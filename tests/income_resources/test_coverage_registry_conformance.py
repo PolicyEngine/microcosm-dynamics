@@ -4940,7 +4940,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 348
+    assert sum(len(row["cases"]) for row in rows) == 346
 
 
 PUBLIC_OFFICERS = {
@@ -5977,13 +5977,13 @@ ELECTING_CHURCH_SERVICE = (
     "beginning of the 2-year period for which it was not furnished); outside "
     "an unrelated trade or business, and outside ministry or order duties"
 )
-CHURCH_REMUNERATION = (
-    "remuneration for service performed on or after 1984-01-01 in the employ "
-    "of an electing church or qualified church-controlled organization, other "
-    "than service in an unrelated trade or business (section 513(a)), of an "
-    "employee who is not a minister or a member of a religious order, from an "
-    "employer paying at least $100 of such remuneration (for service on or "
-    "after 1984-01-01) in the taxable year"
+# Review r6 low 3: the review's $80 comes from an employer paying less
+# than $100, so it meets no church case's employer gate.
+CHURCH_REMUNERATION_BELOW_GATE = (
+    "remuneration of $80 for service performed on or after 1984-01-01 in the "
+    "employ of an electing church, from an employer paying less than $100 of "
+    "such remuneration (for service on or after 1984-01-01) in the taxable "
+    "year"
 )
 
 
@@ -6005,7 +6005,10 @@ def test_fiscal_year_church_service_after_1983_takes_the_1984_cases(
     election to "service performed after December 31, 1983"; a fiscal
     year that began in 1983 reaches the 1968-1983 row, whose cases carry
     that date. Below the $100 employer gate the pay is excluded, so the
-    review's $80 is noncovered; earlier service defers to nonprofit."""
+    review's $80 is noncovered; earlier service defers to nonprofit. In
+    the units row the $80 meets no church case, whose texts carry the
+    employer gate, so the residual's $400 floor applies (review r6 low 3:
+    round 5 said it reached church_combined_below_100)."""
     (rule,) = registry.lookup_date(
         "electing_church_employee_service", date(1983, 7, 1)
     )
@@ -6021,16 +6024,13 @@ def test_fiscal_year_church_service_after_1983_takes_the_1984_cases(
         assert 8000 < gate == 10000
     (units,) = registry.lookup_date("self_employment_units", date(1983, 7, 1))
     unit_facts = {
-        "church_employee_service": CHURCH_REMUNERATION,
+        "church_employee_service": CHURCH_REMUNERATION_BELOW_GATE,
         "services_performed_date": service_date,
         "amount": "combined earnings below $100",
     }
     decided = units.resolve(cases_met(units, unit_facts))
-    if expected == "covered_above_threshold":
-        assert decided.get("case_id") == "church_combined_below_100"
-        assert decided["consequence"] == "noncovered"
-    else:
-        assert "case_id" not in decided
+    assert "case_id" not in decided
+    assert decided["consequence"] == "covered_above_threshold"
 
 
 @pytest.mark.parametrize(

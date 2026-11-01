@@ -3181,6 +3181,20 @@
         "authority": "42 U.S.C. 410, official United States Code 1994 edition label",
         "location": "1983 amendment note quoting former 410(a)(6)(C)(iii)",
         "quote": "(iii) in a penal institution of the United States by an inmate thereof"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a), preamble, clause (B)",
+        "quote": "(B) outside the United States by a citizen or resident of the United States as an employee (i) of an American employer"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "1983 amendment note, Pub. L. 98-21 section 323(a)(2)",
+        "quote": "Pub. L. 98\u201321, \u00a7 323(a)(2) , substituted \u201ca citizen or resident of the United States\u201d for \u201ca citizen of the United States\u201d in cl. (B) in provisions preceding par. (1)."
       }
     ],
     "trigger_facts": [
@@ -3242,7 +3256,7 @@
           ]
         }
       ],
-      "scope": "Former 410(a)(5) and (a)(6) as in effect in January 1983 reach only service \"in the employ of the United States\" or of an instrumentality of the United States, so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. The Army Corps student aide open case rests on POMS RS 01901.340, which addresses Federal civilian employment.",
+      "scope": "Former 410(a)(5) and (a)(6) as in effect in January 1983 reach only service \"in the employ of the United States\" or of an instrumentality of the United States, so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. The Army Corps student aide case rests on POMS RS 01901.340, which addresses Federal civilian employment.",
       "condition_cases": {
         "scope": {
           "cases": {
@@ -3451,7 +3465,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families."
+      "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families. This family does not read 410(a)'s base definition: service outside the United States is employment only under 410(a)(B), \"by a citizen or resident of the United States as an employee (i) of an American employer\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983), and no family in this registry reads that condition, so this residual does not reach a noncitizen's service abroad (registry scope_gaps, review r6 M-5)."
     }
   },
   {
@@ -3560,6 +3574,20 @@
         "authority": "42 U.S.C. 410, official United States Code 1994 edition label",
         "location": "1983 amendment note quoting former 410(a)(6)(C)(iii)",
         "quote": "(iii) in a penal institution of the United States by an inmate thereof"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a), preamble, clause (B)",
+        "quote": "(B) outside the United States by a citizen or resident of the United States as an employee (i) of an American employer"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "1983 amendment note, Pub. L. 98-21 section 323(a)(2)",
+        "quote": "Pub. L. 98\u201321, \u00a7 323(a)(2) , substituted \u201ca citizen or resident of the United States\u201d for \u201ca citizen of the United States\u201d in cl. (B) in provisions preceding par. (1)."
       }
     ],
     "trigger_facts": [
@@ -3622,7 +3650,7 @@
           ]
         }
       ],
-      "scope": "Former 410(a)(5) and (a)(6) as in effect in January 1983 reach only service \"in the employ of the United States\" or of an instrumentality of the United States, so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. The Army Corps student aide open case rests on POMS RS 01901.340, which addresses Federal civilian employment.",
+      "scope": "Former 410(a)(5) and (a)(6) as in effect in January 1983 reach only service \"in the employ of the United States\" or of an instrumentality of the United States, so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. The Army Corps student aide case rests on POMS RS 01901.340, which addresses Federal civilian employment.",
       "condition_cases": {
         "scope": {
           "cases": {
@@ -3816,7 +3844,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families."
+      "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families. This family does not read 410(a)'s base definition: service outside the United States is employment only under 410(a)(B), \"by a citizen or resident of the United States as an employee (i) of an American employer\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983), and no family in this registry reads that condition, so this residual does not reach a noncitizen's service abroad (registry scope_gaps, review r6 M-5)."
     }
   },
   {
@@ -3965,6 +3993,20 @@
         "authority": "POMS RS 01901.340 (2024-06-14)",
         "location": "C.5, student employees with U.S. Army Engineers",
         "quote": "Section 2360 of the Armed Forces Act (title 10) provides for the U.S. Army Corps of Engineers Research and Development Laboratories to contract for seasonal or part-time student employment to perform services as aides in their laboratories. The services of these students are not covered for Social Security or CSRS purposes."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a), preamble, clause (B)",
+        "quote": "(B) outside the United States by a citizen or resident of the United States as an employee (i) of an American employer"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "1983 amendment note, Pub. L. 98-21 section 323(a)(2)",
+        "quote": "Pub. L. 98\u201321, \u00a7 323(a)(2) , substituted \u201ca citizen or resident of the United States\u201d for \u201ca citizen of the United States\u201d in cl. (B) in provisions preceding par. (1)."
       }
     ],
     "trigger_facts": [
@@ -4106,7 +4148,7 @@
           "quote": "Amendment by section 101(a) of Pub. L. 98\u201321 effective with respect to service performed after Dec. 31, 1983"
         }
       },
-      "scope": "410(a)(5) and (a)(6) reach only service \"in the employ of the United States or any instrumentality of the United States\", so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. first_hired_after_1983 names the level too, so a non-Federal new hire reaches the residual. The Army Corps student aide open case rests on POMS RS 01901.340, which addresses Federal employment.",
+      "scope": "410(a)(5) and (a)(6) reach only service \"in the employ of the United States or any instrumentality of the United States\", so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. first_hired_after_1983 names the level too, so a non-Federal new hire reaches the residual. The Army Corps student aide case rests on POMS RS 01901.340, which addresses Federal employment.",
       "condition_cases": {
         "scope": {
           "cases": {
@@ -4347,7 +4389,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins."
+      "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins. This family does not read 410(a)'s base definition: service outside the United States is employment only under 410(a)(B), \"by a citizen or resident of the United States as an employee (i) of an American employer\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983), and no family in this registry reads that condition, so this residual does not reach a noncitizen's service abroad (registry scope_gaps, review r6 M-5)."
     }
   },
   {
@@ -4523,6 +4565,20 @@
         "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
         "location": "1988 amendment note, subsec. (a)(5), Pub. L. 100-647 section 8015(c)(1)",
         "quote": "any such service performed on or after any date on which such individual performs"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a), preamble, clause (B)",
+        "quote": "(B) outside the United States by a citizen or resident of the United States as an employee (i) of an American employer"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "1983 amendment note, Pub. L. 98-21 section 323(a)(2)",
+        "quote": "Pub. L. 98\u201321, \u00a7 323(a)(2) , substituted \u201ca citizen or resident of the United States\u201d for \u201ca citizen of the United States\u201d in cl. (B) in provisions preceding par. (1)."
       }
     ],
     "trigger_facts": [
@@ -5075,7 +5131,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins."
+      "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins. This family does not read 410(a)'s base definition: service outside the United States is employment only under 410(a)(B), \"by a citizen or resident of the United States as an employee (i) of an American employer\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983), and no family in this registry reads that condition, so this residual does not reach a noncitizen's service abroad (registry scope_gaps, review r6 M-5)."
     }
   },
   {
@@ -6594,9 +6650,6 @@
             ],
             "vowed_member_outside_3121r2_definition": [
               "religious_order_service"
-            ],
-            "election_member_abroad_control_outside_us": [
-              "religious_order_service"
             ]
           }
         },
@@ -6677,19 +6730,8 @@
         }
       },
       {
-        "case_id": "election_member_abroad_control_outside_us",
-        "precedence": 3,
-        "when": {
-          "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period",
-          "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
-          "place_of_work": "outside the United States, where the right to direct and control the member's services does not remain with the member's order within the United States"
-        },
-        "consequence": "noncovered",
-        "description": "POMS RS 01901.620 B.4 covers a member's services outside the United States under the election only if \"the right to direct and control remains with the member's order within the U.S.\"; where it does not, the vow-of-poverty exclusion still applies, whatever the member's citizenship or residence."
-      },
-      {
         "case_id": "retroactive_quarter_member_condition_failed",
-        "precedence": 4,
+        "precedence": 3,
         "when": {
           "clergy_or_religious_exemption": "3121(r) certificate whose designated retroactive period (a quarter before the quarter of filing) covers the service, where the member was not a member when performing the service or was not living on the first day of the quarter in which the order filed the certificate",
           "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
@@ -6699,7 +6741,7 @@
       },
       {
         "case_id": "vowed_member_outside_3121r2_definition",
-        "precedence": 5,
+        "precedence": 4,
         "when": {
           "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order but does not perform the tasks usually required of an active member of such order to the extent usually required, or is considered retired because of old age or total disability (outside 3121(r)(2)), performing duties required by such order"
         },
@@ -6708,9 +6750,9 @@
       },
       {
         "case_id": "vow_duties_with_3121r_election",
-        "precedence": 6,
+        "precedence": 5,
         "consequence": "covered",
-        "description": "3121(r)(1)(C) deems the order duties of a member, as 3121(r)(2) defines one (active, and not retired for old age or total disability), to be performed as an employee of the order; use the value of perquisites subject to the statutory floor. A subdivision's election applies only \"to all current and future members of such order who belong to such subdivision\" (3121(r)(1)(B)).",
+        "description": "3121(r)(1)(C) deems the order duties of a member, as 3121(r)(2) defines one (active, and not retired for old age or total disability), to be performed as an employee of the order; use the value of perquisites subject to the statutory floor. A subdivision's election applies only \"to all current and future members of such order who belong to such subdivision\" (3121(r)(1)(B)).POMS RS 01901.620 B.4 conditions a member's service abroad on the election, citizenship (from 1984, citizenship or residence) and membership: \"Services performed by members of religious orders working outside the U.S. are covered if: \u2022 the order has elected coverage, \u2022 the member is a U.S. citizen, or effective January 1, 1984, a resident alien, and \u2022 the individual remains a member of the order even though their services may be directed by a third party outside the U.S., the right to direct and control remains with the member's order within the U.S.\" Its third bullet makes remaining a member the condition: direction by a third party abroad leaves the right to direct and control with the order, so no case excludes a member abroad on control alone (review r6 M-4; POMS NL 00711.065 1331.3 B lists the same three conditions).",
         "when": {
           "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed",
           "religious_order_service": "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
@@ -6718,7 +6760,7 @@
       },
       {
         "case_id": "election_status_not_established",
-        "precedence": 7,
+        "precedence": 6,
         "when": {
           "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
           "clergy_or_religious_exemption": "not established whether a 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covers the period"
@@ -6739,7 +6781,7 @@
       },
       {
         "case_id": "third_party_employment_outside_order",
-        "precedence": 8,
+        "precedence": 7,
         "consequence": "covered",
         "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
         "when": {
@@ -6748,7 +6790,7 @@
       },
       {
         "case_id": "order_duties_without_vow",
-        "precedence": 9,
+        "precedence": 8,
         "when": {
           "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
         },
@@ -7089,9 +7131,6 @@
             ],
             "vowed_member_outside_3121r2_definition": [
               "religious_order_service"
-            ],
-            "election_member_abroad_control_outside_us": [
-              "religious_order_service"
             ]
           }
         },
@@ -7222,19 +7261,8 @@
         }
       },
       {
-        "case_id": "election_member_abroad_control_outside_us",
-        "precedence": 3,
-        "when": {
-          "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period",
-          "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
-          "place_of_work": "outside the United States, where the right to direct and control the member's services does not remain with the member's order within the United States"
-        },
-        "consequence": "noncovered",
-        "description": "POMS RS 01901.620 B.4 covers a member's services outside the United States under the election only if \"the right to direct and control remains with the member's order within the U.S.\"; where it does not, the vow-of-poverty exclusion still applies, whatever the member's citizenship or residence."
-      },
-      {
         "case_id": "retroactive_quarter_member_condition_failed",
-        "precedence": 4,
+        "precedence": 3,
         "when": {
           "clergy_or_religious_exemption": "3121(r) certificate whose designated retroactive period (a quarter before the quarter of filing) covers the service, where the member was not a member when performing the service or was not living on the first day of the quarter in which the order filed the certificate",
           "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
@@ -7244,7 +7272,7 @@
       },
       {
         "case_id": "vowed_member_outside_3121r2_definition",
-        "precedence": 5,
+        "precedence": 4,
         "when": {
           "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order but does not perform the tasks usually required of an active member of such order to the extent usually required, or is considered retired because of old age or total disability (outside 3121(r)(2)), performing duties required by such order"
         },
@@ -7253,9 +7281,9 @@
       },
       {
         "case_id": "vow_duties_with_3121r_election",
-        "precedence": 6,
+        "precedence": 5,
         "consequence": "covered",
-        "description": "3121(r)(1)(C) deems the order duties of a member, as 3121(r)(2) defines one (active, and not retired for old age or total disability), to be performed as an employee of the order; use the value of perquisites subject to the statutory floor. A subdivision's election applies only \"to all current and future members of such order who belong to such subdivision\" (3121(r)(1)(B)).",
+        "description": "3121(r)(1)(C) deems the order duties of a member, as 3121(r)(2) defines one (active, and not retired for old age or total disability), to be performed as an employee of the order; use the value of perquisites subject to the statutory floor. A subdivision's election applies only \"to all current and future members of such order who belong to such subdivision\" (3121(r)(1)(B)).POMS RS 01901.620 B.4 conditions a member's service abroad on the election, citizenship (from 1984, citizenship or residence) and membership: \"Services performed by members of religious orders working outside the U.S. are covered if: \u2022 the order has elected coverage, \u2022 the member is a U.S. citizen, or effective January 1, 1984, a resident alien, and \u2022 the individual remains a member of the order even though their services may be directed by a third party outside the U.S., the right to direct and control remains with the member's order within the U.S.\" Its third bullet makes remaining a member the condition: direction by a third party abroad leaves the right to direct and control with the order, so no case excludes a member abroad on control alone (review r6 M-4; POMS NL 00711.065 1331.3 B lists the same three conditions).",
         "when": {
           "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed",
           "religious_order_service": "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
@@ -7263,7 +7291,7 @@
       },
       {
         "case_id": "election_status_not_established",
-        "precedence": 7,
+        "precedence": 6,
         "when": {
           "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
           "clergy_or_religious_exemption": "not established whether a 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covers the period"
@@ -7284,7 +7312,7 @@
       },
       {
         "case_id": "third_party_employment_outside_order",
-        "precedence": 8,
+        "precedence": 7,
         "consequence": "covered",
         "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
         "when": {
@@ -7293,7 +7321,7 @@
       },
       {
         "case_id": "order_duties_without_vow",
-        "precedence": 9,
+        "precedence": 8,
         "when": {
           "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
         },

@@ -8648,6 +8648,13 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "1983 amendment note, Pub. L. 98-21 section 323(a)(2)",
+          "quote": "Pub. L. 98\u201321, \u00a7 323(a)(2) , substituted \u201ca citizen or resident of the United States\u201d for \u201ca citizen of the United States\u201d in cl. (B) in provisions preceding par. (1).",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
           "location": "1984 amendment note, subsec. (l)(2)",
@@ -8665,6 +8672,13 @@
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
           "location": "410(a) and amendment/effective-date notes",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "410(a), preamble, clause (B)",
+          "quote": "(B) outside the United States by a citizen or resident of the United States as an employee (i) of an American employer",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
@@ -8898,12 +8912,12 @@
           "enactment": "1972-10-30",
           "ordinary_coverage_start": "1973-01-01"
         },
-        "scope": "Former 410(a)(5) and (a)(6) as in effect in January 1983 reach only service \"in the employ of the United States\" or of an instrumentality of the United States, so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. The Army Corps student aide open case rests on POMS RS 01901.340, which addresses Federal civilian employment."
+        "scope": "Former 410(a)(5) and (a)(6) as in effect in January 1983 reach only service \"in the employ of the United States\" or of an instrumentality of the United States, so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. The Army Corps student aide case rests on POMS RS 01901.340, which addresses Federal civilian employment."
       },
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families."
+        "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families. This family does not read 410(a)'s base definition: service outside the United States is employment only under 410(a)(B), \"by a citizen or resident of the United States as an employee (i) of an American employer\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983), and no family in this registry reads that condition, so this residual does not reach a noncitizen's service abroad (registry scope_gaps, review r6 M-5)."
       },
       "rule_id": "federal_1968_1972",
       "trigger_facts": [
@@ -9029,6 +9043,13 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "1983 amendment note, Pub. L. 98-21 section 323(a)(2)",
+          "quote": "Pub. L. 98\u201321, \u00a7 323(a)(2) , substituted \u201ca citizen or resident of the United States\u201d for \u201ca citizen of the United States\u201d in cl. (B) in provisions preceding par. (1).",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
           "location": "1984 amendment note, subsec. (l)(2)",
@@ -9046,6 +9067,13 @@
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
           "location": "410(a) and amendment/effective-date notes",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "410(a), preamble, clause (B)",
+          "quote": "(B) outside the United States by a citizen or resident of the United States as an employee (i) of an American employer",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
@@ -9263,12 +9291,12 @@
           "enactment": "1972-10-30",
           "ordinary_coverage_start": "1973-01-01"
         },
-        "scope": "Former 410(a)(5) and (a)(6) as in effect in January 1983 reach only service \"in the employ of the United States\" or of an instrumentality of the United States, so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. The Army Corps student aide open case rests on POMS RS 01901.340, which addresses Federal civilian employment."
+        "scope": "Former 410(a)(5) and (a)(6) as in effect in January 1983 reach only service \"in the employ of the United States\" or of an instrumentality of the United States, so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. The Army Corps student aide case rests on POMS RS 01901.340, which addresses Federal civilian employment."
       },
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families."
+        "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families. This family does not read 410(a)'s base definition: service outside the United States is employment only under 410(a)(B), \"by a citizen or resident of the United States as an employee (i) of an American employer\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983), and no family in this registry reads that condition, so this residual does not reach a noncitizen's service abroad (registry scope_gaps, review r6 M-5)."
       },
       "rule_id": "federal_1973_1983",
       "trigger_facts": [
@@ -9481,6 +9509,13 @@
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
         },
         {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "1983 amendment note, Pub. L. 98-21 section 323(a)(2)",
+          "quote": "Pub. L. 98\u201321, \u00a7 323(a)(2) , substituted \u201ca citizen or resident of the United States\u201d for \u201ca citizen of the United States\u201d in cl. (B) in provisions preceding par. (1).",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
           "location": "1984 amendment note, subsec. (l)(2)",
@@ -9539,6 +9574,13 @@
           "capture": "lii_42_410.html",
           "location": "410(a)(6)",
           "quote": "(6) Service performed in the employ of the United States or any instrumentality of the United States if such service is performed",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "410(a), preamble, clause (B)",
+          "quote": "(B) outside the United States by a citizen or resident of the United States as an employee (i) of an American employer",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
@@ -9784,7 +9826,7 @@
             "status": "conflicting_guidance_retained_not_operational"
           }
         ],
-        "scope": "410(a)(5) and (a)(6) reach only service \"in the employ of the United States or any instrumentality of the United States\", so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. first_hired_after_1983 names the level too, so a non-Federal new hire reaches the residual. The Army Corps student aide open case rests on POMS RS 01901.340, which addresses Federal employment.",
+        "scope": "410(a)(5) and (a)(6) reach only service \"in the employ of the United States or any instrumentality of the United States\", so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. first_hired_after_1983 names the level too, so a non-Federal new hire reaches the residual. The Army Corps student aide case rests on POMS RS 01901.340, which addresses Federal employment.",
         "section_2601e_nonprofit_service": {
           "citation": {
             "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
@@ -9799,7 +9841,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins."
+        "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins. This family does not read 410(a)'s base definition: service outside the United States is employment only under 410(a)(B), \"by a citizen or resident of the United States as an employee (i) of an American employer\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983), and no family in this registry reads that condition, so this residual does not reach a noncitizen's service abroad (registry scope_gaps, review r6 M-5)."
       },
       "rule_id": "federal_1984_1986",
       "trigger_facts": [
@@ -10096,6 +10138,13 @@
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
         },
         {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "1983 amendment note, Pub. L. 98-21 section 323(a)(2)",
+          "quote": "Pub. L. 98\u201321, \u00a7 323(a)(2) , substituted \u201ca citizen or resident of the United States\u201d for \u201ca citizen of the United States\u201d in cl. (B) in provisions preceding par. (1).",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
           "location": "1987 amendment note quoting 410(l)(1) as it read before Pub. L. 100-203 section 9001(a)(1)",
@@ -10154,6 +10203,13 @@
           "capture": "lii_42_410.html",
           "location": "410(a)(6)",
           "quote": "(6) Service performed in the employ of the United States or any instrumentality of the United States if such service is performed",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "410(a), preamble, clause (B)",
+          "quote": "(B) outside the United States by a citizen or resident of the United States as an employee (i) of an American employer",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
@@ -10527,7 +10583,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins."
+        "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins. This family does not read 410(a)'s base definition: service outside the United States is employment only under 410(a)(B), \"by a citizen or resident of the United States as an employee (i) of an American employer\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983), and no family in this registry reads that condition, so this residual does not reach a noncitizen's service abroad (registry scope_gaps, review r6 M-5)."
       },
       "rule_id": "federal_1987_2026",
       "trigger_facts": [
@@ -16284,21 +16340,10 @@
           }
         },
         {
-          "case_id": "election_member_abroad_control_outside_us",
-          "consequence": "noncovered",
-          "description": "POMS RS 01901.620 B.4 covers a member's services outside the United States under the election only if \"the right to direct and control remains with the member's order within the U.S.\"; where it does not, the vow-of-poverty exclusion still applies, whatever the member's citizenship or residence.",
-          "precedence": 3,
-          "when": {
-            "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period",
-            "place_of_work": "outside the United States, where the right to direct and control the member's services does not remain with the member's order within the United States",
-            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
-          }
-        },
-        {
           "case_id": "retroactive_quarter_member_condition_failed",
           "consequence": "noncovered",
           "description": "26 U.S.C. 3121(r)(3)(A): where the order designates a date before the quarter of filing, \"the election shall apply to services performed before the quarter in which the certificate is filed only if the member performing such services was a member at the time such services were performed and is living on the first day of the quarter in which such certificate is filed\". For this member's pre-filing service no election applies, so the vow-of-poverty exclusion stands.",
-          "precedence": 4,
+          "precedence": 3,
           "when": {
             "clergy_or_religious_exemption": "3121(r) certificate whose designated retroactive period (a quarter before the quarter of filing) covers the service, where the member was not a member when performing the service or was not living on the first day of the quarter in which the order filed the certificate",
             "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
@@ -16308,7 +16353,7 @@
           "case_id": "vowed_member_outside_3121r2_definition",
           "consequence": "noncovered",
           "description": "3121(r)(2) defines a member \"For purposes of this subsection\" as one who performs tasks usually required \"(and to the extent usually required)\" of an active member and is not retired for old age or total disability, and 3121(r)(1)(C) deems only such a member's duties to be employment. A vowed member outside that definition gets no deemed wages under the election, and 411(c)'s closing sentence keeps the vow-of-poverty exclusion from self-employment, so the order election does not cover her duties.Noncovered whether or not an election is in effect: with no election 410(a)(8)(A) excludes the duties (vow_duties_without_election), and with one this member is outside what 3121(r) makes employment, so the case reads no election and ranks above election_status_not_established (review r6 M-2).",
-          "precedence": 5,
+          "precedence": 4,
           "when": {
             "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order but does not perform the tasks usually required of an active member of such order to the extent usually required, or is considered retired because of old age or total disability (outside 3121(r)(2)), performing duties required by such order"
           }
@@ -16316,8 +16361,8 @@
         {
           "case_id": "vow_duties_with_3121r_election",
           "consequence": "covered",
-          "description": "3121(r)(1)(C) deems the order duties of a member, as 3121(r)(2) defines one (active, and not retired for old age or total disability), to be performed as an employee of the order; use the value of perquisites subject to the statutory floor. A subdivision's election applies only \"to all current and future members of such order who belong to such subdivision\" (3121(r)(1)(B)).",
-          "precedence": 6,
+          "description": "3121(r)(1)(C) deems the order duties of a member, as 3121(r)(2) defines one (active, and not retired for old age or total disability), to be performed as an employee of the order; use the value of perquisites subject to the statutory floor. A subdivision's election applies only \"to all current and future members of such order who belong to such subdivision\" (3121(r)(1)(B)).POMS RS 01901.620 B.4 conditions a member's service abroad on the election, citizenship (from 1984, citizenship or residence) and membership: \"Services performed by members of religious orders working outside the U.S. are covered if: \u2022 the order has elected coverage, \u2022 the member is a U.S. citizen, or effective January 1, 1984, a resident alien, and \u2022 the individual remains a member of the order even though their services may be directed by a third party outside the U.S., the right to direct and control remains with the member's order within the U.S.\" Its third bullet makes remaining a member the condition: direction by a third party abroad leaves the right to direct and control with the order, so no case excludes a member abroad on control alone (review r6 M-4; POMS NL 00711.065 1331.3 B lists the same three conditions).",
+          "precedence": 5,
           "when": {
             "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed",
             "religious_order_service": "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
@@ -16338,7 +16383,7 @@
             }
           ],
           "open_reason": "ORDER_ELECTION_STATUS_NOT_ESTABLISHED: 410(a)(8)(A) excludes a vowed member's order duties unless \"an election of coverage under section 3121(r) ... is in effect with respect to such order, or with respect to the autonomous subdivision thereof to which such member belongs\". The record does not establish whether one covers the period, and membership alone does not show it, so the case refuses, as clergy_religious_service's exemption_status_unknown refuses an unestablished 1402(e) exemption.",
-          "precedence": 7,
+          "precedence": 6,
           "when": {
             "clergy_or_religious_exemption": "not established whether a 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covers the period",
             "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
@@ -16348,7 +16393,7 @@
           "case_id": "third_party_employment_outside_order",
           "consequence": "covered",
           "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
-          "precedence": 8,
+          "precedence": 7,
           "when": {
             "religious_order_service": "ordinary employment for a third party outside duties required by the order"
           }
@@ -16357,7 +16402,7 @@
           "case_id": "order_duties_without_vow",
           "consequence": "covered",
           "description": "This family's vow-of-poverty and 3121(r) election rules do not reach a member without a vow, so this family excludes nothing here. clergy_religious_service decides these duties: 410(a)(8)(A) leaves them out of employment, and 411(c)(4) with its closing sentence makes them self-employment unless a 1402(e) exemption is effective. The case does not defer there, because clergy_religious_service defers a vowed member's order duties to this family and the family-level deferral graph must stay acyclic.",
-          "precedence": 9,
+          "precedence": 8,
           "when": {
             "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
           }
@@ -16576,9 +16621,6 @@
           },
           "poverty_vow_self_employment_excluded": {
             "cases": {
-              "election_member_abroad_control_outside_us": [
-                "religious_order_service"
-              ],
               "election_member_abroad_not_covered": [
                 "religious_order_service"
               ],
@@ -16687,21 +16729,10 @@
           }
         },
         {
-          "case_id": "election_member_abroad_control_outside_us",
-          "consequence": "noncovered",
-          "description": "POMS RS 01901.620 B.4 covers a member's services outside the United States under the election only if \"the right to direct and control remains with the member's order within the U.S.\"; where it does not, the vow-of-poverty exclusion still applies, whatever the member's citizenship or residence.",
-          "precedence": 3,
-          "when": {
-            "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period",
-            "place_of_work": "outside the United States, where the right to direct and control the member's services does not remain with the member's order within the United States",
-            "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
-          }
-        },
-        {
           "case_id": "retroactive_quarter_member_condition_failed",
           "consequence": "noncovered",
           "description": "26 U.S.C. 3121(r)(3)(A): where the order designates a date before the quarter of filing, \"the election shall apply to services performed before the quarter in which the certificate is filed only if the member performing such services was a member at the time such services were performed and is living on the first day of the quarter in which such certificate is filed\". For this member's pre-filing service no election applies, so the vow-of-poverty exclusion stands.",
-          "precedence": 4,
+          "precedence": 3,
           "when": {
             "clergy_or_religious_exemption": "3121(r) certificate whose designated retroactive period (a quarter before the quarter of filing) covers the service, where the member was not a member when performing the service or was not living on the first day of the quarter in which the order filed the certificate",
             "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
@@ -16711,7 +16742,7 @@
           "case_id": "vowed_member_outside_3121r2_definition",
           "consequence": "noncovered",
           "description": "3121(r)(2) defines a member \"For purposes of this subsection\" as one who performs tasks usually required \"(and to the extent usually required)\" of an active member and is not retired for old age or total disability, and 3121(r)(1)(C) deems only such a member's duties to be employment. A vowed member outside that definition gets no deemed wages under the election, and 411(c)'s closing sentence keeps the vow-of-poverty exclusion from self-employment, so the order election does not cover her duties.Noncovered whether or not an election is in effect: with no election 410(a)(8)(A) excludes the duties (vow_duties_without_election), and with one this member is outside what 3121(r) makes employment, so the case reads no election and ranks above election_status_not_established (review r6 M-2).",
-          "precedence": 5,
+          "precedence": 4,
           "when": {
             "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order but does not perform the tasks usually required of an active member of such order to the extent usually required, or is considered retired because of old age or total disability (outside 3121(r)(2)), performing duties required by such order"
           }
@@ -16719,8 +16750,8 @@
         {
           "case_id": "vow_duties_with_3121r_election",
           "consequence": "covered",
-          "description": "3121(r)(1)(C) deems the order duties of a member, as 3121(r)(2) defines one (active, and not retired for old age or total disability), to be performed as an employee of the order; use the value of perquisites subject to the statutory floor. A subdivision's election applies only \"to all current and future members of such order who belong to such subdivision\" (3121(r)(1)(B)).",
-          "precedence": 6,
+          "description": "3121(r)(1)(C) deems the order duties of a member, as 3121(r)(2) defines one (active, and not retired for old age or total disability), to be performed as an employee of the order; use the value of perquisites subject to the statutory floor. A subdivision's election applies only \"to all current and future members of such order who belong to such subdivision\" (3121(r)(1)(B)).POMS RS 01901.620 B.4 conditions a member's service abroad on the election, citizenship (from 1984, citizenship or residence) and membership: \"Services performed by members of religious orders working outside the U.S. are covered if: \u2022 the order has elected coverage, \u2022 the member is a U.S. citizen, or effective January 1, 1984, a resident alien, and \u2022 the individual remains a member of the order even though their services may be directed by a third party outside the U.S., the right to direct and control remains with the member's order within the U.S.\" Its third bullet makes remaining a member the condition: direction by a third party abroad leaves the right to direct and control with the order, so no case excludes a member abroad on control alone (review r6 M-4; POMS NL 00711.065 1331.3 B lists the same three conditions).",
+          "precedence": 5,
           "when": {
             "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed",
             "religious_order_service": "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
@@ -16741,7 +16772,7 @@
             }
           ],
           "open_reason": "ORDER_ELECTION_STATUS_NOT_ESTABLISHED: 410(a)(8)(A) excludes a vowed member's order duties unless \"an election of coverage under section 3121(r) ... is in effect with respect to such order, or with respect to the autonomous subdivision thereof to which such member belongs\". The record does not establish whether one covers the period, and membership alone does not show it, so the case refuses, as clergy_religious_service's exemption_status_unknown refuses an unestablished 1402(e) exemption.",
-          "precedence": 7,
+          "precedence": 6,
           "when": {
             "clergy_or_religious_exemption": "not established whether a 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covers the period",
             "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order"
@@ -16751,7 +16782,7 @@
           "case_id": "third_party_employment_outside_order",
           "consequence": "covered",
           "description": "A vow of poverty alone does not exclude ordinary employment; apply the remaining exclusions.",
-          "precedence": 8,
+          "precedence": 7,
           "when": {
             "religious_order_service": "ordinary employment for a third party outside duties required by the order"
           }
@@ -16760,7 +16791,7 @@
           "case_id": "order_duties_without_vow",
           "consequence": "covered",
           "description": "This family's vow-of-poverty and 3121(r) election rules do not reach a member without a vow, so this family excludes nothing here. clergy_religious_service decides these duties: 410(a)(8)(A) leaves them out of employment, and 411(c)(4) with its closing sentence makes them self-employment unless a 1402(e) exemption is effective. The case does not defer there, because clergy_religious_service defers a vowed member's order duties to this family and the family-level deferral graph must stay acyclic.",
-          "precedence": 9,
+          "precedence": 8,
           "when": {
             "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
           }
@@ -17070,9 +17101,6 @@
           },
           "poverty_vow_self_employment_excluded": {
             "cases": {
-              "election_member_abroad_control_outside_us": [
-                "religious_order_service"
-              ],
               "election_member_abroad_not_covered": [
                 "religious_order_service"
               ],
@@ -28055,44 +28083,44 @@
         {
           "case_id": "church_combined_below_100",
           "consequence": "noncovered",
-          "description": "Below $100 of combined earnings the instructions stop. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
+          "description": "Below $100 of combined earnings the instructions stop. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
           "precedence": 1,
           "when": {
             "amount": "combined earnings below $100",
-            "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+            "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
             "services_performed_date": "on or after 1984-01-01"
           }
         },
         {
           "case_id": "church_100_to_399_without_ordinary_loss",
           "consequence": "covered",
-          "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
+          "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
           "precedence": 2,
           "when": {
             "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
-            "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+            "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
             "services_performed_date": "on or after 1984-01-01"
           }
         },
         {
           "case_id": "church_at_least_100_with_ordinary_loss",
           "consequence": "covered",
-          "description": "With an ordinary loss the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
+          "description": "With an ordinary loss the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
           "precedence": 3,
           "when": {
             "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss",
-            "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+            "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
             "services_performed_date": "on or after 1984-01-01"
           }
         },
         {
           "case_id": "church_at_least_400_without_ordinary_loss",
           "consequence": "covered",
-          "description": "From $400 the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
+          "description": "From $400 the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
           "precedence": 4,
           "when": {
             "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss",
-            "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+            "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
             "services_performed_date": "on or after 1984-01-01"
           }
         }
@@ -28266,7 +28294,7 @@
           "church_combined_below_100": "zero",
           "residual_default": "ordinary_net_earnings if at least 400 dollars, otherwise zero"
         },
-        "qualifying_church_remuneration": "gross remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from each such employer paying at least 100 dollars of it in the taxable year; remuneration for service before 1984-01-01 counts neither toward the 100 dollars nor in the base",
+        "qualifying_church_remuneration": "gross remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from each such employer paying at least 100 dollars of it in the taxable year; remuneration for service before 1984-01-01 counts neither toward the 100 dollars nor in the base",
         "units": [
           {
             "aggregation_scope": "person_taxable_year_statutory_unit",
@@ -28286,7 +28314,7 @@
           }
         ],
         "unread_trigger_facts": {
-          "employee_self_or_mixed": "The ordinary-employee family reads it; the units computation and the fiscal-year-1983 church cases do not depend on it (church_employee_service carries the 411(c)(2)(G) route, its unrelated-business and minister limits and the 1984-01-01 service date).",
+          "employee_self_or_mixed": "The ordinary-employee family reads it; the units computation and the fiscal-year-1983 church cases do not depend on it (church_employee_service carries the 411(c)(2)(G) route, its unrelated-business and ministry limits and the 1984-01-01 service date).",
           "reporting_unit": "The units' person-taxable-year aggregation (units.aggregation_scope) reads it.",
           "taxable_year_start": "The taxable-year axis lookup_date reads it; the fiscal-year-1983 church limb is carried by services_performed_date ('on or after 1984-01-01')."
         },
@@ -28313,41 +28341,41 @@
         {
           "case_id": "church_combined_below_100",
           "consequence": "noncovered",
-          "description": "Below $100 of combined earnings the instructions stop. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note).",
+          "description": "Below $100 of combined earnings the instructions stop. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3).",
           "precedence": 1,
           "when": {
             "amount": "combined earnings below $100",
-            "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration in the taxable year"
+            "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year"
           }
         },
         {
           "case_id": "church_100_to_399_without_ordinary_loss",
           "consequence": "covered",
-          "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note).",
+          "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3).",
           "precedence": 2,
           "when": {
             "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
-            "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration in the taxable year"
+            "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year"
           }
         },
         {
           "case_id": "church_at_least_100_with_ordinary_loss",
           "consequence": "covered",
-          "description": "With an ordinary loss the combined earnings are the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note).",
+          "description": "With an ordinary loss the combined earnings are the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3).",
           "precedence": 3,
           "when": {
             "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss",
-            "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration in the taxable year"
+            "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year"
           }
         },
         {
           "case_id": "church_at_least_400_without_ordinary_loss",
           "consequence": "covered",
-          "description": "From $400 the combined earnings are the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note).",
+          "description": "From $400 the combined earnings are the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3).",
           "precedence": 4,
           "when": {
             "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss",
-            "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration in the taxable year"
+            "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year"
           }
         }
       ],
@@ -28620,7 +28648,7 @@
           "line2": "qualifying church wages join nonfarm net profit or loss",
           "lines7_8_9": "Farm and nonfarm amounts combine; the form refers church employees below 400 to the instructions"
         },
-        "qualifying_church_remuneration": "gross remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from each such employer paying at least 100 dollars of it in the taxable year",
+        "qualifying_church_remuneration": "gross remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from each such employer paying at least 100 dollars of it in the taxable year",
         "statutory_units": "One historical combined computation with the stated conditional church/ordinary floors; not the post-1985 two-unit rule",
         "units": [
           {
@@ -28639,7 +28667,7 @@
           }
         ],
         "unread_trigger_facts": {
-          "employee_self_or_mixed": "The ordinary-employee family reads it; church_employee_service carries the 411(c)(2)(G) route and its unrelated-business and minister limits.",
+          "employee_self_or_mixed": "The ordinary-employee family reads it; church_employee_service carries the 411(c)(2)(G) route and its unrelated-business and ministry limits.",
           "reporting_unit": "The historical combined computation's person-taxable-year aggregation reads it.",
           "taxable_year_start": "The taxable-year axis lookup_date reads it (Pub. L. 99-514 section 1882(b)(3): taxable years beginning after 1985-12-31)."
         },
@@ -30855,6 +30883,42 @@
     }
   ],
   "schema_version": "coverage_rules.ce1.v3",
+  "scope_gaps": [
+    {
+      "citations": [
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "410(a), preamble, clause (B)",
+          "quote": "(B) outside the United States by a citizen or resident of the United States as an employee (i) of an American employer",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "1983 amendment note, Pub. L. 98-21 section 323(a)(2)",
+          "quote": "Pub. L. 98\u201321, \u00a7 323(a)(2) , substituted \u201ca citizen or resident of the United States\u201d for \u201ca citizen of the United States\u201d in cl. (B) in provisions preceding par. (1).",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "Effective Date of 1983 Amendment, section 323(a)(2)",
+          "quote": "Amendment by section 323(a)(2) of Pub. L. 98\u201321 applicable to remuneration paid after Dec. 31, 1983",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "POMS RS 01901.340",
+          "capture": "poms_rs_01901340.html",
+          "location": "A",
+          "quote": "excluded by some other provision of law, (e.g., student services or services performed outside the U.S. by an alien)",
+          "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c"
+        }
+      ],
+      "gap": "No family in this registry reads 410(a)'s base definition of employment. Service within the United States is employment \"irrespective of the citizenship or residence of either\" (clause (A)); service outside the United States is employment only \"by a citizen or resident of the United States as an employee (i) of an American employer\" or of a foreign affiliate (clause (B)), and before 1984 only by \"a citizen of the United States\" (Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983). So a residual that reads covered does not reach a noncitizen's service abroad (before 1984 any noncitizen's, from 1984 a nonresident noncitizen's), for a Federal employer as for any other: POMS RS 01901.340 A names \"services performed outside the U.S. by an alien\" as excluded by some other provision of law (review r6 M-5).",
+      "provision": "42 U.S.C. 410(a), preamble, clauses (A) and (B)"
+    }
+  ],
   "scope_status": "partial_statutory_registry_open_histories_refuse",
   "table_definitions": [
     {

@@ -51,6 +51,9 @@ def build(root: Path | None = None) -> str:
         "scope_status": "partial_statutory_registry_open_histories_refuse",
         "design": "docs/design/covered_earnings_v2.md",
         "rare_exclusion_ruling": "open_no_reading_selected",
+        # Statutory conditions no family reads, so no residual reaches
+        # them (review r6 M-5).
+        "scope_gaps": read("scope_gaps.json"),
         "open_questions": [
             {"rule_id": rule["rule_id"], "reason": rule["open_reason"]}
             for rule in sorted(rules, key=lambda row: row["rule_id"])

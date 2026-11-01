@@ -1,0 +1,36 @@
+[
+  {
+    "provision": "42 U.S.C. 410(a), preamble, clauses (A) and (B)",
+    "gap": "No family in this registry reads 410(a)'s base definition of employment. Service within the United States is employment \"irrespective of the citizenship or residence of either\" (clause (A)); service outside the United States is employment only \"by a citizen or resident of the United States as an employee (i) of an American employer\" or of a foreign affiliate (clause (B)), and before 1984 only by \"a citizen of the United States\" (Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983). So a residual that reads covered does not reach a noncitizen's service abroad (before 1984 any noncitizen's, from 1984 a nonresident noncitizen's), for a Federal employer as for any other: POMS RS 01901.340 A names \"services performed outside the U.S. by an alien\" as excluded by some other provision of law (review r6 M-5).",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a), preamble, clause (B)",
+        "quote": "(B) outside the United States by a citizen or resident of the United States as an employee (i) of an American employer"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "1983 amendment note, Pub. L. 98-21 section 323(a)(2)",
+        "quote": "Pub. L. 98–21, § 323(a)(2) , substituted “a citizen or resident of the United States” for “a citizen of the United States” in cl. (B) in provisions preceding par. (1)."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "Effective Date of 1983 Amendment, section 323(a)(2)",
+        "quote": "Amendment by section 323(a)(2) of Pub. L. 98–21 applicable to remuneration paid after Dec. 31, 1983"
+      },
+      {
+        "capture": "poms_rs_01901340.html",
+        "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c",
+        "authority": "POMS RS 01901.340",
+        "location": "A",
+        "quote": "excluded by some other provision of law, (e.g., student services or services performed outside the U.S. by an alien)"
+      }
+    ]
+  }
+]

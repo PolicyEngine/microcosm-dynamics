@@ -6245,7 +6245,7 @@
       "effective_basis_description": "The family uses the taxable-year axis because 411(b)'s minimum applies per taxable year, and Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendments \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\". This row ends where Pub. L. 98-369 section 2603(e) applies former 411(a)(13) to \"service performed after Dec. 31, 1983\".",
       "church_remuneration_employer_gate_cents": 10000,
       "church_gate_aggregation_scope": "person_employer_taxable_year",
-      "qualifying_church_remuneration": "gross remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from each such employer paying at least 100 dollars of it in the taxable year; remuneration for service before 1984-01-01 counts neither toward the 100 dollars nor in the base",
+      "qualifying_church_remuneration": "gross remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from each such employer paying at least 100 dollars of it in the taxable year; remuneration for service before 1984-01-01 counts neither toward the 100 dollars nor in the base",
       "eligible_base_by_case": {
         "residual_default": "ordinary_net_earnings if at least 400 dollars, otherwise zero",
         "church_combined_below_100": "zero",
@@ -6320,7 +6320,7 @@
         }
       },
       "unread_trigger_facts": {
-        "employee_self_or_mixed": "The ordinary-employee family reads it; the units computation and the fiscal-year-1983 church cases do not depend on it (church_employee_service carries the 411(c)(2)(G) route, its unrelated-business and minister limits and the 1984-01-01 service date).",
+        "employee_self_or_mixed": "The ordinary-employee family reads it; the units computation and the fiscal-year-1983 church cases do not depend on it (church_employee_service carries the 411(c)(2)(G) route, its unrelated-business and ministry limits and the 1984-01-01 service date).",
         "reporting_unit": "The units' person-taxable-year aggregation (units.aggregation_scope) reads it.",
         "taxable_year_start": "The taxable-year axis lookup_date reads it; the fiscal-year-1983 church limb is carried by services_performed_date ('on or after 1984-01-01')."
       }
@@ -6341,9 +6341,9 @@
         "case_id": "church_combined_below_100",
         "precedence": 1,
         "consequence": "noncovered",
-        "description": "Below $100 of combined earnings the instructions stop. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
+        "description": "Below $100 of combined earnings the instructions stop. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
         "when": {
-          "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+          "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
           "amount": "combined earnings below $100",
           "services_performed_date": "on or after 1984-01-01"
         }
@@ -6352,9 +6352,9 @@
         "case_id": "church_100_to_399_without_ordinary_loss",
         "precedence": 2,
         "consequence": "covered",
-        "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
+        "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
         "when": {
-          "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+          "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
           "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
           "services_performed_date": "on or after 1984-01-01"
         }
@@ -6363,9 +6363,9 @@
         "case_id": "church_at_least_100_with_ordinary_loss",
         "precedence": 3,
         "consequence": "covered",
-        "description": "With an ordinary loss the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
+        "description": "With an ordinary loss the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
         "when": {
-          "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+          "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
           "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss",
           "services_performed_date": "on or after 1984-01-01"
         }
@@ -6374,9 +6374,9 @@
         "case_id": "church_at_least_400_without_ordinary_loss",
         "precedence": 4,
         "consequence": "covered",
-        "description": "From $400 the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
+        "description": "From $400 the combined earnings are the base. For a fiscal year that began in 1983, this applies to remuneration for electing-church service performed on or after 1984-01-01 (Pub. L. 98-369 section 2603(e)). Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3). Only remuneration for service performed on or after 1984-01-01 counts toward the $100 employer gate: former 411(a)(13) reaches only such service (section 2603(e)).",
         "when": {
-          "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+          "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
           "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss",
           "services_performed_date": "on or after 1984-01-01"
         }
@@ -6486,7 +6486,7 @@
         "numerator": 1,
         "denominator": 1
       },
-      "qualifying_church_remuneration": "gross remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from each such employer paying at least 100 dollars of it in the taxable year",
+      "qualifying_church_remuneration": "gross remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from each such employer paying at least 100 dollars of it in the taxable year",
       "ordinary_net_earnings": "admissible farm/nonfarm/partnership earnings after their own allowed deductions and ordinary losses, including applicable optional-method amounts",
       "combined_earnings": "ordinary_net_earnings plus qualifying_church_remuneration",
       "ordinary_losses_may_offset_church_remuneration": true,
@@ -6677,7 +6677,7 @@
         }
       },
       "unread_trigger_facts": {
-        "employee_self_or_mixed": "The ordinary-employee family reads it; church_employee_service carries the 411(c)(2)(G) route and its unrelated-business and minister limits.",
+        "employee_self_or_mixed": "The ordinary-employee family reads it; church_employee_service carries the 411(c)(2)(G) route and its unrelated-business and ministry limits.",
         "reporting_unit": "The historical combined computation's person-taxable-year aggregation reads it.",
         "taxable_year_start": "The taxable-year axis lookup_date reads it (Pub. L. 99-514 section 1882(b)(3): taxable years beginning after 1985-12-31)."
       }
@@ -6697,9 +6697,9 @@
         "case_id": "church_combined_below_100",
         "precedence": 1,
         "consequence": "noncovered",
-        "description": "Below $100 of combined earnings the instructions stop. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note).",
+        "description": "Below $100 of combined earnings the instructions stop. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3).",
         "when": {
-          "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration in the taxable year",
+          "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
           "amount": "combined earnings below $100"
         }
       },
@@ -6707,9 +6707,9 @@
         "case_id": "church_100_to_399_without_ordinary_loss",
         "precedence": 2,
         "consequence": "covered",
-        "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note).",
+        "description": "From $100 to $399.99 without an ordinary loss, the church remuneration is the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3).",
         "when": {
-          "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration in the taxable year",
+          "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
           "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss"
         }
       },
@@ -6717,9 +6717,9 @@
         "case_id": "church_at_least_100_with_ordinary_loss",
         "precedence": 3,
         "consequence": "covered",
-        "description": "With an ordinary loss the combined earnings are the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note).",
+        "description": "With an ordinary loss the combined earnings are the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3).",
         "when": {
-          "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration in the taxable year",
+          "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
           "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss"
         }
       },
@@ -6727,9 +6727,9 @@
         "case_id": "church_at_least_400_without_ordinary_loss",
         "precedence": 4,
         "consequence": "covered",
-        "description": "From $400 the combined earnings are the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), and the forms send to these rules only an employee who is \"not a minister or a member of a religious order\" (1984 Schedule SE note; 1985 instructions note).",
+        "description": "From $400 the combined earnings are the base. Church remuneration here is pay for 410(a)(8)(B) service, \"other than service in an unrelated trade or business\" (former 411(a)(13) via 411(c)(2)(G)), a test of the service, not the person: a minister's service outside ministry, such as bookkeeping for an electing church, is church employee service. The 1984 Schedule SE and 1985 instructions notes for a reader who is \"a minister or a member of a religious order\" only send that reader to other instructions (review r6 M-3).",
         "when": {
-          "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), of an employee who is not a minister or a member of a religious order, from an employer paying at least $100 of such remuneration in the taxable year",
+          "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
           "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss"
         }
       }
