@@ -1,12 +1,12 @@
 # SSI's asset test and a Social Security cut at depletion, on a population
 
-- **Status:** ratified and frozen (`sa2-ratified-1`). This specification
-  is registered in two issue #42 comments, as Registration 19's was
-  (§15). `sa1-ratified-1`, at commit `7162c660`, governed Registration 19.
+- **Status:** ratified and frozen (`sa2-ratified-1`). We register this
+  specification in two issue #42 comments, as we did for Registration
+  19 (§15). `sa1-ratified-1`, at commit `7162c660`, governed Registration 19.
   This version reruns that analysis on a new frame and differs from it
   only in the lines Registration <<N>>'s first comment names. That
-  comment records this file's path, commit and SHA-256, and that
-  recording is the ratification. Max authorized the rerun (§15). Any
+  comment records this file's path, commit and SHA-256; by recording
+  that hash, we ratify this file. Max authorized the rerun (§15). Any
   change to the ratified file ends the registration; a corrected version
   needs a new registration.
 - **Specification:** `pe_us_depletion_cut_population_ssi_asset_test`,
@@ -35,7 +35,7 @@
     and this is not a projection.* (A population version of PR #506's
     `LAW_YEAR_NOTE`, which describes households.)
   - *Static: no behavioral response.*
-  - *Registered one-shot, not blind: registered after PR #506's
+  - *We register one shot without blinding, after PR #506's
     illustrative results, real-data diagnostics on the earlier frame,
     Registration 19's full results and the microcosm#1178 diagnostics
     (issue #42, Registration <<N>>).*
@@ -122,8 +122,8 @@ Computed from the file without simulation:
 
 - 352,932 households; 907,863 persons; 320 person columns. Household
   weights (`household_weight`, 2024) sum to 138,098,417; weighted persons
-  340,222,955. The smallest household weight is 0.0088, and no weight
-  falls to zero or below. A person's weight is their household's weight.
+  340,222,955. The smallest household weight rounds to 0.0088, and every
+  weight exceeds zero. Each person carries their household's weight.
 - Social Security beneficiaries are the person records with any of the
   four components above zero; the run reports their count and weight.
 - **Reported Social Security.** No record has `SS_VAL > 0` and $0 in all
@@ -141,51 +141,51 @@ Computed from the file without simulation:
   rows with `SS_VAL > 0`, and its docstring says nonreporters keep the PUF
   imputation (`puf_support.py:4186-4243` at `8b0c1950`).
 - **Assets.** The frame stores `bank_account_assets`, `stock_assets` and
-  `bond_assets`, and they are never negative. Every household has at most
+  `bond_assets`; no value falls below zero. Every household has at most
   one person with positive assets, always its lowest-`A_LINENO` person:
-  322,945 households have such a person and 29,987 have none. The lowest
-  line is the CPS reference person (`A_EXPRRP` 1 or 2) in 351,550 of the
-  352,932 households. Of the 322,945 holders, 321,768 are the reference
-  person, 99.6 percent in each channel, and the same number carry
-  `is_household_head`. Microcosm's wealth stage at `8b0c1950`
+  322,945 households have such a person and 29,987 have none. CPS reference
+  persons (`A_EXPRRP` 1 or 2) occupy the lowest line in 351,550 of the
+  352,932 households. They account for 321,768 of the 322,945 holders,
+  99.6 percent in each channel. The `is_household_head` flag marks
+  321,768 holders too. Microcosm's wealth stage at `8b0c1950`
   (`packages/microcosm-build/src/microcosm/build/us_runtime/scf_wealth.py`,
   lines 16-18 and 53) gives each household one draw of its whole asset
   vector, from SCF 2022 or SIPP 2023 with equal probability. Its
-  docstring names the CPS reference person as the carrier, and its
-  `_household_head_mask` (line 673) picks the lowest line, which is the
-  placement the columns show (microcosm#1215). The build passes the
-  pinned SIPP donor to the blend
-  (`tools/build_us_fiscal_refresh_release.py:13830`), but its manifests
-  and source-coverage record do not state whether the SIPP half ran, so
-  whether these assets are that blend or SCF-only is not confirmed
-  (microcosm#1216). Household `net_worth` is also imputed.
-- **Demographics.** `age` holds whole years from 0 and top-codes: ages
-  above 79 are only 80 and 85, standing for 80-84 and 85+. `cps_race`
+  docstring names the CPS reference person as the carrier, while
+  `_household_head_mask` (line 673) picks the lowest line, matching the
+  column checks (microcosm#1215). The build passes the pinned SIPP donor
+  to the blend (`tools/build_us_fiscal_refresh_release.py:13830`). Its
+  manifests and source-coverage record do not state whether the SIPP
+  half ran, and we have not confirmed whether this frame uses the blend
+  or SCF alone (microcosm#1216). Microcosm also imputes household
+  `net_worth`.
+- **Demographics.** `age` records whole years from 0; above 79 it stores
+  only 80 and 85, for 80-84 and 85+. `cps_race`
   holds codes 1-26, and the CPS marital recode `A_MARITL` holds codes
   1-7. The frame also stores `is_female` and `is_hispanic`, which the
-  column checks did not read.
+  column checks did not select for calculations or output.
 - **SSI inputs.** The frame stores `meets_ssi_disability_criteria`,
   `is_blind`, `takes_up_ssi_if_eligible` and `immigration_status_str`,
-  which the column checks did not read.
+  which the column checks did not select for calculations or output.
 - **Marital composition** of beneficiaries aged 62 and over (frame
   weights): married 70.0 percent, widowed 14.7, divorced 9.8, never
   married 4.6, separated 1.0. Persons aged 65 and over live alone 19.2
   percent of the time (§12, difference 6).
 - **Synthetic benefit splits.** 21,059 records, all from Microcosm's
   PUF-support channel (`person_support_channel = puf_tax_detail`), carry
-  all four Social Security components at once, in the same fixed
-  proportions in every record: retirement 19.69, survivors 44.91,
-  dependents 16.64 and disability 18.76 percent of the person's total.
+  all four Social Security components at once. For every record,
+  `numpy.round(100 * component / total, 2)` gives retirement 19.69,
+  survivors 44.91, dependents 16.64 and disability 18.76 percent.
   They hold 10.3 percent of beneficiaries' weight. No other record has
   more than one positive component. The PUF-support stage splits a
   predicted total equally when its donor basis is zero
-  (`puf_support.py:4307` at `8b0c1950`); the frame's shares are not
-  equal, so that step alone does not produce them, and the step that set
-  them is not traced here. The run recomputes these shares as a
+  (`puf_support.py:4307` at `8b0c1950`). These measured shares differ,
+  so that step alone cannot produce them. We have not traced the step
+  that set them. The run recomputes these shares as a
   structural check.
 - **Child beneficiaries.** CPS asks income questions only of persons aged
   15 and over, but the PUF-support channel gives benefits to 67 records
-  aged 0-14 (20,221 weighted, 2024). All are synthetic-split records.
+  aged 0-14 (20,221 weighted, 2024). All 67 carry the synthetic split.
 
 ### 2.3 What the frame is and is not calibrated to
 
@@ -197,13 +197,13 @@ Computed from the file without simulation:
   `us_source_coverage.json`: IRS SOI 4,619, Census population 936, CMS
   Medicaid 135, SSA 111, USDA SNAP 104, CMS ACA 102, Census state tax
   collections 44, HHS TANF 30, JCT 11, CBO 5, BEA 2, and one each from
-  CMS Medicare, HHS LIHEAP and the Federal Reserve. The SSA targets are
-  the national Social Security dollars in total and by type and national
+  CMS Medicare, HHS LIHEAP and the Federal Reserve. Microcosm's SSA
+  targets cover the national Social Security dollars in total and by type and national
   SSI dollars (Annual Statistical Supplement 2025, calendar 2024); SSI
   dollars by state and SSI recipients by state; and SSI recipients in
   three age groups (December 2024). IRS SOI includes taxable Social
-  Security amounts, nationally and by state. The Federal Reserve target
-  is household net worth (Z.1).
+  Security amounts, nationally and by state. The Federal Reserve
+  supplies a household net-worth target (Z.1).
 - **Not calibrated:** liquid asset holdings (bank, stock, bond), counts
   of Social Security beneficiaries, counts of people receiving both
   Social Security and SSI, and the marital composition of beneficiaries.
@@ -540,8 +540,8 @@ row and scenario.
 
 ## 9. Uncertainty and small cells
 
-- **Interval.** A household bootstrap with 500 replicates. Households
-  are all 352,932 households of the frame, sorted by `household_id`
+- **Interval.** A household bootstrap with 500 replicates. We
+  resample the frame's 352,932 households, sorted by `household_id`
   ascending (H of them). One generator,
   `numpy.random.default_rng(20261001)`, is created once; for replicate
   *b* = 0, …, 499, in order,
@@ -642,15 +642,15 @@ and the SSI change outside the universe's marital units (§13).
 
 ## 12. Named differences, carried on every output
 
-1. **Frame-relative.** Liquid assets are imputed (one draw per household,
-   SCF 2022 or SIPP 2023 donors by Microcosm's code; the build's records
-   do not state whether the SIPP half ran, microcosm#1216) and not
-   calibrated; beneficiary counts and concurrent SS-SSI receipt are not
-   calibrated.
+1. **Frame-relative.** Microcosm imputes liquid assets with one draw per
+   household, using SCF 2022 or SIPP 2023 donors in its code. The build's
+   records do not state whether the SIPP half ran (microcosm#1216).
+   Microcosm calibrates neither liquid assets nor beneficiary counts or
+   concurrent SS-SSI receipt.
 2. **Asset placement.** Each household's assets sit on its
-   lowest-`A_LINENO` person; other members hold none. That person is the
-   CPS reference person for 99.6 percent of holders (microcosm#1215).
-   Rows R3 and R4 are two alternative resource tests addressing this.
+   lowest-`A_LINENO` person; other members hold none. CPS reference
+   persons account for 99.6 percent of holders (microcosm#1215). Rows R3
+   and R4 test two alternative resource rules.
 3. **No resource deeming in PE-US 2.18.0** (§4.1). Row R3 applies the
    spousal rule; the parent-to-child rule is not applied in any row.
 4. **The fund of a dependent's benefit is unknown.** PE-US's single
@@ -660,8 +660,8 @@ and the SSI change outside the universe's marital units (§13).
 5. **Synthetic splits.** 10.3 percent of beneficiaries (weighted) carry a
    synthetic fixed-proportion split across all four components (81.2
    percent of it in OASI components); row R5 excludes them.
-6. **Marital and living-arrangement composition.** The frame's
-   beneficiaries aged 62 and over are 70.0 percent married. Urban
+6. **Marital and living-arrangement composition.** Married people
+   make up 70.0 percent of the frame's beneficiaries aged 62 and over. Urban
    Institute tabulations of SSA's MINT model (MINTEX), published in
    2005/2006, project 60 percent of Social Security beneficiaries aged 62
    or older in 2022 to be married (Butrica, Cashin and Uccello, Social
@@ -763,7 +763,7 @@ Reported, not graded:
   of `started`; the container refuses if that marker exists. Nobody reads
   the failed attempt's child outputs, which are deleted unread. A failure
   after `phase-statistics`, or any failure of the re-execution, ends
-  Registration <<N>> and is reported as a refusal is.
+  Registration <<N>>; we report that failure as a refusal.
 - **No tuning and no rerun otherwise.** A code or specification change is
   a new registered version and needs a new registration.
 - **No-drop.** Every row, scenario, cell and statistic is computed and
@@ -801,13 +801,14 @@ Reported, not graded:
   Registration 19's registered commit,
   `3ba0d020e9ac47934f1e6fcc22d3deaec2e15d73`, and PR #506's head at
   Registration 19, `363d9e81a8fa787c690085308d4f2e0602aed07a`. Before the
-  second comment it is pushed to `PolicyEngine/microcosm-dynamics` on
-  branch `pe-us-depletion-cut-population-sa2` and tagged with the
-  annotated tag `registration-<<N>>-sa2`. Later changes to `master` do
+  second comment, we push it to `PolicyEngine/microcosm-dynamics` on
+  branch `pe-us-depletion-cut-population-sa2` and give it the annotated
+  tag `registration-<<N>>-sa2`. Later changes to `master` do
   not change the registered run; the run-complete comment names any later
   change to the functions this run imports. Any merge carrying the
-  registered commit uses a merge commit, never squash or rebase. Like
-  Registration 19's, this commit is not on `master` when it runs.
+  registered commit uses a merge commit, never squash or rebase. As with
+  Registration 19, we run this commit from its branch before any merge
+  to `master`.
 - **Comments.** The first issue #42 comment fixes this specification: it
   restates the rows, statistics, cells and rules, and records the
   ratified file's path, commit and SHA-256. Its URL is the run's
@@ -866,8 +867,8 @@ Reported, not graded:
   R2-R5, the replacement measure and tolerance, the quintile concept, the
   bootstrap, the small-cell rule, and ratification by registration
   comment. This rerun's session chose the frame, on the coordinator's
-  pin, and the changes the first comment names. The independent reviews
-  are recorded in §20.
+  pin, and the changes the first comment names. Section 20 records the
+  independent reviews.
 - **Evidence folder:** `EV/pe-us-depletion-cut-population-20261001/`,
   holding the reader reports (`understand/`) and scripts
   (`scratch-readers/`), the spec reviews (`spec-review/`), the exposure
@@ -885,7 +886,7 @@ Reported, not graded:
   - `sources/lii_416_1163.html`, SHA-256
     `f3ba220819cd3b71d083b4f1e5c591c65cef4a9415da9164a362a2ef6ff16c2d`;
   - `registration/sources/ssi_asr_2024_sect02.html` (Wayback capture
-    20260908072440 of the SSI Annual Statistical Report 2024, section 2,
+    20260519044505 of the SSI Annual Statistical Report 2024, section 2,
     which holds Table 9), SHA-256
     `850348eb29546c5d6945cd6d7598e265b275b917a912c89efb2f7a76821969ac`;
   - `registration/sa2-column-checks/`, which holds the script of §16 and
@@ -949,13 +950,17 @@ read, and:
   (the release) and d2248 (the recertification), SSI's percent moves
   between PE-US 2.2.1 and 2.60.4 among them.
 - One script read the frame's stored columns once, on 2026-11-01, and ran
-  no simulation (SHA-256 `c4108a98add6717b0f065e17fe708aeea8b3d97cc4a0ede6d6253336519a826c`). It read `person_id`, `person_household_id`, `person_marital_unit_id`, `person_support_channel`, `age`, `SS_VAL`, `A_MARITL`, `A_LINENO`, `A_EXPRRP`, `cps_race`, `is_household_head`, the four Social Security components, the three asset columns, `household_id`, `household_weight` and `marital_unit_id`. It printed
+  no simulation (SHA-256 `c4108a98add6717b0f065e17fe708aeea8b3d97cc4a0ede6d6253336519a826c`). It selected `person_id`, `person_household_id`, `person_marital_unit_id`, `person_support_channel`, `age`, `SS_VAL`, `A_MARITL`, `A_LINENO`, `A_EXPRRP`, `cps_race`, `is_household_head`, the four Social Security components, the three asset columns, `household_id`, `household_weight` and `marital_unit_id` for calculations and output. It printed
   counts, shares, codes and distinct values, and no dollar total; §2.2
-  carries its results. It read no SSI column and no take-up flag.
+  carries its results. Its HDF reads loaded complete rows, including SSI
+  inputs and take-up flags; its calculations and output used only the
+  columns listed above.
 - A second script read the frame's stored columns once, on 2026-11-01,
-  and ran no simulation (SHA-256 `87406bfad878e597035c41e823f38060c5b6e09382f55f465e78fc30f4133bac`). It traced the people aged 65 and over who hold a component with no CPS report, and read `person_household_id`, `person_tax_unit_id`, `person_support_channel`, `age`, `SS_VAL`, `SS_YN`, the four Social Security components, `household_id` and `household_weight`. It printed
+  and ran no simulation (SHA-256 `87406bfad878e597035c41e823f38060c5b6e09382f55f465e78fc30f4133bac`). It traced the people aged 65 and over who hold a component with no CPS report, and selected `person_household_id`, `person_tax_unit_id`, `person_support_channel`, `age`, `SS_VAL`, `SS_YN`, the four Social Security components, `household_id` and `household_weight` for calculations and output. It printed
   counts, shares and codes, and no dollar amount; §2.2 carries its
-  results. It read no SSI column and no take-up flag.
+  results. Its HDF reads loaded complete rows, including SSI inputs and
+  take-up flags; its calculations and output used only the columns
+  listed above.
 - No simulation has run on this frame for this registration, and nobody
   working on this registration has computed a statistic of §6 on it. The
   release build and the 2.60.4 recertification simulated this frame for
@@ -1062,7 +1067,7 @@ the code's constants.
     "FRAME-RELATIVE: Microcosm populace-us-2024 frame; liquid assets are imputed and not calibrated, and beneficiary counts are not calibrated to national totals.",
     "Applied to 2026 law and prices: the cut would not happen in 2026, and this is not a projection.",
     "Static: no behavioral response.",
-    "Registered one-shot, not blind: registered after PR #506's illustrative results, real-data diagnostics on the earlier frame, Registration 19's full results and the microcosm#1178 diagnostics (issue #42, Registration <<N>>).",
+    "We register one shot without blinding, after PR #506's illustrative results, real-data diagnostics on the earlier frame, Registration 19's full results and the microcosm#1178 diagnostics (issue #42, Registration <<N>>).",
     "Headline basis: potential federal SSI replacement, as if everyone eligible takes SSI up, under the row's modeled resource test; shares count cut beneficiaries by replacement of their marital unit's combined cut."
   ]
 }
