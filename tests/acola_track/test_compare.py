@@ -692,7 +692,7 @@ def test_oact_footer_accepts_transcribed_whitespace(footer):
 
 
 FOOTER_TOKENS = compare.OACT_FOOTER.split()
-FOOTER_SPACES = (" ", "  ", "\t", "\n", "\r\n", "\xa0", " ", " ")
+FOOTER_SPACES = (" ", "  ", "\t", "\n", "\r\n", "\xa0", "\u2009", "\u202f")
 
 
 @given(
