@@ -4477,6 +4477,61 @@ def test_state_and_local_cases_reach_only_their_level(registry, key, employer):
         assert rule.residual_default["consequence"] == "covered"
 
 
+# Round 5: every case the two families decide by an exclusion, a threshold
+# or a deferral, and INVENTED employers outside the level they reach.
+LEVEL_LIMITED_CASES = sorted(
+    (row["rule_id"], case["case_id"])
+    for row in json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    if row["family"] in STATE_LOCAL_FAMILIES
+    for case in row["cases"]
+    if case["consequence"] in LEVEL_LIMITED_CONSEQUENCES
+)
+OTHER_EMPLOYERS = (
+    PRIVATE_EMPLOYEE,
+    DISTRICT_EMPLOYEE,
+    "employee of the Government of Guam",
+    "employee of the Government of American Samoa",
+    "employee of a Federal agency",
+    "employee of a foreign government",
+    "member of an Indian tribal council",
+)
+
+
+@settings(deadline=None)
+@given(st.sampled_from(LEVEL_LIMITED_CASES), st.sampled_from(OTHER_EMPLOYERS))
+def test_only_the_state_or_local_level_meets_these_cases(
+    registry, key, employer
+):
+    """Round 5 property: a worker whose facts are a case's own conditions
+    meets it at the State or local level. With any other employer the
+    worker meets no case that excludes, sets a threshold or defers, and
+    reaches the row's residual."""
+    rule_id, case_id = key
+    rule = next(r for r in registry.rules if r.rule_id == rule_id)
+    case = next(c for c in rule.cases if c["case_id"] == case_id)
+    own = {
+        fact: text
+        for fact, text in case["when"].items()
+        if fact != "government_level"
+    }
+    assert case_id in cases_met(
+        rule, {**own, "government_level": STATE_EMPLOYEE}
+    )
+    met = cases_met(rule, {**own, "government_level": employer})
+    assert (
+        not {
+            c["case_id"]
+            for c in rule.cases
+            if c["consequence"] in LEVEL_LIMITED_CONSEQUENCES
+        }
+        & met
+    )
+    decided = rule.resolve(met)
+    assert "case_id" not in decided
+    assert decided["consequence"] == "covered"
+    assert len(LEVEL_LIMITED_CASES) == 22
+
+
 # Round 5: an INVENTED State or local employee whose work is not election
 # work, holding every other fact of an election case.
 NON_ELECTION_WORK = "a county clerk's office work, not election work"
