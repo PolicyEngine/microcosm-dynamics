@@ -1,5 +1,5 @@
 {
- "note": "INVENTED fact patterns for the round-4 exclusion sweep of the CE1 coverage registry. No row is a real person or record. Each worker states its facts as phrases; a case holds when, for each fact in its when, one of the worker's phrases is in the condition text (a boolean phrase must equal a boolean condition).",
+ "note": "INVENTED fact patterns for the CE1 coverage registry's exclusion sweeps (review r4 item 9, review r5 item 7). No row is a real person or record. Each worker states, for each fact, the condition texts that are true of the worker: a case holds only when, for every fact in its when, one stated text equals the condition exactly (a boolean equals only the same boolean). expected is the outcome the sources give, decides the case (or residual) that gives it; for a refusing worker, decides is the open case.",
  "workers": [
   {
    "rule_id": "federal_1968_1972",
@@ -7,12 +7,13 @@
    "facts": {
     "federal_retirement_system": [
      "established by a law of the United States",
-     "not subject to the Civil Service Retirement System because subject to another retirement system"
+     "not subject to the Civil Service Retirement System because subject to another retirement system, other than the Tennessee Valley Authority's"
     ],
-    "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty",
+    "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty, which includes active duty for training (410(l)(2)), other than service performed while on leave without pay and other than service creditable under 45 U.S.C. 228c-1 (410(l)(1) and (4)(A) as in effect before Pub. L. 93-445)",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "uniformed_service_410l"
   },
   {
    "rule_id": "federal_1968_1972",
@@ -22,7 +23,8 @@
     "federal_service": "civilian clerk in an executive department",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "federal_retirement_system_service"
   },
   {
    "rule_id": "federal_1968_1972",
@@ -32,7 +34,8 @@
     "federal_service": "civilian service by a retired member of a uniformed service",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "federal_retirement_system_service"
   },
   {
    "rule_id": "federal_1968_1972",
@@ -41,7 +44,8 @@
     "federal_service": "Federal Reserve Bank employee in the bank's own plan",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "federal_1973_1983",
@@ -49,12 +53,13 @@
    "facts": {
     "federal_retirement_system": [
      "established by a law of the United States",
-     "not subject to the Civil Service Retirement System because subject to another retirement system"
+     "not subject to the Civil Service Retirement System because subject to another retirement system, other than the Tennessee Valley Authority's"
     ],
-    "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty",
+    "federal_service": "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty, which includes active duty for training (410(l)(2)), other than service performed while on leave without pay and other than service creditable under 45 U.S.C. 228c-1 or, for service from 1975-01-01 (Pub. L. 93-445 section 603), 45 U.S.C. 231b(i) (410(l)(1) and (4)(A))",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "uniformed_service_410l"
   },
   {
    "rule_id": "federal_1973_1983",
@@ -64,7 +69,8 @@
     "federal_service": "civilian clerk in an executive department",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "federal_retirement_system_service"
   },
   {
    "rule_id": "federal_1973_1983",
@@ -73,7 +79,8 @@
     "federal_service": "Federal home loan bank employee in the bank's own plan",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "federal_1973_1983",
@@ -82,28 +89,31 @@
     "occupation": "inmate of a penal institution of the United States",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "federal_penal_inmate"
   },
   {
    "rule_id": "federal_1984_1986",
    "worker": "INVENTED: Max has served on Army active duty without a break since 1979; service in 1985, no Railroad Retirement Act credit.",
    "facts": {
     "federal_service": [
-     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
-     "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)",
+     "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty, which includes active duty for training (410(l)(2)), other than service performed while on leave without pay and other than service creditable under 45 U.S.C. 231b(i) (410(l)(1) and (4)(A))"
     ],
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "uniformed_service_410l"
   },
   {
    "rule_id": "federal_1984_1986",
    "worker": "INVENTED: Gina has been a CSRS clerk without a break since 1975; service in 1985.",
    "facts": {
-    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
+    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "grandfathered_continuous_service"
   },
   {
    "rule_id": "federal_1984_1986",
@@ -111,22 +121,28 @@
    "facts": {
     "federal_service": [
      "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
-     "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)",
+     "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty, which includes active duty for training (410(l)(2)), other than service performed while on leave without pay and other than service creditable under 45 U.S.C. 231b(i) (410(l)(1) and (4)(A))"
     ],
-    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund",
+    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund, or benefits for employee service under another Federal employee retirement system (other than for uniformed services)",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "uniformed_service_410l"
   },
   {
    "rule_id": "federal_1984_1986",
    "worker": "INVENTED: Hal retired under CSRS in 1982 and returns in 1985 to a civilian post the January 1983 text excludes.",
    "facts": {
-    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
-    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund",
+    "federal_service": [
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)"
+    ],
+    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund, or benefits for employee service under another Federal employee retirement system (other than for uniformed services)",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "grandfathered_continuous_service"
   },
   {
    "rule_id": "federal_1984_1986",
@@ -135,7 +151,8 @@
     "federal_service": "first hired after 1983",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "first_hired_after_1983"
   },
   {
    "rule_id": "federal_1984_1986",
@@ -144,59 +161,68 @@
     "federal_service": "performed in a penal institution of the United States by an inmate thereof",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "federal_penal_inmate"
   },
   {
    "rule_id": "federal_1984_1986",
    "worker": "INVENTED: Ray, a retired federal judge sitting by assignment in 1985 and paid under 28 U.S.C. 371(b).",
    "facts": {
-    "occupation": "retired justice or judge performing service under 28 U.S.C. 294 (assignment to active duty), paid under 28 U.S.C. 371(b)",
+    "occupation": "retired justice or judge performing service under 28 U.S.C. 294 (assignment to active duty), paid under 28 U.S.C. 371(b) during that service",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "retired_judge_371b_payment"
   },
   {
    "rule_id": "federal_1987_2026",
    "worker": "INVENTED: Max has served on Army active duty without a break since 1979; service in 1995, no Railroad Retirement Act credit.",
    "facts": {
     "federal_service": [
-     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
-     "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty"
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)",
+     "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty, which includes active duty for training (410(l)(2)), other than service performed while on leave without pay, or performed after December 1987 as such a member on inactive duty training (410(l)(1)(B) and (3)); in either case other than service creditable under 45 U.S.C. 231b(i) (410(l)(4)(A))"
     ],
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "uniformed_service_410l"
   },
   {
    "rule_id": "federal_1987_2026",
    "worker": "INVENTED: Paula, a Navy reservist since 1980, drills one weekend a month in 1995; her reserve service has run without a break since 1983.",
    "facts": {
     "federal_service": [
-     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
-     "performed after December 1987 as such a member on inactive duty training"
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)",
+     "performed as a member of a uniformed service (42 U.S.C. 410(m)) on active duty, which includes active duty for training (410(l)(2)), other than service performed while on leave without pay, or performed after December 1987 as such a member on inactive duty training (410(l)(1)(B) and (3)); in either case other than service creditable under 45 U.S.C. 231b(i) (410(l)(4)(A))"
     ],
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "uniformed_service_410l"
   },
   {
    "rule_id": "federal_1987_2026",
    "worker": "INVENTED: Gina has been a CSRS clerk without a break since 1975; service in 1995.",
    "facts": {
-    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983",
+    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "grandfathered_continuous_service"
   },
   {
    "rule_id": "federal_1987_2026",
    "worker": "INVENTED: Hal, a CSRS annuitant, is reemployed in 2000 in a civilian post the January 1983 text excludes.",
    "facts": {
-    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
-    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund",
+    "federal_service": [
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)"
+    ],
+    "federal_retirement_system": "receiving an annuity from the Civil Service Retirement and Disability Fund, or benefits for employee service under another Federal employee retirement system (other than for uniformed services)",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "grandfathered_continuous_service"
   },
   {
    "rule_id": "federal_1987_2026",
@@ -204,11 +230,12 @@
    "facts": {
     "federal_service": [
      "first hired after 1983",
-     "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory"
+     "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment"
     ],
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "refuses"
+   "expected": "refuses",
+   "decides": "army_corps_2360_student_aide"
   },
   {
    "rule_id": "federal_1987_2026",
@@ -220,7 +247,8 @@
     ],
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "first_hired_after_1983"
   },
   {
    "rule_id": "federal_1987_2026",
@@ -228,11 +256,12 @@
    "facts": {
     "federal_service": [
      "first hired after 1983",
-     "performed as an employee included under 5 U.S.C. 5351(2)"
+     "performed as an employee included under 5 U.S.C. 5351(2) (certain interns, student nurses and other student employees of Federal hospitals), other than as a medical or dental intern or a medical or dental resident in training"
     ],
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "federal_hospital_student_employee"
   },
   {
    "rule_id": "federal_1987_2026",
@@ -241,256 +270,267 @@
     "federal_service": "first hired after 1983",
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "first_hired_after_1983"
   },
   {
    "rule_id": "federal_1987_2026",
    "worker": "INVENTED: Una, a reemployed CSRS annuitant with an approved FEPCA waiver of offset in 2015.",
    "facts": {
-    "federal_retirement_system": "reemployed annuitant with an approved waiver of annuity offset",
-    "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
+    "federal_retirement_system": "reemployed annuitant with an approved waiver of annuity offset under the Federal Employees Pay Comparability Act",
+    "federal_service": [
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
+     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 and has been performed continuously since December 31, 1983, under the continuity rules of 410(a)(5)(B)(i)(I)-(V)"
+    ],
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
-   "expected": "refuses"
+   "expected": "refuses",
+   "decides": "fepca_waiver_reemployed_annuitant"
   },
   {
    "rule_id": "state_local_1983_1991",
    "worker": "INVENTED: Yolanda, hired by a county in 1980 and in its retirement system, holds in 1988 a position a 1987 Medicare-only modification reaches.",
    "facts": {
-    "section_218_position": "a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "public_retirement_system_participation": "member of the county retirement system"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "no_section_218_agreement"
   },
   {
    "rule_id": "state_local_1983_1991",
    "worker": "INVENTED: Tess, a city clerk in 1988 in an absolute coverage group under the state's 218 agreement.",
    "facts": {
-    "section_218_position": "covered by effective agreement/modification for OASDI",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "section_218_position": "covered by effective agreement/modification for OASDI (old-age, survivors and disability insurance); a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "section_218_agreement_coverage"
   },
   {
    "rule_id": "state_local_1983_1991",
    "worker": "INVENTED: Sam, a county road worker in 1988; his county has no 218 agreement.",
    "facts": {
-    "section_218_position": "not covered",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "no_section_218_agreement"
   },
   {
    "rule_id": "state_local_1983_1991",
    "worker": "INVENTED: Wendy drives in 1988 for a city transit system partly bought from a private firm in 1945; no agreement.",
    "facts": {
     "industry": "covered transportation service under 410(k)",
-    "section_218_position": "not covered",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality"
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "covered_transportation_service"
   },
   {
    "rule_id": "state_local_1991_2026",
    "worker": "INVENTED: Yolanda, hired in 1980, in a qualified county system, holds in 2000 a position a 1987 Medicare-only modification reaches.",
    "facts": {
-    "section_218_position": "a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "public_retirement_system_participation": "member of an IRS-qualified system"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "qualified_system_member_without_agreement"
   },
   {
    "rule_id": "state_local_1991_2026",
    "worker": "INVENTED: Yves, Yolanda's coworker under the same Medicare-only modification, belongs to no retirement system in 2000.",
    "facts": {
-    "section_218_position": "a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "public_retirement_system_participation": "not a member of any IRS-qualified system"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "mandatory_nonmember_coverage"
   },
   {
    "rule_id": "state_local_1991_2026",
    "worker": "INVENTED: Zack, in a qualified state system, holds in 2000 a position the state's 218 agreement covers for OASDI.",
    "facts": {
-    "section_218_position": "covered by effective agreement/modification for OASDI",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "section_218_position": "covered by effective agreement/modification for OASDI (old-age, survivors and disability insurance); a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "public_retirement_system_participation": "member of an IRS-qualified system"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "section_218_agreement_coverage"
   },
   {
    "rule_id": "state_local_1991_2026",
    "worker": "INVENTED: Cal belongs to a qualified city system in 2000; his position has no agreement coverage.",
    "facts": {
-    "section_218_position": "not covered",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "public_retirement_system_participation": "member of an IRS-qualified system"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "qualified_system_member_without_agreement"
   },
   {
    "rule_id": "state_local_1991_2026",
    "worker": "INVENTED: Fay, a county poll worker in 2004, whose position no agreement covers.",
    "facts": {
-    "section_218_position": "not covered",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "mandatory_rule_election_worker"
   },
   {
    "rule_id": "election_work_1991_0702",
    "worker": "INVENTED: Flo, a 1993 poll worker paid above the statutory amount, also a part-time county clerk in a county plan that fails the IRS qualified-system standards; no agreement.",
    "facts": {
     "section_218_position": "not covered",
-    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "covered_above_threshold"
+   "expected": "covered_above_threshold",
+   "decides": "outside_agreement_nonmember"
   },
   {
    "rule_id": "election_work_1991_0702",
    "worker": "INVENTED: Ed, a 1993 poll worker in a qualified city retirement system; no agreement.",
    "facts": {
     "section_218_position": "not covered",
-    "public_retirement_system_participation": [
-     "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
-     "member of a retirement system of the State, subdivision or instrumentality"
-    ],
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "outside_agreement_member"
   },
   {
    "rule_id": "election_work_1991_0702",
    "worker": "INVENTED: Di, a 1993 poll worker in no retirement system; no agreement.",
    "facts": {
     "section_218_position": "not covered",
-    "public_retirement_system_participation": "not a member of any retirement system",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "covered_above_threshold"
+   "expected": "covered_above_threshold",
+   "decides": "outside_agreement_nonmember"
   },
   {
    "rule_id": "election_work_1991_0702",
    "worker": "INVENTED: Bo, a 1993 poll worker in a qualified county system, under an agreement with its own lower exclusion amount.",
    "facts": {
     "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-    "public_retirement_system_participation": [
-     "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
-     "member of a retirement system of the State, subdivision or instrumentality"
-    ],
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "covered_above_threshold"
+   "expected": "covered_above_threshold",
+   "decides": "agreement_with_lower_threshold_member"
   },
   {
    "rule_id": "election_work_1991_0702",
    "worker": "INVENTED: Ben, a 1993 poll worker in a county plan that fails the IRS standards, under an agreement with its own lower exclusion amount.",
    "facts": {
     "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "covered_above_threshold"
+   "expected": "covered_above_threshold",
+   "decides": "agreement_with_lower_threshold_nonmember"
   },
   {
    "rule_id": "election_work_1991_0702",
    "worker": "INVENTED: Cy, a 1993 poll worker under an agreement with no election worker exclusion.",
    "facts": {
     "section_218_position": "covered by a section 218 agreement with no election worker exclusion",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "agreement_without_election_exclusion"
   },
   {
    "rule_id": "election_work_1995",
    "worker": "INVENTED: Flo, a 2016 poll worker paid above the statutory amount, also a part-time county clerk in a county plan that fails the IRS qualified-system standards; no agreement.",
    "facts": {
     "section_218_position": "not covered",
-    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "covered_above_threshold"
+   "expected": "covered_above_threshold",
+   "decides": "outside_agreement_nonmember"
   },
   {
    "rule_id": "election_work_1995",
    "worker": "INVENTED: Ed, a 2016 poll worker in a qualified city retirement system; no agreement.",
    "facts": {
     "section_218_position": "not covered",
-    "public_retirement_system_participation": [
-     "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
-     "member of a retirement system of the State, subdivision or instrumentality"
-    ],
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "outside_agreement_member"
   },
   {
    "rule_id": "election_work_1995",
    "worker": "INVENTED: Di, a 2016 poll worker in no retirement system; no agreement.",
    "facts": {
     "section_218_position": "not covered",
-    "public_retirement_system_participation": "not a member of any retirement system",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "covered_above_threshold"
+   "expected": "covered_above_threshold",
+   "decides": "outside_agreement_nonmember"
   },
   {
    "rule_id": "election_work_1995",
    "worker": "INVENTED: Bo, a 2016 poll worker in a qualified county system, under an agreement with its own lower exclusion amount.",
    "facts": {
     "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-    "public_retirement_system_participation": [
-     "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system",
-     "member of a retirement system of the State, subdivision or instrumentality"
-    ],
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "member of a retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them)",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "covered_above_threshold"
+   "expected": "covered_above_threshold",
+   "decides": "agreement_with_lower_threshold_member"
   },
   {
    "rule_id": "election_work_1995",
    "worker": "INVENTED: Ben, a 2016 poll worker in a county plan that fails the IRS standards, under an agreement with its own lower exclusion amount.",
    "facts": {
     "section_218_position": "covered by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount",
-    "public_retirement_system_participation": "an employee who belongs only to a system that fails those standards",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "public_retirement_system_participation": "not a member of any retirement system of the State, subdivision or instrumentality that is a qualified retirement system under the IRS standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them); an employee who belongs only to a system that fails those standards meets this condition",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "covered_above_threshold"
+   "expected": "covered_above_threshold",
+   "decides": "agreement_with_lower_threshold_nonmember"
   },
   {
    "rule_id": "election_work_1995",
    "worker": "INVENTED: Cy, a 2016 poll worker under an agreement with no election worker exclusion.",
    "facts": {
     "section_218_position": "covered by a section 218 agreement with no election worker exclusion",
-    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality",
+    "government_level": "employee of a State, a political subdivision or a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "agreement_without_election_exclusion"
   },
   {
    "rule_id": "agricultural_service_1988",
    "worker": "INVENTED: in 2000 a farmhand gets rent-free farm housing and daily meals; the operator keeps title to the house and nothing converts to cash [decides: genuine_noncash_with_dominion]",
    "facts": {
-    "cash_remuneration": [
-     "lodging",
-     "food"
-    ],
+    "cash_remuneration": "remuneration paid in any medium other than cash, including lodging, food, clothing, and agricultural or horticultural commodities such as livestock, grain and milk products",
     "noncash_transfer_cash_equivalence": false,
     "noncash_transfer_dominion_control": "the operator keeps title to the house; nothing converts to cash",
     "services_performed_date": "on or after 1995-08-07"
@@ -502,10 +542,7 @@
    "rule_id": "agricultural_service_1988",
    "worker": "INVENTED: in 1990 a farmhand gets rent-free farm housing and daily meals, nothing converting to cash [decides: genuine_noncash_with_dominion]",
    "facts": {
-    "cash_remuneration": [
-     "lodging",
-     "food"
-    ],
+    "cash_remuneration": "remuneration paid in any medium other than cash, including lodging, food, clothing, and agricultural or horticultural commodities such as livestock, grain and milk products",
     "noncash_transfer_cash_equivalence": false,
     "noncash_transfer_dominion_control": "the operator keeps title to the house; nothing converts to cash",
     "services_performed_date": "before 1995-08-07"
@@ -517,9 +554,9 @@
    "rule_id": "agricultural_service_1988",
    "worker": "INVENTED: in 2000 an operator sells his herd and the buyer pays the hand directly for 'his' 30 head, which the hand never kept apart [decides: cash_equivalent_transfer_from_1995_08_07]",
    "facts": {
-    "cash_remuneration": "agricultural or horticultural commodities such as livestock",
+    "cash_remuneration": "remuneration paid in any medium other than cash, including lodging, food, clothing, and agricultural or horticultural commodities such as livestock, grain and milk products",
     "noncash_transfer_cash_equivalence": true,
-    "noncash_transfer_dominion_control": "employee did not obtain dominion and control",
+    "noncash_transfer_dominion_control": "employee did not obtain dominion and control; transfer is economically a cash payment",
     "services_performed_date": "on or after 1995-08-07"
    },
    "expected": "covered_above_threshold",
@@ -529,9 +566,9 @@
    "rule_id": "agricultural_service_1988",
    "worker": "INVENTED: the same cattle sale in 1993, before SSR 95-3P [decides: cash_equivalent_transfer_before_1995_08_07]",
    "facts": {
-    "cash_remuneration": "agricultural or horticultural commodities such as livestock",
+    "cash_remuneration": "remuneration paid in any medium other than cash, including lodging, food, clothing, and agricultural or horticultural commodities such as livestock, grain and milk products",
     "noncash_transfer_cash_equivalence": true,
-    "noncash_transfer_dominion_control": "employee did not obtain dominion and control",
+    "noncash_transfer_dominion_control": "employee did not obtain dominion and control; transfer is economically a cash payment",
     "services_performed_date": "before 1995-08-07"
    },
    "expected": "noncovered",
@@ -541,7 +578,7 @@
    "rule_id": "agricultural_service_1988",
    "worker": "INVENTED: in 2000 a hand gets 10 head of cattle a month, pastures them at his own cost and sells them himself [decides: genuine_noncash_with_dominion]",
    "facts": {
-    "cash_remuneration": "livestock",
+    "cash_remuneration": "remuneration paid in any medium other than cash, including lodging, food, clothing, and agricultural or horticultural commodities such as livestock, grain and milk products",
     "noncash_transfer_cash_equivalence": false,
     "noncash_transfer_dominion_control": "employee obtained dominion and control",
     "services_performed_date": "on or after 1995-08-07"
@@ -567,7 +604,8 @@
     "casual_service": "service not in the course of the employer's trade or business, performed on a farm operated for profit",
     "cash_remuneration": "cash wages"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "domestic_service_in_private_home"
   },
   {
    "rule_id": "casual_service_1978",
@@ -577,7 +615,8 @@
     "casual_service": "service not in the course of the employer's trade or business, performed on a farm operated for profit",
     "cash_remuneration": "cash wages"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "domestic_service_in_private_home"
   },
   {
    "rule_id": "casual_service_1978",
@@ -587,7 +626,8 @@
     "casual_service": "service not in the course of the employer's trade or business, performed on a farm operated for profit",
     "cash_remuneration": "cash wages"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "farm_operated_for_profit"
   },
   {
    "rule_id": "casual_service_1978",
@@ -597,7 +637,8 @@
     "casual_service": "not on a farm",
     "cash_remuneration": "cash wages"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "domestic_service_in_private_home"
   },
   {
    "rule_id": "casual_service_1978",
@@ -615,8 +656,8 @@
    "worker": "INVENTED: in December 1967 a mother cares at home for the children (aged 4 and 7) of her unremarried widowed daughter, who pays her on 1968-01-05 [decides: parent_for_child_nonbusiness_or_domestic]",
    "facts": {
     "family_service": [
-     "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried",
-     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+     "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse in the home unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or needs an adult's care for at least 4 continuous weeks in the quarter; this includes a stepparent employed by a stepson or stepdaughter on these terms, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter on these terms",
+     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home; this includes a stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter in such service"
     ],
     "services_performed_date": "before 1968-01-01"
    },
@@ -628,8 +669,8 @@
    "worker": "INVENTED: the same care given and paid in 1978 [decides: parent_domestic_care_exception]",
    "facts": {
     "family_service": [
-     "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried",
-     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+     "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse in the home unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or needs an adult's care for at least 4 continuous weeks in the quarter; this includes a stepparent employed by a stepson or stepdaughter on these terms, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter on these terms",
+     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home; this includes a stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter in such service"
     ],
     "services_performed_date": "on or after 1968-01-01"
    },
@@ -640,7 +681,7 @@
    "rule_id": "family_service_1968",
    "worker": "INVENTED: in 1980 a 17-year-old works in his stepfather's shop after his mother, the stepfather's wife, has died [decides: child_under_21]",
    "facts": {
-    "family_service": "stepchild under 21 employed by a stepparent, also after the natural parent's death"
+    "family_service": "child under 21 employed by a parent (for a partnership, every partner has this relationship); this includes a stepchild under 21 employed by a stepparent, also after the natural parent's death, and an adopted or foster child under 21 employed by an adoptive or foster parent"
    },
    "expected": "noncovered",
    "decides": "child_under_21"
@@ -649,7 +690,7 @@
    "rule_id": "family_service_1968",
    "worker": "INVENTED: in 1980 a stepmother keeps house for her married stepson, who has no children, after his father has died [decides: parent_for_child_nonbusiness_or_domestic]",
    "facts": {
-    "family_service": "stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death"
+    "family_service": "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home; this includes a stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter in such service"
    },
    "expected": "noncovered",
    "decides": "parent_for_child_nonbusiness_or_domestic"
@@ -659,8 +700,8 @@
    "worker": "INVENTED: in 1980 an unremarried widowed stepdaughter employs her stepmother at home to care for her children under 18 [decides: parent_domestic_care_exception]",
    "facts": {
     "family_service": [
-     "stepparent employed by a stepson or stepdaughter on these terms",
-     "stepparent employed by a stepson or stepdaughter in such service"
+     "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse in the home unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or needs an adult's care for at least 4 continuous weeks in the quarter; this includes a stepparent employed by a stepson or stepdaughter on these terms, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter on these terms",
+     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home; this includes a stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter in such service"
     ],
     "services_performed_date": "on or after 1968-01-01"
    },
@@ -680,7 +721,7 @@
    "rule_id": "family_service_1968",
    "worker": "INVENTED: in 1975 a 19-year-old clerks in his father's store [decides: child_under_21]",
    "facts": {
-    "family_service": "child under 21 employed by a parent"
+    "family_service": "child under 21 employed by a parent (for a partnership, every partner has this relationship); this includes a stepchild under 21 employed by a stepparent, also after the natural parent's death, and an adopted or foster child under 21 employed by an adoptive or foster parent"
    },
    "expected": "noncovered",
    "decides": "child_under_21"
@@ -690,7 +731,7 @@
    "worker": "INVENTED: in 1985 a 17-year-old works for his father's incorporated firm [decides: corporate_employer]",
    "facts": {
     "incorporation": "corporation is the employer",
-    "family_service": "child under 21 employed by a parent"
+    "family_service": "child under 21 employed by a parent (for a partnership, every partner has this relationship); this includes a stepchild under 21 employed by a stepparent, also after the natural parent's death, and an adopted or foster child under 21 employed by an adoptive or foster parent"
    },
    "expected": "covered",
    "decides": "corporate_employer"
@@ -701,7 +742,7 @@
    "facts": {
     "family_service": [
      "parent employed by child in the child's trade or business in a genuine employment relationship",
-     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home; this includes a stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter in such service"
     ]
    },
    "expected": "noncovered",
@@ -742,8 +783,8 @@
    "worker": "INVENTED: in 2000 an unremarried widow employs her mother at home to care for her three children under 18 [decides: parent_domestic_care_exception]",
    "facts": {
     "family_service": [
-     "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried",
-     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+     "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse in the home unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or needs an adult's care for at least 4 continuous weeks in the quarter; this includes a stepparent employed by a stepson or stepdaughter on these terms, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter on these terms",
+     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home; this includes a stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter in such service"
     ]
    },
    "expected": "covered",
@@ -753,7 +794,7 @@
    "rule_id": "family_service_1988",
    "worker": "INVENTED: in 2005 a 16-year-old works in her stepmother's shop after her father, the stepmother's husband, has died [decides: child_under_18]",
    "facts": {
-    "family_service": "stepchild under 18 employed by a stepparent, also after the natural parent's death"
+    "family_service": "child under 18 employed by a parent (for a partnership, every partner has this relationship); this includes a stepchild under 18 employed by a stepparent, also after the natural parent's death, and an adopted or foster child under 18 employed by an adoptive or foster parent"
    },
    "expected": "noncovered",
    "decides": "child_under_18"
@@ -762,7 +803,7 @@
    "rule_id": "family_service_1988",
    "worker": "INVENTED: in 2005 a 19-year-old cleans his stepfather's house [decides: child_under_21_nonbusiness_or_domestic]",
    "facts": {
-    "family_service": "stepchild under 21 employed by a stepparent in such service"
+    "family_service": "child under 21 employed by a parent in service not in the course of the parent's trade or business, or in domestic service in the parent's private home (for a partnership, every partner has this relationship); this includes a stepchild under 21 employed by a stepparent in such service, also after the natural parent's death, and an adopted or foster child under 21 employed by an adoptive or foster parent in such service"
    },
    "expected": "noncovered",
    "decides": "child_under_21_nonbusiness_or_domestic"
@@ -780,7 +821,7 @@
    "rule_id": "family_service_1988",
    "worker": "INVENTED: in 2000 a 16-year-old stocks shelves in her mother's store [decides: child_under_18]",
    "facts": {
-    "family_service": "child under 18 employed by a parent"
+    "family_service": "child under 18 employed by a parent (for a partnership, every partner has this relationship); this includes a stepchild under 18 employed by a stepparent, also after the natural parent's death, and an adopted or foster child under 18 employed by an adoptive or foster parent"
    },
    "expected": "noncovered",
    "decides": "child_under_18"
@@ -791,7 +832,7 @@
    "facts": {
     "age": "under 18",
     "employee_self_or_mixed": "employee",
-    "newspaper_service_arrangement": "at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay",
+    "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back",
     "direct_seller_contract": "no written contract"
    },
    "expected": "noncovered",
@@ -803,7 +844,7 @@
    "facts": {
     "age": "18 or older",
     "employee_self_or_mixed": "employee",
-    "newspaper_service_arrangement": "at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back",
+    "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back",
     "direct_seller_contract": "no written contract"
    },
    "expected": "covered",
@@ -839,7 +880,7 @@
    "facts": {
     "age": "under 18",
     "employee_self_or_mixed": "employee",
-    "newspaper_service_arrangement": "at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay",
+    "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back",
     "direct_seller_contract": "no written contract"
    },
    "expected": "noncovered",
@@ -851,7 +892,7 @@
    "facts": {
     "age": "18 or older",
     "employee_self_or_mixed": "employee",
-    "newspaper_service_arrangement": "at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back",
+    "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back",
     "direct_seller_contract": "no written contract"
    },
    "expected": "covered",
@@ -885,245 +926,271 @@
    "rule_id": "clergy_1968_1972",
    "worker": "INVENTED: Christian Science practitioner in Ohio with no 1402(e) exemption, 1970",
    "facts": {
-    "ministerial_service": "Christian Science practitioner",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1968_1972",
    "worker": "INVENTED: Christian Science practitioner whose 1402(e) exemption is effective, 1971",
    "facts": {
-    "ministerial_service": "Christian Science practitioner",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": "effective 1402(e) exemption"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "effective_1402e_exemption"
   },
   {
    "rule_id": "clergy_1968_1972",
    "worker": "INVENTED: Nun under a vow of poverty who teaches in her order's school as an order duty, 1969",
    "facts": {
-    "religious_order_service": "who has taken a vow of poverty as a member of such order",
-    "ministerial_service": "qualifying ministry, order duties",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "vow_of_poverty_order_duties"
   },
   {
    "rule_id": "clergy_1968_1972",
    "worker": "INVENTED: Ordained Lutheran pastor in Iowa with no exemption, 1970",
    "facts": {
-    "ministerial_service": "qualifying ministry",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1968_1972",
    "worker": "INVENTED: Ordained pastor whose approved 1402(e) exemption is effective, 1971",
    "facts": {
-    "ministerial_service": "qualifying ministry",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": "effective 1402(e) exemption"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "effective_1402e_exemption"
   },
   {
    "rule_id": "clergy_1968_1972",
    "worker": "INVENTED: Brother of an order without a poverty vow who runs the order's retreat house as an order duty, no exemption, 1970",
    "facts": {
     "religious_order_service": "performed by a member who has not taken a vow of poverty",
-    "ministerial_service": "qualifying ministry, order duties",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1968_1972",
    "worker": "INVENTED: Nonresident alien priest serving a parish in Texas for six months, 1970",
    "facts": {
-    "nonresident_alien_status": "nonresident alien individual for the taxable year",
-    "ministerial_service": "qualifying ministry",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "nonresident_alien_ministry"
   },
   {
    "rule_id": "clergy_1968_1972",
    "worker": "INVENTED: Army chaplain on active duty, 1970",
    "facts": {
-    "ministerial_service": "not ministry"
+    "ministerial_service": "not ministry, order duties or Christian Science practice"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "non_ministerial_service"
   },
   {
    "rule_id": "clergy_1968_1972",
    "worker": "INVENTED: Non-citizen pastor who resides in Guam and is no nonresident alien under 411(b)'s final sentence, 1971",
    "facts": {
     "nonresident_alien_status": "not a nonresident alien under 411(b)",
-    "ministerial_service": "qualifying ministry",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1973_1981",
    "worker": "INVENTED: Christian Science practitioner with no exemption, 1976",
    "facts": {
-    "ministerial_service": "Christian Science practitioner",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1973_1981",
    "worker": "INVENTED: Christian Science practitioner with an effective 1402(e) exemption, 1976",
    "facts": {
-    "ministerial_service": "Christian Science practitioner",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": "effective 1402(e) exemption"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "effective_1402e_exemption"
   },
   {
    "rule_id": "clergy_1973_1981",
    "worker": "INVENTED: Monk under a vow of poverty who keeps his abbey's farm as an order duty; the order has not elected, 1977",
    "facts": {
-    "religious_order_service": "who has taken a vow of poverty as a member of such order",
-    "ministerial_service": "qualifying ministry, order duties"
+    "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "vow_of_poverty_order_duties"
   },
   {
    "rule_id": "clergy_1973_1981",
    "worker": "INVENTED: Ordained pastor with no exemption, 1975",
    "facts": {
-    "ministerial_service": "qualifying ministry",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1973_1981",
    "worker": "INVENTED: Nonresident alien priest, 1975",
    "facts": {
-    "nonresident_alien_status": "nonresident alien individual for the taxable year",
-    "ministerial_service": "qualifying ministry"
+    "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "nonresident_alien_ministry"
   },
   {
    "rule_id": "clergy_1973_1981",
    "worker": "INVENTED: Non-citizen pastor resident in Puerto Rico, 1979",
    "facts": {
     "nonresident_alien_status": "not a nonresident alien under 411(b)",
-    "ministerial_service": "qualifying ministry",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1982_2026",
    "worker": "INVENTED: Christian Science practitioner with no exemption, 2015",
    "facts": {
-    "ministerial_service": "Christian Science practitioner",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1982_2026",
    "worker": "INVENTED: Christian Science practitioner with an approved Form 4361, 2015",
    "facts": {
-    "ministerial_service": "Christian Science practitioner",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": "effective 1402(e) exemption"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "effective_1402e_exemption"
   },
   {
    "rule_id": "clergy_1982_2026",
    "worker": "INVENTED: Sister under a vow of poverty who works in the diocese's business office as an order duty; the order has not elected, 2010",
    "facts": {
-    "religious_order_service": "who has taken a vow of poverty as a member of such order",
-    "ministerial_service": "qualifying ministry, order duties",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "vow_of_poverty_order_duties"
   },
   {
    "rule_id": "clergy_1982_2026",
    "worker": "INVENTED: US-citizen pastor of a congregation in Germany whom the US-Germany agreement makes subject only to German social security law, 2015",
    "facts": {
-    "ministerial_service": "qualifying ministry",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": [
-     "subject only to the social security laws of a foreign country",
-     "no 1402(e) exemption in effect"
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country",
+     "no 1402(e) exemption in effect and no applicable poverty vow"
     ]
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "foreign_agreement_sole_coverage"
   },
   {
    "rule_id": "clergy_1982_2026",
    "worker": "INVENTED: German pastor, a US resident alien, sent to a Chicago parish for two years and kept under German social security law by the agreement, 2016",
    "facts": {
-    "ministerial_service": "qualifying ministry",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": [
-     "subject only to the social security laws of a foreign country",
-     "no 1402(e) exemption in effect"
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country",
+     "no 1402(e) exemption in effect and no applicable poverty vow"
     ]
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "foreign_agreement_sole_coverage"
   },
   {
    "rule_id": "clergy_1982_2026",
    "worker": "INVENTED: US-citizen minister of a US church in Mexico, no agreement with Mexico, 2025",
    "facts": {
-    "ministerial_service": "qualifying ministry",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1982_2026",
    "worker": "INVENTED: Nonresident alien priest with no agreement, 2010",
    "facts": {
-    "nonresident_alien_status": "nonresident alien individual for the taxable year",
-    "ministerial_service": "qualifying ministry"
+    "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one), and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "nonresident_alien_ministry"
   },
   {
    "rule_id": "clergy_1982_2026",
    "worker": "INVENTED: Nonresident alien priest whom an agreement places in US coverage, 2010",
    "facts": {
     "nonresident_alien_status": "an agreement under section 433 makes his net earnings self-employment income",
-    "ministerial_service": "qualifying ministry",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect"
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1982_2026",
    "worker": "INVENTED: Pastor with an approved Form 4361, 2010",
    "facts": {
-    "ministerial_service": "qualifying ministry",
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": "effective 1402(e) exemption"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "effective_1402e_exemption"
   },
   {
    "rule_id": "clergy_1982_2026",
    "worker": "INVENTED: Air Force chaplain, 2010",
    "facts": {
-    "ministerial_service": "not ministry"
+    "ministerial_service": "not ministry, order duties or Christian Science practice"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "non_ministerial_service"
   },
   {
    "rule_id": "religious_order_1968_1983",
    "worker": "INVENTED: Order member without a poverty vow teaching in the order's school as an order duty, 1975 (the clergy family decides; this family excludes nothing)",
    "facts": {
-    "religious_order_service": "performed by a member who has not taken a vow of poverty"
+    "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "order_duties_without_vow"
   },
   {
    "rule_id": "religious_order_1968_1983",
@@ -1135,7 +1202,8 @@
     ],
     "clergy_or_religious_exemption": "no 3121(r) election in effect for the period"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "vow_duties_without_election"
   },
   {
    "rule_id": "religious_order_1968_1983",
@@ -1145,17 +1213,22 @@
      "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
      "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
     ],
-    "clergy_or_religious_exemption": "effective 3121(r) election covering the period"
+    "clergy_or_religious_exemption": [
+     "effective 3121(r) election covering the period",
+     "effective 3121(r) election covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the order filed the certificate"
+    ]
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "vow_duties_with_3121r_election"
   },
   {
    "rule_id": "religious_order_1984_2026",
    "worker": "INVENTED: Order member without a poverty vow doing order duties, 2000",
    "facts": {
-    "religious_order_service": "performed by a member who has not taken a vow of poverty"
+    "religious_order_service": "duties required by the order, performed by a member who has not taken a vow of poverty"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "order_duties_without_vow"
   },
   {
    "rule_id": "religious_order_1984_2026",
@@ -1167,61 +1240,68 @@
     ],
     "clergy_or_religious_exemption": "no 3121(r) election in effect for the period"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "vow_duties_without_election"
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
    "worker": "INVENTED: Self-employed US-citizen minister to a congregation of US citizens on Wake Island, 1971",
    "facts": {
-    "citizenship": "a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country",
-    "place_of_work": "another possession of the United States"
+    "citizenship": "not a United States citizen, or a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country who has a congregation composed predominantly of United States citizens",
+    "place_of_work": "in a foreign country, or in Puerto Rico, the Virgin Islands, Guam, American Samoa or another possession of the United States"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "foreign_minister_without_qualification"
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
    "worker": "INVENTED: Self-employed US-citizen minister to a mostly US-citizen congregation in Puerto Rico who is not a Puerto Rico resident, 1971",
    "facts": {
-    "citizenship": "a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country",
-    "place_of_work": "Puerto Rico"
+    "citizenship": "not a United States citizen, or a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country who has a congregation composed predominantly of United States citizens",
+    "place_of_work": "in a foreign country, or in Puerto Rico, the Virgin Islands, Guam, American Samoa or another possession of the United States"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "foreign_minister_without_qualification"
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
    "worker": "INVENTED: Self-employed US-citizen minister to a mostly French congregation in Lyon, 1970",
    "facts": {
-    "citizenship": "a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country",
-    "place_of_work": "in a foreign country"
+    "citizenship": "not a United States citizen, or a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country who has a congregation composed predominantly of United States citizens",
+    "place_of_work": "in a foreign country, or in Puerto Rico, the Virgin Islands, Guam, American Samoa or another possession of the United States"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "foreign_minister_without_qualification"
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
    "worker": "INVENTED: Resident-alien minister serving a parish in Guam, 1970",
    "facts": {
-    "citizenship": "not a United States citizen",
-    "place_of_work": "Guam"
+    "citizenship": "not a United States citizen, or a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country who has a congregation composed predominantly of United States citizens",
+    "place_of_work": "in a foreign country, or in Puerto Rico, the Virgin Islands, Guam, American Samoa or another possession of the United States"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "foreign_minister_without_qualification"
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
    "worker": "INVENTED: US-citizen minister in Germany employed by an American church board under 410(e), 1971",
    "facts": {
     "citizenship": "citizen employed as a minister by an American employer",
-    "place_of_work": "in a foreign country"
+    "place_of_work": "in a foreign country, or in Puerto Rico, the Virgin Islands, Guam, American Samoa or another possession of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
    "worker": "INVENTED: US-citizen pastor of a mostly American congregation in Lyon, 1970",
    "facts": {
     "citizenship": "citizen ministering in a foreign country to a mostly US-citizen congregation",
-    "place_of_work": "in a foreign country"
+    "place_of_work": "in a foreign country, or in Puerto Rico, the Virgin Islands, Guam, American Samoa or another possession of the United States"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
@@ -1230,7 +1310,8 @@
     "citizenship": "citizen of the United States",
     "place_of_work": "Ohio"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
@@ -1238,31 +1319,35 @@
    "facts": {
     "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "exempt_minister"
   },
   {
    "rule_id": "se_clergy_gross_concept_1987_2026",
    "worker": "INVENTED: Nonexempt Pastor Kim, whose church puts $6,000 into his 403(b) annuity left out of his gross income, 2025",
    "facts": {
-    "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister"
+    "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister, including any salary reduction contributions (elective deferrals), that are not included in the minister's gross income"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "church_tax_sheltered_annuity_contributions"
   },
   {
    "rule_id": "se_clergy_gross_concept_1987_2026",
    "worker": "INVENTED: Same pastor's $3,000 of elective deferrals that his gross income leaves out, 2025",
    "facts": {
-    "clergy_remuneration": "salary reduction contributions (elective deferrals)"
+    "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister, including any salary reduction contributions (elective deferrals), that are not included in the minister's gross income"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "church_tax_sheltered_annuity_contributions"
   },
   {
    "rule_id": "se_clergy_gross_concept_1987_2026",
    "worker": "INVENTED: US-citizen minister in Germany whom the agreement makes subject only to German social security law, 2025",
    "facts": {
-    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country"
+    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "foreign_agreement_sole_coverage"
   },
   {
    "rule_id": "se_clergy_gross_concept_1987_2026",
@@ -1271,7 +1356,8 @@
     "clergy_or_religious_exemption": "no 1402(e) exemption",
     "clergy_remuneration": "salary for ministry in Mexico"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "se_clergy_gross_concept_1987_2026",
@@ -1279,15 +1365,17 @@
    "facts": {
     "clergy_remuneration": "fair rental value of a parsonage given to an active minister"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "se_clergy_gross_concept_1987_2026",
    "worker": "INVENTED: Retired pastor living in the church parsonage, 2025",
    "facts": {
-    "clergy_retirement_benefit": "parsonage rental value or allowance provided after retirement"
+    "clergy_retirement_benefit": "parsonage rental value or allowance provided after retirement, or another retirement benefit from a church plan after retirement"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "retired_clergy_benefits"
   },
   {
    "rule_id": "se_clergy_gross_concept_1987_2026",
@@ -1295,124 +1383,138 @@
    "facts": {
     "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "exempt_minister"
   },
   {
    "rule_id": "se_base_definition_1968_2026",
    "worker": "INVENTED: 2012, Ohio: Ana's household reports her husband's sole-proprietorship profit as her income; Ana carries on no trade or business and belongs to no partnership.",
    "facts": {
-    "trade_or_business": "the amount is not derived from any trade or business",
-    "partnership_status": "is not the person's distributive share"
+    "trade_or_business": "the amount is not derived from any trade or business (as 411(c) defines the term) carried on by the person, and no 411(a)(5) rule treats it as the person's gross income (before taxable years including October 1980, former 411(a)(5)(A) treated all of a community business's gross income and deductions as the husband's unless the wife exercised substantially all of the management and control)",
+    "partnership_status": "the amount is not the person's distributive share of the ordinary net income or loss from a trade or business carried on by a partnership of which the person is a member, and not a guaranteed payment described in section 707(c) from such a partnership"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "outside_own_trade_or_business_and_partnership"
   },
   {
    "rule_id": "se_base_definition_1968_2026",
    "worker": "INVENTED: 2012, Ohio: Ana's own bookkeeping practice, which she runs alone, earns a profit.",
    "facts": {
     "trade_or_business": "derived from a trade or business the person carries on",
-    "partnership_status": "is not the person's distributive share"
+    "partnership_status": "the amount is not the person's distributive share of the ordinary net income or loss from a trade or business carried on by a partnership of which the person is a member, and not a guaranteed payment described in section 707(c) from such a partnership"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "se_base_definition_1968_2026",
    "worker": "INVENTED: 2015: Ben, a general partner in a two-person landscaping partnership, receives his distributive share of its ordinary income.",
    "facts": {
-    "trade_or_business": "the amount is not derived from any trade or business",
+    "trade_or_business": "the amount is not derived from any trade or business (as 411(c) defines the term) carried on by the person, and no 411(a)(5) rule treats it as the person's gross income (before taxable years including October 1980, former 411(a)(5)(A) treated all of a community business's gross income and deductions as the husband's unless the wife exercised substantially all of the management and control)",
     "partnership_status": "is the person's distributive share"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "se_community_income_1968_1979",
    "worker": "INVENTED: 1976, California: Carla runs a shop bought with her separate funds; state apportionment makes part of the profit her separate income and part community; her husband shares management. The item is her separate-income part.",
    "facts": {
-    "community_property_income": "any of whose income is community income",
-    "substantially_all_business_management_and_control": "the person is the wife and does not"
+    "community_property_income": "gross income or deductions attributable to a trade or business (other than a trade or business carried on by a partnership) any of whose income is community income under community property laws applicable to such income",
+    "substantially_all_business_management_and_control": "former 411(a)(5)(A) treats the income as the other spouse's: the person is the husband and the wife exercises substantially all of the management and control, or the person is the wife and does not"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "business_income_treated_as_other_spouses"
   },
   {
    "rule_id": "se_community_income_1968_1979",
    "worker": "INVENTED: 1976, Ohio (no community property): Dora's shop profit, with her husband sharing management.",
    "facts": {
     "community_property_income": "no income of the business is community income",
-    "substantially_all_business_management_and_control": "the person is the wife and does not"
+    "substantially_all_business_management_and_control": "former 411(a)(5)(A) treats the income as the other spouse's: the person is the husband and the wife exercises substantially all of the management and control, or the person is the wife and does not"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "se_community_income_1968_1979",
    "worker": "INVENTED: 1977, Texas: Elena runs her community-property shop alone; the item is the shop's profit, asked for Elena.",
    "facts": {
-    "community_property_income": "any of whose income is community income",
+    "community_property_income": "gross income or deductions attributable to a trade or business (other than a trade or business carried on by a partnership) any of whose income is community income under community property laws applicable to such income",
     "substantially_all_business_management_and_control": "the person is the wife and exercises substantially all"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "se_community_income_1968_1979",
    "worker": "INVENTED: 1975, Texas: Frank is a partner and his wife Gina is not; his share is community income. The item is that share, asked for Gina.",
    "facts": {
     "community_property_income": "community income or loss under applicable community property laws",
-    "partnership_status": "the distributive share of the person's spouse as a partner"
+    "partnership_status": "the income is the distributive share of the person's spouse as a partner, not the person's own distributive share"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "partnership_share_of_spouse_partner"
   },
   {
    "rule_id": "se_community_income_2004_2026",
    "worker": "INVENTED: 2015, California: Hal carries on a shop; his wife Ida owns its building and capital as separate property, so part of the profit is her separate income and the rest community. The item is Ida's separate-income part, asked for Ida.",
    "facts": {
-    "community_property_income": "any of whose income is community income",
-    "business_operator_spouse": "the other spouse carries on the business"
+    "community_property_income": "gross income or deductions attributable to a trade or business (other than a trade or business carried on by a partnership) any of whose income is community income under community property laws applicable to such income",
+    "business_operator_spouse": "the other spouse carries on the business, or, for a jointly operated business, the part that is the other spouse's distributive share"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "business_income_of_other_spouse"
   },
   {
    "rule_id": "se_community_income_2004_2026",
    "worker": "INVENTED: 2015, California: the same shop, asked for Hal, who carries it on.",
    "facts": {
-    "community_property_income": "any of whose income is community income",
+    "community_property_income": "gross income or deductions attributable to a trade or business (other than a trade or business carried on by a partnership) any of whose income is community income under community property laws applicable to such income",
     "business_operator_spouse": "the person carries on the business"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "se_community_income_2004_2026",
    "worker": "INVENTED: 2015, Ohio (no community property): Jon's wife owns a share of the shop Jon's brother runs; the item is that profit, asked for Jon's wife.",
    "facts": {
     "community_property_income": "no income of the business is community income",
-    "business_operator_spouse": "the other spouse carries on the business"
+    "business_operator_spouse": "the other spouse carries on the business, or, for a jointly operated business, the part that is the other spouse's distributive share"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "se_conservation_reserve_2008_2026",
    "worker": "INVENTED: 2016: Ruth, 70, draws section 402 retirement benefits and receives an annual Conservation Reserve payment under 16 U.S.C. 3833(a)(2).",
    "facts": {
-    "conservation_reserve_payment": "16 U.S.C. 3833(a)(2)",
+    "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears",
     "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "crp_payment_to_beneficiary"
   },
   {
    "rule_id": "se_conservation_reserve_2008_2026",
    "worker": "INVENTED: 2010: Ruth, 64, draws section 402 retirement benefits and receives an annual Conservation Reserve payment under 16 U.S.C. 3833(2).",
    "facts": {
-    "conservation_reserve_payment": "16 U.S.C. 3833(2)",
+    "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears",
     "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "crp_payment_to_beneficiary"
   },
   {
    "rule_id": "se_conservation_reserve_2008_2026",
    "worker": "INVENTED: 2016: Sam, 50, receives no Social Security benefits and gets an annual Conservation Reserve payment under 16 U.S.C. 3833(a)(2).",
    "facts": {
-    "conservation_reserve_payment": "16 U.S.C. 3833(a)(2)",
+    "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears",
     "benefit_type": "recipient is not receiving benefits under 42 U.S.C. 402 or 423"
    },
-   "expected": "refuses"
+   "expected": "refuses",
+   "decides": "crp_payment_classification_open"
   },
   {
    "rule_id": "se_conservation_reserve_2008_2026",
@@ -1421,24 +1523,27 @@
     "conservation_reserve_payment": "state conservation cost-share payment",
     "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "residual"
   },
   {
    "rule_id": "se_material_participation_1974_2026",
    "worker": "INVENTED: 1985: real estate dealer Carr Land Co. holds farmland for sale to customers in its dealer business and rents it to a farmer on a cash lease with no participation term; Carr does not participate.",
    "facts": {
-    "real_estate_dealer_status": "the dealer holds for sale to customers"
+    "real_estate_dealer_status": "rentals a real estate dealer receives in the course of that trade or business from real estate the dealer holds for sale to customers"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "real_estate_dealer_rentals"
   },
   {
    "rule_id": "se_material_participation_1974_2026",
    "worker": "INVENTED: Taxable year beginning 1990-01-01: real estate dealer Dunn Realty rents farmland it holds only for investment to a farmer on a cash lease; Dunn does not participate.",
    "facts": {
-    "real_estate_dealer_status": "the dealer holds for investment or speculation",
-    "taxable_year_start": "beginning before 1996-04-01"
+    "real_estate_dealer_status": "rentals a real estate dealer receives from real estate the dealer holds for investment or speculation",
+    "taxable_year_start": "taxable year beginning before 1996-04-01"
    },
-   "expected": "refuses"
+   "expected": "refuses",
+   "decides": "dealer_investment_holdings_before_1996"
   },
   {
    "rule_id": "se_capital_gain_nol_1968_2026",
@@ -1446,11 +1551,12 @@
    "facts": {
     "trade_or_business": "options or commodities dealer, in a taxable year beginning after 1984-07-18",
     "property_disposition_type": [
-     "trading section 1256 contracts",
-     "capital-asset gain or loss under subtitle A"
+     "gain or loss from section 1256 contracts or property related to such contracts, in the normal course of the taxpayer's activity of dealing in or trading section 1256 contracts",
+     "capital-asset gain or loss under subtitle A; timber, coal or iron ore gain or loss to which 631 applies; or gain or loss on property that is neither inventory-type property nor held primarily for sale to customers"
     ]
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "options_dealer_from_1984"
   },
   {
    "rule_id": "se_capital_gain_nol_1968_2026",
@@ -1458,20 +1564,22 @@
    "facts": {
     "trade_or_business": "options or commodities dealer, in a taxable year beginning after 1984-07-18",
     "property_disposition_type": [
-     "dealing in or trading section 1256 contracts",
-     "capital-asset gain or loss under subtitle A"
+     "gain or loss from section 1256 contracts or property related to such contracts, in the normal course of the taxpayer's activity of dealing in or trading section 1256 contracts",
+     "capital-asset gain or loss under subtitle A; timber, coal or iron ore gain or loss to which 631 applies; or gain or loss on property that is neither inventory-type property nor held primarily for sale to customers"
     ]
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "options_dealer_from_1984"
   },
   {
    "rule_id": "se_capital_gain_nol_1968_2026",
    "worker": "INVENTED: 2000: the same options dealer sells a section 1256 position it held as a personal investment, outside its dealing activity.",
    "facts": {
     "trade_or_business": "options or commodities dealer, in a taxable year beginning after 1984-07-18",
-    "property_disposition_type": "capital-asset gain or loss under subtitle A"
+    "property_disposition_type": "capital-asset gain or loss under subtitle A; timber, coal or iron ore gain or loss to which 631 applies; or gain or loss on property that is neither inventory-type property nor held primarily for sale to customers"
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "excluded_property_gain_or_loss"
   },
   {
    "rule_id": "se_capital_gain_nol_1968_2026",
@@ -1479,27 +1587,30 @@
    "facts": {
     "trade_or_business": "options or commodities dealer, in a taxable year beginning on 1984-01-01",
     "property_disposition_type": [
-     "trading section 1256 contracts",
-     "capital-asset gain or loss under subtitle A"
+     "gain or loss from section 1256 contracts or property related to such contracts, in the normal course of the taxpayer's activity of dealing in or trading section 1256 contracts",
+     "capital-asset gain or loss under subtitle A; timber, coal or iron ore gain or loss to which 631 applies; or gain or loss on property that is neither inventory-type property nor held primarily for sale to customers"
     ]
    },
-   "expected": "noncovered"
+   "expected": "noncovered",
+   "decides": "excluded_property_gain_or_loss"
   },
   {
    "rule_id": "nonprofit_1984_2026",
    "worker": "INVENTED: 1995: Pastor Lee, with no 1402(e) exemption, is paid $90 by each of five churches for preaching and pastoral work.",
    "facts": {
-    "ministerial_service": "licensed minister of a church in the exercise of his ministry"
+    "ministerial_service": "service performed by a duly ordained, commissioned, or licensed minister of a church in the exercise of his ministry, or by a member of a religious order in the exercise of duties required by such order while no election of coverage under section 3121(r) is in effect for the order or for the autonomous subdivision to which the member belongs"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "ministry_or_order_duties_outside_employment"
   },
   {
    "rule_id": "nonprofit_1984_2026",
    "worker": "INVENTED: 1990: Mia keeps the books for two churches that each have a 3121(w) election in effect; each pays her $60 for that work, which is not part of any unrelated business.",
    "facts": {
-    "church_employee_service": "in the employ of a church or qualified church-controlled organization that has in effect an election under section 3121(w)"
+    "church_employee_service": "service performed in the employ of a church or qualified church-controlled organization that has in effect an election under section 3121(w), outside any unrelated trade or business (within the meaning of section 513(a))"
    },
-   "expected": "covered"
+   "expected": "covered",
+   "decides": "electing_church_service_outside_employment"
   },
   {
    "rule_id": "nonprofit_1984_2026",
@@ -1507,7 +1618,8 @@
    "facts": {
     "church_employee_service": "church that has no election under section 3121(w) in effect"
    },
-   "expected": "covered_above_threshold"
+   "expected": "covered_above_threshold",
+   "decides": "residual"
   },
   {
    "rule_id": "nonprofit_1984_2026",
@@ -1515,7 +1627,8 @@
    "facts": {
     "church_employee_service": "service in a church-run unrelated trade or business"
    },
-   "expected": "covered_above_threshold"
+   "expected": "covered_above_threshold",
+   "decides": "residual"
   },
   {
    "rule_id": "nonprofit_1984_2026",
@@ -1524,23 +1637,25 @@
     "nonprofit_organization": "501(c)(3) organization",
     "federal_retirement_system": "not subject to the Civil Service Retirement System"
    },
-   "expected": "covered_above_threshold"
+   "expected": "covered_above_threshold",
+   "decides": "residual"
   },
   {
    "rule_id": "nonprofit_1984_2026",
    "worker": "INVENTED: 1990: Pat, a federal employee hired in 1975, works for a 501(c)(3) organization and is required by law to stay under the Civil Service Retirement System.",
    "facts": {
     "nonprofit_organization": "501(c)(3) organization",
-    "federal_retirement_system": "required by law to be subject to the Civil Service Retirement System"
+    "federal_retirement_system": "employee required by law to be subject to the Civil Service Retirement System for this service"
    },
-   "expected": "deferred"
+   "expected": "deferred",
+   "decides": "csrs_required_nonprofit_employee"
   },
   {
    "rule_id": "agricultural_service_1988",
    "worker": "INVENTED: in 2005 a strawberry picker paid the region's customary piece rate, commuting daily from home, who worked 6 weeks in agriculture in 2004, is paid $120 cash by a farm that spends $40,000 on labor [decides: seasonal_hand_harvest_under_150]",
    "facts": {
-    "agricultural_service": "employed as a hand harvest laborer and paid on a piece rate basis",
-    "amount": "is less than $150"
+    "agricultural_service": "employed as a hand harvest laborer and paid on a piece rate basis in an operation which has been, and is customarily and generally recognized as having been, paid on a piece rate basis in the region of employment; commutes daily from his permanent residence to the farm on which he is so employed; and has been employed in agriculture less than 13 weeks during the preceding calendar year",
+    "amount": "cash remuneration paid by the employer in the calendar year for agricultural labor is less than $150"
    },
    "expected": "noncovered",
    "decides": "seasonal_hand_harvest_under_150"
@@ -1549,10 +1664,84 @@
    "rule_id": "agricultural_service_1988",
    "worker": "INVENTED: the same picker paid $200 cash in 2005 [decides: residual]",
    "facts": {
-    "agricultural_service": "employed as a hand harvest laborer and paid on a piece rate basis",
+    "agricultural_service": "employed as a hand harvest laborer and paid on a piece rate basis in an operation which has been, and is customarily and generally recognized as having been, paid on a piece rate basis in the region of employment; commutes daily from his permanent residence to the farm on which he is so employed; and has been employed in agriculture less than 13 weeks during the preceding calendar year",
     "amount": "is $200"
    },
    "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "family_service_1988",
+   "worker": "INVENTED (review r5 M-2, A4 2a): 1995: a widow employs her mother as housekeeper in her home; her only child is 19 and needs no adult's care, so 410(a)(3)(B)'s child-in-home limb fails.",
+   "facts": {
+    "family_service": "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home; this includes a stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter in such service"
+   },
+   "expected": "noncovered",
+   "decides": "parent_for_child_nonbusiness_or_domestic"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1987_2026",
+   "worker": "INVENTED (review r5 M-2, A4 2b): 2025: Pastor Kim's church puts $2,000 of after-tax contributions into his 403(b) account; they stay in his gross income.",
+   "facts": {
+    "clergy_remuneration": "after-tax contributions to the minister's 403(b) account, included in his gross income"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "federal_1968_1972",
+   "worker": "INVENTED (review r5 M-2, A4 2c): 1970: an Army sergeant under military retirement law spends six months on leave without pay; 410(l)(1) does not reach that time.",
+   "facts": {
+    "government_level": "employee of the United States or of an instrumentality of the United States",
+    "federal_service": "service as a member of a uniformed service while on leave without pay",
+    "federal_retirement_system": "established by a law of the United States"
+   },
+   "expected": "noncovered",
+   "decides": "federal_retirement_system_service"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED (review r5 M-2, A4 2c): 1995: a Navy petty officer first enlisted in 1990 spends three months on leave without pay; 410(l)(1)(B) does not reach that time, and the later-hire rule decides.",
+   "facts": {
+    "government_level": "employee of the United States or of an instrumentality of the United States",
+    "federal_service": [
+     "service as a member of a uniformed service while on leave without pay",
+     "first hired after 1983"
+    ]
+   },
+   "expected": "covered",
+   "decides": "first_hired_after_1983"
+  },
+  {
+   "rule_id": "se_conservation_reserve_2008_2026",
+   "worker": "INVENTED (review r5 M-2, A4 2e): 2016: Uma, 66, draws State unemployment compensation but no section 402 or 423 benefits, and gets an annual Conservation Reserve payment under 16 U.S.C. 3833(a)(2).",
+   "facts": {
+    "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears",
+    "benefit_type": "recipient is not receiving benefits under 42 U.S.C. 402 or 423"
+   },
+   "expected": "refuses",
+   "decides": "crp_payment_classification_open"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED (review r5 M-2, A4 2i): 2010: Raj, first hired in 2009 as a medical resident in training at a VA hospital; 410(a)(6)(B) excepts residents in training from the student-employee exclusion.",
+   "facts": {
+    "government_level": "employee of the United States or of an instrumentality of the United States",
+    "federal_service": "first hired after 1983",
+    "occupation": "medical resident in training at a Federal hospital"
+   },
+   "expected": "covered",
+   "decides": "first_hired_after_1983"
+  },
+  {
+   "rule_id": "international_organization_service_1995",
+   "worker": "INVENTED (review r5 M-2, A4 2j): 2000: Pia, a Canadian citizen, works in Washington for an organization whose International Organizations Immunities Act designation was revoked in 1998.",
+   "facts": {
+    "citizenship": "a citizen of Canada",
+    "place_of_work": "United States",
+    "international_organization_service": "employee of a public international organization whose designation under the International Organizations Immunities Act is no longer in effect"
+   },
+   "expected": "covered",
    "decides": "residual"
   }
  ]

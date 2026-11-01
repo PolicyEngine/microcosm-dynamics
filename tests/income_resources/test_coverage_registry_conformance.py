@@ -3534,25 +3534,28 @@ def test_failed_conditions_no_longer_exclude(
 def cases_met(rule, facts):
     """Cases whose every `when` condition an INVENTED worker's facts meet.
 
-    ``facts`` maps each trigger fact to a phrase, or a tuple of phrases,
-    stating the worker's true value. A condition holds when its text
-    contains one of them; a condition on a fact the pattern leaves out
-    fails. The test then passes these cases to ``resolve``, so a `when`
-    narrowed until no real value meets it changes the outcome (review r4
-    M-5).
+    ``facts`` maps each trigger fact to the condition texts a fixture states
+    are true of the worker: one text, a tuple or list of texts, or a
+    boolean. A condition holds only when one of them equals its text
+    exactly (a boolean equals only the same boolean); a condition on a fact
+    the pattern leaves out fails. So the worker's facts are a statement
+    separate from the row's `when`: a case narrowed, broadened or reworded
+    no longer equals what the worker states, and "a United States citizen"
+    never meets "not a United States citizen" (review r5 M-2; review r4
+    M-5 used substring matching, which saw neither).
     """
 
     def holds(fact, condition):
-        phrases = facts.get(fact, ())
-        if isinstance(phrases, (str, bool)):
-            phrases = (phrases,)
+        stated = facts.get(fact, ())
+        if isinstance(stated, (str, bool)):
+            stated = (stated,)
         return any(
             (
                 phrase is condition
                 if isinstance(phrase, bool) or isinstance(condition, bool)
-                else phrase in condition
+                else phrase == condition
             )
-            for phrase in phrases
+            for phrase in stated
         )
 
     return {
@@ -3898,6 +3901,24 @@ ACTIVE_VOWED = (ORDER_VOWED, ORDER_ACTIVE)
 RETIRED_VOWED = (ORDER_VOWED, ORDER_OUTSIDE_R2)
 NO_ORDER_ELECTION = "no 3121(r) election in effect for the period"
 ORDER_ELECTION = "effective 3121(r) election covering the period"
+# The election's covered case adds 3121(r)(3)(A)'s retroactive-quarter
+# limb, which a member in a prospective quarter meets too.
+ORDER_ELECTION_APPLIES = (
+    "effective 3121(r) election covering the period; for a retroactive "
+    "quarter, the member was a member when performing the service and was "
+    "living on the first day of the quarter in which the order filed the "
+    "certificate"
+)
+ORDER_RETROACTIVE_FAILED = (
+    "3121(r) certificate whose designated retroactive period (a quarter "
+    "before the quarter of filing) covers the service, where the member was "
+    "not a member when performing the service or was not living on the "
+    "first day of the quarter in which the order filed the certificate"
+)
+ORDER_ABROAD_NONCITIZEN = (
+    "not a United States citizen",
+    "neither a United States citizen nor a resident alien",
+)
 ORDER_MEMBERS = {
     # member: (order service, exemption, place, alien status or
     # citizenship), the outcome the sources give and the deciding case.
@@ -3931,7 +3952,7 @@ ORDER_MEMBERS = {
     ),
     "election_prospective_quarter": (
         ACTIVE_VOWED,
-        (ORDER_ELECTION,),
+        (ORDER_ELECTION, ORDER_ELECTION_APPLIES),
         "in the United States",
         "a United States citizen",
         "covered",
@@ -3939,11 +3960,7 @@ ORDER_MEMBERS = {
     ),
     "election_retroactive_quarter_conditions_met": (
         ACTIVE_VOWED,
-        (
-            ORDER_ELECTION,
-            "for a retroactive quarter, the member was a member when "
-            "performing the service and was living",
-        ),
+        (ORDER_ELECTION, ORDER_ELECTION_APPLIES),
         "in the United States",
         "a United States citizen",
         "covered",
@@ -3953,7 +3970,7 @@ ORDER_MEMBERS = {
     # member did order duties in 1971 and died before the filing quarter.
     "retroactive_quarter_member_died": (
         ACTIVE_VOWED,
-        ("was not living on the first day of the quarter",),
+        (ORDER_ELECTION, ORDER_RETROACTIVE_FAILED),
         "in the United States",
         "a United States citizen",
         "noncovered",
@@ -3964,17 +3981,28 @@ ORDER_MEMBERS = {
     # designates. She was not a 3121(r)(2) member when she did them.
     "retroactive_quarter_not_a_member": (
         RETIRED_VOWED,
-        ("was not a member when performing the service",),
+        (ORDER_ELECTION, ORDER_RETROACTIVE_FAILED),
         "in the United States",
         "a United States citizen",
         "noncovered",
         "retroactive_quarter_member_condition_failed",
     ),
+    # Review r5 M-2 (A4 F2): a citizen member abroad under an election is
+    # covered; the oracle never reads "a United States citizen" as "not a
+    # United States citizen".
+    "election_citizen_abroad": (
+        ACTIVE_VOWED,
+        (ORDER_ELECTION, ORDER_ELECTION_APPLIES),
+        "outside the United States",
+        "a United States citizen",
+        "covered",
+        "vow_duties_with_3121r_election",
+    ),
     "election_noncitizen_abroad": (
         ACTIVE_VOWED,
-        (ORDER_ELECTION,),
+        (ORDER_ELECTION, ORDER_ELECTION_APPLIES),
         "outside the United States",
-        ("not a United States citizen", "neither a United States citizen"),
+        ORDER_ABROAD_NONCITIZEN,
         "noncovered",
         "election_member_abroad_not_covered",
     ),
@@ -4011,32 +4039,51 @@ def test_religious_order_members_resolve_from_their_facts(
     decided = rule.resolve(cases_met(rule, facts))
     assert decided.get("case_id", "residual") == decides
     third_party = {
-        "religious_order_service": "ordinary employment for a third party"
+        "religious_order_service": (
+            "ordinary employment for a third party outside duties required "
+            "by the order"
+        )
     }
     assert resolved_consequence(rule, third_party) == "covered"
     # Without a vow this family excludes nothing; the clergy family, which
     # defers vow-of-poverty order duties here, decides (r4 sweep).
-    no_vow = {"religious_order_service": "has not taken a vow of poverty"}
+    no_vow = {
+        "religious_order_service": (
+            "duties required by the order, performed by a member who has "
+            "not taken a vow of poverty"
+        )
+    }
     assert resolved_consequence(rule, no_vow) == "covered"
 
 
 # Phrases stating an INVENTED 2018-2026 council member's facts (r4 H-C).
+TRIBAL_COUNCIL_MEMBER = (
+    "service as a member of an Indian tribal council, in that capacity, for "
+    "the tribal government"
+)
+TRIBAL_NOT_INCLUDED = (
+    "council-capacity services not included under an effective section "
+    "418a agreement"
+)
+TRIBAL_INCLUDED = (
+    "council-capacity services performed on or after the effective date of "
+    "an effective section 418a agreement"
+)
 TRIBAL_2018_MEMBERS = {
     "recognized_tribe_no_agreement": (
         "federally recognized tribe",
-        "not included under an effective section 418a agreement",
+        TRIBAL_NOT_INCLUDED,
         "noncovered",
     ),
     # H-C repro: a council member of an unrecognized tribe in 2020.
     "unrecognized_tribe_no_agreement": (
         "a tribe that is not federally recognized",
-        "not included under an effective section 418a agreement",
+        TRIBAL_NOT_INCLUDED,
         "covered",
     ),
     "recognized_tribe_agreement": (
         "federally recognized tribe",
-        "performed on or after the effective date of an effective section "
-        "418a agreement",
+        TRIBAL_INCLUDED,
         "covered",
     ),
 }
@@ -4050,8 +4097,7 @@ def test_tribal_council_2018_resolves_from_its_facts(registry, member):
     (rule,) = registry.lookup_date("tribal_council_service", date(2020, 6, 1))
     recognition, agreement, expected = TRIBAL_2018_MEMBERS[member]
     facts = {
-        "tribal_council_service": "service as a member of an Indian tribal "
-        "council, in that capacity",
+        "tribal_council_service": TRIBAL_COUNCIL_MEMBER,
         "tribal_federal_recognition": recognition,
         "tribal_coverage_agreement": agreement,
     }
@@ -4063,24 +4109,68 @@ def test_tribal_council_2018_resolves_from_its_facts(registry, member):
 # Phrases stating INVENTED crew members' facts (review r4 M-3): a new
 # boat crewed by 5 has no four-quarter average, and noncash pay did not
 # defeat the pre-1996 test.
+FISHING_NOT_FICA = (
+    "payor did not treat the remuneration, when paid, as subject to FICA tax"
+)
+FISHING_FICA = (
+    "payor treated the remuneration, when paid, as subject to FICA tax"
+)
+FISHING_SHARE_1996 = (
+    "a share of the boat's catch or its proceeds (or the boats' catch in a "
+    "fishing operation involving more than one boat) that depends on the "
+    "amount caught, where the operating crew of the boat (or each boat from "
+    "which the individual receives a share) is normally made up of fewer "
+    "than 10 individuals (a crew whose average size on trips made during the "
+    "preceding 4 calendar quarters was fewer than 10 is treated as normally "
+    "fewer than 10), with no additional compensation other than cash of at "
+    "most $100 per trip that is contingent on a minimum catch and paid "
+    "solely for additional duties (such as mate, engineer, or cook) for "
+    "which additional cash is traditional in the industry"
+)
+FISHING_SHARE_BEFORE_1996 = (
+    "a share of the boat's catch or its proceeds (or the boats' catch in a "
+    "fishing operation involving more than one boat) that depends on the "
+    "amount caught, where the operating crew of the boat (or each boat from "
+    "which the individual receives a share) is normally made up of fewer "
+    "than 10 individuals, with no cash remuneration apart from that share "
+    "(former 410(a)(20)(A), before the 1996 amendment)"
+)
 FISHING_CREW = {
+    # (year, FICA treatment, arrangement texts the crew member meets) and
+    # the deciding case. A new boat crewed by 5 has no four-quarter
+    # average; noncash pay did not defeat the pre-1996 test.
     "new_boat_no_fica": (
         1991,
-        "did not treat",
-        "is normally made up of fewer than 10 individuals",
+        FISHING_NOT_FICA,
+        FISHING_SHARE_1996,
         "catch_share_1996_clarification",
     ),
     "noncash_pay_payor_fica": (
         1991,
-        "payor treated the remuneration",
-        "no cash remuneration apart from that share",
+        FISHING_FICA,
+        FISHING_SHARE_BEFORE_1996,
         "catch_share_payor_treated_as_fica",
     ),
     "new_boat_after_1994": (
         2015,
-        "did not treat",
-        "is normally made up of fewer than 10 individuals",
+        FISHING_NOT_FICA,
+        FISHING_SHARE_1996,
         "qualifying_catch_share_arrangement",
+    ),
+    # Review r5 M-2 (A4 2d): neighbours who just miss. A boat normally
+    # crewed by 12, and a $150 cash bonus, meet neither text; the
+    # residual's ordinary wage rules apply.
+    "crew_of_twelve_payor_fica": (
+        1991,
+        FISHING_FICA,
+        "a share of the catch on a boat whose crew is normally 12",
+        "residual",
+    ),
+    "cash_bonus_150_after_1994": (
+        2015,
+        FISHING_NOT_FICA,
+        "a share of the catch plus a $150 cash bonus per trip as mate",
+        "residual",
     ),
 }
 
@@ -4098,20 +4188,48 @@ def test_fishing_crew_test_is_normally_under_ten(registry, crew):
         "fishing_catch_share_arrangement": arrangement,
     }
     decided = rule.resolve(cases_met(rule, facts))
-    assert decided.get("case_id") == expected
+    assert decided.get("case_id", "residual") == expected
 
 
 # INVENTED self-employed people, by the phrases stating their 411(b)
 # facts (review r4 M-4): (year, facts, outcome).
+NONRESIDENT_ALIEN = "nonresident alien individual for the taxable year"
+SECTION_433_AGREEMENT = (
+    "an agreement under section 433 makes the net earnings of this "
+    "nonresident alien self-employment income for the taxable year"
+)
+TERRITORIAL_RESIDENT = (
+    "a resident of the Commonwealth of Puerto Rico, the Virgin Islands, "
+    "Guam, or American Samoa"
+)
+# The clergy rows' nonresident-alien texts (review r4 M-4).
+CLERGY_NONRESIDENT_ALIEN = {
+    "clergy_1973_1981": (
+        "nonresident alien individual for the taxable year (a noncitizen who "
+        "is a resident of the Commonwealth of Puerto Rico, the Virgin "
+        "Islands, Guam, or American Samoa is not one)"
+    ),
+    "clergy_1982_2026": (
+        "nonresident alien individual for the taxable year (a noncitizen who "
+        "is a resident of the Commonwealth of Puerto Rico, the Virgin "
+        "Islands, Guam, or American Samoa is not one), and, for a taxable "
+        "year beginning on or after 1983-04-20, no agreement under section "
+        "433 covers the earnings"
+    ),
+}
+CLERGY_MINISTRY = (
+    "qualifying ministry, order duties, or service in the exercise of the "
+    "profession of a Christian Science practitioner"
+)
 NONRESIDENT_SELF_EMPLOYED = {
     "nonresident_alien_1978": (
         1978,
-        {"nonresident_alien_status": "nonresident alien individual"},
+        {"nonresident_alien_status": NONRESIDENT_ALIEN},
         "noncovered",
     ),
     "nonresident_alien_2010": (
         2010,
-        {"nonresident_alien_status": "nonresident alien individual"},
+        {"nonresident_alien_status": NONRESIDENT_ALIEN},
         "noncovered",
     ),
     # Before 1983-04-20 no agreement exception exists.
@@ -4119,8 +4237,8 @@ NONRESIDENT_SELF_EMPLOYED = {
         1980,
         {
             "nonresident_alien_status": (
-                "nonresident alien individual",
-                "an agreement under section 433 makes",
+                NONRESIDENT_ALIEN,
+                "an agreement under section 433 covers the earnings",
             )
         },
         "noncovered",
@@ -4129,22 +4247,26 @@ NONRESIDENT_SELF_EMPLOYED = {
         1995,
         {
             "nonresident_alien_status": (
-                "nonresident alien individual",
-                "an agreement under section 433 makes",
+                NONRESIDENT_ALIEN,
+                SECTION_433_AGREEMENT,
             )
         },
         "covered",
     ),
+    # 411(b)'s last sentence: a noncitizen resident of Guam is not a
+    # nonresident alien (review r5 M-2, A4 F8).
     "guam_resident_noncitizen": (
         1970,
         {
-            "nonresident_alien_status": "nonresident alien individual",
+            "nonresident_alien_status": (
+                "not a nonresident alien: a noncitizen resident of Guam"
+            ),
             "citizenship": "not a citizen of the United States",
-            "country_of_residence": "Guam",
+            "country_of_residence": TERRITORIAL_RESIDENT,
         },
         "covered",
     ),
-    "citizen": (2000, {"citizenship": "a citizen"}, "covered"),
+    "citizen": (2000, {"citizenship": "a United States citizen"}, "covered"),
 }
 
 
@@ -4160,7 +4282,7 @@ def test_nonresident_alien_net_earnings_follow_411b(registry, person):
     (rule,) = registry.lookup("self_employment_nonresident_alien", year)
     assert resolved_consequence(rule, facts) == expected
     # The clergy rows read a plain nonresident alien or citizen the same
-    # way; their exceptions sit in the case text, which phrases can't test.
+    # way.
     if person in {
         "nonresident_alien_1978",
         "nonresident_alien_2010",
@@ -4172,7 +4294,11 @@ def test_nonresident_alien_net_earnings_follow_411b(registry, person):
             if r.family == "clergy_religious_service"
             and r.effective_start.year <= year <= r.effective_end.year
         )
-        ministry = {**facts, "ministerial_service": "qualifying ministry"}
+        ministry = {**facts, "ministerial_service": CLERGY_MINISTRY}
+        if "nonresident_alien_status" in facts:
+            ministry["nonresident_alien_status"] = CLERGY_NONRESIDENT_ALIEN[
+                clergy.rule_id
+            ]
         assert (
             "nonresident_alien_ministry" in cases_met(clergy, ministry)
         ) == (expected == "noncovered")
@@ -4277,20 +4403,24 @@ def test_base_definition_keeps_guaranteed_payments_and_411a5_income(
 
 
 # Review r4 M-5: for each REQUIRED_CONDITIONS entry on a covered case,
-# an INVENTED worker who meets the case except for its condition, by fact
-# phrases. "reaches" names the exclusion (or residual) the failure must
-# reach; "stays_covered" says why failing leaves the worker covered, and
-# by which case (None: either of two covered cases).
+# an INVENTED worker who meets the case except for its condition, by the
+# texts of the conditions the worker meets. "reaches" names the
+# consequence the failure must reach and the case (or residual) that
+# decides it; "stays_covered" says why failing leaves the worker covered,
+# and which case (or the residual) decides (review r5 M-2: every entry
+# names its path).
 # An INVENTED State or local employee, as the State and local cases'
 # government_level states the level (round 5).
 STATE_EMPLOYEE = (
     "employee of a State, a political subdivision or a wholly owned "
-    "instrumentality"
+    "instrumentality, other than the District of Columbia, Guam and "
+    "American Samoa"
 )
 ELECTION_WORKER = "election official or election worker"
 GRANDFATHERED_FEDERAL = (
     "would be excluded under 410(a)(5)-(6) as in effect in January 1983 "
-    "and has been performed continuously"
+    "and has been performed continuously since December 31, 1983, under "
+    "the continuity rules of 410(a)(5)(B)(i)(I)-(V)"
 )
 LEGISLATIVE_STILL_UNDER_CSRS = (
     "reaches",
@@ -4300,7 +4430,8 @@ LEGISLATIVE_STILL_UNDER_CSRS = (
             "United States"
         ),
         "federal_service": (
-            "service in the legislative branch other than as a Member",
+            "service in the legislative branch other than as a Member, "
+            "Delegate or Resident Commissioner",
             GRANDFATHERED_FEDERAL,
         ),
         "federal_retirement_system": (
@@ -4308,9 +4439,36 @@ LEGISLATIVE_STILL_UNDER_CSRS = (
         ),
     },
     "noncovered",
+    "grandfathered_continuous_service",
 )
 DESIGNATED_ORGANIZATION = (
-    "employee of a public international organization designated"
+    "employee of a public international organization designated under the "
+    "International Organizations Immunities Act, while the designation is "
+    "in effect and its conditions are met"
+)
+CRP_PAYMENT = (
+    "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally "
+    "amended section 1233 of the Food Security Act of 1985 on 2014-02-07, "
+    "under 16 U.S.C. 3833(a)(2), where the substance of former section "
+    "1233(2) now appears"
+)
+ELECTION_LOWER_AMOUNT = (
+    "covered by a section 218 agreement that excludes election workers "
+    "paid less than an amount the agreement states below the statutory "
+    "amount"
+)
+ELECTION_NONMEMBER = (
+    "not a member of any retirement system of the State, subdivision or "
+    "instrumentality that is a qualified retirement system under the IRS "
+    "standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites "
+    "them); an employee who belongs only to a system that fails those "
+    "standards meets this condition"
+)
+ELECTION_MEMBER = (
+    "member of a retirement system of the State, subdivision or "
+    "instrumentality that is a qualified retirement system under the IRS "
+    "standards (26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites "
+    "them)"
 )
 REQUIRED_CONDITION_FAILURES = {
     **{
@@ -4318,11 +4476,13 @@ REQUIRED_CONDITION_FAILURES = {
             "reaches",
             {
                 "clergy_or_religious_exemption": (
-                    "was not living on the first day of the quarter"
+                    ORDER_ELECTION,
+                    ORDER_RETROACTIVE_FAILED,
                 ),
                 "religious_order_service": ACTIVE_VOWED,
             },
             "noncovered",
+            "retroactive_quarter_member_condition_failed",
         )
         for rule_id in (
             "religious_order_1968_1983",
@@ -4335,11 +4495,14 @@ REQUIRED_CONDITION_FAILURES = {
     ): (
         "reaches",
         {
-            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
+            "conservation_reserve_payment": CRP_PAYMENT,
             "real_estate_dealer_status": "not a real estate dealer",
-            "benefit_type": "recipient is receiving benefits",
+            "benefit_type": (
+                "recipient is receiving benefits under 42 U.S.C. 402 or 423"
+            ),
         },
         "noncovered",
+        "crp_payment_to_beneficiary",
     ),
     **{
         key: (
@@ -4357,8 +4520,10 @@ REQUIRED_CONDITION_FAILURES = {
                     "catch_share_1996_clarification",
                 ),
                 {
-                    "historical_fica_treatment": "did not treat",
-                    "fishing_catch_share_arrangement": "a $150 cash bonus",
+                    "historical_fica_treatment": FISHING_NOT_FICA,
+                    "fishing_catch_share_arrangement": (
+                        "a share of the catch plus a $150 cash bonus"
+                    ),
                 },
             ),
             (
@@ -4367,8 +4532,10 @@ REQUIRED_CONDITION_FAILURES = {
                     "catch_share_payor_treated_as_fica",
                 ),
                 {
-                    "historical_fica_treatment": "payor treated the",
-                    "fishing_catch_share_arrangement": "a $50 cash bonus",
+                    "historical_fica_treatment": FISHING_FICA,
+                    "fishing_catch_share_arrangement": (
+                        "a share of the catch plus a $50 cash bonus"
+                    ),
                 },
             ),
             (
@@ -4376,7 +4543,11 @@ REQUIRED_CONDITION_FAILURES = {
                     "fishing_crew_share_service_1995",
                     "qualifying_catch_share_arrangement",
                 ),
-                {"fishing_catch_share_arrangement": "a flat $80 per trip"},
+                {
+                    "fishing_catch_share_arrangement": (
+                        "a flat $80 per trip, not a share of the catch"
+                    )
+                },
             ),
         )
     },
@@ -4386,16 +4557,19 @@ REQUIRED_CONDITION_FAILURES = {
     ): (
         "reaches",
         {
-            "tribal_council_service": "service as a member of an Indian "
-            "tribal council, in that capacity",
+            "tribal_council_service": TRIBAL_COUNCIL_MEMBER,
             "tribal_federal_recognition": "federally recognized tribe",
             "tribal_coverage_agreement": (
-                "before the agreement's effective date that the tribe asked",
-                "not included under an effective section 418a agreement",
+                "council-capacity services before the agreement's effective "
+                "date that the tribe asked the agreement to include",
+                TRIBAL_NOT_INCLUDED,
             ),
-            "historical_fica_treatment": "never paid",
+            "historical_fica_treatment": (
+                "FICA-equivalent amounts were never paid for the service"
+            ),
         },
         "noncovered",
+        "no_section_418a_inclusion",
     ),
     **{
         (rule_id, case_id): LEGISLATIVE_STILL_UNDER_CSRS
@@ -4417,6 +4591,7 @@ REQUIRED_CONDITION_FAILURES = {
             ),
         },
         "noncovered",
+        "grandfathered_continuous_service",
     ),
     **{
         (rule_id, case_id): (
@@ -4424,24 +4599,27 @@ REQUIRED_CONDITION_FAILURES = {
             "Membership decides which amount applies, not whether pay is "
             "covered: POMS SL 30001.357's NOTE covers a nonmember unless "
             "410(a)(7)(F)(iv) excepts the pay, and a member's pay is "
-            "covered when the agreement's amount is met.",
+            "covered when the agreement's amount is met. A worker who fails "
+            "one case's membership limb meets its twin.",
             {
-                "section_218_position": "below the statutory amount",
+                "section_218_position": ELECTION_LOWER_AMOUNT,
                 "public_retirement_system_participation": phrase,
                 "government_level": STATE_EMPLOYEE,
                 "election_work": ELECTION_WORKER,
             },
-            None,
+            via,
         )
         for rule_id in ("election_work_1991_0702", "election_work_1995")
-        for case_id, phrase in (
+        for case_id, phrase, via in (
             (
                 "agreement_with_lower_threshold_nonmember",
-                "member of a retirement system",
+                ELECTION_MEMBER,
+                "agreement_with_lower_threshold_member",
             ),
             (
                 "agreement_with_lower_threshold_member",
-                "not a member of a retirement system",
+                ELECTION_NONMEMBER,
+                "agreement_with_lower_threshold_nonmember",
             ),
         )
     },
@@ -4456,6 +4634,7 @@ REQUIRED_CONDITION_FAILURES = {
                 ),
             },
             "noncovered",
+            "designated_international_organization",
         )
         for rule_id in (
             "international_organization_service_1968",
@@ -4473,6 +4652,7 @@ REQUIRED_CONDITION_FAILURES = {
             "international_organization_service": DESIGNATED_ORGANIZATION,
         },
         "noncovered",
+        "designated_international_organization",
     ),
     **{
         (rule_id, "statutory_homeworker"): (
@@ -4483,6 +4663,7 @@ REQUIRED_CONDITION_FAILURES = {
                 "employee_self_or_mixed": "independent contractor",
             },
             "deferred",
+            "residual",
         )
         for rule_id in (
             "statutory_homeworker_service_1968",
@@ -4521,15 +4702,18 @@ def test_failing_a_covered_condition_reaches_an_exclusion(registry, key):
     if kind == "stays_covered":
         reason, facts, via = rest
         assert reason.strip()
-        met = cases_met(rule, facts)
-        decided = rule.resolve(met)
-        assert decided["consequence"] in COVERED_CONSEQUENCES
-        if via is not None:
-            assert decided.get("case_id", "residual") == via
+        expected = None
     else:
-        facts, expected = rest
-        met = cases_met(rule, facts)
-        assert resolved_consequence(rule, facts) == expected
+        facts, expected, via = rest
+    assert via is not None and via != case_id
+    assert via == "residual" or via in {c["case_id"] for c in rule.cases}
+    met = cases_met(rule, facts)
+    decided = rule.resolve(met)
+    assert decided.get("case_id", "residual") == via
+    if expected is None:
+        assert decided["consequence"] in COVERED_CONSEQUENCES
+    else:
+        assert decided["consequence"] == expected
     assert case_id not in met
 
 
@@ -4551,8 +4735,17 @@ def test_swept_rows_resolve_invented_workers_from_their_facts(
     change, resolves from the cases its facts meet."""
     rule = next(r for r in registry.rules if r.rule_id == worker["rule_id"])
     assert resolved_consequence(rule, worker["facts"]) == worker["expected"]
-    if "decides" in worker:
-        decided = rule.resolve(cases_met(rule, worker["facts"]))
+    met = cases_met(rule, worker["facts"])
+    if worker["expected"] == "refuses":
+        # The deciding case is the open one: it ranks first among those met.
+        first = min(
+            (c for c in rule.cases if c["case_id"] in met),
+            key=lambda c: c["precedence"],
+        )
+        assert first["case_id"] == worker["decides"]
+        assert "open_reason" in first
+    else:
+        decided = rule.resolve(met)
         assert decided.get("case_id", "residual") == worker["decides"]
 
 
@@ -4776,91 +4969,161 @@ STATUTORY_AGREEMENT_AMOUNT = (
     "covered by a section 218 agreement that excludes election workers "
     "paid less than the statutory amount"
 )
-NOT_A_MEMBER = "not a member of any retirement system"
-QUALIFIED_MEMBER = (
-    "member of a retirement system of the State, subdivision or "
-    "instrumentality that is a qualified retirement system"
+NOT_A_MEMBER = ELECTION_NONMEMBER
+QUALIFIED_MEMBER = ELECTION_MEMBER
+MANDATORY_NOT_COVERED = (
+    "not covered for OASDI by any effective agreement/modification, "
+    "including a position that only a Medicare hospital insurance "
+    "modification under 418(v), redesignated 418(n), reaches"
 )
+# Review r5 M-2: each key's outcome for a State or local employee, as the
+# sources give it, stated here rather than read from the case: 410(a)(7)(F)
+# (ii) excludes the patient's work, (F)(iv) sends the poll worker and (F)(v)
+# the fee position to their own families; 418(c)(8) sets the election
+# amounts, and an election worker outside any agreement is excluded only
+# where 410(a)(7)(F) does not cover a nonmember.
 STATE_LOCAL_CASE_FACTS = {
     # A patient who works in an institution's laundry, in no retirement
     # system, whose position no agreement covers (410(a)(7)(F)(ii)).
-    ("state_local_1991_2026", "mandatory_rule_exclusions"): {
-        "assignment": (
-            "service in a hospital, home or other institution by a patient "
-            "or inmate"
-        ),
-        "section_218_position": "not covered",
-        "public_retirement_system_participation": (
-            "not a member of any IRS-qualified system"
-        ),
-    },
+    ("state_local_1991_2026", "mandatory_rule_exclusions"): (
+        "noncovered",
+        {
+            "assignment": (
+                "service to relieve the individual from unemployment; "
+                "service in a hospital, home or other institution by a "
+                "patient or inmate; or temporary service in case of fire, "
+                "storm, snow, earthquake, flood or similar emergency"
+            ),
+            "section_218_position": MANDATORY_NOT_COVERED,
+            "public_retirement_system_participation": (
+                "not a member of any IRS-qualified system"
+            ),
+        },
+    ),
+    # A county road worker whose position no agreement covers, before
+    # mandatory coverage (410(a)(7)).
+    ("state_local_1968_1983", "no_section_218_agreement"): (
+        "noncovered",
+        {"section_218_position": "not covered"},
+    ),
+    ("state_local_1983_1991", "no_section_218_agreement"): (
+        "noncovered",
+        {"section_218_position": MANDATORY_NOT_COVERED},
+    ),
+    # A member of a qualified city system whose position no agreement
+    # covers (410(a)(7)(F) reaches only nonmembers).
+    ("state_local_1991_2026", "qualified_system_member_without_agreement"): (
+        "noncovered",
+        {
+            "section_218_position": MANDATORY_NOT_COVERED,
+            "public_retirement_system_participation": (
+                "member of an IRS-qualified system"
+            ),
+        },
+    ),
     # A poll worker whose position no agreement covers ((F)(iv)).
-    ("state_local_1991_2026", "mandatory_rule_election_worker"): {
-        "election_work": ELECTION_WORKER,
-        "section_218_position": "not covered",
-    },
+    ("state_local_1991_2026", "mandatory_rule_election_worker"): (
+        "deferred",
+        {
+            "election_work": ELECTION_WORKER,
+            "section_218_position": MANDATORY_NOT_COVERED,
+        },
+    ),
     # A position paid only by fees, outside any agreement ((F)(v)).
-    ("state_local_1991_2026", "mandatory_rule_fee_basis_position"): {
-        "public_office_fee_basis": (
-            "position compensated solely on a fee basis"
-        ),
-        "section_218_position": "not covered",
-    },
+    ("state_local_1991_2026", "mandatory_rule_fee_basis_position"): (
+        "deferred",
+        {
+            "public_office_fee_basis": (
+                "position compensated solely on a fee basis, treated under "
+                "411(c)(2)(E) as a trade or business"
+            ),
+            "section_218_position": MANDATORY_NOT_COVERED,
+        },
+    ),
     # Poll workers before mandatory coverage, by their agreement position.
     **{
-        (rule_id, case_id): {
-            "section_218_position": position,
-            "election_work": ELECTION_WORKER,
-        }
+        (rule_id, case_id): (
+            consequence,
+            {
+                "section_218_position": position,
+                "election_work": ELECTION_WORKER,
+            },
+        )
         for rule_id in ("election_work_1968", "election_work_1978")
-        for case_id, position in (
-            ("agreement_with_lower_threshold", LOWER_AGREEMENT_AMOUNT),
+        for case_id, position, consequence in (
+            (
+                "agreement_with_lower_threshold",
+                LOWER_AGREEMENT_AMOUNT,
+                "covered_above_threshold",
+            ),
             (
                 "agreement_with_statutory_threshold",
                 STATUTORY_AGREEMENT_AMOUNT,
+                "covered_above_threshold",
             ),
-            ("outside_agreement", "not covered"),
+            ("outside_agreement", "not covered", "noncovered"),
         )
     },
     # A 1977 poll worker paid in 1978 (review r5 M-1).
     (
         "election_work_1968",
         "agreement_with_statutory_threshold_paid_after_1977",
-    ): {
-        "section_218_position": STATUTORY_AGREEMENT_AMOUNT,
-        "election_work": ELECTION_WORKER,
-        "remuneration_paid_date": "remuneration paid on or after 1978-01-01",
-    },
+    ): (
+        "covered_above_threshold",
+        {
+            "section_218_position": STATUTORY_AGREEMENT_AMOUNT,
+            "election_work": ELECTION_WORKER,
+            "remuneration_paid_date": (
+                "remuneration paid on or after 1978-01-01"
+            ),
+        },
+    ),
     # Poll workers from 1991-07-02, by agreement position and membership.
     **{
-        (rule_id, case_id): {
-            "section_218_position": position,
-            "election_work": ELECTION_WORKER,
-            **(
-                {"public_retirement_system_participation": membership}
-                if membership
-                else {}
-            ),
-        }
+        (rule_id, case_id): (
+            consequence,
+            {
+                "section_218_position": position,
+                "election_work": ELECTION_WORKER,
+                **(
+                    {"public_retirement_system_participation": membership}
+                    if membership
+                    else {}
+                ),
+            },
+        )
         for rule_id in ("election_work_1991_0702", "election_work_1995")
-        for case_id, position, membership in (
+        for case_id, position, membership, consequence in (
             (
                 "agreement_with_lower_threshold_nonmember",
                 LOWER_AGREEMENT_AMOUNT,
                 NOT_A_MEMBER,
+                "covered_above_threshold",
             ),
             (
                 "agreement_with_lower_threshold_member",
                 LOWER_AGREEMENT_AMOUNT,
                 QUALIFIED_MEMBER,
+                "covered_above_threshold",
             ),
             (
                 "agreement_with_statutory_threshold",
                 STATUTORY_AGREEMENT_AMOUNT,
                 None,
+                "covered_above_threshold",
             ),
-            ("outside_agreement_nonmember", "not covered", NOT_A_MEMBER),
-            ("outside_agreement_member", "not covered", QUALIFIED_MEMBER),
+            (
+                "outside_agreement_nonmember",
+                "not covered",
+                NOT_A_MEMBER,
+                "covered_above_threshold",
+            ),
+            (
+                "outside_agreement_member",
+                "not covered",
+                QUALIFIED_MEMBER,
+                "noncovered",
+            ),
         )
     },
 }
@@ -4879,15 +5142,14 @@ def test_state_and_local_cases_reach_only_their_level(registry, key, employer):
     employ of a State"); a State or local employee gets the case."""
     rule_id, case_id = key
     rule = next(r for r in registry.rules if r.rule_id == rule_id)
-    case = next(c for c in rule.cases if c["case_id"] == case_id)
-    facts = {
-        **STATE_LOCAL_CASE_FACTS[key],
-        "government_level": LEVEL_EMPLOYERS[employer],
-    }
+    expected, own = STATE_LOCAL_CASE_FACTS[key]
+    facts = {**own, "government_level": LEVEL_EMPLOYERS[employer]}
     decided = rule.resolve(cases_met(rule, facts))
     if employer == "state_or_local":
         assert decided.get("case_id") == case_id
-        assert decided["consequence"] == case["consequence"]
+        # The outcome the fixture states, not the case's own consequence
+        # (review r5 M-2).
+        assert decided["consequence"] == expected
     else:
         assert "case_id" not in decided
         assert decided["consequence"] == "covered"
@@ -4906,6 +5168,10 @@ LEVEL_LIMITED_CASES = sorted(
 OTHER_EMPLOYERS = (
     PRIVATE_EMPLOYEE,
     DISTRICT_EMPLOYEE,
+    # The level text names these after "other than" (review r5 M-2).
+    "employee of the District of Columbia",
+    "employee of a State, a political subdivision or a wholly owned "
+    "instrumentality, including the District of Columbia government",
     "employee of the Government of Guam",
     "employee of the Government of American Samoa",
     "employee of a Federal agency",
@@ -4914,23 +5180,23 @@ OTHER_EMPLOYERS = (
 )
 
 
-@settings(deadline=None)
-@given(st.sampled_from(LEVEL_LIMITED_CASES), st.sampled_from(OTHER_EMPLOYERS))
+@settings(deadline=None, max_examples=500)
+@given(
+    st.sampled_from(sorted(STATE_LOCAL_CASE_FACTS)),
+    st.sampled_from(OTHER_EMPLOYERS),
+)
 def test_only_the_state_or_local_level_meets_these_cases(
     registry, key, employer
 ):
-    """Round 5 property: a worker whose facts are a case's own conditions
-    meets it at the State or local level. With any other employer the
-    worker meets no case that excludes, sets a threshold or defers, and
-    reaches the row's residual."""
+    """Round 5 property: a worker with a case's other facts, as the
+    fixture states them, meets it at the State or local level. With any
+    other employer the worker meets no case that excludes, sets a
+    threshold or defers, and reaches the row's residual. The facts come
+    from STATE_LOCAL_CASE_FACTS, not from the case (review r5 M-2)."""
+    assert sorted(STATE_LOCAL_CASE_FACTS) == LEVEL_LIMITED_CASES
     rule_id, case_id = key
     rule = next(r for r in registry.rules if r.rule_id == rule_id)
-    case = next(c for c in rule.cases if c["case_id"] == case_id)
-    own = {
-        fact: text
-        for fact, text in case["when"].items()
-        if fact != "government_level"
-    }
+    _, own = STATE_LOCAL_CASE_FACTS[key]
     assert case_id in cases_met(
         rule, {**own, "government_level": STATE_EMPLOYEE}
     )
@@ -4968,7 +5234,7 @@ def test_election_cases_reach_only_election_work(registry, key):
     rule_id, _ = key
     rule = next(r for r in registry.rules if r.rule_id == rule_id)
     facts = {
-        **STATE_LOCAL_CASE_FACTS[key],
+        **STATE_LOCAL_CASE_FACTS[key][1],
         "government_level": STATE_EMPLOYEE,
         "election_work": NON_ELECTION_WORK,
     }
@@ -5568,7 +5834,9 @@ def test_only_the_federal_level_meets_these_cases(registry, key, employer):
 
 
 PUBLIC_OFFICE_ELECTION = (
-    "Timely irrevocable election under Public Law 90-248 section 122(c)(2)"
+    "Timely irrevocable election under Public Law 90-248 section 122(c)(2), "
+    "made by an individual in an affected position in 1968, applies to "
+    "these fees."
 )
 PUBLIC_OFFICE_ELECTION_HOLDERS = {
     # INVENTED: a county recorder paid only by fees, outside any
@@ -5576,7 +5844,7 @@ PUBLIC_OFFICE_ELECTION_HOLDERS = {
     "county_fee_officer": (
         {
             "public_office_1968_exemption_election": PUBLIC_OFFICE_ELECTION,
-            "government_level": "political subdivision",
+            "government_level": "state or political subdivision",
             "public_office_functions": (
                 "income is for performing the functions of a public office"
             ),
@@ -5644,9 +5912,11 @@ TERMINATION_HEADING = (
 )
 TERMINATION_EFFECTIVE = "applicable to payments after Dec. 31, 1997"
 QUALIFYING_TERMINATION_TERMS = (
-    "a covenant not to compete for at least one year; the amount depends "
-    "primarily on last-year policies or their persistence, and not at all "
-    "on length of service or overall earnings"
+    "received after the agreement ends; no services for the company after "
+    "termination and before the year closes; a covenant not to compete for "
+    "at least one year; the amount depends primarily on last-year policies "
+    "or their persistence, and not at all on length of service or overall "
+    "earnings"
 )
 SERVICE_LENGTH_TERMS = "an amount that grows with length of service"
 TERMINATION_PAYMENTS = {
@@ -5666,6 +5936,15 @@ TERMINATION_PAYMENTS = {
         date(1995, 6, 1),
         SERVICE_LENGTH_TERMS,
         "covered",
+        "residual",
+    ),
+    # Review r5 M-2 (A4 2h): a payment received while the agreement still
+    # runs fails 411(j)(1) and reaches the residual.
+    "paid_before_agreement_ends_1999": (
+        date(1999, 6, 1),
+        "received before the agreement ends; otherwise as 411(j)(2)-(4) "
+        "describe",
+        "deferred",
         "residual",
     ),
     "service_length_paid_1999": (
