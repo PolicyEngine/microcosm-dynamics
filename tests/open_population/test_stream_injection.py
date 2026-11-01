@@ -1184,8 +1184,8 @@ def _relocate(tree: ast.AST, origin: ast.AST) -> None:
                 setattr(node, field, getattr(origin, field, None))
 
 
-def _annotation_nodes(tree: ast.AST) -> set[int]:
-    """Return the ids of every node inside an annotation."""
+def _annotations(tree: ast.AST) -> list[ast.expr]:
+    """List every annotation in a tree."""
     hints = []
     for node in ast.walk(tree):
         if isinstance(node, ast.arg | ast.AnnAssign) and node.annotation:
@@ -1193,7 +1193,78 @@ def _annotation_nodes(tree: ast.AST) -> set[int]:
         elif isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
             if node.returns is not None:
                 hints.append(node.returns)
-    return {id(item) for hint in hints for item in ast.walk(hint)}
+    return hints
+
+
+def _spelled(node: ast.AST, memo: _FoldMemo) -> ast.expr | None:
+    """Return the expression a node's text spells, if it spells one."""
+    text = _static_text(node, memo) if isinstance(node, ast.expr) else None
+    if text is None:
+        return None
+    try:
+        return ast.parse(text.strip(), mode="eval").body
+    except (SyntaxError, ValueError):
+        return None
+
+
+def _expanded(
+    call: ast.Call,
+    memo: _FoldMemo,
+    unexpanded: set[int],
+    depth: int,
+    anchor: ast.AST,
+) -> list[ast.Module]:
+    """Parse the literal code a call runs, nested code too.
+
+    The parsed tree takes the call's location. Code nested more than
+    ``_EMBED_DEPTH`` deep is not parsed: ``anchor``, a node the scan walks,
+    goes in ``unexpanded``, and the scan reports it as dynamic code.
+    """
+    text = _static_text(call.args[0], memo)
+    if text is None:
+        return []
+    try:
+        parsed = ast.parse(text)
+    except (SyntaxError, ValueError):
+        return []
+    if depth > _EMBED_DEPTH:
+        unexpanded.add(id(anchor))
+        return []
+    _relocate(parsed, call)
+    return [parsed, *_embedded(parsed, memo, unexpanded, depth + 1)]
+
+
+def _hint_code(
+    part: ast.expr,
+    hint: ast.expr,
+    memo: _FoldMemo,
+    unexpanded: set[int],
+    depth: int,
+) -> list[ast.Module]:
+    """Parse the statement suites a hint's code calls hold, nested too.
+
+    A literal that spells an expression is the hint checks' to read, so
+    the walk only follows it, one level deeper, for a suite inside. A code
+    call's other literal is code, as it is outside annotations. A spelled
+    part is no node the scan walks, so ``hint`` stands for it, and it goes
+    in ``unexpanded`` when such a part runs code the folder cannot read.
+    """
+    found = []
+    for node in ast.walk(part):
+        spelled = _spelled(node, memo)
+        if spelled is not None:
+            _relocate(spelled, hint)
+            found += _hint_code(spelled, hint, memo, unexpanded, depth + 1)
+        elif (
+            isinstance(node, ast.Call)
+            and node.args
+            and _code_call(node.func)
+            and _spelled(node.args[0], memo) is None
+        ):
+            if part is not hint and _static_text(node.args[0], memo) is None:
+                unexpanded.add(id(hint))
+            found += _expanded(node, memo, unexpanded, depth, hint)
+    return found
 
 
 def _embedded(
@@ -1202,35 +1273,23 @@ def _embedded(
     """Parse the literal code a module evaluates, nested code too.
 
     A literal passed to ``eval``, ``exec``, ``compile`` or ``ForwardRef``
-    is code the module runs, so the scan checks it as part of the module;
-    each parsed tree takes its call's location. Inside an annotation the
-    hint checks parse such literals instead, so they are skipped here.
-    Code nested more than ``_EMBED_DEPTH`` deep is not parsed: its call
-    goes in ``unexpanded``, and the scan reports it as dynamic code.
+    is code the module runs, so the scan checks it as part of the module.
+    Inside an annotation the hint checks read literals that spell an
+    expression, and ``_hint_code`` finds the rest.
     """
+    hints = _annotations(tree)
+    hinted = {id(item) for hint in hints for item in ast.walk(hint)}
     found = []
-    hinted = _annotation_nodes(tree)
     for node in ast.walk(tree):
-        if not (
+        if (
             isinstance(node, ast.Call)
             and node.args
             and _code_call(node.func)
             and id(node) not in hinted
         ):
-            continue
-        text = _static_text(node.args[0], memo)
-        if text is None:
-            continue
-        try:
-            parsed = ast.parse(text)
-        except (SyntaxError, ValueError):
-            continue
-        if depth > _EMBED_DEPTH:
-            unexpanded.add(id(node))
-            continue
-        _relocate(parsed, node)
-        found.append(parsed)
-        found += _embedded(parsed, memo, unexpanded, depth + 1)
+            found += _expanded(node, memo, unexpanded, depth, node)
+    for hint in hints:
+        found += _hint_code(hint, hint, memo, unexpanded, depth)
     return found
 
 
@@ -1325,32 +1384,41 @@ class _ModuleBindings:
         return path
 
     def module_path(self, node: ast.expr) -> str | None:
-        """Return the dotted path a name, attribute or import denotes."""
+        """Return the dotted path a name, attribute or import denotes.
+
+        Attributes and literal ``sys.modules`` reads are unwound in a loop,
+        so a long chain cannot exhaust recursion.
+        """
+        links: list[str | ast.expr] = []
+        while True:
+            if isinstance(node, ast.Attribute):
+                links.append(node.attr)
+                node = node.value
+            elif (
+                isinstance(node, ast.Subscript)
+                and isinstance(node.value, ast.Attribute)
+                and node.value.attr == "modules"
+            ):
+                links.append(node.slice)
+                node = node.value.value
+            else:
+                break
+        path = None
         if isinstance(node, ast.Name):
             path = self.modules.get(node.id)
-            return None if path is None else self._resolve(path)
-        if isinstance(node, ast.Attribute):
-            # Unwound in a loop, so a long chain cannot exhaust recursion.
-            attributes = []
-            while isinstance(node, ast.Attribute):
-                attributes.append(node.attr)
-                node = node.value
-            path = self.module_path(node)
-            for attribute in reversed(attributes):
+            path = None if path is None else self._resolve(path)
+        elif isinstance(node, ast.Call):
+            path = self._imported(node)
+        for link in reversed(links):
+            if isinstance(link, str):
                 if not path:
                     return None
-                path = self._resolve(f"{path}.{attribute}")
-            return path
-        if isinstance(node, ast.Call):
-            return self._imported(node)
-        if (
-            isinstance(node, ast.Subscript)
-            and isinstance(node.value, ast.Attribute)
-            and node.value.attr == "modules"
-            and self.module_path(node.value.value) == "sys"
-        ):
-            return self.text(node.slice)
-        return None
+                path = self._resolve(f"{path}.{link}")
+            elif path != "sys":
+                return None
+            else:
+                path = self.text(link)
+        return path
 
     def _imported(self, node: ast.Call) -> str | None:
         """Name the module a literal ``import_module`` or ``__import__`` gives."""
@@ -1866,12 +1934,8 @@ class _ModuleBindings:
         index = 0
         while index < len(parts) and len(parts) < _HINT_PARTS:
             for node in ast.walk(parts[index]):
-                text = self.text(node) if isinstance(node, ast.expr) else None
-                if text is None:
-                    continue
-                try:
-                    parsed = ast.parse(text.strip(), mode="eval").body
-                except (SyntaxError, ValueError):
+                parsed = _spelled(node, self.memo)
+                if parsed is None:
                     continue
                 _relocate(parsed, hint)
                 for item in ast.walk(parsed):
@@ -2061,6 +2125,9 @@ class _ModuleBindings:
 
     def _kind(self, node: ast.AST) -> str | None:
         """Name the specific check ``node`` makes, if it makes one."""
+        if id(node) in self.unexpanded:
+            # Code nested past the depth the scan parses may name anything.
+            return "dynamic-code"
         if isinstance(node, ast.expr) and not isinstance(
             node, ast.Name | ast.Attribute
         ):
@@ -2154,14 +2221,10 @@ class _ModuleBindings:
         if (
             _code_call(node.func)
             and node.args
-            and (
-                id(node) in self.unexpanded
-                or (self.text(node.args[0]) is None and self.binds_tracked())
-            )
+            and self.text(node.args[0]) is None
+            and self.binds_tracked()
         ):
-            # Code the folder cannot read may name what the module binds,
-            # and code nested past the depth the scan parses may name
-            # anything.
+            # Code the folder cannot read may name what the module binds.
             return "dynamic-code"
         if (
             name in _INTROSPECTION_CALLS
@@ -2405,13 +2468,21 @@ def _inert(node: ast.AST) -> bool:
     return True
 
 
+def _is_hint(parent: ast.AST, field: str) -> bool:
+    """Return whether this child of ``parent`` is an annotation."""
+    if isinstance(parent, ast.FunctionDef | ast.AsyncFunctionDef):
+        return field == "returns"
+    return isinstance(parent, ast.arg | ast.AnnAssign) and (
+        field == "annotation"
+    )
+
+
 def _folds_through(parent: ast.AST, field: str) -> bool:
-    """Return whether the folder or a hint parser reads this child.
+    """Return whether the folder reads this child.
 
     It reads operands, subscripts, f-string parts, method receivers, the
     arguments of the calls it folds and of the calls whose literal is
-    code, the items of a container it reads, and annotations, whose
-    strings are parsed as code.
+    code, and the items of a container it reads.
     """
     if isinstance(
         parent,
@@ -2425,14 +2496,9 @@ def _folds_through(parent: ast.AST, field: str) -> bool:
         | ast.Tuple
         | ast.List
         | ast.Set
-        | ast.Dict
-        | ast.arg,
+        | ast.Dict,
     ):
         return True
-    if isinstance(parent, ast.FunctionDef | ast.AsyncFunctionDef):
-        return field == "returns"
-    if isinstance(parent, ast.AnnAssign):
-        return field == "annotation"
     if isinstance(parent, ast.Call) and field in {"args", "keywords"}:
         return (
             _call_name(parent.func)
@@ -2445,32 +2511,34 @@ def _prune(tree: ast.Module) -> ast.Module:
     """Replace each inert literal container with ``None``, in place.
 
     No check reports or binds anything from an inert container, and none
-    is pruned where the folder or a hint parser could read it, so the hits
-    are unchanged (a differential test pins that); the data modules' large
-    tables stop costing time and memory.
+    is pruned where the folder could read it or in an annotation, whose
+    strings are parsed as code, so the hits are unchanged (a differential
+    test pins that); the data modules' large tables stop costing time and
+    memory.
     """
-    stack: list[tuple[ast.AST, bool]] = [(tree, False)]
+    stack: list[tuple[ast.AST, bool, bool]] = [(tree, False, False)]
     while stack:
-        node, inherited = stack.pop()
+        node, inherited, annotated = stack.pop()
         for field, value in ast.iter_fields(node):
             items = value if isinstance(value, list) else [value]
             for index, item in enumerate(items):
                 if not isinstance(item, ast.AST):
                     continue
+                hinted = annotated or _is_hint(node, field)
                 # A keyword's value is read as its call's arguments are.
                 read = (
                     inherited
                     if isinstance(node, ast.keyword)
                     else _folds_through(node, field)
                 )
-                if not read and _inert(item):
+                if not (read or hinted) and _inert(item):
                     stub = ast.copy_location(ast.Constant(None), item)
                     if isinstance(value, list):
                         value[index] = stub
                     else:
                         setattr(node, field, stub)
                 else:
-                    stack.append((item, read))
+                    stack.append((item, read, hinted))
     return tree
 
 
@@ -3903,6 +3971,252 @@ def test_scan_parses_five_levels_of_literal_code_and_flags_deeper(depth):
     )
 
 
+_SUITE = "global f\ndef f(x):\n    return isinstance(x, R)\n"
+# Each reads an annotation, which runs the code call in it. R is an alias,
+# so the hint names nothing the read itself would report.
+_FORCED_HINTS = {
+    "class": "class C:\n    v: {}\nC.__annotations__\n",
+    "argument": "def g(v: {}):\n    pass\ng.__annotations__\n",
+    "return": "def g() -> {}:\n    pass\ng.__annotations__\n",
+}
+
+
+def _wrapped(code, depth):
+    """Nest ``code`` in ``depth`` literal execs."""
+    for _ in range(depth):
+        code = f"exec({code!r})"
+    return code
+
+
+@pytest.mark.parametrize("depth", (1, 5, 6, 7))
+@pytest.mark.parametrize("place", tuple(_FORCED_HINTS))
+def test_scan_reads_statement_suites_an_annotation_runs(place, depth):
+    """A suite in a hint counts to five levels, as one in a statement does.
+
+    Every outer literal here spells an expression, and only the innermost
+    is a suite. Each module is a working check once its hint is read, so
+    the scan reports it as the check, or as dynamic code past five levels.
+    """
+    hint = _FORCED_HINTS[place].format(_wrapped(_SUITE, depth))
+    text = f"{_IMPORT} as R\n{hint}"
+    assert _answers(text) == [True, False]
+    line = 3 if place == "class" else 2
+    kind = "isinstance" if depth <= 5 else "dynamic-code"
+    for prune in (True, False):
+        hits = scan_sources([_invented(text)], prune=prune)
+        assert [(hit.line, hit.kind) for hit in hits] == [
+            (line, kind)
+        ], describe(hits)
+
+
+_RUN_SUITE = _wrapped(_SUITE, 1)
+_RUN_DEEP_SUITE = _wrapped(_SUITE, 6)
+_ANNOTATED_SUITE = f"class C:\n    v: {_RUN_SUITE}\nC.__annotations__\n"
+_TRUSTED_HINT = f"def g(v: R, w: {_RUN_SUITE}):\n    pass\ng.__annotations__\n"
+# Working checks an annotation hides, the hits they give, and whether the
+# forcing read runs them. Line 1 imports the registry as R.
+HINT_CODE_CASES = {
+    "a folded literal": (
+        f"class C:\n    v: exec({_SUITE[:9]!r} + {_SUITE[9:]!r})\n"
+        "C.__annotations__\n",
+        [(3, "isinstance")],
+    ),
+    "compiled code": (
+        f"class C:\n    v: exec(compile({_SUITE!r}, 'f', 'exec'))\n"
+        "C.__annotations__\n",
+        [(3, "dynamic-code"), (3, "isinstance")],
+    ),
+    "an expression literal around the suite": (
+        f"class C:\n    v: eval({_RUN_SUITE!r})\nC.__annotations__\n",
+        [(3, "isinstance")],
+    ),
+    "a string hint": (
+        f"import typing\ndef g(v: {_RUN_SUITE!r}):\n    pass\n"
+        "typing.get_type_hints(g)\n",
+        [(3, "isinstance")],
+    ),
+    "a string hint six levels deep": (
+        f"import typing\ndef g(v: {_RUN_DEEP_SUITE!r}):\n    pass\n"
+        "typing.get_type_hints(g)\n",
+        [(3, "dynamic-code")],
+    ),
+    "a string hint running code the folder cannot read": (
+        f"import typing\nS = {_SUITE!r}\ndef g(v: 'exec(S)'):\n    pass\n"
+        "typing.get_type_hints(g)\n",
+        [(4, "dynamic-code")],
+    ),
+    "a keyword-only argument": (
+        f"def g(*, v: {_RUN_SUITE}):\n    pass\ng.__annotations__\n",
+        [(2, "isinstance")],
+    ),
+    "a starred argument": (
+        f"def g(*v: {_RUN_SUITE}):\n    pass\ng.__annotations__\n",
+        [(2, "isinstance")],
+    ),
+    "a coroutine": (
+        f"async def g(v: {_RUN_SUITE}):\n    pass\ng.__annotations__\n",
+        [(2, "isinstance")],
+    ),
+    "an annotation in literal code": (
+        f"exec({_ANNOTATED_SUITE!r})\n",
+        [(2, "isinstance")],
+    ),
+    "a trusted function's hint": (
+        _TRUSTED_HINT,
+        [(2, "isinstance"), (4, "annotation-read")],
+    ),
+    "a trusted function's hint at the sixth level": (
+        f"{_wrapped(_TRUSTED_HINT, 5)}\n",
+        [(2, "dynamic-code")],
+    ),
+    "a literal under a call that does not fold": (
+        f"class C:\n    v: (lambda s=[{_RUN_SUITE!r}]: eval(s[0]))()\n"
+        "C.__annotations__\n",
+        [(3, "dynamic-code"), (3, "isinstance")],
+    ),
+}
+
+
+@pytest.mark.parametrize("case", tuple(HINT_CODE_CASES))
+def test_scan_reads_code_an_annotation_hides(case):
+    """Each case is a working check, and both scans report it alike."""
+    body, expected = HINT_CODE_CASES[case]
+    text = f"{_IMPORT} as R\n{body}"
+    assert _answers(text) == [True, False]
+    for prune in (True, False):
+        hits = scan_sources([_invented(text)], prune=prune)
+        assert [(hit.line, hit.kind) for hit in hits] == expected, describe(
+            hits
+        )
+
+
+@pytest.mark.parametrize(
+    "hint",
+    (
+        "exec('pass')",
+        "exec('x = 1')",
+        "exec(code)",
+        "eval('int')",
+        "'int'",
+        "eval('exec(\"pass\")')",
+    ),
+)
+def test_scan_trusts_code_in_a_hint_that_reaches_no_class(hint):
+    """A hint's code call alone reports nothing in a module binding none."""
+    assert scan_sources([_invented(f"def g(v: {hint}):\n    pass\n")]) == ()
+
+
+def test_scan_leaves_expression_literals_in_hints_to_the_hint_checks():
+    """A trusted hint stays trusted: only a suite counts as code."""
+    text = (
+        f"{_REGISTRY_IMPORT}"
+        "from typing import ForwardRef\n"
+        "def g(v: ForwardRef('ProjectionRNGRegistry')):\n    pass\n"
+        "def h(v: eval('ProjectionRNGRegistry')):\n    pass\n"
+    )
+    assert scan_sources([_invented(text)]) == ()
+
+
+def test_scan_reads_a_suite_in_a_hint_as_it_reads_one_in_a_statement():
+    """An annotation runs a literal suite as an ``exec`` statement does.
+
+    So the hint gives every check the statement gives. The catch-all's
+    name-string hits do not carry over: it reads the string in a statement
+    and skips it in a trusted annotation.
+    """
+
+    def checks(text):
+        hits = scan_sources([_invented(text)])
+        return {
+            hit
+            for hit in hits
+            if hit.kind not in {"class-name-string", "module-name-string"}
+        }
+
+    texts = [text for text, _ in SPELLINGS.values()]
+    texts += [_REGISTRY_IMPORT + body for body in NEGATIVE_BODIES]
+    for text in texts:
+        assert checks(f"exec({text!r})\n") <= checks(
+            f"def g(v: exec({text!r})):\n    pass\n"
+        )
+
+
+def _recursive_module_path(scope, node):
+    """Follow a chain by recursion, which only a short chain survives."""
+    if isinstance(node, ast.Name):
+        path = scope.modules.get(node.id)
+        return None if path is None else scope._resolve(path)
+    if isinstance(node, ast.Attribute):
+        path = _recursive_module_path(scope, node.value)
+        return scope._resolve(f"{path}.{node.attr}") if path else None
+    if isinstance(node, ast.Call):
+        return scope._imported(node)
+    if (
+        isinstance(node, ast.Subscript)
+        and isinstance(node.value, ast.Attribute)
+        and node.value.attr == "modules"
+        and _recursive_module_path(scope, node.value.value) == "sys"
+    ):
+        return scope.text(node.slice)
+    return None
+
+
+_PATH_BASES = st.sampled_from(
+    [
+        "sys",
+        "os",
+        "engine",
+        "rng",
+        "unbound",
+        "__import__('sys')",
+        "__import__('os')",
+        "importlib.import_module('sys')",
+        "(lambda: sys)()",
+        "values[0]",
+    ]
+)
+_PATH_LINKS = st.lists(
+    st.sampled_from(
+        [
+            ".modules['sys']",
+            ".modules['os']",
+            ".modules['']",
+            ".modules[key]",
+            ".modules['populace_dynamics.engine.rng']",
+            ".modules",
+            ".path",
+            ".rng",
+            ".ProjectionRNGRegistry",
+            "['sys']",
+            ".other['sys']",
+            "()",
+        ]
+    ),
+    max_size=8,
+)
+
+
+@settings(max_examples=500, deadline=None)
+@given(base=_PATH_BASES, links=_PATH_LINKS)
+def test_module_path_agrees_with_a_recursive_walk(base, links):
+    """Unwinding a chain changes no path, and keeps its determinism."""
+    source = _invented(
+        "import importlib\nimport os\nimport sys\n"
+        "import populace_dynamics.engine as engine\n"
+        "from populace_dynamics.engine import rng\n"
+    )
+    scope = _ModuleBindings(source, set(), set(), {}, _FoldMemo(source.path))
+    scope.bind(
+        [
+            node
+            for node in ast.walk(_parse(source))
+            if isinstance(node, _BINDING_NODES)
+        ]
+    )
+    chain = ast.parse(base + "".join(links), mode="eval").body
+    assert scope.module_path(chain) == _recursive_module_path(scope, chain)
+
+
 _CHAIN = 3000
 _RUN_ANY = "isinstance(x, ProjectionRNGRegistry) if x else x"
 # Checks inside, or next to, chains 3000 links long. The recursive walks
@@ -3951,6 +4265,22 @@ LONG_CHAINS = {
         f"{_IMPORT}\ndef f(x):\n    return "
         + "not " * _CHAIN
         + "isinstance(x, ProjectionRNGRegistry)  # check\n",
+        "isinstance",
+    ),
+    # A link of these holds two nodes, so half as many reach the same depth.
+    "a chain of sys.modules reads": (
+        f"{_IMPORT}\nimport sys\nSAME = sys"
+        + ".modules['sys']" * (_CHAIN // 2)
+        + "\ndef f(x):\n"
+        "    return isinstance(x, ProjectionRNGRegistry)  # check\n",
+        "isinstance",
+    ),
+    "a chain of sys.modules reads to the class": (
+        "import sys\nimport populace_dynamics.engine.rng\n"
+        "def f(x):\n    return isinstance(x, sys"
+        + ".modules['sys']" * (_CHAIN // 2)
+        + ".modules['populace_dynamics.engine.rng'].ProjectionRNGRegistry)"
+        "  # check\n",
         "isinstance",
     ),
 }
@@ -4017,6 +4347,9 @@ _LITERAL_PLACES = (
     + "    b = ''.join({0}) == type(x).__name__ or ({0},)[0] == x\n"
     + "    c = '%s' % ({0},) == '{{}}'.format({0}) == str({0}).lower()\n"
     + "    return a or b or c or g(key={0})\n"
+    + "class K:\n"
+    + "    v: g({0})\n"
+    + "    w: (lambda y={0}: y)()\n"
 )
 
 
@@ -4037,7 +4370,7 @@ def test_pruning_leaves_scans_unchanged_for_any_literal(literal):
 
     Each generated literal is placed in every position a check could read
     it from: a binding, a container beside the class, a listing, a
-    default, a loop, a comparison, a type check and a call.
+    default, a loop, a comparison, a type check, a call and an annotation.
     """
     text = _LITERAL_PLACES.format(repr(literal))
     pruned = scan_sources([_invented(text)])
