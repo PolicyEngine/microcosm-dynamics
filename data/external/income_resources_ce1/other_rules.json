@@ -60,6 +60,12 @@
             "agricultural_employee_cash",
             "agricultural_time_days"
           ]
+        },
+        "all_cash_covered_when_test_met": {
+          "threshold_ids": [
+            "agricultural_employee_cash",
+            "agricultural_time_days"
+          ]
         }
       },
       "effective_basis": "payment_date",
@@ -231,6 +237,20 @@
         "authority": "SSA POMS RS 01402.020",
         "location": "D.2, equivalent to cash",
         "quote": "Although Section 209(a)(7)(A) of the Act excludes from the definition of wages remuneration paid in any medium other than cash for agricultural labor, if a bona fide transfer of the noncash medium from the employer to the employee has not occurred and the transaction is, in economic reality, equivalent to a payment in cash, the wage exclusion does not apply."
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+        "location": "409(a)(7)(B)",
+        "quote": "except that clause (ii) shall not apply in determining whether remuneration paid to an employee constitutes \u201cwages\u201d under this section if such employee (I) is employed as a hand harvest laborer"
+      },
+      {
+        "capture": "poms_rs_01402025.html",
+        "sha256": "de0c04135c4b30f85f395607ee4c84700ae70ea6a5620673fef1259fc1e59acf",
+        "authority": "POMS RS 01402.025",
+        "location": "seasonal agricultural employees",
+        "quote": "we exclude cash payments of less than $150 from wages to a seasonal agricultural employee"
       }
     ],
     "trigger_facts": [
@@ -273,6 +293,23 @@
             "agricultural_employee_cash",
             "agricultural_employer_payroll"
           ]
+        },
+        "all_cash_covered_when_test_met": {
+          "threshold_ids": [
+            "agricultural_employee_cash",
+            "agricultural_employer_payroll"
+          ]
+        },
+        "employer_paid_employee_fica_included_in_wages": {
+          "not_a_coverage_condition": "42 U.S.C. 409(a)(5)(A) takes the employee tax an employer pays without deduction out of wages, and that tax falls only on pay the cash tests already make wages (IRS Pub. 51 (2023): all farm cash wages are taxed \"if either of the two tests below is met\"). It sets the wage amount (Dan's box 3 shows $1,000.00, box 1 $1,076.50), not which case or residual applies."
+        },
+        "seasonal_exception_facts": {
+          "cases": {
+            "seasonal_hand_harvest_under_150": [
+              "agricultural_service",
+              "amount"
+            ]
+          }
         }
       },
       "effective_basis": "payment_date",
@@ -487,8 +524,18 @@
         "description": "POMS RS 01402.020 A: before SSA Ruling 95-3P, published August 7, 1995, SSA excluded noncash transfers from wages."
       },
       {
-        "case_id": "cash_equivalent_transfer_from_1995_08_07",
+        "case_id": "seasonal_hand_harvest_under_150",
         "precedence": 2,
+        "when": {
+          "agricultural_service": "employed as a hand harvest laborer and paid on a piece rate basis in an operation which has been, and is customarily and generally recognized as having been, paid on a piece rate basis in the region of employment; commutes daily from his permanent residence to the farm on which he is so employed; and has been employed in agriculture less than 13 weeks during the preceding calendar year",
+          "amount": "cash remuneration paid by the employer in the calendar year for agricultural labor is less than $150"
+        },
+        "consequence": "noncovered",
+        "description": "409(a)(7)(B): the $2,500 employer-expenditure test \"shall not apply in determining whether remuneration paid to an employee constitutes \u201cwages\u201d under this section if such employee (I) is employed as a hand harvest laborer\" and meets the piece-rate, commuting and 13-week conditions; POMS RS 01402.025 excludes such an employee's cash payments of less than $150. A seasonal worker paid $150 or more takes the residual, where the $150 test passes."
+      },
+      {
+        "case_id": "cash_equivalent_transfer_from_1995_08_07",
+        "precedence": 3,
         "when": {
           "services_performed_date": "on or after 1995-08-07",
           "noncash_transfer_cash_equivalence": true,
@@ -502,7 +549,7 @@
       },
       {
         "case_id": "genuine_noncash_with_dominion",
-        "precedence": 3,
+        "precedence": 4,
         "when": {
           "cash_remuneration": "remuneration paid in any medium other than cash, including lodging, food, clothing, and agricultural or horticultural commodities such as livestock, grain and milk products"
         },
@@ -743,6 +790,16 @@
       ],
       "condition_cases": {
         "arrangement_requires_all": {
+          "cases": {
+            "qualifying_sharefarmer_arrangement": [
+              "agricultural_share_arrangement"
+            ]
+          }
+        },
+        "self_employment_threshold_scope": {
+          "not_a_coverage_condition": "Says the 411(b)(2) $400 floor (\"if such net earnings for the taxable year are less than $400\") applies to the year's whole net earnings from self-employment, which the self-employment families test with threshold other_net_earnings_minimum (person_year). This row tests no amount; its covered case hands the sharefarming earnings to that unit."
+        },
+        "wage_employment_excluded": {
           "cases": {
             "qualifying_sharefarmer_arrangement": [
               "agricultural_share_arrangement"
@@ -1803,7 +1860,15 @@
             "2014"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "repeal_savings_requires_pre_enactment_item_and_effect_on_later_tax_liability": {
+          "not_a_coverage_condition": "Records the savings clause of Pub. L. 113-295 section 221(b)(2), which keeps the old treatment only of a \"transaction occurring before the date of the enactment\" or of property or an item from before it. This service-date row starts on the 2014-12-19 enactment date, so every service it classifies is post-enactment; earlier service belongs to communist_organization_service_1968."
+        },
+        "specific_exclusion_repealed": {
+          "not_a_coverage_condition": "Describes what the covered residual already does: Pub. L. 113-295 section 221(a)(99)(C)(ii) amends section 210(a) \"by striking paragraph (17)\", effective on enactment under section 221(b)(1), so this family excludes no service in a window that starts on that date."
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2198,6 +2263,9 @@
       "condition_cases": {
         "rounding": {
           "not_a_coverage_condition": "42 U.S.C. 409(c) optional rounding of each cash payment changes the amount counted, not whether the service is covered."
+        },
+        "employer_paid_employee_fica_included_in_wages": {
+          "not_a_coverage_condition": "42 U.S.C. 409(a)(5)(A) takes the employee tax an employer pays without deduction out of wages, and below the annual cash threshold \"neither you nor your employee will owe social security or Medicare tax\" (IRS Pub. 926 (2026)). It sets the wage amount of pay already covered (\"your employee's wages each payday are $100\"), not which case or residual applies."
         }
       },
       "effective_basis": "payment_date",
@@ -2403,7 +2471,16 @@
             "1994"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "agreement_has_no_exclusion": {
+          "cases": {
+            "agreement_without_election_exclusion": [
+              "section_218_position"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2635,6 +2712,15 @@
           "quote": "with respect to remuneration paid after December 31, 1977"
         },
         "axis_exception": "The family keeps the service-date axis because its 1991-07-02 boundary keys on service performed after July 1, 1991 (410(a)(7)(F)); this boundary keys on remuneration paid after 1977, so 1977 service paid in 1978 must be classified by its payment date."
+      },
+      "condition_cases": {
+        "agreement_has_no_exclusion": {
+          "cases": {
+            "agreement_without_election_exclusion": [
+              "section_218_position"
+            ]
+          }
+        }
       }
     },
     "worked_examples": [],
@@ -2928,7 +3014,16 @@
             "1994"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "agreement_has_no_exclusion": {
+          "cases": {
+            "agreement_without_election_exclusion": [
+              "section_218_position"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3233,6 +3328,15 @@
           "location": "Effective Date of 1994 Amendment note, Pub. L. 103-296 section 303(e)",
           "quote": "Pub. L. 103\u2013296, title III, \u00a7 303(e) , Aug. 15, 1994 , 108 Stat. 1520 , provided that: \u201cThe amendments made by subsections (a), (b), and (c) [amending this section, section 418 of this title , and section 3121 of Title 26 , Internal Revenue Code ] shall apply with respect to service performed on or after January 1, 1995 .\u201d"
         }
+      },
+      "condition_cases": {
+        "agreement_has_no_exclusion": {
+          "cases": {
+            "agreement_without_election_exclusion": [
+              "section_218_position"
+            ]
+          }
+        }
       }
     },
     "worked_examples": [],
@@ -3485,7 +3589,38 @@
         }
       ],
       "effective_basis": "payment_date",
-      "effective_basis_description": "Pub. L. 100-203, as the 42 U.S.C. 410 notes summarize it, applies \"with respect to remuneration paid after Dec. 31, 1987\"."
+      "effective_basis_description": "Pub. L. 100-203, as the 42 U.S.C. 410 notes summarize it, applies \"with respect to remuneration paid after Dec. 31, 1987\".",
+      "condition_cases": {
+        "child_parent_age_exclusion": {
+          "cases": {
+            "child_under_21": [
+              "family_service"
+            ]
+          }
+        },
+        "domestic_parent_exception": {
+          "cases": {
+            "parent_domestic_care_exception": [
+              "family_service",
+              "services_performed_date"
+            ]
+          }
+        },
+        "parent_child_nonbusiness_excluded": {
+          "cases": {
+            "parent_for_child_nonbusiness_or_domestic": [
+              "family_service"
+            ]
+          }
+        },
+        "spouse_trade_business_excluded": {
+          "cases": {
+            "spouse_employee": [
+              "family_service"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3710,7 +3845,51 @@
       ],
       "parent_child_trade_business_excluded": false,
       "effective_basis": "payment_date",
-      "effective_basis_description": "Pub. L. 100-203, as the 42 U.S.C. 410 notes summarize it, applies \"with respect to remuneration paid after Dec. 31, 1987\"."
+      "effective_basis_description": "Pub. L. 100-203, as the 42 U.S.C. 410 notes summarize it, applies \"with respect to remuneration paid after Dec. 31, 1987\".",
+      "condition_cases": {
+        "child_parent_age_exclusion": {
+          "cases": {
+            "child_under_18": [
+              "family_service"
+            ]
+          }
+        },
+        "child_parent_nonbusiness_domestic_age_exclusion": {
+          "cases": {
+            "child_under_21_nonbusiness_or_domestic": [
+              "family_service"
+            ]
+          }
+        },
+        "domestic_parent_exception": {
+          "cases": {
+            "parent_domestic_care_exception": [
+              "family_service"
+            ]
+          }
+        },
+        "parent_child_nonbusiness_excluded": {
+          "cases": {
+            "parent_for_child_nonbusiness_or_domestic": [
+              "family_service"
+            ]
+          }
+        },
+        "parent_child_trade_business_excluded": {
+          "cases": {
+            "parent_in_child_trade_or_business": [
+              "family_service"
+            ]
+          }
+        },
+        "spouse_trade_business_excluded": {
+          "cases": {
+            "spouse_in_trade_or_business": [
+              "family_service"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [
       {
@@ -4560,6 +4739,25 @@
               "fishing_catch_share_arrangement"
             ]
           }
+        },
+        "family_service_exclusion_first": {
+          "cases": {
+            "child_under_18_for_parent": [
+              "family_service"
+            ]
+          }
+        },
+        "wage_employment_excluded_when_arrangement_qualifies": {
+          "cases": {
+            "catch_share_1996_clarification": [
+              "historical_fica_treatment",
+              "fishing_catch_share_arrangement"
+            ],
+            "catch_share_payor_treated_as_fica": [
+              "historical_fica_treatment",
+              "fishing_catch_share_arrangement"
+            ]
+          }
         }
       },
       "effective_basis": "payment_date",
@@ -4945,6 +5143,37 @@
           }
         },
         "catch_share_conditions": {
+          "cases": {
+            "qualifying_catch_share_arrangement": [
+              "fishing_catch_share_arrangement"
+            ]
+          }
+        },
+        "amendment_applies_to_remuneration_paid_after": {
+          "not_a_coverage_condition": "States the row's window: Pub. L. 104-188 section 1116(a)(3)(A) applies the 1996 amendments \"to remuneration paid-- (i) after December 31, 1994\", and this payment-date row starts on 1995-01-01."
+        },
+        "cash_limit_per_trip": {
+          "cases": {
+            "qualifying_catch_share_arrangement": [
+              "fishing_catch_share_arrangement"
+            ]
+          }
+        },
+        "crew_test": {
+          "cases": {
+            "qualifying_catch_share_arrangement": [
+              "fishing_catch_share_arrangement"
+            ]
+          }
+        },
+        "family_service_exclusion_first": {
+          "cases": {
+            "child_under_18_for_parent": [
+              "family_service"
+            ]
+          }
+        },
+        "wage_employment_excluded_when_arrangement_qualifies": {
           "cases": {
             "qualifying_catch_share_arrangement": [
               "fishing_catch_share_arrangement"
@@ -5526,6 +5755,9 @@
               "foreign_government_service"
             ]
           }
+        },
+        "other_eligibility_rules_still_apply": {
+          "not_a_coverage_condition": "Restates what this family's covered outcomes already mean: the row excludes nothing beyond 410(a)(11)-(12), and the other families still apply (residual: \"Apply the other families\"), including the self-employment rules the us_citizen_in_united_states case hands the service to."
         }
       }
     },
@@ -5709,6 +5941,16 @@
             ],
             "foreign_craft_non_american_employer": [
               "american_employer"
+            ]
+          }
+        },
+        "clause_a_employment_test": {
+          "cases": {
+            "foreign_craft_noncitizen": [
+              "place_of_work"
+            ],
+            "foreign_craft_non_american_employer": [
+              "place_of_work"
             ]
           }
         }
@@ -5940,7 +6182,18 @@
             "1960"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "requires_all": {
+          "cases": {
+            "philippine_resident_h2_in_guam": [
+              "place_of_work",
+              "country_of_residence",
+              "visa_status"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -6302,6 +6555,13 @@
           "cases": {
             "designated_international_organization": [
               "international_organization_service"
+            ]
+          }
+        },
+        "transferred_federal_employee_exception": {
+          "cases": {
+            "transferred_federal_employee_410r": [
+              "federal_service"
             ]
           }
         }
@@ -7096,6 +7356,11 @@
           "location": "1994 amendment note, subsec. (a)(19)",
           "quote": "substituted \u201c(J), (M), or (Q)\u201d for \u201c(J), or (M)\u201d in two places"
         }
+      },
+      "condition_cases": {
+        "other_coverage_rules_required": {
+          "not_a_coverage_condition": "Directs the caller to the other families. Before Pub. L. 103-296 section 320 put \"(Q)\" into 410(a)(19), effective with the calendar quarter after August 15, 1994, no paragraph of 410(a) names Q-class service (POMS RS 01901.740 C.3 NOTE: \"Prior to October 1, 1994, individuals with a designation of Q are not exempt from Social Security coverage\"), so this family excludes nothing and the covered residual applies."
+        }
       }
     },
     "worked_examples": [],
@@ -7205,7 +7470,16 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "condition_cases": {
+        "requires_admission_purpose_service": {
+          "cases": {
+            "q_cultural_exchange_program_service": [
+              "assignment"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -7382,7 +7656,23 @@
             "1961"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "requires_admission_purpose_service": {
+          "cases": {
+            "f1_j1_admission_purpose_service": [
+              "statutory_student_service"
+            ]
+          }
+        },
+        "requires_nonresident_alien": {
+          "cases": {
+            "f1_j1_admission_purpose_service": [
+              "nonresident_alien_status"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -7552,7 +7842,12 @@
       "readings_agree_before": "1987-01-01",
       "visa_classes": [
         "M-1"
-      ]
+      ],
+      "condition_cases": {
+        "excluded_visa_classes": {
+          "not_a_coverage_condition": "Records that 410(a)(19) named only the F and J classes until Pub. L. 100-647 section 1001(d)(2)(E) substituted \"(F), (J), or (M)\" for \"(F) or (J)\". The nonresident_alien_service family decides F and J service (case f1_j1_admission_purpose_service); for this family's M-1 service the list means only that nothing is excluded in this window, which the covered residual gives."
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -7692,6 +7987,18 @@
       "m1_exclusion_start_by_reading": {
         "as_if_included_in_tra1986_section_123": "1987-01-01",
         "from_enactment_1988_11_10": "1988-11-10"
+      },
+      "condition_cases": {
+        "m1_exclusion_start_by_reading": {
+          "not_a_coverage_condition": "Records the start date each named alternative of case m1_admission_purpose_service_start_open gives (1987-01-01 or 1988-11-10). That case refuses for M-1 admission-purpose service throughout this row's 1987-01-01..1988-11-09 window, and nonresident_alien_vocational_service_1988_1110 applies the exclusion both readings share, so the dates decide nothing beyond the row windows."
+        },
+        "requires_admission_purpose_service": {
+          "cases": {
+            "m1_admission_purpose_service_start_open": [
+              "statutory_student_service"
+            ]
+          }
+        }
       }
     },
     "worked_examples": [],
@@ -7914,7 +8221,23 @@
           "quote": "PUBLIC LAW 100-647\u2014NOV. 10, 1988"
         }
       },
-      "enactment": "1988-11-10"
+      "enactment": "1988-11-10",
+      "condition_cases": {
+        "requires_admission_purpose_service": {
+          "cases": {
+            "m1_admission_purpose_service": [
+              "statutory_student_service"
+            ]
+          }
+        },
+        "requires_nonresident_alien_status": {
+          "cases": {
+            "m1_admission_purpose_service": [
+              "nonresident_alien_status"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -8369,7 +8692,16 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "condition_cases": {
+        "required_school_state_approval": {
+          "cases": {
+            "enrolled_student_nurse": [
+              "employer_school_nexus"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -8491,7 +8823,16 @@
             "1972"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "auxiliary_organization_included": {
+          "cases": {
+            "enrolled_student_at_employing_school": [
+              "employer_school_nexus"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -8793,6 +9134,30 @@
           "sha256": "5f1b43cd6b8560c81bade01a962bccebd89c69a3312c20be317ed4a9ff5091d0"
         },
         "operative": "act_1973_service_start"
+      },
+      "condition_cases": {
+        "auxiliary_organization_included": {
+          "cases": {
+            "enrolled_student_before_2024_08_15": [
+              "employer_school_nexus"
+            ],
+            "enrolled_student_from_2024_08_15": [
+              "employer_school_nexus"
+            ]
+          }
+        },
+        "current_poms_student_criteria": {
+          "cases": {
+            "enrolled_student_before_2024_08_15": [
+              "services_performed_date"
+            ],
+            "enrolled_student_from_2024_08_15": [
+              "services_performed_date",
+              "statutory_student_service",
+              "enrollment"
+            ]
+          }
+        }
       }
     },
     "worked_examples": [],
@@ -8933,6 +9298,13 @@
       "later_edition_reliance": {
         "status": "explicitly_labeled",
         "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year."
+      },
+      "condition_cases": {
+        "all_cash_tips_covered_when_test_met": {
+          "threshold_ids": [
+            "cash_tips_monthly"
+          ]
+        }
       }
     },
     "worked_examples": [],
@@ -9115,6 +9487,20 @@
               "historical_fica_treatment"
             ]
           }
+        },
+        "applies_to": {
+          "cases": {
+            "federally_recognized_council_member": [
+              "tribal_council_service",
+              "tribal_federal_recognition"
+            ]
+          }
+        },
+        "non_federally_recognized_tribes": {
+          "not_a_coverage_condition": "Names what the residual applies: POMS RS 01901.700 F makes all services for a non-federally recognized tribe, council members' included, covered employment, with the nonprofit rules for a tax-exempt tribe. federally_recognized_council_member requires a federally recognized tribe, so these workers fall to the covered residual and the other families."
+        },
+        "section_418a_agreement_statute_available": {
+          "not_a_coverage_condition": "Records history: section 218A (42 U.S.C. 418a) became law on September 20, 2018 (Pub. L. 115-243), after this row ends on 2018-09-19, so no agreement could be in force during the row. A later agreement's reach back into these years is decided by later_418a_retroactive_coverage."
         }
       }
     },
@@ -9342,6 +9728,19 @@
         },
         "non_federally_recognized_tribes": {
           "not_a_coverage_condition": "Names what the residual applies: POMS RS 01901.700 F covers an unrecognized tribe's council members, and no_section_418a_inclusion requires a federally recognized tribe, so they fall to the residual."
+        },
+        "agreement_scope": {
+          "cases": {
+            "section_418a_agreement_inclusion": [
+              "tribal_coverage_agreement"
+            ],
+            "no_section_418a_inclusion": [
+              "tribal_coverage_agreement"
+            ]
+          }
+        },
+        "section_418a_agreement_statute_available": {
+          "not_a_coverage_condition": "Records that 418a is law for the whole row: Pub. L. 115-243 was approved September 20, 2018, the row's start. Whether an agreement includes a given service is decided by section_418a_agreement_inclusion, section_418a_retroactive_inclusion and no_section_418a_inclusion."
         }
       }
     },

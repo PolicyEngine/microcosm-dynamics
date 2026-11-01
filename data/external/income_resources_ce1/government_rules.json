@@ -2157,7 +2157,12 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "The family uses the taxable-year axis because Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendment (411(i)) \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\". This row ends where Pub. L. 98-369 section 2603(e) begins the election, for \"service performed after December 31, 1983\"."
+      "effective_basis_description": "The family uses the taxable-year axis because Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendment (411(i)) \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\". This row ends where Pub. L. 98-369 section 2603(e) begins the election, for \"service performed after December 31, 1983\".",
+      "condition_cases": {
+        "employer_election_available": {
+          "not_a_coverage_condition": "The church employer election reaches only service performed after December 31, 1983 (Pub. L. 98-369 section 2603(e)). This row's residual defers earlier service to nonprofit_service; for a taxable year that began in 1983, the 1984 row's boundary_clause axis_exception routes service performed after 1983 to that row's cases."
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -2326,6 +2331,20 @@
           "quote": "Pub. L. 98\u2013369, div. B, title VI, \u00a7 2603(e) , July 18, 1984 , 98 Stat. 1130 , provided that: \u201cThe amendments made by this section [amending this section and section 411 of this title and sections 1402 and 3121 of Title 26 and enacting provisions set out as a note under section 3121 of Title 26 ] shall apply to service performed after December 31, 1983 .\u201d"
         },
         "axis_exception": "Pub. L. 98-369 section 2603(e) applies the church employer election amendments to service performed after December 31, 1983, while the family's 1986 boundary (411(i)) applies to remuneration paid or derived in taxable years beginning after Dec. 31, 1985, so the family keeps the taxable-year axis. For a calendar-year worker the first such year begins January 1, 1984; a fiscal-year worker whose taxable year began in 1983 classifies electing-church service performed after December 31, 1983 by this row's cases, and earlier service by the earlier row."
+      },
+      "condition_cases": {
+        "employer_election_available": {
+          "cases": {
+            "electing_church_nonministerial_service": [
+              "church_employee_service"
+            ]
+          }
+        },
+        "threshold_concept": {
+          "threshold_ids": [
+            "church_employee_minimum_historical"
+          ]
+        }
       }
     },
     "worked_examples": [],
@@ -2594,7 +2613,21 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendment (411(i)) \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\"."
+      "effective_basis_description": "Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendment (411(i)) \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\".",
+      "condition_cases": {
+        "employer_election_available": {
+          "cases": {
+            "electing_church_nonministerial_service": [
+              "church_employee_service"
+            ]
+          }
+        },
+        "threshold_concept": {
+          "threshold_ids": [
+            "church_employee_minimum"
+          ]
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -4297,7 +4330,12 @@
             "1983"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "other_exclusions_still_apply": {
+          "not_a_coverage_condition": "Says the other 410(a) exclusions, such as 410(a)(8)(A) for ministers and members of religious orders, still reach service that a waiver certificate covers. Their own families decide them: this row's covered and covered_above_threshold outcomes mean only that former 410(a)(8)(B) does not exclude the service, and its residual says \"apply the other families\"."
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -4609,7 +4647,12 @@
             "1983"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "other_exclusions_still_apply": {
+          "not_a_coverage_condition": "Says the other 410(a) exclusions, such as 410(a)(8)(A) for ministers and members of religious orders, still reach service that a waiver certificate covers. Their own families decide them: this row's covered and covered_above_threshold outcomes mean only that former 410(a)(8)(B) does not exclude the service, and its residual says \"apply the other families\"."
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -4889,6 +4932,11 @@
           "location": "Effective Date of 1983 Amendment note (Pub. L. 98-21 section 102(c))",
           "quote": "Amendment by section 102(a) of Pub. L. 98\u201321 effective with respect to service performed after Dec. 31, 1983"
         }
+      },
+      "condition_cases": {
+        "other_exclusions_still_apply": {
+          "not_a_coverage_condition": "Says the other 410(a) exclusions still reach nonprofit service after mandatory coverage begins. Their own families decide them (clergy_religious_service, electing_church_employee_service, which church_election_family names, student_service and the rest); this row's residual means only that the nonprofit family does not exclude the service and says \"apply the other families\"."
+        }
       }
     },
     "worked_examples": [],
@@ -5039,7 +5087,12 @@
           "historical_note_headings_verified_present": [],
           "amendment_year_entries_verified_present": []
         }
-      ]
+      ],
+      "condition_cases": {
+        "scope": {
+          "not_a_coverage_condition": "States the row's domain. 410(a)(9) excludes railroad service from OASDI employment, and POMS RS 01901.580 B sends coordination of railroad employment information with the Railroad Retirement Board to RS 01600.000, which no capture holds. The row's sources state no exception to the exclusion, so the remark on benefit coordination changes no outcome of case railroad_act_service."
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -5252,6 +5305,19 @@
             ],
             "retroactive_quarter_member_condition_failed": [
               "clergy_or_religious_exemption"
+            ]
+          }
+        },
+        "poverty_vow_self_employment_excluded": {
+          "cases": {
+            "vow_duties_without_election": [
+              "religious_order_service"
+            ],
+            "election_member_abroad_not_covered": [
+              "religious_order_service"
+            ],
+            "retroactive_quarter_member_condition_failed": [
+              "religious_order_service"
             ]
           }
         }
@@ -5634,6 +5700,26 @@
               "clergy_or_religious_exemption"
             ]
           }
+        },
+        "poverty_vow_self_employment_excluded": {
+          "cases": {
+            "vow_duties_without_election": [
+              "religious_order_service"
+            ],
+            "election_member_abroad_not_covered": [
+              "religious_order_service"
+            ],
+            "retroactive_quarter_member_condition_failed": [
+              "religious_order_service"
+            ]
+          }
+        },
+        "third_party_ordinary_employment_excluded_by_vow": {
+          "cases": {
+            "third_party_employment_outside_order": [
+              "religious_order_service"
+            ]
+          }
         }
       },
       "boundary_clause": {
@@ -5886,6 +5972,13 @@
               "industry"
             ]
           }
+        },
+        "scope": {
+          "cases": {
+            "no_section_218_agreement": [
+              "government_level"
+            ]
+          }
         }
       }
     },
@@ -6085,6 +6178,13 @@
           "cases": {
             "covered_transportation_service": [
               "industry"
+            ]
+          }
+        },
+        "scope": {
+          "cases": {
+            "no_section_218_agreement": [
+              "government_level"
             ]
           }
         }
@@ -6386,6 +6486,29 @@
           "cases": {
             "covered_transportation_service": [
               "industry"
+            ]
+          }
+        },
+        "mandatory_exclusions": {
+          "cases": {
+            "mandatory_rule_exclusions": [
+              "assignment"
+            ],
+            "mandatory_rule_election_worker": [
+              "election_work"
+            ],
+            "mandatory_rule_fee_basis_position": [
+              "public_office_fee_basis"
+            ]
+          }
+        },
+        "scope": {
+          "cases": {
+            "mandatory_nonmember_coverage": [
+              "government_level"
+            ],
+            "qualified_system_member_without_agreement": [
+              "government_level"
             ]
           }
         }

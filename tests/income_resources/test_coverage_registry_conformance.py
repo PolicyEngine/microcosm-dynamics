@@ -1937,6 +1937,21 @@ CASE_CONDITION_KEY = re.compile(
     r"(^|_)(conditions?|requires_all|requires?|required|any_of|"
     r"exceptions?|if_applies)$"
 )
+# Review r4 M-5: top-level keys that describe a scope (applies_to,
+# requires_*, *_excluded, non_*, *_scope, *_concept, *_exception, ...),
+# which the leaf-name pattern above missed (H-C's applies_to).
+SCOPE_KEY = re.compile(
+    r"^non_|(^|_)(applies|requires?|required|excluded|exclusions?|scope|"
+    r"concepts?|included|eligible|eligibility|disregarded|exceptions?|"
+    r"limits?|criteria|test|approval|repealed|removed|available)(_|$)"
+)
+SCOPE_KEY_EXEMPT = {
+    "effective_basis",
+    "effective_basis_description",
+    "evidence_only_boundaries",
+    "deferral_exceptions",
+    "threshold_id",
+}
 TIE_KINDS = {"cases", "threshold_ids", "not_a_coverage_condition"}
 
 
@@ -1946,24 +1961,34 @@ def condition_parameters(parameters):
     Named option records are readings, which the operative-reading checker
     covers, so they are skipped here.
     """
-    return {
+    leaves = {
         path[0]
         for path, _ in parameter_leaves(parameters)
         if path
         and not OPTION_RECORDS.search(path[0])
         and CASE_CONDITION_KEY.search(path[-1])
     }
+    scopes = {
+        key
+        for key in parameters
+        if key not in PARAMETER_EVIDENCE | SCOPE_KEY_EXEMPT
+        and not OPTION_RECORDS.search(key)
+        and SCOPE_KEY.search(key)
+    }
+    return leaves | scopes
 
 
 def condition_case_problems(row, threshold_ids):
-    """Condition parameters on a closed row with cases left untied.
+    """Condition and scope parameters on a closed row left untied.
+
+    A case-free row ties them to thresholds or to a reason (review r4 M-5).
 
     ``parameters.condition_cases`` maps each such key to one record:
     ``cases`` (case ID to the facts its ``when`` must carry),
     ``threshold_ids`` (thresholds the registry defines) or
     ``not_a_coverage_condition`` (the reason, in text).
     """
-    if row["open_reason"] is not None or not row["cases"]:
+    if row["open_reason"] is not None:
         return []
     parameters = row["parameters"]
     ties = parameters.get("condition_cases", {})
@@ -1983,7 +2008,7 @@ def condition_case_problems(row, threshold_ids):
         if kind not in TIE_KINDS:
             problems.append((key, f"tie kind {kind}"))
         elif kind == "cases":
-            if not value:
+            if not value or not row["cases"]:
                 problems.append((key, "no cases"))
             for case_id, facts in value.items():
                 if case_id not in when:
@@ -2002,7 +2027,10 @@ def test_condition_parameters_on_case_rows_name_their_cases():
     """Review r3 M1: the detector reaches rows that have cases.
 
     At ea599b92 no row recorded these ties, so it flagged all 32 rows it
-    reached then; se_community_income_1968_1979 gained cases since.
+    reached then; se_community_income_1968_1979 gained cases since. With
+    the scope keys and case-free rows of review r4 M-5 it flags 84 rows
+    (186 keys) there and 79 rows (149 keys) at fd5b7b2a, among them every
+    row the review's param_keys.txt lists.
     """
     raw = json.loads(REGISTRY_ARTIFACT.read_text())
     threshold_ids = {t["threshold_id"] for t in raw["thresholds"]}
@@ -2015,14 +2043,37 @@ def test_condition_parameters_on_case_rows_name_their_cases():
     tied = [
         row for row in raw["rules"] if "condition_cases" in row["parameters"]
     ]
-    assert len(tied) == 34
-    assert all(row["cases"] and row["open_reason"] is None for row in tied)
+    assert len(tied) == 89
+    assert all(row["open_reason"] is None for row in tied)
+    # H-C: the 2018 tribal row's scope parameter names the case that reads
+    # federal recognition.
+    tribal = next(
+        r
+        for r in raw["rules"]
+        if r["rule_id"] == "tribal_council_service_2018_0920"
+    )
+    assert tribal["parameters"]["condition_cases"]["applies_to"] == {
+        "cases": {
+            "no_section_418a_inclusion": [
+                "tribal_council_service",
+                "tribal_federal_recognition",
+            ]
+        }
+    }
 
 
 @settings(deadline=None)
 @given(
     st.sampled_from(
-        ["required_conditions", "exception", "notes", "if_applies"]
+        [
+            "required_conditions",
+            "exception",
+            "notes",
+            "if_applies",
+            "applies_to",
+            "non_recognized_groups",
+            "wage_employment_excluded",
+        ]
     ),
     st.sampled_from(
         [
@@ -2067,7 +2118,7 @@ def test_condition_case_checker_requires_a_tie(key, tie, with_cases, is_open):
     if tie is not None:
         row["parameters"]["condition_cases"] = {key: records[tie]}
     problems = condition_case_problems(row, {"INVENTED_threshold"})
-    if is_open or not with_cases:
+    if is_open:
         assert problems == []
         return
     flagged = key != "notes" and tie is None
@@ -2077,7 +2128,7 @@ def test_condition_case_checker_requires_a_tie(key, tie, with_cases, is_open):
         "unknown_threshold",
         "blank_reason",
         "two_records",
-    }
+    } or (not with_cases and tie in {"cases", "missing_fact"})
     assert bool(problems) == (flagged or bad)
 
 

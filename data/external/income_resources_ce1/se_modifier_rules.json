@@ -57,7 +57,19 @@
           },
           "evidence": "The April 1, 1996 edition of 20 CFR 404.1082 is the earliest captured edition stating the dealer-holdings, occupant-services and space-payment rules. The date is that edition's, not a change in the law."
         }
-      ]
+      ],
+      "condition_cases": {
+        "scope": {
+          "cases": {
+            "dealer_investment_or_speculative_holdings": [
+              "real_estate_dealer_status"
+            ],
+            "services_to_occupants_regulatory_detail": [
+              "services_to_occupants"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -319,6 +331,16 @@
               "real_estate_dealer_status"
             ]
           }
+        },
+        "rental_income_and_attributable_deductions_excluded": {
+          "cases": {
+            "real_estate_rentals": [
+              "rental_income"
+            ]
+          }
+        },
+        "scope": {
+          "not_a_coverage_condition": "Describes what the residual already does: a landlord's earnings other than rentals from real estate (or personal property leased with it) match no case and take the covered residual (\"Not rental income from real estate, so 411(a)(1) does not exclude it\")."
         }
       }
     },
@@ -476,7 +498,19 @@
         }
       ],
       "effective_basis": "payment_date",
-      "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule."
+      "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule.",
+      "condition_cases": {
+        "scope": {
+          "not_a_coverage_condition": "Describes what the residual already does: interest other than on a corporation's (or government's) bond, debenture, note, certificate or other evidence of indebtedness issued with interest coupons or in registered form matches no case and takes the covered residual (\"Not dividends or interest of the kinds 411(a)(2) names\")."
+        },
+        "stock_dividends_excluded": {
+          "cases": {
+            "specified_dividends": [
+              "dividend_or_interest_income"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -663,7 +697,22 @@
         }
       ],
       "effective_basis": "payment_date",
-      "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule."
+      "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule.",
+      "condition_cases": {
+        "obsolete_interest_exception_removed": {
+          "not_a_coverage_condition": "Records history: Pub. L. 95-600 section 703(j)(14)(D) struck the 1939 Code section 25(a) parenthetical, \"effective Oct. 4, 1976\" (42 U.S.C. 411 notes). This row starts that day and has no 25(a) case, so such interest meets specified_interest; se_passive_income_1968_1976 keeps the exception as interest_described_in_1939_code_25a."
+        },
+        "scope": {
+          "not_a_coverage_condition": "Describes what the residual already does: interest other than on a corporation's (or government's) bond, debenture, note, certificate or other evidence of indebtedness issued with interest coupons or in registered form matches no case and takes the covered residual (\"Not dividends or interest of the kinds 411(a)(2) names\")."
+        },
+        "stock_dividends_excluded": {
+          "cases": {
+            "specified_dividends": [
+              "dividend_or_interest_income"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -864,7 +913,19 @@
         }
       ],
       "effective_basis": "payment_date",
-      "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule."
+      "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule.",
+      "condition_cases": {
+        "scope": {
+          "not_a_coverage_condition": "Describes what the residual already does: interest other than on a corporation's (or government's) evidence of indebtedness matches no case and takes the covered residual; a corporate obligation outside registered form reaches the open obligation_not_in_registered_form case, and one in registered form reaches specified_interest_registered_form."
+        },
+        "stock_dividends_excluded": {
+          "cases": {
+            "specified_dividends": [
+              "dividend_or_interest_income"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -1056,7 +1117,15 @@
             "1960"
           ]
         }
-      ]
+      ],
+      "condition_cases": {
+        "income_tax_exclusion_disregarded": {
+          "not_a_coverage_condition": "Names the income-tax exclusion 411(a)(6) sets aside: a Puerto Rico resident computes net earnings \"without regard to the provisions of section 933\". Setting 933 aside excludes nothing, so it is what the covered residual already applies."
+        },
+        "scope": {
+          "not_a_coverage_condition": "States the row's reach: 411(a)(6) changes only how a Puerto Rico resident computes net earnings. Service exclusions and income-source or residence facts belong to the other families, which the covered residual sends the item to."
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -1212,7 +1281,20 @@
         }
       ],
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "411(b) works by taxable year, and Pub. L. 98-21 section 322(c), as the 26 U.S.C. 3121 notes give it, makes the section 433 exception \"effective for taxable years beginning on or after the date of the enactment of this Act [ Apr. 20, 1983 ]\"."
+      "effective_basis_description": "411(b) works by taxable year, and Pub. L. 98-21 section 322(c), as the 26 U.S.C. 3121 notes give it, makes the section 433 exception \"effective for taxable years beginning on or after the date of the enactment of this Act [ Apr. 20, 1983 ]\".",
+      "condition_cases": {
+        "scope": {
+          "cases": {
+            "territorial_resident": [
+              "citizenship",
+              "country_of_residence"
+            ],
+            "nonresident_alien_individual": [
+              "nonresident_alien_status"
+            ]
+          }
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -1406,6 +1488,22 @@
           "authority": "26 U.S.C. 3121 (LII capture, historical notes)",
           "location": "Pub. L. 98-21 section 322(c) effective-date note",
           "quote": "shall be effective for taxable years beginning on or after the date of the enactment of this Act [ Apr. 20, 1983 ]"
+        }
+      },
+      "condition_cases": {
+        "scope": {
+          "cases": {
+            "territorial_resident": [
+              "citizenship",
+              "country_of_residence"
+            ],
+            "section_433_agreement": [
+              "nonresident_alien_status"
+            ],
+            "nonresident_alien_individual": [
+              "nonresident_alien_status"
+            ]
+          }
         }
       }
     },
@@ -1642,6 +1740,16 @@
               "residence_period"
             ]
           }
+        },
+        "income_tax_exclusion_disregarded": {
+          "cases": {
+            "us_resident_entire_taxable_year": [
+              "residence_period"
+            ]
+          }
+        },
+        "scope": {
+          "not_a_coverage_condition": "Restates the residual: Pub. L. 92-603 section 124 disregards 911(a)(2) only \"In the case of an individual who has been a resident of the United States during the entire taxable year\" and says nothing for anyone else, so for a person who fails that condition the residual returns open."
         }
       },
       "effective_basis": "taxable_year_start",
@@ -1889,6 +1997,14 @@
           "authority": "42 USC 411, official 2024 United States Code section granule",
           "location": "Effective and Termination Dates of 1983 Amendment note (Pub. L. 98-21 section 323(c)(2))",
           "quote": "Amendment by section 323(b)(2)(A) of Pub. L. 98\u201321 applicable to taxable years beginning after Dec. 31, 1983"
+        }
+      },
+      "condition_cases": {
+        "income_tax_exclusion_disregarded": {
+          "not_a_coverage_condition": "Names the exclusion the covered residual disregards: 411(a)(10) reads \"The exclusion from gross income provided by section 911(a)(1) ... shall not apply\" with no condition, so every individual's 911(a)(1) amount stays in net earnings."
+        },
+        "scope": {
+          "not_a_coverage_condition": "Names questions other families decide: citizenship and residence through self_employment_nonresident_alien, which reads 411(b)'s nonresident-alien clause and its section 433 agreement exception (case section_433_agreement), and service coverage through the service families. This row's sources state no other agreement rule."
         }
       }
     },
@@ -2231,6 +2347,16 @@
               "tribal_fishing_qualified_entity"
             ]
           }
+        },
+        "excluded_income_reference": {
+          "cases": {
+            "section_7873_exempt_income": [
+              "tribal_fishing_rights_income"
+            ],
+            "section_7873c2_de_minimis_amount": [
+              "tribal_fishing_rights_income"
+            ]
+          }
         }
       },
       "de_minimis_rule": "26 U.S.C. 7873(c)(2)(A): a de minimis unrelated part of an amount derived through a qualified Indian entity shares the exemption when all the rest is exempt under 7873(a)(1)."
@@ -2515,7 +2641,12 @@
         }
       },
       "effective_basis": "taxable_year_start",
-      "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\"."
+      "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\".",
+      "condition_cases": {
+        "scope": {
+          "not_a_coverage_condition": "Names the one deduction 411(a)(15) disallows (\"The deduction under section 162(l) ... shall not be allowed\"); ordinary attributable trade or business deductions stay under self_employment_base_definition. The remark decides no outcome here."
+        }
+      }
     },
     "worked_examples": [],
     "rare_exclusion": null,
@@ -2632,6 +2763,11 @@
           "authority": "26 USC 162, official 2024 United States Code section granule",
           "location": "162(l)(4), as amended by Pub. L. 111-240 section 2042(a)",
           "quote": "for purposes of chapter 2 for taxable years beginning before January 1, 2010, or after December 31, 2010."
+        }
+      },
+      "condition_cases": {
+        "scope": {
+          "not_a_coverage_condition": "Limits the row to the 162(l) deduction, which 411(a)(15) disallows in every individual's computation (the row's case_free_basis); the other attributable trade or business deductions it mentions are computed by the base definition, so the scope names another family's concept and states no condition."
         }
       }
     },
@@ -2760,6 +2896,11 @@
           "authority": "26 USC 162, official 2024 United States Code section granule",
           "location": "Effective Date of 2010 Amendment note (Pub. L. 111-240 section 2042(b))",
           "quote": "Pub. L. 111\u2013240, title II, \u00a72042(b), Sept. 27, 2010, 124 Stat. 2560, provided that: \"The amendments made by this section [amending this section] shall apply to taxable years beginning after December 31, 2009.\""
+        }
+      },
+      "condition_cases": {
+        "named_concepts": {
+          "not_a_coverage_condition": "Names two computations. Coverage net earnings follow 411(a)(15), which Pub. L. 111-240 section 2042 did not amend, and the covered residual applies it. Section 2042(a) changed only 162(l)(4), the Title 26 self-employment tax base, which decides no coverage consequence of this family."
         }
       }
     },
@@ -2893,6 +3034,14 @@
           "authority": "42 USC 411, official 2024 United States Code section granule",
           "location": "411(f)",
           "quote": "In computing a partner's net earnings from self-employment for his taxable year which ends as a result of his death (but only if such taxable year ends within, and not with, the taxable year of the partnership), there shall be included"
+        }
+      },
+      "condition_cases": {
+        "excluded_partnership_period_begin": {
+          "not_a_coverage_condition": "Marks where the share 411(f) adds stops: it includes the share \"as is not attributable to an interest in the partnership during any period beginning on or after the first day of the first calendar month following the month in which such partner died\". The date sizes the amount added to the final-year computation, which the residual already states (\"through the month of death\"); it excludes no income from coverage, as case_free_basis records."
+        },
+        "scope": {
+          "not_a_coverage_condition": "States what the row does not do: 411(f) adds a share of the partnership's \"ordinary income or loss\" to the final year. Whether a capital item counts is decided by the self_employment_capital_gains_and_nol family (se_capital_gain_nol_1968_2026), not here."
         }
       }
     },

@@ -802,6 +802,12 @@
       "parameters": {
         "all_cash_covered_when_test_met": true,
         "condition_cases": {
+          "all_cash_covered_when_test_met": {
+            "threshold_ids": [
+              "agricultural_employee_cash",
+              "agricultural_time_days"
+            ]
+          },
           "coverage_any_of": {
             "threshold_ids": [
               "agricultural_employee_cash",
@@ -931,13 +937,23 @@
           }
         },
         {
+          "case_id": "seasonal_hand_harvest_under_150",
+          "consequence": "noncovered",
+          "description": "409(a)(7)(B): the $2,500 employer-expenditure test \"shall not apply in determining whether remuneration paid to an employee constitutes \u201cwages\u201d under this section if such employee (I) is employed as a hand harvest laborer\" and meets the piece-rate, commuting and 13-week conditions; POMS RS 01402.025 excludes such an employee's cash payments of less than $150. A seasonal worker paid $150 or more takes the residual, where the $150 test passes.",
+          "precedence": 2,
+          "when": {
+            "agricultural_service": "employed as a hand harvest laborer and paid on a piece rate basis in an operation which has been, and is customarily and generally recognized as having been, paid on a piece rate basis in the region of employment; commutes daily from his permanent residence to the farm on which he is so employed; and has been employed in agriculture less than 13 weeks during the preceding calendar year",
+            "amount": "cash remuneration paid by the employer in the calendar year for agricultural labor is less than $150"
+          }
+        },
+        {
           "case_id": "cash_equivalent_transfer_from_1995_08_07",
           "consequence": "covered_above_threshold",
           "description": "Apply the cash-wage tests to cash-equivalent transfers under POMS RS 01402.020 A and D.2-D.3. D.2 lifts the 409(a)(7)(A) noncash exclusion: \"if a bona fide transfer of the noncash medium from the employer to the employee has not occurred and the transaction is, in economic reality, equivalent to a payment in cash, the wage exclusion does not apply\".",
           "overrides": [
             "genuine_noncash_with_dominion"
           ],
-          "precedence": 2,
+          "precedence": 3,
           "when": {
             "noncash_transfer_cash_equivalence": true,
             "noncash_transfer_dominion_control": "employee did not obtain dominion and control; transfer is economically a cash payment",
@@ -948,7 +964,7 @@
           "case_id": "genuine_noncash_with_dominion",
           "consequence": "noncovered",
           "description": "409(a)(7)(A) excludes \"Remuneration paid in any medium other than cash for agricultural labor\", and POMS RS 01402.020 A counts \"lodging, food, clothing, agricultural or horticultural commodities\" among such in-kind payments. A bona fide commodity transfer and lodging or meals given in kind both stay outside agricultural cash wages. The two cash-equivalent cases rank above this one, so a transfer that is in economic reality a cash payment reaches them first.",
-          "precedence": 3,
+          "precedence": 4,
           "when": {
             "cash_remuneration": "remuneration paid in any medium other than cash, including lodging, food, clothing, and agricultural or horticultural commodities such as livestock, grain and milk products"
           }
@@ -993,6 +1009,13 @@
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
         },
         {
+          "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+          "capture": "lii_42_409.html",
+          "location": "409(a)(7)(B)",
+          "quote": "except that clause (ii) shall not apply in determining whether remuneration paid to an employee constitutes \u201cwages\u201d under this section if such employee (I) is employed as a hand harvest laborer",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
           "authority": "SSA POMS RS 01402.020",
           "capture": "poms_rs_01402020.html",
           "location": "A, in-kind payments",
@@ -1017,6 +1040,13 @@
           "capture": "poms_rs_01402025.html",
           "location": "Policy; statutory seasonal conditions",
           "sha256": "de0c04135c4b30f85f395607ee4c84700ae70ea6a5620673fef1259fc1e59acf"
+        },
+        {
+          "authority": "POMS RS 01402.025",
+          "capture": "poms_rs_01402025.html",
+          "location": "seasonal agricultural employees",
+          "quote": "we exclude cash payments of less than $150 from wages to a seasonal agricultural employee",
+          "sha256": "de0c04135c4b30f85f395607ee4c84700ae70ea6a5620673fef1259fc1e59acf"
         }
       ],
       "consequence": "covered_above_threshold",
@@ -1030,11 +1060,28 @@
       "parameters": {
         "all_cash_covered_when_test_met": true,
         "condition_cases": {
+          "all_cash_covered_when_test_met": {
+            "threshold_ids": [
+              "agricultural_employee_cash",
+              "agricultural_employer_payroll"
+            ]
+          },
           "coverage_any_of": {
             "threshold_ids": [
               "agricultural_employee_cash",
               "agricultural_employer_payroll"
             ]
+          },
+          "employer_paid_employee_fica_included_in_wages": {
+            "not_a_coverage_condition": "42 U.S.C. 409(a)(5)(A) takes the employee tax an employer pays without deduction out of wages, and that tax falls only on pay the cash tests already make wages (IRS Pub. 51 (2023): all farm cash wages are taxed \"if either of the two tests below is met\"). It sets the wage amount (Dan's box 3 shows $1,000.00, box 1 $1,076.50), not which case or residual applies."
+          },
+          "seasonal_exception_facts": {
+            "cases": {
+              "seasonal_hand_harvest_under_150": [
+                "agricultural_service",
+                "amount"
+              ]
+            }
           }
         },
         "coverage_any_of": [
@@ -1492,6 +1539,16 @@
         ],
         "condition_cases": {
           "arrangement_requires_all": {
+            "cases": {
+              "qualifying_sharefarmer_arrangement": [
+                "agricultural_share_arrangement"
+              ]
+            }
+          },
+          "self_employment_threshold_scope": {
+            "not_a_coverage_condition": "Says the 411(b)(2) $400 floor (\"if such net earnings for the taxable year are less than $400\") applies to the year's whole net earnings from self-employment, which the self-employment families test with threshold other_net_earnings_minimum (person_year). This row tests no amount; its covered case hands the sharefarming earnings to that unit."
+          },
+          "wage_employment_excluded": {
             "cases": {
               "qualifying_sharefarmer_arrangement": [
                 "agricultural_share_arrangement"
@@ -4558,6 +4615,14 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "repeal_savings_requires_pre_enactment_item_and_effect_on_later_tax_liability": {
+            "not_a_coverage_condition": "Records the savings clause of Pub. L. 113-295 section 221(b)(2), which keeps the old treatment only of a \"transaction occurring before the date of the enactment\" or of property or an item from before it. This service-date row starts on the 2014-12-19 enactment date, so every service it classifies is post-enactment; earlier service belongs to communist_organization_service_1968."
+          },
+          "specific_exclusion_repealed": {
+            "not_a_coverage_condition": "Describes what the covered residual already does: Pub. L. 113-295 section 221(a)(99)(C)(ii) amends section 210(a) \"by striking paragraph (17)\", effective on enactment under section 221(b)(1), so this family excludes no service in a window that starts on that date."
+          }
+        },
         "named_options": {
           "enacted_2014_repeal": {
             "specific_exclusion_repealed_from": "2014-12-19"
@@ -4980,6 +5045,9 @@
           }
         ],
         "condition_cases": {
+          "employer_paid_employee_fica_included_in_wages": {
+            "not_a_coverage_condition": "42 U.S.C. 409(a)(5)(A) takes the employee tax an employer pays without deduction out of wages, and below the annual cash threshold \"neither you nor your employee will owe social security or Medicare tax\" (IRS Pub. 926 (2026)). It sets the wage amount of pay already covered (\"your employee's wages each payday are $100\"), not which case or residual applies."
+          },
           "rounding": {
             "not_a_coverage_condition": "42 U.S.C. 409(c) optional rounding of each cash payment changes the amount counted, not whether the service is covered."
           }
@@ -5209,6 +5277,11 @@
             ]
           }
         ],
+        "condition_cases": {
+          "employer_election_available": {
+            "not_a_coverage_condition": "The church employer election reaches only service performed after December 31, 1983 (Pub. L. 98-369 section 2603(e)). This row's residual defers earlier service to nonprofit_service; for a taxable year that began in 1983, the 1984 row's boundary_clause axis_exception routes service performed after 1983 to that row's cases."
+          }
+        },
         "coverage_family": "nonprofit_service",
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "The family uses the taxable-year axis because Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendment (411(i)) \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\". This row ends where Pub. L. 98-369 section 2603(e) begins the election, for \"service performed after December 31, 1983\".",
@@ -5391,6 +5464,20 @@
             ]
           }
         ],
+        "condition_cases": {
+          "employer_election_available": {
+            "cases": {
+              "electing_church_nonministerial_service": [
+                "church_employee_service"
+              ]
+            }
+          },
+          "threshold_concept": {
+            "threshold_ids": [
+              "church_employee_minimum_historical"
+            ]
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "This row starts where Pub. L. 98-369 section 2603(e) applies the church election amendments to \"service performed after December 31, 1983\" (pinned with an axis_exception in boundary_clause). The family keeps the taxable-year axis because Pub. L. 99-514 section 1882(b)(3) makes 411(i) \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\".",
         "employer_definition": "A qualified church controlled organization must meet the 3121(w) definition; nonprofit religious status alone does not establish this.",
@@ -5660,6 +5747,20 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "employer_election_available": {
+            "cases": {
+              "electing_church_nonministerial_service": [
+                "church_employee_service"
+              ]
+            }
+          },
+          "threshold_concept": {
+            "threshold_ids": [
+              "church_employee_minimum"
+            ]
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 99-514 section 1882(b)(3), as the 42 U.S.C. 411 notes summarize it, makes the section 1882(b)(2) amendment (411(i)) \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\".",
         "employer_definition": "A qualified church controlled organization must meet the 3121(w) definition; nonprofit religious status alone does not establish this.",
@@ -5831,6 +5932,15 @@
             ]
           }
         ],
+        "condition_cases": {
+          "agreement_has_no_exclusion": {
+            "cases": {
+              "agreement_without_election_exclusion": [
+                "section_218_position"
+              ]
+            }
+          }
+        },
         "mandatory_nonmember_coverage": false,
         "service_date_transition": null,
         "threshold_id": "election_remuneration_quarterly"
@@ -6063,6 +6173,15 @@
             ]
           }
         ],
+        "condition_cases": {
+          "agreement_has_no_exclusion": {
+            "cases": {
+              "agreement_without_election_exclusion": [
+                "section_218_position"
+              ]
+            }
+          }
+        },
         "mandatory_nonmember_coverage": false,
         "service_date_transition": null,
         "threshold_id": "election_remuneration_annual"
@@ -6378,6 +6497,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "agreement_has_no_exclusion": {
+            "cases": {
+              "agreement_without_election_exclusion": [
+                "section_218_position"
+              ]
+            }
+          }
+        },
         "mandatory_nonmember_coverage": true,
         "service_date_transition": "1991-07-02",
         "threshold_id": "election_remuneration_annual"
@@ -6683,6 +6811,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "agreement_has_no_exclusion": {
+            "cases": {
+              "agreement_without_election_exclusion": [
+                "section_218_position"
+              ]
+            }
+          }
+        },
         "mandatory_nonmember_coverage": true,
         "service_date_transition": "1991-07-02",
         "threshold_id": "election_remuneration_annual"
@@ -6921,6 +7058,37 @@
             ]
           }
         ],
+        "condition_cases": {
+          "child_parent_age_exclusion": {
+            "cases": {
+              "child_under_21": [
+                "family_service"
+              ]
+            }
+          },
+          "domestic_parent_exception": {
+            "cases": {
+              "parent_domestic_care_exception": [
+                "family_service",
+                "services_performed_date"
+              ]
+            }
+          },
+          "parent_child_nonbusiness_excluded": {
+            "cases": {
+              "parent_for_child_nonbusiness_or_domestic": [
+                "family_service"
+              ]
+            }
+          },
+          "spouse_trade_business_excluded": {
+            "cases": {
+              "spouse_employee": [
+                "family_service"
+              ]
+            }
+          }
+        },
         "corporation": "family_relationship_not_applicable",
         "domestic_parent_exception": {
           "child_in_home": "under_18_or_needs_adult_care_4_continuous_weeks_in_quarter",
@@ -7178,6 +7346,50 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "child_parent_age_exclusion": {
+            "cases": {
+              "child_under_18": [
+                "family_service"
+              ]
+            }
+          },
+          "child_parent_nonbusiness_domestic_age_exclusion": {
+            "cases": {
+              "child_under_21_nonbusiness_or_domestic": [
+                "family_service"
+              ]
+            }
+          },
+          "domestic_parent_exception": {
+            "cases": {
+              "parent_domestic_care_exception": [
+                "family_service"
+              ]
+            }
+          },
+          "parent_child_nonbusiness_excluded": {
+            "cases": {
+              "parent_for_child_nonbusiness_or_domestic": [
+                "family_service"
+              ]
+            }
+          },
+          "parent_child_trade_business_excluded": {
+            "cases": {
+              "parent_in_child_trade_or_business": [
+                "family_service"
+              ]
+            }
+          },
+          "spouse_trade_business_excluded": {
+            "cases": {
+              "spouse_in_trade_or_business": [
+                "family_service"
+              ]
+            }
+          }
+        },
         "corporation": "family_relationship_not_applicable",
         "domestic_parent_exception": {
           "child_in_home": "under_18_or_needs_adult_care_4_continuous_weeks_in_quarter",
@@ -9386,6 +9598,25 @@
                 "fishing_catch_share_arrangement"
               ]
             }
+          },
+          "family_service_exclusion_first": {
+            "cases": {
+              "child_under_18_for_parent": [
+                "family_service"
+              ]
+            }
+          },
+          "wage_employment_excluded_when_arrangement_qualifies": {
+            "cases": {
+              "catch_share_1996_clarification": [
+                "historical_fica_treatment",
+                "fishing_catch_share_arrangement"
+              ],
+              "catch_share_payor_treated_as_fica": [
+                "historical_fica_treatment",
+                "fishing_catch_share_arrangement"
+              ]
+            }
           }
         },
         "conditional_1996_clarification": {
@@ -9791,7 +10022,38 @@
               ]
             }
           },
+          "amendment_applies_to_remuneration_paid_after": {
+            "not_a_coverage_condition": "States the row's window: Pub. L. 104-188 section 1116(a)(3)(A) applies the 1996 amendments \"to remuneration paid-- (i) after December 31, 1994\", and this payment-date row starts on 1995-01-01."
+          },
+          "cash_limit_per_trip": {
+            "cases": {
+              "qualifying_catch_share_arrangement": [
+                "fishing_catch_share_arrangement"
+              ]
+            }
+          },
           "catch_share_conditions": {
+            "cases": {
+              "qualifying_catch_share_arrangement": [
+                "fishing_catch_share_arrangement"
+              ]
+            }
+          },
+          "crew_test": {
+            "cases": {
+              "qualifying_catch_share_arrangement": [
+                "fishing_catch_share_arrangement"
+              ]
+            }
+          },
+          "family_service_exclusion_first": {
+            "cases": {
+              "child_under_18_for_parent": [
+                "family_service"
+              ]
+            }
+          },
+          "wage_employment_excluded_when_arrangement_qualifies": {
             "cases": {
               "qualifying_catch_share_arrangement": [
                 "fishing_catch_share_arrangement"
@@ -10402,6 +10664,9 @@
                 "foreign_government_service"
               ]
             }
+          },
+          "other_eligibility_rules_still_apply": {
+            "not_a_coverage_condition": "Restates what this family's covered outcomes already mean: the row excludes nothing beyond 410(a)(11)-(12), and the other families still apply (residual: \"Apply the other families\"), including the self-employment rules the us_citizen_in_united_states case hands the service to."
           }
         },
         "direct_foreign_government": "employment_excluded",
@@ -10571,6 +10836,16 @@
           }
         ],
         "condition_cases": {
+          "clause_a_employment_test": {
+            "cases": {
+              "foreign_craft_non_american_employer": [
+                "place_of_work"
+              ],
+              "foreign_craft_noncitizen": [
+                "place_of_work"
+              ]
+            }
+          },
           "exclusion_any_of": {
             "cases": {
               "foreign_craft_non_american_employer": [
@@ -10795,6 +11070,17 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "requires_all": {
+            "cases": {
+              "philippine_resident_h2_in_guam": [
+                "place_of_work",
+                "country_of_residence",
+                "visa_status"
+              ]
+            }
+          }
+        },
         "historical_basis": "Public Law 86-778 sections 103(d),103(v)(1), reproduced in the 2023 Code amendment/effective-date notes",
         "requires_all": {
           "country_of_residence": "Republic_of_the_Philippines",
@@ -11190,6 +11476,13 @@
             "cases": {
               "designated_international_organization": [
                 "international_organization_service"
+              ]
+            }
+          },
+          "transferred_federal_employee_exception": {
+            "cases": {
+              "transferred_federal_employee_410r": [
+                "federal_service"
               ]
             }
           }
@@ -12079,6 +12372,11 @@
             ]
           }
         ],
+        "condition_cases": {
+          "other_exclusions_still_apply": {
+            "not_a_coverage_condition": "Says the other 410(a) exclusions, such as 410(a)(8)(A) for ministers and members of religious orders, still reach service that a waiver certificate covers. Their own families decide them: this row's covered and covered_above_threshold outcomes mean only that former 410(a)(8)(B) does not exclude the service, and its residual says \"apply the other families\"."
+          }
+        },
         "other_exclusions_still_apply": true,
         "threshold": {
           "aggregation_unit": "same_employer_employee_calendar_quarter",
@@ -12350,6 +12648,11 @@
             ]
           }
         ],
+        "condition_cases": {
+          "other_exclusions_still_apply": {
+            "not_a_coverage_condition": "Says the other 410(a) exclusions, such as 410(a)(8)(A) for ministers and members of religious orders, still reach service that a waiver certificate covers. Their own families decide them: this row's covered and covered_above_threshold outcomes mean only that former 410(a)(8)(B) does not exclude the service, and its residual says \"apply the other families\"."
+          }
+        },
         "named_options": [
           {
             "citation": {
@@ -12658,6 +12961,11 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "other_exclusions_still_apply": {
+            "not_a_coverage_condition": "Says the other 410(a) exclusions still reach nonprofit service after mandatory coverage begins. Their own families decide them (clergy_religious_service, electing_church_employee_service, which church_election_family names, student_service and the rest); this row's residual means only that the nonprofit family does not exclude the service and says \"apply the other families\"."
+          }
+        },
         "federal_employee_nonprofit_special_case": "Public Law 98-369 section 2601(e): employees required to participate in CSRS for nonprofit service can be treated as service for a US instrumentality.",
         "mandatory_coverage_start": "1984-01-01",
         "other_exclusions_still_apply": true,
@@ -12784,6 +13092,11 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "other_coverage_rules_required": {
+            "not_a_coverage_condition": "Directs the caller to the other families. Before Pub. L. 103-296 section 320 put \"(Q)\" into 410(a)(19), effective with the calendar quarter after August 15, 1994, no paragraph of 410(a) names Q-class service (POMS RS 01901.740 C.3 NOTE: \"Prior to October 1, 1994, individuals with a designation of Q are not exempt from Social Security coverage\"), so this family excludes nothing and the covered residual applies."
+          }
+        },
         "other_coverage_rules_required": true,
         "visa_class": "Q"
       },
@@ -12903,6 +13216,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "requires_admission_purpose_service": {
+            "cases": {
+              "q_cultural_exchange_program_service": [
+                "assignment"
+              ]
+            }
+          }
+        },
         "requires_admission_purpose_service": true,
         "visa_class": "Q"
       },
@@ -13071,6 +13393,22 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "requires_admission_purpose_service": {
+            "cases": {
+              "f1_j1_admission_purpose_service": [
+                "statutory_student_service"
+              ]
+            }
+          },
+          "requires_nonresident_alien": {
+            "cases": {
+              "f1_j1_admission_purpose_service": [
+                "nonresident_alien_status"
+              ]
+            }
+          }
+        },
         "dependent_classes_not_excepted": [
           "F-2",
           "J-2"
@@ -13231,6 +13569,11 @@
             ]
           }
         ],
+        "condition_cases": {
+          "excluded_visa_classes": {
+            "not_a_coverage_condition": "Records that 410(a)(19) named only the F and J classes until Pub. L. 100-647 section 1001(d)(2)(E) substituted \"(F), (J), or (M)\" for \"(F) or (J)\". The nonresident_alien_service family decides F and J service (case f1_j1_admission_purpose_service); for this family's M-1 service the list means only that nothing is excluded in this window, which the covered residual gives."
+          }
+        },
         "excluded_visa_classes": [
           "F",
           "J"
@@ -13393,6 +13736,18 @@
             ]
           }
         ],
+        "condition_cases": {
+          "m1_exclusion_start_by_reading": {
+            "not_a_coverage_condition": "Records the start date each named alternative of case m1_admission_purpose_service_start_open gives (1987-01-01 or 1988-11-10). That case refuses for M-1 admission-purpose service throughout this row's 1987-01-01..1988-11-09 window, and nonresident_alien_vocational_service_1988_1110 applies the exclusion both readings share, so the dates decide nothing beyond the row windows."
+          },
+          "requires_admission_purpose_service": {
+            "cases": {
+              "m1_admission_purpose_service_start_open": [
+                "statutory_student_service"
+              ]
+            }
+          }
+        },
         "m1_exclusion_start_by_reading": {
           "as_if_included_in_tra1986_section_123": "1987-01-01",
           "from_enactment_1988_11_10": "1988-11-10"
@@ -13607,6 +13962,22 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "requires_admission_purpose_service": {
+            "cases": {
+              "m1_admission_purpose_service": [
+                "statutory_student_service"
+              ]
+            }
+          },
+          "requires_nonresident_alien_status": {
+            "cases": {
+              "m1_admission_purpose_service": [
+                "nonresident_alien_status"
+              ]
+            }
+          }
+        },
         "enactment": "1988-11-10",
         "requires_admission_purpose_service": true,
         "requires_nonresident_alien_status": true,
@@ -13768,6 +14139,11 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "scope": {
+            "not_a_coverage_condition": "States the row's domain. 410(a)(9) excludes railroad service from OASDI employment, and POMS RS 01901.580 B sends coordination of railroad employment information with the Railroad Retirement Board to RS 01600.000, which no capture holds. The row's sources state no exception to the exclusion, so the remark on benefit coordination changes no outcome of case railroad_act_service."
+          }
+        },
         "history": "1984 technical recodification replaced reference to former 1939 Code 1532 with 1954 Code 3231 without changing existing rights/status.",
         "scope": "OASDI employment and payroll coverage only; railroad compensation may be used under separate benefit coordination statutes, not inferred here."
       },
@@ -14005,6 +14381,19 @@
           }
         ],
         "condition_cases": {
+          "poverty_vow_self_employment_excluded": {
+            "cases": {
+              "election_member_abroad_not_covered": [
+                "religious_order_service"
+              ],
+              "retroactive_quarter_member_condition_failed": [
+                "religious_order_service"
+              ],
+              "vow_duties_without_election": [
+                "religious_order_service"
+              ]
+            }
+          },
           "retroactive_election": {
             "cases": {
               "retroactive_quarter_member_condition_failed": [
@@ -14394,6 +14783,19 @@
           }
         ],
         "condition_cases": {
+          "poverty_vow_self_employment_excluded": {
+            "cases": {
+              "election_member_abroad_not_covered": [
+                "religious_order_service"
+              ],
+              "retroactive_quarter_member_condition_failed": [
+                "religious_order_service"
+              ],
+              "vow_duties_without_election": [
+                "religious_order_service"
+              ]
+            }
+          },
           "retroactive_election": {
             "cases": {
               "retroactive_quarter_member_condition_failed": [
@@ -14401,6 +14803,13 @@
               ],
               "vow_duties_with_3121r_election": [
                 "clergy_or_religious_exemption"
+              ]
+            }
+          },
+          "third_party_ordinary_employment_excluded_by_vow": {
+            "cases": {
+              "third_party_employment_outside_order": [
+                "religious_order_service"
               ]
             }
           }
@@ -14632,6 +15041,13 @@
                 "industry"
               ]
             }
+          },
+          "scope": {
+            "cases": {
+              "no_section_218_agreement": [
+                "government_level"
+              ]
+            }
           }
         },
         "covered_transportation_exception": "410(a)(7)(B) and 410(k): a covered public transportation system is excepted from government exclusion.",
@@ -14840,6 +15256,13 @@
             "cases": {
               "covered_transportation_service": [
                 "industry"
+              ]
+            }
+          },
+          "scope": {
+            "cases": {
+              "no_section_218_agreement": [
+                "government_level"
               ]
             }
           }
@@ -15167,6 +15590,29 @@
                 "industry"
               ]
             }
+          },
+          "mandatory_exclusions": {
+            "cases": {
+              "mandatory_rule_election_worker": [
+                "election_work"
+              ],
+              "mandatory_rule_exclusions": [
+                "assignment"
+              ],
+              "mandatory_rule_fee_basis_position": [
+                "public_office_fee_basis"
+              ]
+            }
+          },
+          "scope": {
+            "cases": {
+              "mandatory_nonmember_coverage": [
+                "government_level"
+              ],
+              "qualified_system_member_without_agreement": [
+                "government_level"
+              ]
+            }
           }
         },
         "covered_transportation_exception": "410(a)(7)(B) and 410(k): a covered public transportation system is excepted from government exclusion.",
@@ -15333,6 +15779,21 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "aggregation_scope": {
+            "not_a_coverage_condition": "States the unit: 411(a) sums an individual's net earnings for the taxable year, a term 411(e) gives its subtitle A meaning. It sets how amounts add up, not whether any amount is net earnings."
+          },
+          "eligible_concept": {
+            "cases": {
+              "outside_own_trade_or_business_and_partnership": [
+                "trade_or_business"
+              ]
+            }
+          },
+          "scope_note": {
+            "not_a_coverage_condition": "Says other families make the adjustments and service exclusions before the unit arithmetic (for example self_employment_rental_income, self_employment_capital_gains_and_nol and self_employment_employee_definition, then self_employment_units). It names concepts other families compute."
+          }
+        },
         "eligible_concept": "trade/business net income plus admissible ordinary partnership income/loss",
         "partner_taxable_year": "include partnership year ending within or with individual taxable year",
         "scope_note": "Base definition only; apply adjustment and service-exclusion families before unit arithmetic.",
@@ -15503,6 +15964,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "excluded_concepts": {
+            "cases": {
+              "excluded_property_gain_or_loss": [
+                "property_disposition_type"
+              ]
+            }
+          }
+        },
         "cross_reference_history": "1984 technical amendments replace obsolete 1939 Code references by 1954 Code/Subtitle A and 172; no new economic inclusion rule is inferred from the reference correction.",
         "excluded_concepts": [
           "Subtitle A capital gains/losses",
@@ -16139,6 +16609,23 @@
                 "citizenship"
               ]
             }
+          },
+          "foreign_exclusions_disregarded": {
+            "cases": {
+              "foreign_minister_without_qualification": [
+                "place_of_work",
+                "citizenship"
+              ]
+            }
+          },
+          "gross_income_exclusions_disregarded": {
+            "not_a_coverage_condition": "Names the 107 and 119 exclusions that 411(a)(7) has every nonexempt minister compute net earnings without, with no further condition in this window. The covered residual applies it (\"Nonexempt ministry earnings include the parsonage and employer meals-and-lodging values\")."
+          },
+          "historical_foreign_qualification_removed_for": {
+            "not_a_coverage_condition": "Records when the citizen qualification ended: Pub. L. 92-603 section 140(c) applies its removal \"with respect to taxable years beginning after December 31, 1972\". The family's taxable_year_start axis ends this row at 1972-12-31 and the 1973 row has no qualification, so the date decides nothing beyond the row windows."
+          },
+          "retired_clergy_exception_effective_scope": {
+            "not_a_coverage_condition": "Records that Pub. L. 108-203 section 422(b) applies the retired-clergy exclusion \"to years beginning before, on, or after December 31, 1994\", so it limits no year of this row. Case retired_clergy_benefits carries the exclusion itself."
           }
         },
         "deferral_exceptions": {
@@ -16398,6 +16885,14 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "gross_income_exclusions_disregarded": {
+            "not_a_coverage_condition": "Names the 107, 119, 911 and 931 exclusions that 411(a)(7), as Pub. L. 92-603 section 140 amended it, has every nonexempt minister compute net earnings without; the amendment struck the citizen qualification, so no condition remains, and the covered residual applies it."
+          },
+          "retired_clergy_exception_effective_scope": {
+            "not_a_coverage_condition": "Records that Pub. L. 108-203 section 422(b) applies the retired-clergy exclusion \"to years beginning before, on, or after December 31, 1994\", so it limits no year of this row. Case retired_clergy_benefits carries the exclusion itself."
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 92-603 section 140, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "gross_income_exclusions_disregarded": [
@@ -16677,6 +17172,14 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "gross_income_exclusions_disregarded": {
+            "not_a_coverage_condition": "Names the 107, 119 and 911 exclusions that 411(a)(7) has every nonexempt minister compute net earnings without, with no condition; the covered residual applies it. Section 931 left (a)(7) under Pub. L. 100-203 section 9023(b)(1), and 411(a)(8) disregards it for everyone in the possessions family."
+          },
+          "retired_clergy_exception_effective_scope": {
+            "not_a_coverage_condition": "Records that Pub. L. 108-203 section 422(b) applies the retired-clergy exclusion \"to years beginning before, on, or after December 31, 1994\", so it limits no year of this row. Case retired_clergy_benefits carries the exclusion itself."
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 92-603 section 140, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "gross_income_exclusions_disregarded": [
@@ -17394,6 +17897,11 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "special_2008_crp_exclusion": {
+            "not_a_coverage_condition": "Records that the beneficiary exclusion Pub. L. 110-246 section 15301 added to 411(a)(1) reaches only payments made after December 31, 2007, past this row's payment-date window. No case here reads benefit_type: a real estate dealer's payment is covered (crp_payment_in_real_estate_dealer_business) and case crp_payment_classification_open decides every other payment."
+          }
+        },
         "effective_basis": "payment_date",
         "effective_basis_description": "Payments made on or before December 31, 2007. Pub. L. 110-246 section 15301(c), as the 42 U.S.C. 411 Effective Date of 2008 Amendment note summarizes it: the amendment is \"applicable to payments made after Dec. 31, 2007\".",
         "special_2008_crp_exclusion": false
@@ -17560,6 +18068,16 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "excluded_concept": {
+            "cases": {
+              "crp_payment_to_beneficiary": [
+                "conservation_reserve_payment",
+                "benefit_type"
+              ]
+            }
+          }
+        },
         "effective_basis": "payment_date",
         "effective_basis_description": "Pub. L. 110-246 section 15301(c), as the 42 U.S.C. 411 Effective Date of 2008 Amendment note summarizes it: the amendment is \"applicable to payments made after Dec. 31, 2007\".",
         "excluded_concept": "16 USC 3833(2) payments (from 2014-02-07, 16 USC 3833(a)(2)) to recipient of 42 USC 402 or 423 benefits"
@@ -17775,6 +18293,11 @@
             ]
           }
         ],
+        "condition_cases": {
+          "exception": {
+            "not_a_coverage_condition": "Changes only the taxable year to which director fees are assigned: the former 1402(a) paragraph deems the income derived \"in that year, at the time the services were performed, regardless of when the income is actually paid ... (unless it was actually paid and received prior to that year)\". The fees are net earnings in either year, which the covered residual gives."
+          }
+        },
         "director_specific_service_year_deeming": true,
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 100-203 section 9022(c), quoted in the 26 U.S.C. 1402 notes: the amendments \"shall apply with respect to services performed in taxable years beginning on or after January 1, 1988\". The row ends before taxable years beginning after December 31, 1990, to which Pub. L. 101-508 section 5123(b) applies the 1990 amendment.",
@@ -18212,6 +18735,45 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "exceptions_requiring_other_family": {
+            "cases": {
+              "adult_fixed_price_vendor": [
+                "age",
+                "newspaper_service_arrangement"
+              ],
+              "electing_church_employee": [
+                "church_employee_service"
+              ],
+              "fee_basis_state_local_position": [
+                "government_level",
+                "public_office_fee_basis"
+              ],
+              "ministry_or_order_duties": [
+                "ministerial_service"
+              ],
+              "sharefarmer": [
+                "agricultural_share_arrangement"
+              ],
+              "small_boat_fishing": [
+                "fishing_catch_share_arrangement"
+              ],
+              "us_citizen_foreign_government": [
+                "citizenship",
+                "place_of_work",
+                "foreign_government_service"
+              ],
+              "us_citizen_international_organization": [
+                "citizenship",
+                "place_of_work",
+                "international_organization_service"
+              ]
+            }
+          },
+          "scope_note": {
+            "not_a_coverage_condition": "States how the row is drafted, not a condition: the only exception whose start this row dates itself, 411(c)(2)(G) (service performed after December 31, 1983, per the Pub. L. 98-369 section 2603(e) note), carries 'from 1984' in electing_church_employee's text, and the other exceptions defer to families whose dated rows decide the years."
+          }
+        },
         "deferral_exceptions": {
           "small_boat_fishing": [
             {
@@ -18406,6 +18968,16 @@
               ],
               "participation_under_required_arrangement": [
                 "material_participation"
+              ]
+            }
+          },
+          "arrangement_requires_material_participation": {
+            "cases": {
+              "arrangement_lacks_participation_term": [
+                "rental_arrangement_requires_material_participation"
+              ],
+              "participation_under_required_arrangement": [
+                "rental_arrangement_requires_material_participation"
               ]
             }
           },
@@ -18945,12 +19517,22 @@
           }
         ],
         "condition_cases": {
+          "income_tax_exclusion_disregarded": {
+            "cases": {
+              "us_resident_entire_taxable_year": [
+                "residence_period"
+              ]
+            }
+          },
           "individual_condition": {
             "cases": {
               "us_resident_entire_taxable_year": [
                 "residence_period"
               ]
             }
+          },
+          "scope": {
+            "not_a_coverage_condition": "Restates the residual: Pub. L. 92-603 section 124 disregards 911(a)(2) only \"In the case of an individual who has been a resident of the United States during the entire taxable year\" and says nothing for anyone else, so for a person who fails that condition the residual returns open."
           }
         },
         "effective_basis": "taxable_year_start",
@@ -19193,6 +19775,14 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "income_tax_exclusion_disregarded": {
+            "not_a_coverage_condition": "Names the exclusion the covered residual disregards: 411(a)(10) reads \"The exclusion from gross income provided by section 911(a)(1) ... shall not apply\" with no condition, so every individual's 911(a)(1) amount stays in net earnings."
+          },
+          "scope": {
+            "not_a_coverage_condition": "Names questions other families decide: citizenship and residence through self_employment_nonresident_alien, which reads 411(b)'s nonresident-alien clause and its section 433 agreement exception (case section_433_agreement), and service coverage through the service families. This row's sources state no other agreement rule."
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 98-21 section 323(c)(2), as the 42 U.S.C. 411 notes summarize it, makes the section 323(b)(2)(A) amendment \"applicable to taxable years beginning after Dec. 31, 1983\".",
         "effective_taxable_year_begin_after": "1983-12-31",
@@ -19427,6 +20017,11 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "scope": {
+            "not_a_coverage_condition": "Names the one deduction 411(a)(15) disallows (\"The deduction under section 162(l) ... shall not be allowed\"); ordinary attributable trade or business deductions stay under self_employment_base_definition. The remark decides no outcome here."
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 99-514 section 1161, as the 26 U.S.C. 162 notes give it, shall \"apply to taxable years beginning after December 31, 1986\".",
         "scope": "The named 162(l) deduction; ordinary attributable trade/business deductions remain governed separately.",
@@ -19543,6 +20138,11 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "named_concepts": {
+            "not_a_coverage_condition": "Names two computations. Coverage net earnings follow 411(a)(15), which Pub. L. 111-240 section 2042 did not amend, and the covered residual applies it. Section 2042(a) changed only 162(l)(4), the Title 26 self-employment tax base, which decides no coverage consequence of this family."
+          }
+        },
         "conflation_forbidden": true,
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 111-240 section 2042(b), as the 26 U.S.C. 162 notes set it out, \"shall apply to taxable years beginning after December 31, 2009\", and section 2042(a) limits the change by inserting \"for taxable years beginning before January 1, 2010, or after December 31, 2010\" into 162(l)(4).",
@@ -19673,6 +20273,11 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "scope": {
+            "not_a_coverage_condition": "Limits the row to the 162(l) deduction, which 411(a)(15) disallows in every individual's computation (the row's case_free_basis); the other attributable trade or business deductions it mentions are computed by the base definition, so the scope names another family's concept and states no condition."
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "26 U.S.C. 162(l)(4), as Pub. L. 111-240 section 2042(a) amended it, again disallows the deduction \"for taxable years beginning before January 1, 2010, or after December 31, 2010\".",
         "scope": "The named 162(l) deduction; ordinary attributable trade/business deductions remain governed separately.",
@@ -19764,6 +20369,11 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "exclusion_411_j_available": {
+            "not_a_coverage_condition": "Records history: Pub. L. 105-34 added 411(j) 'applicable to payments after Dec. 31, 1997', so no payment in this row's range meets it; the residual already applies no 411(j) exclusion and sends the payment to the other families."
+          }
+        },
         "effective_basis": "payment_date",
         "effective_basis_description": "Pub. L. 105-34 section 922, as the 42 U.S.C. 411 notes summarize it, is \"applicable to payments after Dec. 31, 1997\".",
         "exclusion_411_j_available": false
@@ -19878,6 +20488,13 @@
           }
         ],
         "condition_cases": {
+          "exclusion_411_j_available": {
+            "cases": {
+              "qualifying_termination_payment": [
+                "insurance_sales_termination_payment"
+              ]
+            }
+          },
           "required_conditions": {
             "cases": {
               "qualifying_termination_payment": [
@@ -19970,6 +20587,11 @@
             ]
           }
         ],
+        "condition_cases": {
+          "special_limited_partner_exclusion": {
+            "not_a_coverage_condition": "Records history: Pub. L. 95-216 section 313(c) applies the limited-partner exclusion (then 411(a)(11)) 'with respect to taxable years beginning after December 31, 1977'; the residual already includes the distributive share under the ordinary partnership rule."
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 95-216 section 313, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1977\".",
         "ordinary_partnership_income_rule": "411(a) introductory sentence",
@@ -20322,6 +20944,19 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "scope": {
+            "cases": {
+              "nonresident_alien_individual": [
+                "nonresident_alien_status"
+              ],
+              "territorial_resident": [
+                "citizenship",
+                "country_of_residence"
+              ]
+            }
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "411(b) works by taxable year, and Pub. L. 98-21 section 322(c), as the 26 U.S.C. 3121 notes give it, makes the section 433 exception \"effective for taxable years beginning on or after the date of the enactment of this Act [ Apr. 20, 1983 ]\".",
         "jurisdictions": [
@@ -20529,6 +21164,22 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "scope": {
+            "cases": {
+              "nonresident_alien_individual": [
+                "nonresident_alien_status"
+              ],
+              "section_433_agreement": [
+                "nonresident_alien_status"
+              ],
+              "territorial_resident": [
+                "citizenship",
+                "country_of_residence"
+              ]
+            }
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "411(b) works by taxable year, and Pub. L. 98-21 section 322(c), as the 26 U.S.C. 3121 notes give it, makes the section 433 exception \"effective for taxable years beginning on or after the date of the enactment of this Act [ Apr. 20, 1983 ]\".",
         "jurisdictions": [
@@ -20651,6 +21302,37 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "aggregation_scope": {
+            "threshold_ids": [
+              "self_employment_optional_lower_limit",
+              "self_employment_optional_upper_limit"
+            ]
+          },
+          "farm_available": {
+            "not_a_coverage_condition": "Describes what the residual already does ('the regular computation applies, or the farm optional computation when elected'); electing it changes the amount the self-employment minimum tests, and the row stays covered_above_threshold either way."
+          },
+          "lower_limit_cents": {
+            "threshold_ids": [
+              "self_employment_optional_lower_limit"
+            ]
+          },
+          "nonfarm_available": {
+            "not_a_coverage_condition": "Records history: Pub. L. 92-603 section 121(c) applies the nonfarm optional computation 'only with respect to taxable years beginning after December 31, 1972'; the residual names only the regular and farm computations, so nothing in this row applies a nonfarm option."
+          },
+          "threshold_scope": {
+            "threshold_ids": [
+              "other_net_earnings_minimum",
+              "self_employment_optional_lower_limit",
+              "self_employment_optional_upper_limit"
+            ]
+          },
+          "upper_limit_cents": {
+            "threshold_ids": [
+              "self_employment_optional_upper_limit"
+            ]
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 92-603 section 121, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "factor": {
@@ -20847,6 +21529,34 @@
           }
         ],
         "combined_optional_method_maximum_cents": 160000,
+        "condition_cases": {
+          "aggregation_scope": {
+            "threshold_ids": [
+              "self_employment_optional_lower_limit",
+              "self_employment_optional_upper_limit",
+              "other_net_earnings_minimum"
+            ]
+          },
+          "farm_available": {
+            "not_a_coverage_condition": "Describes what the residual already does ('or a farm or nonfarm optional computation when its conditions hold and it is elected'); electing it changes the amount the self-employment minimum tests, and the row stays covered_above_threshold either way."
+          },
+          "lower_limit_cents": {
+            "threshold_ids": [
+              "self_employment_optional_lower_limit"
+            ]
+          },
+          "nonfarm_available": {
+            "not_a_coverage_condition": "Describes what the residual already does ('or a farm or nonfarm optional computation when its conditions hold and it is elected'); electing it changes the amount the self-employment minimum tests, and the row stays covered_above_threshold either way."
+          },
+          "nonfarm_required_conditions": {
+            "not_a_coverage_condition": "These conditions decide only whether the nonfarm optional computation may replace the regular one; when any fails, the regular computation the residual names applies and the minimum tests it, as the row's case_free_basis records from 411(a) ('may, at his option, be deemed')."
+          },
+          "upper_limit_cents": {
+            "threshold_ids": [
+              "self_employment_optional_upper_limit"
+            ]
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 92-603 section 121, as the 42 U.S.C. 411 notes give it, applies \"with respect to taxable years beginning after December 31, 1972\".",
         "factor": {
@@ -21129,6 +21839,61 @@
           ]
         },
         "computed_value_provenance": "The 2026 pair uses the explicit published quarterly QC input named in supplied_index_inputs_cents; the 2026 upper limit is not an IRS-published optional limit.",
+        "condition_cases": {
+          "computed_lower_upper_limits_cents": {
+            "threshold_ids": [
+              "self_employment_optional_lower_limit",
+              "self_employment_optional_upper_limit"
+            ]
+          },
+          "farm_available": {
+            "not_a_coverage_condition": "Describes what the residual already does ('or a farm or nonfarm optional computation with the indexed limits when its conditions hold and it is elected'); electing it changes the amount the self-employment minimum tests, and the row stays covered_above_threshold either way."
+          },
+          "guidance_profit_limit_note": {
+            "not_a_coverage_condition": "Records a source note: it explains the whole-dollar farm-profit figures that Schedule SE prints, and says the statutory test runs on the lower limit and the regular-method factor, so the note itself decides nothing."
+          },
+          "lower_limit_formula": {
+            "threshold_ids": [
+              "self_employment_optional_lower_limit"
+            ]
+          },
+          "nonfarm_available": {
+            "not_a_coverage_condition": "Describes what the residual already does ('or a farm or nonfarm optional computation with the indexed limits when its conditions hold and it is elected'); electing it changes the amount the self-employment minimum tests, and the row stays covered_above_threshold either way."
+          },
+          "parameter_required_if_unpublished": {
+            "threshold_ids": [
+              "self_employment_optional_lower_limit",
+              "self_employment_optional_upper_limit"
+            ]
+          },
+          "published_limit_sources": {
+            "not_a_coverage_condition": "Records sources: it names the Schedule SE capture behind each year's printed limits, which the two optional-limit thresholds also cite; a source list decides no consequence."
+          },
+          "published_lower_upper_limits_cents": {
+            "threshold_ids": [
+              "self_employment_optional_lower_limit",
+              "self_employment_optional_upper_limit"
+            ]
+          },
+          "published_net_farm_profit_guidance_limit_dollars": {
+            "not_a_coverage_condition": "Records Schedule SE's printed farm-profit guidance figures (2025: 'your net farm profits were less than $7,840'); guidance_profit_limit_note says the statutory test uses the lower limit and the regular-method factor instead, so these figures decide nothing."
+          },
+          "regular_basis_required": {
+            "not_a_coverage_condition": "Conditions only the nonfarm optional computation (411(g)); when it fails, the regular computation the residual names applies and the minimum tests it, as the row's case_free_basis records from 411(a) ('may, at his option, be deemed')."
+          },
+          "threshold_scope": {
+            "threshold_ids": [
+              "other_net_earnings_minimum",
+              "self_employment_optional_lower_limit",
+              "self_employment_optional_upper_limit"
+            ]
+          },
+          "upper_limit_formula": {
+            "threshold_ids": [
+              "self_employment_optional_upper_limit"
+            ]
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 110-246 section 15352(c), as the 42 U.S.C. 411 notes summarize it, makes the section 15352(b)(1), (2) amendment \"applicable to taxable years beginning after Dec. 31, 2007\".",
         "factor": {
@@ -21389,6 +22154,11 @@
             ]
           }
         ],
+        "condition_cases": {
+          "411_h_available": {
+            "not_a_coverage_condition": "Records history: the 42 U.S.C. 411 note makes Pub. L. 98-369 section 102(c)(2), which added 411(h), 'applicable to taxable years beginning after July 18, 1984'; the residual already leaves a dealer's section 1256 gains to the capital-gain exclusion, whose options_dealer_from_1984 case needs a later taxable year."
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Taxable years beginning on or before July 18, 1984. Pub. L. 98-369 section 102(c)(2), which added 411(h), is \"applicable to taxable years beginning after July 18, 1984\" (42 U.S.C. 411 Effective Date of 1984 Amendment note). Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
         "historical_effective_date_wording": "Taxable years beginning after 1984-07-18"
@@ -21503,6 +22273,14 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "411_h_available": {
+            "not_a_coverage_condition": "Records that 411(h) is in force; the capital-gain family's options_dealer_from_1984 case applies it by overriding excluded_property_gain_or_loss and deferring here, and this case-free row's covered residual is the 411(h) outcome for every item that reaches it."
+          },
+          "included_concept": {
+            "not_a_coverage_condition": "Names the items another family selects: the capital-gain family's options_dealer_from_1984 case (property_disposition_type: 'section 1256 contract or related property, in the normal course of dealing') decides which gains reach this row, and every item that reaches it is covered."
+          }
+        },
         "dealer_definitions": "Options dealer under 1256(g)(8); commodities dealer actively trading 1256 contracts, registered with a domestic board of trade designated as a CFTC contract market",
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 98-369 section 102(c)(2), which added 411(h), is \"applicable to taxable years beginning after July 18, 1984\" (42 U.S.C. 411 Effective Date of 1984 Amendment note). Annual lookup assumes a taxable year beginning January 1; date lookup accepts the actual fiscal-year start.",
@@ -21637,6 +22415,14 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "excluded_partnership_period_begin": {
+            "not_a_coverage_condition": "Marks where the share 411(f) adds stops: it includes the share \"as is not attributable to an interest in the partnership during any period beginning on or after the first day of the first calendar month following the month in which such partner died\". The date sizes the amount added to the final-year computation, which the residual already states (\"through the month of death\"); it excludes no income from coverage, as case_free_basis records."
+          },
+          "scope": {
+            "not_a_coverage_condition": "States what the row does not do: 411(f) adds a share of the partnership's \"ordinary income or loss\" to the final year. Whether a capital item counts is decided by the self_employment_capital_gains_and_nol family (se_capital_gain_nol_1968_2026), not here."
+          }
+        },
         "deceased_partner_share_includes": "Estate or successor-in-interest share as specified in 411(f).",
         "excluded_partnership_period_begin": "First day of the calendar month following the month of death",
         "scope": "Timing/allocation rule; does not characterize a capital item as ordinary income.",
@@ -21803,6 +22589,18 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "scope": {
+            "not_a_coverage_condition": "Describes what the residual already does: interest other than on a corporation's (or government's) bond, debenture, note, certificate or other evidence of indebtedness issued with interest coupons or in registered form matches no case and takes the covered residual (\"Not dividends or interest of the kinds 411(a)(2) names\")."
+          },
+          "stock_dividends_excluded": {
+            "cases": {
+              "specified_dividends": [
+                "dividend_or_interest_income"
+              ]
+            }
+          }
+        },
         "effective_basis": "payment_date",
         "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule.",
         "scope": "Specified dividend/interest concepts; does not assert exclusion of every type of interest.",
@@ -21976,6 +22774,21 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "obsolete_interest_exception_removed": {
+            "not_a_coverage_condition": "Records history: Pub. L. 95-600 section 703(j)(14)(D) struck the 1939 Code section 25(a) parenthetical, \"effective Oct. 4, 1976\" (42 U.S.C. 411 notes). This row starts that day and has no 25(a) case, so such interest meets specified_interest; se_passive_income_1968_1976 keeps the exception as interest_described_in_1939_code_25a."
+          },
+          "scope": {
+            "not_a_coverage_condition": "Describes what the residual already does: interest other than on a corporation's (or government's) bond, debenture, note, certificate or other evidence of indebtedness issued with interest coupons or in registered form matches no case and takes the covered residual (\"Not dividends or interest of the kinds 411(a)(2) names\")."
+          },
+          "stock_dividends_excluded": {
+            "cases": {
+              "specified_dividends": [
+                "dividend_or_interest_income"
+              ]
+            }
+          }
+        },
         "effective_basis": "payment_date",
         "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule.",
         "obsolete_interest_exception_removed": "1976-10-04",
@@ -22186,6 +22999,18 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "scope": {
+            "not_a_coverage_condition": "Describes what the residual already does: interest other than on a corporation's (or government's) evidence of indebtedness matches no case and takes the covered residual; a corporate obligation outside registered form reaches the open obligation_not_in_registered_form case, and one in registered form reaches specified_interest_registered_form."
+          },
+          "stock_dividends_excluded": {
+            "cases": {
+              "specified_dividends": [
+                "dividend_or_interest_income"
+              ]
+            }
+          }
+        },
         "effective_basis": "payment_date",
         "effective_basis_description": "The amendments at this family's boundaries take effect on calendar dates, with no taxable-year rule: Pub. L. 95-600 is \"effective Oct. 4, 1976\" (section 703(r)) and Pub. L. 110-246 section 4115(c)(1)(A)(i), (B)(iii) is \"effective Oct. 1, 2008\" (section 4407), as the 42 U.S.C. 411 effective-date notes state. The coordinate is the date a dividend or interest receipt is derived, so a 1976 or 2008 year lookup returns both wordings. Round 1 had read the boundaries as taxable-year starts; the captured notes do not state that rule.",
         "named_wordings": [
@@ -22552,6 +23377,9 @@
                 "section_218_position"
               ]
             }
+          },
+          "eligible_exception_unit": {
+            "not_a_coverage_condition": "Names the unit the excepted fees join: ordinary (other) net earnings, not church employee income. The self_employment_units family computes that unit and its $400 minimum (unit_id other_net_earnings from 1986); whether the fees stay in trade or business is decided by state_local_fee_basis_office."
           }
         },
         "covered_exception_conditions": [
@@ -22684,6 +23512,14 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "income_tax_exclusion_disregarded": {
+            "not_a_coverage_condition": "Names the income-tax exclusion 411(a)(6) sets aside: a Puerto Rico resident computes net earnings \"without regard to the provisions of section 933\". Setting 933 aside excludes nothing, so it is what the covered residual already applies."
+          },
+          "scope": {
+            "not_a_coverage_condition": "States the row's reach: 411(a)(6) changes only how a Puerto Rico resident computes net earnings. Service exclusions and income-source or residence facts belong to the other families, which the covered residual sends the item to."
+          }
+        },
         "income_tax_exclusion_disregarded": "26 USC 933",
         "resident_jurisdiction": "Puerto Rico",
         "scope": "NESE computation override; service exclusions and income-source/residence facts remain separate."
@@ -22816,6 +23652,11 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "qualified_joint_venture_411_a_16_available": {
+            "not_a_coverage_condition": "Records history: Pub. L. 110-28 added 411(a)(16) 'applicable to taxable years beginning after Dec. 31, 2006'; the residual already sends spouses' joint business income to the partnership and community-income rules, so the flag decides nothing here."
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 110-28 section 8215, as the 42 U.S.C. 411 notes summarize it, is \"applicable to taxable years beginning after Dec. 31, 2006\".",
         "qualified_joint_venture_411_a_16_available": false
@@ -22922,6 +23763,16 @@
         ],
         "condition_cases": {
           "eligibility_source_required": {
+            "cases": {
+              "qualified_joint_venture": [
+                "qualified_joint_venture_election",
+                "joint_return",
+                "partnership_status",
+                "material_participation"
+              ]
+            }
+          },
+          "qualified_joint_venture_411_a_16_available": {
             "cases": {
               "qualified_joint_venture": [
                 "qualified_joint_venture_election",
@@ -23067,6 +23918,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "excluded_concept": {
+            "cases": {
+              "railroad_act_service": [
+                "railroad_covered_service"
+              ]
+            }
+          }
+        },
         "excluded_concept": "Service as an employee or employee representative defined in 26 USC 3231"
       },
       "rare_exclusion": null,
@@ -23216,6 +24076,18 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "condition_cases": {
+          "scope": {
+            "cases": {
+              "dealer_investment_or_speculative_holdings": [
+                "real_estate_dealer_status"
+              ],
+              "services_to_occupants_regulatory_detail": [
+                "services_to_occupants"
+              ]
+            }
+          }
+        },
         "evidence_only_boundaries": [
           {
             "citation": {
@@ -23427,6 +24299,16 @@
                 "real_estate_dealer_status"
               ]
             }
+          },
+          "rental_income_and_attributable_deductions_excluded": {
+            "cases": {
+              "real_estate_rentals": [
+                "rental_income"
+              ]
+            }
+          },
+          "scope": {
+            "not_a_coverage_condition": "Describes what the residual already does: a landlord's earnings other than rentals from real estate (or personal property leased with it) match no case and take the covered residual (\"Not rental income from real estate, so 411(a)(1) does not exclude it\")."
           }
         },
         "evidence_only_boundaries": [
@@ -23594,6 +24476,13 @@
           }
         ],
         "condition_cases": {
+          "eligible_concept": {
+            "cases": {
+              "qualifying_retirement_payment": [
+                "retirement_payment"
+              ]
+            }
+          },
           "required_conditions": {
             "cases": {
               "qualifying_retirement_payment": [
@@ -23775,6 +24664,16 @@
               "section_7873c2_de_minimis_amount": [
                 "tribal_fishing_rights_income",
                 "tribal_fishing_qualified_entity"
+              ]
+            }
+          },
+          "excluded_income_reference": {
+            "cases": {
+              "section_7873_exempt_income": [
+                "tribal_fishing_rights_income"
+              ],
+              "section_7873c2_de_minimis_amount": [
+                "tribal_fishing_rights_income"
               ]
             }
           },
@@ -24137,6 +25036,60 @@
           }
         ],
         "combined_earnings": "ordinary_net_earnings plus qualifying_church_remuneration",
+        "condition_cases": {
+          "aggregation_scope": {
+            "cases": {
+              "church_100_to_399_without_ordinary_loss": [
+                "amount"
+              ],
+              "church_at_least_100_with_ordinary_loss": [
+                "amount"
+              ],
+              "church_at_least_400_without_ordinary_loss": [
+                "amount"
+              ],
+              "church_combined_below_100": [
+                "amount"
+              ]
+            }
+          },
+          "church_gate_aggregation_scope": {
+            "cases": {
+              "church_100_to_399_without_ordinary_loss": [
+                "church_employee_service"
+              ],
+              "church_at_least_100_with_ordinary_loss": [
+                "church_employee_service"
+              ],
+              "church_at_least_400_without_ordinary_loss": [
+                "church_employee_service"
+              ],
+              "church_combined_below_100": [
+                "church_employee_service"
+              ]
+            }
+          },
+          "eligible_base_by_case": {
+            "cases": {
+              "church_100_to_399_without_ordinary_loss": [
+                "church_employee_service",
+                "amount"
+              ],
+              "church_at_least_100_with_ordinary_loss": [
+                "church_employee_service",
+                "amount"
+              ],
+              "church_at_least_400_without_ordinary_loss": [
+                "church_employee_service",
+                "amount"
+              ],
+              "church_combined_below_100": [
+                "church_employee_service",
+                "amount"
+              ]
+            }
+          }
+        },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "This row starts where Pub. L. 98-369 section 2603(e), as the 42 U.S.C. 411 notes summarize it, makes former 411(a)(13) \"applicable to service performed after Dec. 31, 1983\" (pinned with an axis_exception in boundary_clause); it ends where Pub. L. 99-514 section 1882(b)(3) makes the 1986 rules \"applicable to remuneration paid or derived in taxable years beginning after Dec. 31, 1985\".",
         "eligible_base_by_case": {
@@ -25162,6 +26115,15 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "required_school_state_approval": {
+            "cases": {
+              "enrolled_student_nurse": [
+                "employer_school_nexus"
+              ]
+            }
+          }
+        },
         "required_school_state_approval": true,
         "service_as_student_nurse": true
       },
@@ -25296,6 +26258,15 @@
             ]
           }
         ],
+        "condition_cases": {
+          "auxiliary_organization_included": {
+            "cases": {
+              "enrolled_student_at_employing_school": [
+                "employer_school_nexus"
+              ]
+            }
+          }
+        },
         "public_school_section_218_override": true
       },
       "rare_exclusion": {
@@ -25591,6 +26562,30 @@
             "title": 42
           }
         ],
+        "condition_cases": {
+          "auxiliary_organization_included": {
+            "cases": {
+              "enrolled_student_before_2024_08_15": [
+                "employer_school_nexus"
+              ],
+              "enrolled_student_from_2024_08_15": [
+                "employer_school_nexus"
+              ]
+            }
+          },
+          "current_poms_student_criteria": {
+            "cases": {
+              "enrolled_student_before_2024_08_15": [
+                "services_performed_date"
+              ],
+              "enrolled_student_from_2024_08_15": [
+                "services_performed_date",
+                "statutory_student_service",
+                "enrollment"
+              ]
+            }
+          }
+        },
         "current_poms_student_criteria": {
           "before": "No capture holds an earlier POMS edition of these criteria, so service before 2024-08-15 keeps the statutory test of 410(a)(10) without them; the criteria are not projected backwards.",
           "citation": {
@@ -25720,6 +26715,13 @@
       "open_reason": null,
       "parameters": {
         "all_cash_tips_covered_when_test_met": true,
+        "condition_cases": {
+          "all_cash_tips_covered_when_test_met": {
+            "threshold_ids": [
+              "cash_tips_monthly"
+            ]
+          }
+        },
         "later_edition_reliance": {
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
@@ -25894,6 +26896,14 @@
           }
         ],
         "condition_cases": {
+          "applies_to": {
+            "cases": {
+              "federally_recognized_council_member": [
+                "tribal_council_service",
+                "tribal_federal_recognition"
+              ]
+            }
+          },
           "benefit_credit_posting_rule": {
             "not_a_coverage_condition": "POMS RS 01901.700 C.1 says council-member services \"do not constitute employment\" and, in its NOTE, that SSA uses earnings already posted for tax years 2005 and earlier in benefit computations. That crediting rule reads historical_earnings_posting and leaves coverage unchanged, so no case reads the fact."
           },
@@ -25904,6 +26914,12 @@
                 "historical_fica_treatment"
               ]
             }
+          },
+          "non_federally_recognized_tribes": {
+            "not_a_coverage_condition": "Names what the residual applies: POMS RS 01901.700 F makes all services for a non-federally recognized tribe, council members' included, covered employment, with the nonprofit rules for a tax-exempt tribe. federally_recognized_council_member requires a federally recognized tribe, so these workers fall to the covered residual and the other families."
+          },
+          "section_418a_agreement_statute_available": {
+            "not_a_coverage_condition": "Records history: section 218A (42 U.S.C. 418a) became law on September 20, 2018 (Pub. L. 115-243), after this row ends on 2018-09-19, so no agreement could be in force during the row. A later agreement's reach back into these years is decided by later_418a_retroactive_coverage."
           }
         },
         "historical_legal_basis": "POMS RS 01901.700C.1 expressly bases council-service noncoverage on Revenue Ruling 59-354; the 2018 Act adds the statutory exclusion and agreement route.",
@@ -26112,6 +27128,16 @@
           }
         ],
         "condition_cases": {
+          "agreement_scope": {
+            "cases": {
+              "no_section_418a_inclusion": [
+                "tribal_coverage_agreement"
+              ],
+              "section_418a_agreement_inclusion": [
+                "tribal_coverage_agreement"
+              ]
+            }
+          },
           "applies_to": {
             "cases": {
               "no_section_418a_inclusion": [
@@ -26133,6 +27159,9 @@
           },
           "non_federally_recognized_tribes": {
             "not_a_coverage_condition": "Names what the residual applies: POMS RS 01901.700 F covers an unrecognized tribe's council members, and no_section_418a_inclusion requires a federally recognized tribe, so they fall to the residual."
+          },
+          "section_418a_agreement_statute_available": {
+            "not_a_coverage_condition": "Records that 418a is law for the whole row: Pub. L. 115-243 was approved September 20, 2018, the row's start. Whether an agreement includes a given service is decided by section_418a_agreement_inclusion, section_418a_retroactive_inclusion and no_section_418a_inclusion."
           }
         },
         "default_council_service": "noncovered_without_agreement",

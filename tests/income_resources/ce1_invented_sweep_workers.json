@@ -1477,6 +1477,26 @@
     "federal_retirement_system": "required by law to be subject to the Civil Service Retirement System"
    },
    "expected": "deferred"
+  },
+  {
+   "rule_id": "agricultural_service_1988",
+   "worker": "INVENTED: in 2005 a strawberry picker paid the region's customary piece rate, commuting daily from home, who worked 6 weeks in agriculture in 2004, is paid $120 cash by a farm that spends $40,000 on labor [decides: seasonal_hand_harvest_under_150]",
+   "facts": {
+    "agricultural_service": "employed as a hand harvest laborer and paid on a piece rate basis",
+    "amount": "is less than $150"
+   },
+   "expected": "noncovered",
+   "decides": "seasonal_hand_harvest_under_150"
+  },
+  {
+   "rule_id": "agricultural_service_1988",
+   "worker": "INVENTED: the same picker paid $200 cash in 2005 [decides: residual]",
+   "facts": {
+    "agricultural_service": "employed as a hand harvest laborer and paid on a piece rate basis",
+    "amount": "is $200"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "residual"
   }
  ]
 }
