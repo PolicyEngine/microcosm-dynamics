@@ -431,7 +431,15 @@ _FIRST_OWN_RIB_WITHOUT_WIB_CARRYOVER_BIRTH_YEAR = 1928
 _FIRST_COHORT_WITHOUT_PRE_1978_REDUCTION = 1928
 # RS 00615.005A.4 starts reduced disabled widow(er)'s benefits at age 50. RIB
 # and spouse's benefits start at 62 (A.1, A.2) and aged WIB at 60 (A.3).
-_EARLIEST_REDUCED_BENEFIT_AGE = 50
+# RS 00615.005A.3 starts reduced DIBs. A.1, A.3 and A.4 give each benefit that
+# can come first as (first month, earliest age). The schema records no sex, so
+# women's dates stand for men's later ones.
+_FIRST_REDUCED_DIB_MONTH = (1965, 9)
+_PRIOR_REDUCED_BENEFIT_ROUTES = (
+    ((1956, 11), 62),
+    ((1965, 9), 60),
+    ((1968, 2), 50),
+)
 # This cohort attains 62 no earlier than January 1978 (RS 00615.005C.2).
 _FIRST_COHORT_WITHOUT_PRE_1978_OWN_RIB = 1916
 
@@ -1827,6 +1835,10 @@ _PRIOR_REDUCED_BENEFIT_HOLDS = _PRE_1978_HISTORY_HOLDS | {
 # _is_entitled compares these roles' actual own RIB. A spouse's test reads the
 # raw own PIA (F5), which no reduction history changes.
 _OWN_RIB_AMOUNT_TEST_ROLES = _WIDOW_ROLES | {Role.MOTHER_FATHER, Role.PARENT}
+# With no delayed credits, none of these can lift an own RIB past its PIA.
+_PIA_CAP_KEEPING_HOLDS = _NH_REDUCTION_ONLY_HOLDS | {
+    UnsupportedReason.DELAYED_CREDITS_BEFORE_1917,
+}
 
 
 def _declared_fact_holds(state, beneficiary=None):
@@ -1876,19 +1888,33 @@ def _historical_own_rib_possible(own, birth_year):
 
 
 def _prior_reduced_benefit_possible(birth_year, payment_month):
-    """Whether any reduced benefit could precede this payment month.
+    """Whether a reduced benefit could precede and lower this DIB month.
 
     RS 00615.010 says "DIB is not reduced unless there was prior entitlement
-    to reduced RIB (or WIB prior to 1/90)." RS 00615.005A.1-A.4 start those
-    benefits no earlier than age 50, and an SSA cohort attains an age no
-    earlier than January of that year. The schema doesn't say which route a
-    hold took, so every hold shares the earliest age of any route.
+    to reduced RIB (or WIB prior to 1/90)", and it counts "months of WIB
+    entitlement before the first MOET to DIB". So a route needs a month
+    before this one. RS 00615.005A.1-A.4 date each route, and an SSA cohort
+    attains an age no earlier than January of that year. The schema doesn't
+    say which route a hold took, so every hold shares the earliest of any
+    route. ``first_dib_entitlement`` is the first-ever DIB month, not the
+    latest period's, so only the payment month bounds that period's start.
     """
-    return (
-        birth_year is None
-        or payment_month is None
-        or payment_month.year >= birth_year + _EARLIEST_REDUCED_BENEFIT_AGE
+    if payment_month is None:
+        return True
+    month = (payment_month.year, payment_month.month)
+    if month < _FIRST_REDUCED_DIB_MONTH:
+        return False
+    return birth_year is None or any(
+        max(first_month, (birth_year + age, 1)) < month
+        for first_month, age in _PRIOR_REDUCED_BENEFIT_ROUTES
     )
+
+
+def _tested_pia(state, beneficiary):
+    """The PIA an own-RIB test reads; a widow(er)'s OB can deem a higher one."""
+    if beneficiary is None:
+        return state.pia
+    return beneficiary.original_benefit_basis or state.pia
 
 
 def _hold_unsettles_fact(
@@ -1901,18 +1927,18 @@ def _hold_unsettles_fact(
     beneficiaries,
     params,
     upper_bound=False,
+    pia_cap=False,
 ):
     if fact not in _PREFLIGHT_FACT_UNSETTLERS[hold]:
         return False
+    if pia_cap and hold in _PIA_CAP_KEEPING_HOLDS:
+        return False
+    tested_pia = _tested_pia(state, beneficiary)
     if fact in ("F3", "F6") and hold in _PRE_1978_HISTORY_HOLDS:
-        own, cohort, tested_pia = (
-            (state.worker, state.worker_birth_year, state.pia)
+        own, cohort = (
+            (state.worker, state.worker_birth_year)
             if beneficiary is None
-            else (
-                beneficiary.own_benefit,
-                beneficiary.birth_year,
-                beneficiary.original_benefit_basis or state.pia,
-            )
+            else (beneficiary.own_benefit, beneficiary.birth_year)
         )
         # A declared history reaches past the undated current formula, in
         # either direction. A zero PIA fails every RIB on every filling.
@@ -1925,8 +1951,8 @@ def _hold_unsettles_fact(
     ):
         return False
     # 404.411(b) reduces a DIB after a reduced RIB and after a WIB under
-    # (b)(2). The schema omits the onset that scopes (b)(2), so only age and
-    # the pre-1978 cohort limit a hold that works through either benefit.
+    # (b)(2). The schema omits the onset that scopes (b)(2), so only each
+    # route's dates and the pre-1978 cohort limit a hold on either benefit.
     if (
         fact == "F2"
         and hold in _PRIOR_REDUCED_BENEFIT_HOLDS
@@ -1951,6 +1977,10 @@ def _hold_unsettles_fact(
     ):
         own = state.worker if beneficiary is None else beneficiary.own_benefit
         if own is None:
+            return False
+        # Every nonnegative RIB meets a zero threshold, so its amount can't
+        # change the result.
+        if fact == "F6" and tested_pia == 0:
             return False
         try:
             _own_monthly_benefit_validated(own, params)
@@ -2026,7 +2056,7 @@ def _hold_unsettles_fact(
         # less than a zero deemed-death PIA (402(e)(1)(D)).
         return (
             beneficiary.role in _OWN_RIB_AMOUNT_TEST_ROLES
-            and (beneficiary.original_benefit_basis or state.pia) > 0
+            and tested_pia > 0
             and _wib_carryover_possible(
                 beneficiary.own_benefit, beneficiary.birth_year
             )
@@ -2043,6 +2073,7 @@ def _fact_is_settled(
     beneficiaries=(),
     params=None,
     upper_bound=False,
+    pia_cap=False,
 ):
     """Whether ordinary G can establish this fact before a coverage hold.
 
@@ -2052,6 +2083,8 @@ def _fact_is_settled(
     Canonical money helpers may still refuse a fact that passes this test.
     An upper-bound request asks only for a cap: the one-parent OB without
     an exact parent count, or an NH rate a reduction-only hold can lower.
+    A PIA-cap request asks only whether a RIB with no delayed credits stays
+    at or below its PIA, a weaker cap that survives money history.
     """
     if beneficiary is not None:
         beneficiary = _with_effective_cohort(beneficiary)
@@ -2066,6 +2099,7 @@ def _fact_is_settled(
             beneficiaries=beneficiaries,
             params=params,
             upper_bound=upper_bound,
+            pia_cap=pia_cap,
         )
         for hold in holds
     ):
@@ -2123,6 +2157,7 @@ def _fact_is_settled(
             beneficiaries=beneficiaries,
             params=params,
             upper_bound=upper_bound,
+            pia_cap=pia_cap,
         )
         for hold in holds
     )

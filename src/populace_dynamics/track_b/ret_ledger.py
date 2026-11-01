@@ -1175,6 +1175,7 @@ def _check_settled_family_facts(record: RecordYear) -> None:
             member=None,
             *,
             upper_bound=False,
+            pia_cap=False,
             state=state,
             payment_month=payment_month,
             context=context,
@@ -1187,6 +1188,7 @@ def _check_settled_family_facts(record: RecordYear) -> None:
                 beneficiaries=context.beneficiaries,
                 params=context.params,
                 upper_bound=upper_bound,
+                pia_cap=pia_cap,
             )
 
         if record.kind is not RecordKind.DECEASED:
@@ -1205,20 +1207,32 @@ def _check_settled_family_facts(record: RecordYear) -> None:
                         raise InvalidFamilyInput(
                             "G context does not match RET rates"
                         )
-                elif settled("F3", upper_bound=True):
-                    try:
-                        gross = g._own_monthly_benefit_validated(
-                            state.worker, context.params
-                        )[1]
-                    except FamilyConfigurationUnsupported:
-                        pass
-                    else:
-                        if declared > gross or (
-                            settled("F3") and declared != gross
-                        ):
-                            raise InvalidFamilyInput(
-                                "G context does not match RET rates"
-                            )
+                else:
+                    # RS 00615.005C.2 subtracts a money reduction from the
+                    # new PIA, so with no delayed credits history leaves a
+                    # RIB at or below that PIA, whatever the exact rate.
+                    if (
+                        declared > state.pia
+                        and state.worker.delayed_credit_months == 0
+                        and settled("F3", pia_cap=True)
+                    ):
+                        raise InvalidFamilyInput(
+                            "G context does not match RET rates"
+                        )
+                    if settled("F3", upper_bound=True):
+                        try:
+                            gross = g._own_monthly_benefit_validated(
+                                state.worker, context.params
+                            )[1]
+                        except FamilyConfigurationUnsupported:
+                            pass
+                        else:
+                            if declared > gross or (
+                                settled("F3") and declared != gross
+                            ):
+                                raise InvalidFamilyInput(
+                                    "G context does not match RET rates"
+                                )
         parent_count = None
         parent_count_known = False
         for auxiliary in context.beneficiaries:
@@ -1250,22 +1264,23 @@ def _check_settled_family_facts(record: RecordYear) -> None:
             if settled(fact, auxiliary) and not (
                 auxiliary.role is g.Role.PARENT and original is None
             ):
-                try:
-                    own_mba = None
-                    if auxiliary.own_benefit is not None and fact == "F6":
+                own_mba = None
+                if auxiliary.own_benefit is not None and fact == "F6":
+                    try:
                         own_mba = g._own_monthly_benefit_validated(
                             auxiliary.own_benefit, context.params
                         )[1]
-                    entitled, _ = g._is_entitled(
-                        auxiliary, state.pia, own_mba, parent_ob=original
+                    except FamilyConfigurationUnsupported:
+                        # No RIB falls below zero, so a test that a zero RIB
+                        # fails holds on every filling of the missing amount.
+                        own_mba = Fraction(0)
+                entitled, _ = g._is_entitled(
+                    auxiliary, state.pia, own_mba, parent_ob=original
+                )
+                if not entitled:
+                    raise InvalidFamilyInput(
+                        "G and RET auxiliary entitlement facts differ"
                     )
-                except FamilyConfigurationUnsupported:
-                    pass
-                else:
-                    if not entitled:
-                        raise InvalidFamilyInput(
-                            "G and RET auxiliary entitlement facts differ"
-                        )
             if (
                 settled("F4", auxiliary)
                 and original is not None

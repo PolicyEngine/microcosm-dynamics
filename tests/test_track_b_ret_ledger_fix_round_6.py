@@ -610,7 +610,9 @@ def test_each_reason_classifies_a_lower_rib(reason):
 
 @pytest.mark.parametrize("reason", list(UR), ids=lambda reason: reason.value)
 @pytest.mark.parametrize("kind", ["dib", "rib"])
-def test_only_finality_lifts_an_nh_rate_cap(reason, kind):
+def test_only_finality_lifts_an_nh_rate_cap_outside_money_history_scope(
+    reason, kind
+):
     # Cohort 1927 sits past the money-history scope that round 7 opens.
     pia = F(400)
     case = (

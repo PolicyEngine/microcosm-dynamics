@@ -93,7 +93,15 @@ def _deferred(reason):
 
 
 def _rib_record(
-    pia, gross, *, reason=None, cohort=None, months=8, conditions=()
+    pia,
+    gross,
+    *,
+    reason=None,
+    cohort=None,
+    months=8,
+    conditions=(),
+    credits=0,
+    year=2000,
 ):
     state = g.RecordState(
         g.FamilyKind.RETIREMENT,
@@ -103,6 +111,7 @@ def _rib_record(
             g.OwnBenefitKind.OLD_AGE,
             pia,
             reduction_months=months,
+            delayed_credit_months=credits,
             birth_year=cohort,
         ),
         worker_birth_year=cohort,
@@ -110,7 +119,7 @@ def _rib_record(
         deferred_refusal=_deferred(reason),
     )
     return r.RecordYear(
-        2000,
+        year,
         "nh",
         r.RecordKind.RETIREMENT,
         (
@@ -184,6 +193,9 @@ def _mother_record(
     year=2000,
     eligibility=1990,
     maximum=None,
+    credits=0,
+    conditions=(),
+    member_conditions=(),
 ):
     state = g.RecordState(
         g.FamilyKind.SURVIVOR,
@@ -191,6 +203,7 @@ def _mother_record(
         g.floor_dime(pia * F(3, 2)) if maximum is None else maximum,
         eligibility_year=eligibility,
         widow_drc_savings_clause=False,
+        conditions=conditions,
         deferred_refusal=_deferred(reason),
     )
     members = (
@@ -202,8 +215,10 @@ def _mother_record(
                 g.OwnBenefitKind.OLD_AGE,
                 own,
                 reduction_months=months,
+                delayed_credit_months=credits,
                 birth_year=cohort,
             ),
+            conditions=member_conditions,
         ),
         g.Beneficiary("c", g.Role.CHILD),
     )
@@ -259,7 +274,15 @@ def _f2_settled(birth, year, month, *, conditions=(), reason=None):
 
 
 def _f6_settled(
-    role, reason, cohort, *, pia=F(480), months=12, kind=None, own_pia=F(400)
+    role,
+    reason,
+    cohort,
+    *,
+    pia=F(480),
+    months=12,
+    kind=None,
+    own_pia=F(400),
+    credits=0,
 ):
     state = g.RecordState(
         g.FamilyKind.SURVIVOR,
@@ -277,6 +300,7 @@ def _f6_settled(
             g.OwnBenefitKind.OLD_AGE if kind is None else kind,
             own_pia,
             reduction_months=months,
+            delayed_credit_months=credits,
             birth_year=cohort,
         ),
         own_benefit_first=True if role in SPOUSE_ROLES else None,
@@ -492,7 +516,7 @@ def test_history_leaves_a_dib_cap_alone(reason, birth):
 def test_history_keeps_every_rate_in_its_scope(
     pia, months, cohort, reason, gap
 ):
-    gross = max(F(0), _ordinary(pia, months) + gap)
+    gross = min(pia, max(F(0), _ordinary(pia, months) + gap))
     _assert_refusal(
         _rib_record(pia, gross, reason=reason, cohort=cohort, months=months),
         reason,
@@ -693,10 +717,11 @@ def test_f6_matches_a_table_written_from_the_sources(
         and role in (g.Role.MOTHER_FATHER, g.Role.PARENT)
         and (cohort is None or cohort < 1928)
     )
-    # A known cohort refuses its own history whatever the record declares.
+    # A known cohort refuses its own history whatever the record declares,
+    # and a zero PIA fails every RIB on every filling.
     implicit_history = months > 0 and cohort is not None and cohort < 1916
-    expected_open = implicit_history or (
-        pia > 0 and (money_history or carryover)
+    expected_open = pia > 0 and (
+        implicit_history or money_history or carryover
     )
     settled = _f6_settled(role, reason, cohort, months=months, pia=pia)
     assert settled is not expected_open
@@ -752,13 +777,16 @@ def test_before_age_50_a_dib_below_the_pia_raises(
     "birth,year,month,keeps",
     [
         (1974, 2023, 12, False),
-        (1974, 2024, 1, True),
+        (1974, 2024, 1, False),
+        (1974, 2024, 2, True),
+        (1973, 2023, 1, False),
+        (1973, 2023, 2, True),
         (1973, 2023, 12, True),
         (1960, 2024, 1, True),
         (None, 2024, 1, True),
     ],
 )
-def test_the_floor_opens_in_january_of_the_year_a_cohort_turns_50(
+def test_the_floor_opens_the_month_after_a_cohort_turns_50(
     conditions, reason, named, birth, year, month, keeps
 ):
     pia = F(405)
@@ -829,8 +857,10 @@ def test_the_floor_needs_a_cohort_and_a_month():
     "birth,year,month,settled",
     [
         (1927, 1976, 12, True),
-        (1927, 1977, 1, False),
-        (1926, 1976, 12, False),
+        (1927, 1977, 1, True),
+        (1927, 1977, 2, False),
+        (1926, 1976, 1, True),
+        (1926, 1976, 2, False),
         (1928, 1990, 1, True),
     ],
 )
@@ -859,6 +889,7 @@ def test_a_pre_1978_hold_needs_both_the_cohort_and_the_age(
 )
 @example(birth=1974, year=2023, month=12, hold=DUAL)
 @example(birth=1974, year=2024, month=1, hold=DUAL)
+@example(birth=1974, year=2024, month=2, hold=DUAL)
 @settings(max_examples=250, deadline=None)
 def test_f2_matches_a_table_written_from_the_sources(birth, year, month, hold):
     if hold in (
@@ -868,7 +899,7 @@ def test_f2_matches_a_table_written_from_the_sources(birth, year, month, hold):
     ):
         expected_open = True
     else:
-        expected_open = year >= birth + 50
+        expected_open = (year, month) > (birth + 50, 1)
         if hold in PRE_1978_REASONS:
             expected_open = expected_open and birth < 1928
     conditions, reason = ({hold}, None) if isinstance(hold, RC) else ((), hold)

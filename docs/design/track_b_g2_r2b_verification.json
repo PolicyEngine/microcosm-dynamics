@@ -13161,5 +13161,87 @@
       ]
     }
   },
-  "round_7_current_evidence_note": "Fresh reviewed-head failing-first, named module gates, cross-head diagnostic and copied-tree mutation evidence sits under round_7. Earlier heads, counts and commands remain historical."
+  "round_7_current_evidence_note": "Fresh reviewed-head failing-first, named module gates, cross-head diagnostic and copied-tree mutation evidence sits under round_7. Earlier heads, counts and commands remain historical.",
+  "round_8": {
+    "reviewed_head": "fbe491d4c3ea3077702616eee79a742da124eefd",
+    "workspace": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-g2-20261023",
+    "verification_class": "statutory_conformance",
+    "admitted_scope": "Invented declarations and captured published examples only; no population, behavioral or forecast claim.",
+    "fixed_by": "the session, because Fleet ops asked for one job at a time and a review held the slot",
+    "named_test_gate": {
+      "selection": "tests/test_track_b_*.py",
+      "result": "14193 passed, 7 skipped in 979.17s (0:16:19)",
+      "environment": "both data roots set to a nonexistent path"
+    },
+    "failing_first": {
+      "reviewed_head": "fbe491d4c3ea3077702616eee79a742da124eefd",
+      "module": "tests/test_track_b_ret_ledger_fix_round_8.py",
+      "result": "96 failed, 52 passed in 0.77s"
+    },
+    "cross_head": {
+      "r2_stable_rows": 240,
+      "r3_stable_rows": 240,
+      "identical_declared_output_bytes": true,
+      "stable_sha256": "799fc9e23a902ac1ca0c2563579ceb094d0dbcd631a912305c40062cf21a5f55"
+    },
+    "conformance_report_sha256": "17d144575b38bb85080d8cbed28fad470ec93fd6eb6803b48729bb26a78b3d45",
+    "conformance_report_byte_identical": true,
+    "tier_policy": "Left to CI; no local whole-suite collection.",
+    "final_source_sha256": {
+      "src/populace_dynamics/track_b/gross_benefits.py": "96ef26ad39fc7f26d2e1f93659928821a6edc7e13c32844866527c74c131b38a",
+      "src/populace_dynamics/track_b/ret_ledger.py": "78c24f9f94ab8cf90efcd0ca5c5b92686fd0cad71911594e204517313135c999"
+    },
+    "final_test_sha256": {
+      "tests/test_track_b_ret_ledger_fix_round_4.py": "02c5c86b64070f9e7350868f8d94dcc9233bedc32cbcae32b3264f9ae570d1bb",
+      "tests/test_track_b_ret_ledger_fix_round_5.py": "c86ef045d797e31d6db09ef11bc7fbfbcf7c1fa54d32f04e7b6b42e8b813c9cd",
+      "tests/test_track_b_ret_ledger_fix_round_6.py": "8ec899e262d6e242f67f860e1722f465882573bbcb481b8459f2ff13946f92b0",
+      "tests/test_track_b_ret_ledger_fix_round_7.py": "6f8f1cdc4f90e594759225870e1ec36a905fa1cd6eea7d142747ac13bec066c4",
+      "tests/test_track_b_ret_ledger_fix_round_8.py": "f6702f15e22000379a5e1bd45c3d15bd9766c71b7e9965266574458bfdfd8f23"
+    },
+    "mutations": {
+      "count": 39,
+      "ids": [
+        "round8-cap_also_at_the_pia",
+        "round8-cap_ignores_credits",
+        "round8-cap_ignores_every_hold",
+        "round8-cap_removed",
+        "round8-cap_uses_the_ordinary_upper_bound",
+        "round8-disabled_route_age_49",
+        "round8-disabled_route_age_51",
+        "round8-disabled_route_month_early",
+        "round8-disabled_route_month_late",
+        "round8-disabled_route_removed",
+        "round8-effective_date_removed",
+        "round8-every_route_must_precede",
+        "round8-first_pass_drops_pia_cap",
+        "round8-last_pass_drops_pia_cap",
+        "round8-pia_cap_drops_delayed_hold",
+        "round8-pia_cap_for_every_hold",
+        "round8-pia_cap_only_delayed_hold",
+        "round8-pia_cap_removed",
+        "round8-reduced_dib_month_early",
+        "round8-reduced_dib_month_late",
+        "round8-rib_route_age_61",
+        "round8-rib_route_age_63",
+        "round8-rib_route_removed",
+        "round8-rib_route_starts_with_the_dib",
+        "round8-route_ignores_age",
+        "round8-route_ignores_its_first_month",
+        "round8-route_month_may_equal_the_dib",
+        "round8-tested_pia_ignores_basis",
+        "round8-unknown_cohort_closes_the_route",
+        "round8-unknown_month_closes_the_route",
+        "round8-unknown_rib_passes_the_test",
+        "round8-unknown_rib_takes_its_pia",
+        "round8-widow_route_age_59",
+        "round8-widow_route_age_61",
+        "round8-widow_route_month_early",
+        "round8-widow_route_month_late",
+        "round8-widow_route_removed",
+        "round8-zero_threshold_reaches_positive_pia",
+        "round8-zero_threshold_removed"
+      ]
+    }
+  },
+  "round_8_current_evidence_note": "Fresh reviewed-head failing-first, named module gates, cross-head diagnostic and copied-tree mutation evidence sits under round_8. Earlier heads, counts and commands remain historical."
 }
