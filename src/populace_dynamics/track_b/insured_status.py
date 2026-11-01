@@ -1468,8 +1468,11 @@ def _fra_quarter(person):
 
 def _last_insured(person, credits, month, exit_month, *, years=None):
     last = None
+    # Every nonblind route needs six ordinary QCs in its own window. Below
+    # six, only a blind person's aggregate can still supply a historical DLI.
     if sum(len(fixed) + flexible for fixed, flexible in credits.values()) < 6:
-        return None, False
+        if years is None or not person.statutory_blindness:
+            return None, False
     cap = min(_qid(month), _fra_quarter(person) - 1)
     if person.death_date is not None:
         cap = min(cap, _qid(person.death_date))
@@ -1482,7 +1485,7 @@ def _last_insured(person, credits, month, exit_month, *, years=None):
     credited_years = [
         y for y, (fixed, flex) in credits.items() if fixed or flex
     ]
-    start = max(min(credited_years) * 4, _qid(person.birth_date))
+    start = max(min(credited_years, default=1937) * 4, _qid(person.birth_date))
     if not person.statutory_blindness and not person.prior_disability_periods:
         cap = min(cap, max(credited_years) * 4 + 3 + 39)
     for qid in range(cap, start - 1, -1):
@@ -1713,10 +1716,10 @@ def _start_sensitive_years(person, horizon):
 def _period_outcomes(
     person, completed, start, credits, month, exit_month, kinds, dated
 ):
-    """Statuses and date last insured for each ending of one start."""
+    """Statuses, date last insured and witnesses for each ending."""
     for option in _current_period_completions(person, completed, start, month):
-        statuses = tuple(
-            _decision_witness(option, credits, month, exit_month, kind)[0][0]
+        witnesses = tuple(
+            _decision_witness(option, credits, month, exit_month, kind)
             for kind in kinds
         )
         last = (
@@ -1724,11 +1727,35 @@ def _period_outcomes(
             if dated
             else None
         )
-        yield statuses, last
+        yield tuple(found[0][0] for found in witnesses), last, witnesses
+
+
+def _witness_rank(entry):
+    """Order a status's witnesses the way ``_witness`` scores them."""
+    witness = entry[0]
+    return witness[0], witness[1] - witness[2], witness[1]
+
+
+def _witness_ranks(table):
+    return [[_witness_rank(entry) for entry in row] for row in table]
+
+
+def _keep_favorable(kept, outcomes):
+    """Each status's best witness so far, for each period ending."""
+    found = tuple(zip(*(outcome[2] for outcome in outcomes), strict=True))
+    if kept is None:
+        return found
+    return tuple(
+        tuple(
+            max(entries, key=_witness_rank)
+            for entries in zip(*pair, strict=True)
+        )
+        for pair in zip(kept, found, strict=True)
+    )
 
 
 def _improves(outcome, returned, last_insured):
-    statuses, last = outcome
+    statuses, last, _ = outcome
     return any(
         found and not kept
         for found, kept in zip(statuses, returned, strict=True)
@@ -1746,6 +1773,8 @@ def _settle_first_start(
     *,
     dated,
     last_insured,
+    reported,
+    favored,
 ):
     """Refuse a result no filling and its own first start can support.
 
@@ -1758,13 +1787,24 @@ def _settle_first_start(
     as its own and no filling can improve on it. Flexible credits bound
     every filling at each possible start, so a bound that allows an
     improvement refuses by name. Otherwise the search begins at the filling
-    that insures the start, varies the latest years first, and stops at the
-    first filling that attains the result. A year that cannot move the
-    start stays flexible, so each status still places it favorably.
+    that insures the start and varies the latest years first until a filling
+    attains the result. Ties go to ``favored``, the quarters the excluded
+    world credits, so the returned filling keeps a year's credits where it
+    can. A year that cannot move the start stays flexible, so each status
+    still places it favorably.
+
+    The same limit binds what a status reports. Its favorable count and
+    assignment can rest on a placement that would move the start, so
+    ``reported`` holds each status's witness for each period ending, and
+    the search continues past that filling until every one is attained with
+    the reported start or the placements run out. It returns the filling
+    that attained the result, with the best witnesses the reported start
+    allows. It returns ``(None, ())`` when any filling keeps the start, or
+    when ``reported`` is None because unknown facts leave only an envelope.
     """
     # Source conflict us:oasdi-insured-one-filling-first-start
     if _start_fixed(person, credits, start, month, exit_month):
-        return
+        return None, ()
     horizon = _current_period_start_horizon(person, month)
     for quarter in range(_qid(start), _qid(horizon) + 1):
         try:
@@ -1799,11 +1839,16 @@ def _settle_first_start(
     options = {
         year: sorted(
             _assignment_candidates(*row),
-            key=lambda choice: not witness.issuperset(choice),
+            key=lambda choice: (
+                len(set(choice) - witness),
+                len(set(choice) - favored),
+                choice,
+            ),
         )
         for year, row in rows.items()
         if year in sensitive and row[1]
     }
+    joint = kept = None
     for index, choices in enumerate(product(*options.values())):
         if index == 4096:
             _refuse(
@@ -1828,25 +1873,44 @@ def _settle_first_start(
                 )
             except InvalidFamilyInput:
                 continue
-            if own_start == start and (
-                returned,
-                last_insured,
-            ) in _period_outcomes(
-                person,
-                completed,
-                own_start,
-                filling,
-                month,
-                exit_month,
-                kinds,
-                dated,
+            if own_start != start:
+                continue
+            outcomes = tuple(
+                _period_outcomes(
+                    person,
+                    completed,
+                    own_start,
+                    filling,
+                    month,
+                    exit_month,
+                    kinds,
+                    dated,
+                )
+            )
+            if joint is None and any(
+                outcome[:2] == (returned, last_insured) for outcome in outcomes
             ):
-                return
-    _refuse(
-        InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
-        "First insured start depends on annual placement "
-        "or prior treatment",
-    )
+                joint = filling
+            if joint is not None and reported is None:
+                return None, ()
+            if reported is not None:
+                kept = _keep_favorable(kept, outcomes)
+            if joint is not None and _witness_ranks(kept) == _witness_ranks(
+                reported
+            ):
+                return joint, kept
+    # Every ending must still agree once each keeps the reported start.
+    if joint is None or any(
+        entry[0][0] != insured
+        for entries, insured in zip(kept, returned, strict=True)
+        for entry in entries
+    ):
+        _refuse(
+            InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+            "First insured start depends on annual placement "
+            "or prior treatment",
+        )
+    return joint, kept
 
 
 def _current_period_completions(person, completed, start, month):
@@ -2370,6 +2434,43 @@ def _could_establish_current_period(
     return False
 
 
+def _status_decision(lo_candidates, hi_candidates, envelope=None):
+    """One status from its candidates; ``envelope`` widens unsure counts."""
+    lo, lo_quarter = lo_candidates[-1]
+    hi, hi_quarter = hi_candidates[0]
+    witnesses = [value for value, _ in (*lo_candidates, *hi_candidates)]
+    count_lo, count_hi, full_lo, full_hi = (
+        (0, envelope, 0, envelope)
+        if envelope is not None
+        else (
+            min(w[1] for w in witnesses),
+            max(w[1] for w in witnesses),
+            min(w[7] for w in witnesses),
+            max(w[7] for w in witnesses),
+        )
+    )
+    return _computed(
+        StatusDecision,
+        lo[0],
+        count_lo,
+        count_hi,
+        lo[2],
+        lo[3],
+        lo[4],
+        lo[5],
+        hi[2],
+        hi[3],
+        hi[4],
+        hi[5],
+        lo[6],
+        hi[6],
+        full_lo,
+        full_hi,
+        lo_quarter,
+        hi_quarter,
+    )
+
+
 def _dli_cap(person, month, exit_month):
     cap = min(_qid(month), _fra_quarter(person) - 1)
     if exit_month is not None and exit_month <= month:
@@ -2442,6 +2543,9 @@ def insured_status(
     A first successful filling cannot settle the other requested statuses:
     wherever placement or treatment can move the start, one filling with
     its own start must attain the returned result and none may beat it.
+    Each status then reports the best count and assignment that start
+    allows, and the year counts and top-level assignment describe the
+    returned filling. An UNKNOWN fact keeps its envelope instead.
     The pre1956 flag adds no route beyond the automatic alternate. A flag's
     own conditions remain declared facts and are not tested.
     History validation runs first. Uncomputable QC rows use bounded
@@ -2621,7 +2725,7 @@ def insured_status(
             InsuredUnsupportedReason.CURRENT_PERIOD_DLI,
             "Current period end beyond query is unobserved",
         )
-    decisions = {}
+    decisions, candidates = {}, {}
     for kind in (
         InsuredTest.FULLY,
         InsuredTest.CURRENTLY,
@@ -2732,36 +2836,9 @@ def insured_status(
                 and len(_events(person, month, kind)) > 1
             )
         )
-        witnesses = [value for value, _ in lo_candidates + hi_candidates]
-        count_lo, count_hi = (
-            (0, maximum_qcs)
-            if broad
-            else (min(w[1] for w in witnesses), max(w[1] for w in witnesses))
-        )
-        full_lo, full_hi = (
-            (0, maximum_qcs)
-            if broad
-            else (min(w[7] for w in witnesses), max(w[7] for w in witnesses))
-        )
-        decisions[kind] = _computed(
-            StatusDecision,
-            lo[0],
-            count_lo,
-            count_hi,
-            lo[2],
-            lo[3],
-            lo[4],
-            lo[5],
-            hi[2],
-            hi[3],
-            hi[4],
-            hi[5],
-            lo[6],
-            hi[6],
-            full_lo,
-            full_hi,
-            lo_quarter,
-            hi_quarter,
+        candidates[kind] = lo_candidates
+        decisions[kind] = _status_decision(
+            lo_candidates, hi_candidates, maximum_qcs if broad else None
         )
     dli = None
     if test in (InsuredTest.ALL, InsuredTest.DISABILITY):
@@ -2792,13 +2869,22 @@ def insured_status(
             # false current status cannot prove a positive DLI lower date.
             lo_date = None
         dli = _computed(DLIRange, lo_date, hi_date, lo_censored or hi_censored)
+    placement = None
     if lo_start is not None:
+        favored_rows, _ = _world(
+            lo_person,
+            upper,
+            _qid(month),
+            coverage_end_month,
+            True,
+            include_zero=True,
+        )
         kinds = tuple(
             kind
             for kind in (InsuredTest.FULLY, InsuredTest.CURRENTLY)
             if decisions[kind] is not None
         )
-        _settle_first_start(
+        placement, settled = _settle_first_start(
             person,
             upper,
             hi_start,
@@ -2810,10 +2896,22 @@ def insured_status(
             last_insured=(
                 dli.upper if dli is not None and not prior_unknown else None
             ),
+            reported=(
+                None
+                if unknown or prior_unknown
+                else tuple(candidates[kind] for kind in kinds)
+            ),
+            favored=frozenset(
+                quarter
+                for row in favored_rows.values()
+                for quarter in _assign_qcs(*row)
+            ),
         )
+        for kind, witnesses in zip(kinds, settled, strict=False):
+            decisions[kind] = _status_decision(witnesses, witnesses)
     lo_rows, _ = _world(
         lo_person,
-        lower,
+        placement or lower,
         _qid(month),
         coverage_end_month,
         True,
@@ -2838,8 +2936,8 @@ def insured_status(
             include_zero=True,
         )[0]
         for people, credits in (
-            (lo_completions, lower),
-            (hi_completions, upper),
+            (lo_completions, placement or lower),
+            (hi_completions, placement or upper),
         )
         for p in people
     ]

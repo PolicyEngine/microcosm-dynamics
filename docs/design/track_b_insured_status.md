@@ -470,6 +470,8 @@ each earnings-bound world. Thus a disability witness can show 20 recent QCs
 and still be uninsured because its duration-of-work requirement is not met.
 The low and high witnesses each optimize assignment for that particular
 test. They need not have the same assignment or prior-period treatment.
+Where the first start can move, each keeps a filling with the reported start,
+and `qcs_by_year` and the top-level assignment describe the returned filling.
 The per-year QC mapping uses the disability-excluded context; the witness
 identifies credits actually used if disregarding the periods is favorable.
 Witness fields describe selected computations; their endpoint counts are
@@ -854,7 +856,7 @@ to a statutory sentence that does not state it.
 | B14. Declaring continuity never widens the administrative-end candidate set; every returned status and count envelope remains valid for every retained concrete ending. | C321(c)'s ending events still govern. Set intersection with ends on/after the observation can only remove candidates; it creates neither an ending nor a new credit. The universal envelope remains unchanged where other unknown facts require it. |
 | B15. Ordinary establishment overlap resolution enumerates at most 4,096 unknown-credit fillings after its fixed-date monotonicity, candidate-quarter, six-QC, and minimum-requirement proofs. | C320(b)(2) and C321(a) require one insured beginning consistent with the complete declaration. I13 settles fixed-quarter overlap and I15 settles a known-history nonblind lifetime-QC shortfall before enumeration. If neither settles the declaration, a search beyond the limit returns `disability_boundary_assignments_unsupported`; it asserts neither a concrete filling nor an input error. |
 | B16. A deferred raw-conversion row retains independently computable ordinary credits in its minimum and every enumerated filling, and cannot exceed feasible calendar-quarter credits in its maximum. | A213(d)(2)'s prior-increment floor bounds future annual credits above by the captured 2027 increment applied to the supplied wages plus SE income; the possibility-only lower bound is zero. Raw 1937 allocation remains zero through four because A213(b)'s half-year rule is unresolved. For separate pre1955 agriculture or pre1951 SE, supported quarterly wage credits and supported post1950 calendar-year SE credits remain fixed; unresolved additional allocation can fill only remaining allowed quarters. Both minimum and maximum fillings may violate derived overlap even when a middle filling is valid, so neither endpoint alone proves impossibility. These bounds do not adjudicate a specialist allocation or replace its refusal. |
-| B17. The first-start check refuses when flexible credits allow a better result at any possible start, and it searches at most 4,096 placements of the annual years that can change a first insured quarter. | 404.321(a) gives a record one start, and RS .230 makes placement flexible. A year wholly inside every tested window and untouched by a period adds its full count wherever its QCs fall, so it stays flexible. Without prior periods, an insured worst filling proves no filling starts later, and the check stops. The bound can refuse a declaration that no concrete filling improves, and a search can reach its limit before it attains a result. Both return `disability_boundary_assignments_unsupported`, so the row keeps its weight; neither asserts a filling or an input error. |
+| B17. The first-start check refuses when flexible credits allow a better result at any possible start, and it searches at most 4,096 placements of the annual years that can change a first insured quarter. | 404.321(a) gives a record one start, and RS .230 makes placement flexible. A year wholly inside every tested window and untouched by a period adds its full count wherever its QCs fall, so it stays flexible. Without prior periods, an insured worst filling proves no filling starts later, and the check stops. The bound can refuse a declaration that no concrete filling improves, and a search can reach its limit before it attains a result. Round 16's longer search for each status's witness can reach the same limit. All return `disability_boundary_assignments_unsupported`, so the row keeps its weight; none asserts a filling or an input error. |
 
 The round-5 adversarial audit revisits each row in both directions in
 `scratch/review/round5-premise-audit.md`: a valid filling cannot be rejected,
@@ -1922,7 +1924,8 @@ status or a later date last insured refuses the row with
 `disability_boundary_assignments_unsupported`. It then looks for an
 attaining filling, starting from the filling that insures the reported
 start and varying the latest years first, because those years conflict
-with the later windows. The first attaining filling ends the search. A year
+with the later windows. Round 15 stopped at the first attaining filling, and
+round 16 searches on for each status's count. A year
 that can't move the start stays flexible, so each status still places it
 favorably. The check joins each status to the start, not the statuses to one
 another. This keeps the favorable answer of RS 00301.230 and replaces an
@@ -1961,8 +1964,9 @@ found 13 status disagreements and no false rejection, and each of the 13
 had more than one possible first start. The committed test pins all 13
 seeds and generates more. Two more generators add a DIB entitlement month,
 drawn mostly from partial years up to the onset, and ages 22 to 30 at onset
-under 404.130(c) and (d). DLI, the subsequent-special route, UNKNOWN facts
-and flags stay outside its claim. Declared priors are not re-adjudicated.
+under 404.130(c) and (d). UNKNOWN facts and flags stay outside its claim,
+and round 16 adds the date last insured and the subsequent-special route.
+Declared priors are not re-adjudicated.
 
 After the fix, the same 28,000 and 14,000 fresh declarations give no
 disagreement, no false rejection and no computed row without a lawful
@@ -2003,6 +2007,144 @@ The invariants added in this round are executed by these tests:
   (`test_fully_refusal_and_a_met_recent_rule_never_compute_false`);
 - the DISABILITY refusal tracks the exact aggregate
   (`test_disability_refusal_tracks_the_exact_aggregate`).
+
+## Round 16 diagnostics on the reported start
+
+Verification class: statutory conformance on invented declarations only.
+This correction admits no population, behavioral, payment, or forecast claim.
+Sol's eleventh review of `c28bb1dd` raised two mediums, and both reproduced.
+
+### Exact diagnostics rest on the reported start
+
+Round 15 joined each status's Boolean to the reported start. Its count and
+assignment kept the status's own favorable placement, so an exact diagnostic
+could describe a filling that 404.321(a) excludes. An invented woman born
+1962-02-02 has annual QCs 1998:4, 1999:2, 2000:1, four in each of 2001 to
+2004 and 2005:3, onset 2010-01-15, a period ending 2010-12-31 and a DIB
+entitlement month of 2000-01. The 2000 QC reaches 20 of 40 at the onset only
+in 2000Q2 or later, so every lawful filling finds six of 13 at the entitlement
+month. At `c28bb1dd` CURRENTLY reported seven, and both its assignment and
+the top-level `assigned_quarters` put that QC in 2000Q1. The status stayed
+true, and the count and quarter were wrong. The review's record adds a prior
+period and earlier work, with the same result.
+
+`_settle_first_start` now takes each status's witness for each period ending.
+It searches past the first attaining filling until every witness recurs with
+the reported start or the placements run out. It then returns the filling
+that attained the result and each status's best witness among the fillings
+that keep the reported start. `_witness_rank` orders them as `_witness`
+scores them, by status, then margin over the requirement, then count. Every
+ending must still agree once its witness keeps the reported start, and a
+status only a moved placement met keeps its
+`disability_boundary_assignments_unsupported` refusal. The top-level
+`assigned_quarters` and `qcs_by_year` describe the returned filling. Where
+the same record has no moving start, `_start_fixed` holds and each status
+keeps its own favorable placement. So does an UNKNOWN year or prior, whose
+envelope states an outer bound rather than a filling. This changes no reading. It carries the logged reading
+`us:oasdi-insured-one-filling-first-start` from the Boolean to the fields
+that report it.
+
+Three records pin the edges. With nineteen QCs through 1999, one 2000 QC, an
+onset of 1999-06-15 and a query of 2003-04-01, a declared ending in 2000Q2 or
+later meets CURRENTLY at the reported start with the 2000 QC in 2000Q1. An
+ending in 2000Q1 needs that QC in a later quarter, so it refuses. An UNKNOWN
+ending includes that one, so it refuses too, although its other endings
+agree. With 19 QCs from 2001 through 2005, the latest date last insured needs
+the 2000 QC in 2000Q2 or later and the row refuses. With 20, the date doesn't
+need that QC, and it computes 2010-12-31.
+
+The returned filling is one lawful filling, not a proof that it credits the
+most quarters. The search tries the start's witness first and then the
+quarters `_world` credits in the excluded context, so a year keeps its
+credits where it can. A disregard-periods witness can still hold a year's QCs
+inside a prior, and the year count then falls below what another filling with
+the same start gives. This limit touches only that diagnostic: no status,
+count, start or date depends on it, and no module reads `qcs_by_year` or the
+top-level `assigned_quarters`. An exact row keeps
+`qcs_by_year[y] == (len(assigned_quarters[y]),) * 2`.
+
+Sol's record moves a count, and the random generators rarely reach one. On
+1,200 stress declarations, `c28bb1dd` and this head agree on every outcome
+class, status, count, start and date, and 67 rows change only where their QCs
+sit. The exhaustive placements in
+`test_a_computed_count_is_the_best_lawful_count` check the rule's count against
+plain arithmetic for the no-prior record, and each stress generator now checks
+counts on every computed row.
+
+### The aggregate below six ordinary QCs
+
+`_last_insured` returned no date last insured below six ordinary QCs, on the
+premise that every route needs them. A blind person's fully insured route
+doesn't: blindness removes the recent rule, and Act 213(c)'s aggregate can
+supply the fully insured quarters. An invented blind woman born 1926-02-02 has $8,800 in
+single quarters across 1948 to 1950 and three ordinary QCs. Her 22 aggregate
+credits match the 22 of 1973, so at 1974-01-01 the aggregate could date her
+last insured quarter, while `c28bb1dd` reported none. The row now refuses
+with `simplified_pre1951_unsupported`, with or without an exit. The same
+holds for 52 quarters of $49, which earn no ordinary QC. The shortcut still
+answers every nonblind record, because each nonblind route needs six ordinary
+QCs in its own window. A blind record with no wages reaches the scan and finds
+no date.
+
+`test_blind_aggregate_decides_below_six_ordinary_qcs` in round 15 asserted
+that $8,700, or 21 credits, computed false. Those credits meet 1972's 21 for a
+historical date, so that row now refuses, and $2,397, or five credits, takes
+its place as the row that computes.
+
+### Oracle reach and bounds
+
+The status oracle and stress generators drew neither the date last insured nor
+the subsequent-special route, and they checked no count. Both claims now
+execute. `favorable_statuses` and `lawful_fillings` return each lawful
+filling's own first start, and `_check_diagnostics` and `check_diagnostics`
+hold every computed count and date to the best filling with the reported
+start. `subsequent_declaration` draws a special prior from ages 24 to 30 and
+an onset from ages 32 to 40, so 404.130(d) now runs alongside 404.130(c).
+The session drew 4,800 fresh declarations across the four generators at the
+final source. Of these, 3,131 computed and agreed on status, count and date, 62
+refused by name, 1,607 raised `InvalidFamilyInput` with no lawful filling, and
+nothing disagreed.
+
+Ten mutations survived a first pass, and execution settled each one. Eight
+were test gaps, and named tests now kill them. The first fix returned the first
+attaining filling, and a differential against `c28bb1dd` found that it lowered
+the year count in 62 of 712 computed rows. The `favored` tie-break brings
+that to 8. Reversing every candidate list changes no output on those
+declarations. Without the sort's last key, the same reversal changes 72.
+`unknown_current_treated_as_exact` showed that an UNKNOWN current period can't
+reach `_settle_first_start`, because its start stays `None`, so that condition
+left the code. `rank_ignores_status` is equivalent: the search ranks only
+FULLY and CURRENTLY witnesses, whose `insured` is exactly `count >= required`,
+and all 9,892 witnesses ranked in a stress run agree. All 23 mutations in the
+ledger ran against the final source, with 22 killed and that one equivalent.
+
+The longer search can reach the 4,096 limit where the first attaining
+filling once stopped it. Such a row refuses by name and keeps its weight, as
+B17 records.
+
+The invariants added in this round are executed by these tests:
+
+- a computed count and assignment rest on a filling with the reported start
+  (`test_count_and_assignment_keep_the_reported_start`,
+  `test_every_exact_diagnostic_rests_on_one_filling`,
+  `test_a_computed_count_is_the_best_lawful_count`, and both oracles);
+- a fixed start and an UNKNOWN envelope keep the favorable count
+  (`test_a_fixed_start_keeps_the_favorable_count`,
+  `test_unknown_years_keep_the_universal_envelope`,
+  `test_an_unknown_ending_keeps_each_endings_witness`);
+- the year counts match the returned filling
+  (`test_status_stress_year_counts_follow_the_returned_filling`,
+  `check_diagnostics`), and that filling keeps credited endpoints
+  (`test_status_stress_returned_filling_keeps_credited_endpoints`);
+- each ending must hold at the reported start, and so must the date last
+  insured (`test_an_ending_the_reported_start_fails_refuses`,
+  `test_a_later_ending_meets_currently_at_the_reported_start`,
+  `test_a_date_only_a_moved_placement_reaches_refuses`,
+  `test_a_date_the_reported_start_reaches_computes`);
+- a date last insured below six ordinary QCs refuses exactly where the
+  aggregate reaches six or more (`test_the_dli_refusal_tracks_six_aggregate_qcs`,
+  `test_aggregate_below_six_ordinary_qcs_refuses_the_dli`,
+  `test_aggregate_with_no_ordinary_qc_refuses_the_dli`).
 
 ## Not in scope
 

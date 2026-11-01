@@ -10,16 +10,19 @@ I (20/40) or blindness applies. Endings, queries, annual totals with at most
 four partial years, no prior, a clear prior or an overlapping prior, and
 blindness in a quarter of cases all vary by seed. A second generator adds a
 DIB entitlement month, which ends a CURRENTLY window before the onset. A third
-draws ages 22-30 at onset, where 404.130(c) and (d) apply. Declared priors are
-not re-adjudicated. No flags, UNKNOWN facts, DLI, subsequent-special routes,
-raw earnings or death are claimed.
+draws ages 22-30 at onset, where 404.130(c) applies. A fourth declares a
+special-insured prior after age 31, where 404.130(d) applies. Declared priors
+are not re-adjudicated. No flags, UNKNOWN facts, raw earnings or death are
+claimed.
 
 Every annual placement and both all-prior treatments are enumerated. A lawful
 filling has its own first insured start (404.321(a)), and that start supplies
-the current period for FULLY and CURRENTLY. Each returned status must equal
-the favorable Boolean over lawful fillings (RS 00301.230), and a true status
-must hold on a filling whose first start is the reported start. A rejection
-needs no lawful filling. A named refusal retains the declaration and passes.
+the current period for FULLY, CURRENTLY and the date last insured. Each
+returned status must equal the favorable Boolean over lawful fillings
+(RS 00301.230), and a true status must hold on a filling whose first start is
+the reported start. Each exact count, assignment and date last insured must
+also be the best a filling with that start attains. A rejection needs no
+lawful filling. A named refusal retains the declaration and passes.
 """
 
 import calendar
@@ -93,10 +96,12 @@ def recent(use, at, periods, length):
     return count
 
 
-def under_31(birth, use, at, periods):
+def under_31(birth, use, at, periods, special=False):
     """404.130(c), (d): half the quarters after age 21, or 6 of 12."""
     attained_21 = quarter(date(birth.year + 21, birth.month, birth.day))
-    if at >= quarter(date(birth.year + 31, birth.month, birth.day)):
+    if not special and at >= quarter(
+        date(birth.year + 31, birth.month, birth.day)
+    ):
         return False
     elapsed = [
         candidate
@@ -112,13 +117,25 @@ def under_31(birth, use, at, periods):
     return credited >= max(6, min(len(elapsed), 40) // 2)
 
 
-def disability(birth, credits, at, periods, blind):
+def disability(birth, credits, at, periods, blind, special=False):
     use = usable(credits, at, periods)
     fully = len(use) >= requirement(birth, at // 4, periods)
     return fully and (
         blind
         or recent(use, at, periods, 40) >= 20
-        or under_31(birth, use, at, periods)
+        or under_31(birth, use, at, periods, special)
+    )
+
+
+def last_insured(birth, credits, at, periods, blind, special):
+    """Latest quarter through the query that insures a potential onset."""
+    return max(
+        (
+            candidate
+            for candidate in range(min(credits, default=at), at + 1)
+            if disability(birth, credits, candidate, periods, blind, special)
+        ),
+        default=None,
     )
 
 
@@ -134,7 +151,9 @@ def placements(annual):
 def lawful_fillings(case):
     """Exhaust every filling before comparing to a public result.
 
-    Each lawful filling gives its first start and three statuses.
+    Each lawful filling gives its first start, three statuses, the best
+    (insured, margin, count) for FULLY and CURRENTLY, its date last insured
+    quarter and its credits.
     """
     birth, onset, ending, month = (
         case["birth"],
@@ -143,6 +162,7 @@ def lawful_fillings(case):
         case["month"],
     )
     blind, prior, annual = case["blind"], case["prior"], case["annual"]
+    special = case.get("special", False)
     at = quarter(month)
     events = [
         event for event in (case.get("entitlement"),) if event is not None
@@ -155,7 +175,9 @@ def lawful_fillings(case):
                 (
                     candidate
                     for candidate in range(quarter(onset), quarter(ending) + 1)
-                    if disability(birth, credits, candidate, used, blind)
+                    if disability(
+                        birth, credits, candidate, used, blind, special
+                    )
                 ),
                 None,
             )
@@ -167,29 +189,52 @@ def lawful_fillings(case):
             start = (
                 onset if first == quarter(onset) else date(year, 3 * q + 1, 1)
             )
-            fully = currently = False
+            fully_best = currently_best = (False, -99, -1)
+            latest = None
             for periods in (prior + ((start, ending),), ()):
                 use = usable(credits, at, periods)
-                fully |= len(use) >= requirement(birth, month.year, periods)
-                currently |= any(
-                    recent(
+                needed = requirement(birth, month.year, periods)
+                fully_best = max(
+                    fully_best,
+                    (len(use) >= needed, len(use) - needed, len(use)),
+                )
+                for event in events:
+                    held = recent(
                         usable(credits, quarter(event), periods),
                         quarter(event),
                         periods,
                         13,
                     )
-                    >= 6
-                    for event in events
+                    currently_best = max(
+                        currently_best, (held >= 6, held - 6, held)
+                    )
+                latest = max(
+                    filter(
+                        None,
+                        (
+                            latest,
+                            last_insured(
+                                birth, credits, at, periods, blind, special
+                            ),
+                        ),
+                    ),
+                    default=None,
                 )
             found.append(
                 (
                     first,
-                    fully,
-                    currently,
+                    fully_best[0],
+                    currently_best[0],
                     any(
-                        disability(birth, credits, candidate, used, blind)
+                        disability(
+                            birth, credits, candidate, used, blind, special
+                        )
                         for candidate in range(quarter(onset), at + 1)
                     ),
+                    fully_best,
+                    currently_best,
+                    latest,
+                    credits,
                 )
             )
     return found
@@ -207,7 +252,10 @@ def public(case):
         current_disability_period_end=case["ending"],
         current_disability_period_end_provenance=observed,
         prior_disability_periods=tuple(
-            rule.DisabilityPeriod(a, b) for a, b in case["prior"]
+            rule.DisabilityPeriod(
+                a, b, special_insured=case.get("special", False)
+            )
+            for a, b in case["prior"]
         ),
         prior_disability_periods_provenance=observed,
         sspa211_applies=False,
@@ -341,6 +389,59 @@ def under_31_declaration(seed):
     }
 
 
+def subsequent_declaration(seed):
+    """Declare a special-insured prior before 31, and an onset after it.
+
+    The special prior opens 404.130(d) at the later onset.
+    """
+    case = declaration(seed)
+    draw = random.Random(f"subsequent-{seed}")
+    onset = case["onset"]
+    birth = date(onset.year - draw.randint(32, 40), 2, 2)
+    begins = date(birth.year + draw.randint(24, 30), 7, 1)
+    ends = date(begins.year + draw.randint(0, 1), 12, 31)
+    case.update(birth=birth, prior=((begins, ends),), special=True)
+    return case
+
+
+def check_diagnostics(case, result, fillings):
+    """Every exact diagnostic must belong to the reported start."""
+    start = quarter(result.current_disability_period_start)
+    own = [filling for filling in fillings if filling[0] == start]
+    for name, position in (("fully", 4), ("currently", 5)):
+        decision = getattr(result, name)
+        count = decision.qc_count_upper
+        score = (decision.insured, count - decision.required, count)
+        assert decision.qc_count_lower == count, (case, name, result)
+        assert score == max(filling[position] for filling in own), (
+            case,
+            name,
+            score,
+            result,
+        )
+        assert any(
+            filling[position] == score
+            and set(decision.assigned_quarters) <= filling[7]
+            for filling in own
+        ), (case, name, decision)
+    assigned = {
+        credit
+        for quarters in result.assigned_quarters.values()
+        for credit in quarters
+    }
+    assert any(assigned <= filling[7] for filling in own), (case, assigned)
+    for year, quarters in result.assigned_quarters.items():
+        assert result.qcs_by_year[year] == (len(quarters), len(quarters)), (
+            case,
+            year,
+            result,
+        )
+    upper = result.dli.upper
+    assert (None if upper is None else quarter(upper)) == max(
+        filling[6] for filling in own
+    ), (case, upper, own)
+
+
 def check(case):
     fillings = lawful_fillings(case)
     try:
@@ -364,7 +465,34 @@ def check(case):
         assert not insured or any(
             filling[0] == start and filling[index] for filling in fillings
         ), (case, actual, start, fillings)
+    check_diagnostics(case, result, fillings)
     return "computed"
+
+
+@pytest.mark.parametrize("seed", (5000026, 5000168))
+def test_status_stress_year_counts_follow_the_returned_filling(seed):
+    # The start's witness leaves a prior's interior holding a year's QCs.
+    assert check(declaration(seed)) == "computed"
+
+
+@pytest.mark.parametrize("seed", (5000005, 5000019))
+def test_status_stress_candidate_order_changes_nothing(seed, monkeypatch):
+    forward = public(declaration(seed))
+    candidates = rule._assignment_candidates
+    monkeypatch.setattr(
+        rule,
+        "_assignment_candidates",
+        lambda *row: tuple(reversed(tuple(candidates(*row)))),
+    )
+    backward = public(declaration(seed))
+    assert dict(backward.assigned_quarters) == dict(forward.assigned_quarters)
+    assert dict(backward.qcs_by_year) == dict(forward.qcs_by_year)
+
+
+def test_status_stress_returned_filling_keeps_credited_endpoints():
+    # 2016 holds three QCs inside a current period, and its two endpoints
+    # credit two of them wherever the third falls.
+    assert public(declaration(5000133)).qcs_by_year[2016] == (2, 2)
 
 
 @pytest.mark.parametrize("seed", SPLIT_SEEDS)
@@ -395,3 +523,9 @@ def test_status_stress_with_an_entitlement_month(seed):
 @given(seed=st.integers(0, 2**32 - 1))
 def test_status_stress_under_31(seed):
     check(under_31_declaration(seed))
+
+
+@settings(max_examples=120, deadline=None, derandomize=True)
+@given(seed=st.integers(0, 2**32 - 1))
+def test_status_stress_subsequent_special(seed):
+    check(subsequent_declaration(seed))

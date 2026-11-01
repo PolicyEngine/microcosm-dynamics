@@ -464,14 +464,15 @@ def test_a_moving_start_keeps_a_result_one_filling_attains():
 
 @pytest.mark.parametrize(
     ("amount", "refused"),
-    ((Fraction(2950), True), (Fraction(2900), False)),
+    ((Fraction(2950), True), (Fraction(2900), True), (Fraction(799), False)),
 )
 def test_blind_aggregate_decides_below_six_ordinary_qcs(amount, refused):
-    """The date-last-insured scan stops below six, so this site decides.
+    """Three first-quarter wages earn three ordinary QCs.
 
-    Three first-quarter wages earn three ordinary QCs, under the $3,000
-    that would earn gift QCs. Elapsed years run 1951 through 1972, so 22
-    QCs insure: $8,850 reaches 22 at $400 each, and $8,700 reaches 21.
+    That stays under the $3,000 that would earn gift QCs. Elapsed years run
+    1951 through 1972, so 22 QCs insure at the onset, and $8,850 reaches 22
+    at $400 each. $8,700 reaches 21, which meets 1972's 21 for a historical
+    date last insured. $2,397 reaches five, below every requirement.
     """
     person = replace(
         _unestablished(

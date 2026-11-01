@@ -21,7 +21,9 @@ are assigned favorably (RS 00301.230). A lawful filling has its own first
 insured start; that start supplies the current period for FULLY and
 CURRENTLY. DISABILITY must qualify without using the period it establishes.
 Each returned status must equal the favorable Boolean over all lawful
-fillings. A named refusal retains the declaration and passes the oracle.
+fillings. Each exact count, assignment and date last insured must be the best
+a filling with the reported first start attains. A named refusal retains the
+declaration and passes the oracle.
 """
 
 from dataclasses import dataclass
@@ -139,6 +141,7 @@ def favorable_statuses(case):
     answer = [False, False, False]
     lawful = 0
     starts = set()
+    own = {}
     onset = date(2000, 2, 15)
     ending = date(2002, 12, 31)
     at = quarter(case.month)
@@ -173,12 +176,36 @@ def favorable_statuses(case):
                 onset if first == quarter(onset) else date(year, 3 * q + 1, 1)
             )
             completed = case.periods + ((start, ending),)
+            best = own.setdefault(
+                first,
+                {"fully": (False, -99, -1), "currently": (False, -99, -1)},
+            )
+            best.setdefault("fillings", []).append(credits)
             for status_periods in (completed, ()):
                 usable = _usable(credits, at, status_periods)
-                answer[0] |= len(usable) >= _fully_requirement(
-                    at, status_periods
+                needed = _fully_requirement(at, status_periods)
+                held = _recent(usable, at, status_periods, 13)
+                answer[0] |= len(usable) >= needed
+                answer[1] |= held >= 6
+                best["fully"] = max(
+                    best["fully"],
+                    (len(usable) >= needed, len(usable) - needed, len(usable)),
                 )
-                answer[1] |= _recent(usable, at, status_periods, 13) >= 6
+                best["currently"] = max(
+                    best["currently"], (held >= 6, held - 6, held)
+                )
+                best["last"] = max(
+                    (
+                        best.get("last", -1),
+                        *(
+                            q
+                            for q in range(min(credits), at + 1)
+                            if _disability(
+                                credits, q, status_periods, case.blind
+                            )
+                        ),
+                    )
+                )
             # The first insured start is itself a valid 404.131 witness.
             # Later queries do not erase that witness, and the current
             # period is never used to establish its own DISABILITY status.
@@ -186,11 +213,31 @@ def favorable_statuses(case):
                 _disability(credits, q, establishment_periods, case.blind)
                 for q in range(quarter(onset), at + 1)
             )
-    return tuple(answer), lawful, tuple(sorted(starts))
+    return tuple(answer), lawful, tuple(sorted(starts)), own
+
+
+def _check_diagnostics(case, result, best):
+    """Every exact diagnostic must belong to the reported start."""
+    for name in ("fully", "currently"):
+        decision = getattr(result, name)
+        count = decision.qc_count_upper
+        assert decision.qc_count_lower == count, (case, name, result)
+        assert (
+            decision.insured,
+            count - decision.required,
+            count,
+        ) == best[
+            name
+        ], (case, name, best[name], result)
+        assert any(
+            set(decision.assigned_quarters) <= credits
+            for credits in best["fillings"]
+        ), (case, name, decision)
+    assert quarter(result.dli.upper) == best["last"], (case, result)
 
 
 def _check(case):
-    expected, lawful, starts = favorable_statuses(case)
+    expected, lawful, starts, own = favorable_statuses(case)
     observed = rule.EarningsProvenance.OBSERVED
     person = rule.Person(
         date(1960, 2, 2),
@@ -230,12 +277,15 @@ def _check(case):
         for name in ("fully", "currently", "disability")
     )
     assert actual == expected, (case, actual, expected, starts, result)
+    _check_diagnostics(
+        case, result, own[quarter(result.current_disability_period_start)]
+    )
     return "computed"
 
 
 def test_status_oracle_review_completion_has_favorable_fully_status():
     case = Declaration()
-    expected, lawful, starts = favorable_statuses(case)
+    expected, lawful, starts, _ = favorable_statuses(case)
     assert lawful and 2000 * 4 + 1 in starts
     assert expected[0]
     _check(case)
