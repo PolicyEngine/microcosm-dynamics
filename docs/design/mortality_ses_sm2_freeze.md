@@ -47,9 +47,9 @@ those sources; nothing here feeds a blind role.
   a rule this record sets.
 - **Data.** This job opened no PSID, HRS, SIPP or NHIS microdata file and
   computed nothing on real data. PSID use follows the project's
-  data-access record. DYNASIM, Urban Institute and PWBM material is not
-  used or compared; it reaches these gates only through a validation lane
-  (S0.1 scope). CBO publication 49659 stays closed; its methods count as
+  data-access record. This record uses and compares no DYNASIM, Urban
+  Institute or PWBM material, which reaches these gates only through a
+  validation lane (S0.1 scope). CBO publication 49659 stays closed; its methods count as
   open until a validation lane supplies a bounded definitions-only
   extract.
 - **Markers.** **[frozen here]** marks a decision this record makes.
@@ -78,7 +78,7 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 
 | Row | Audit line | S0.1 item | Resolution | Where | State |
 |---|---|---|---|---|---|
-| S2-01 | 424 | **[proposed]** mapping assumption: OACT rate ratios used directly as annual-q multipliers, reported with the dynamic-AIME versus frozen-rank distinction and the beneficiary population difference | Confirmed and tightened: adds Study 129's exposure convention (deaths get a full year of exposure, so the published rates are initial-exposure probabilities, p. 5 and Appendix B pp. 13–14), the age-basis mapping, and three named mapping assumptions (M-E2 to M-E4) that every report carries | §4.1 | frozen here |
+| S2-01 | 424 | **[proposed]** mapping assumption: OACT rate ratios used directly as annual-q multipliers, reported with the dynamic-AIME versus frozen-rank distinction and the beneficiary population difference | Confirmed and tightened: adds Study 129's exposure convention (deaths get a full year of exposure, which makes each published rate an initial-exposure estimate of an annual probability, p. 5 and Appendix B pp. 13–14), the age-basis mapping, and three named mapping assumptions (M-E2 to M-E4) that every report carries | §4.1 | frozen here |
 | S2-02 | 440 | **[open]** availability of earlier NCHS education editions | Settled by the NVSR listing and twelve earlier *Deaths: Final Data* reports: 2010–2017 cover reporting states only (31 rising to 49 states plus DC); 2018–2020 are national in the internet tables I–7 and I–19; 2021–2022 are national in printed Table 14 and Table VIII; the listing of 1 November 2026 holds no edition for 2023. The fit uses 2018–2022; 2010–2017 form a labeled sensitivity | §3.2 | frozen here |
 | S2-03 | 474 | **[open]** harmonization of earlier NHIS years | Rescoped to NHIS 2009–2018 sample adults. The 2009, 2016 and 2018 layouts carry `EDUC1`, `HISPAN_I`, `RACERPI2`, `AGE_P`, `SEX`, `SRVY_YR`, `INTV_QRT` and `HHX`/`FMX`/`FPX` with identical code lists; the design variables are `STRAT_P`/`PSU_P` in 2009 and `PSTRAT`/`PPSU` in 2016 and 2018. The fit job checks each intervening year's layout against these names before use | §3.4 | frozen here (window and variables); intervening layouts checked by the fit job |
 | S2-04 | 481 | **[open]** a three-dimension joint gradient conditional on lifetime earnings | Resolved by the joint route: joint marginal calibration on a public reference population, with the earnings–education–race dependence taken from a stated proxy. The dependence itself stays unidentified in public data, and §6.4 says so | §6 | frozen here (route); the dependence stays unidentified and named |
@@ -86,7 +86,7 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | S2-06 | 520 | **[proposed]** CBO 41681 as context only | Confirmed. It supplies the reason the widening alternative leaves race and Hispanic origin flat (pp. 1–2) and no coefficient or target | §3.1, §7.4 | frozen here |
 | S2-07 | 538 | **[proposed schema]** dimensions, columns, categories, references and unclassified treatment | Confirmed against `mortality_ses/specification.py`; tightened to one unclassified string per dimension, a fixed category order, and a crosswalk per source | §8 | frozen here |
 | S2-08 | 564 | **[proposed loader]** OACT contrasts `log(r_q) − log(r_q3)`, band expansion, a source-year matrix that says what happens before a band first appears | Confirmed; tightened with the band-backcast rule, the figure-year rule and two independent table transcriptions | §3.1, §4.1, §5 | frozen here |
-| S2-09 | 570 | **[open]** earnings ages below 62 and 90–120 | Frozen: the 62–64 coefficient holds down to age 25 and the age-25 value below; the 85–89 coefficient holds up to 120; three registered sensitivities | §5 | frozen here |
+| S2-09 | 570 | **[open]** earnings ages below 62 and 90–120 | Frozen: the 62–64 coefficient holds down to age 25 and the age-25 value below; the 85–89 coefficient holds up to 120; four registered sensitivities | §5 | frozen here |
 | S2-10 | 579 | **[open]** terminal 100+ rule and any unsupported other-group coefficient | Frozen: race contrasts at 100–120 hold the age-99 contrast, and the fit reads no contrast from the 100+ interval; `other_non_hispanic` comes from NHIS–LMF, with NCHS's AIAN and Asian tables reported beside as a partial group | §4.3, §5 | frozen here |
 | S2-11 | 587 | **[open]** extraction and digitization of the 2022 gradient, its uncertainty, complete coverage | Frozen: vector extraction of Study 129 Figures 7–12, validated against Tables 7–12 at every table year, with a digitization half-width the validation sets; complete tables at every knot | §7.1–7.3 | frozen here |
 | S2-12 | 591 | **[open]** widening `CoefficientPath`: slope, origin, ages, caps; knot years and synchronization | Frozen: origin 2024, slopes from a frozen estimator on OACT's pre-pandemic annual figures, caps of 30 years and a 1.5 multiplier, race held flat; annual knots 2010–2024 with one synchronization rule | §7.4–7.5 | frozen here |
@@ -111,7 +111,8 @@ the two calls that go to Max; neither comes from a row of this table.
 
 ## 3. Source-year matrix
 
-This job read every source below at the SHA-256 that section 13 lists. "Fit" means the source supplies a target the joint calibration
+This job read every source below at the SHA-256 that section 13 lists.
+"Fit" means the source supplies a target the joint calibration
 reproduces; "beside" means the record reports the source next to the fit
 and fits nothing to it; "context" means it informs a reason and supplies no number;
 "reference" means it supplies the reference population, not a target.
@@ -128,18 +129,20 @@ reported beside the fit; this record names one or more for each dimension
 | Study 129 | Tables 1–6, death rates, pp. 15–20 | As Tables 7–12 | Male, female | As Tables 7–12 | As Tables 7–12 | Cross-check only (§9.1): ratios of printed rates must agree with printed RMRs within both rounding intervals |
 | Study 129 | Figures 1–6, death rates, pp. 21–26 | Five quintiles | Male, female | One band per figure | 1995–2022 | Not used |
 | OACT Actuarial Study No. 124 (April 2018) | Tables 4–8, RMRs by AIME quintile, pp. 11–15; Tables 9–13, hypothetical-worker intervals, pp. 21–25 | Five quintiles and Total; five intervals | Male, female | 62–64 to 80–84 and a Total column | 1995, 2000, 2005, 2010, 2015 | Beside (vintage revision of the same quantity on the June 2017 MBR, birth cohorts 1930 and later, p. 6) |
-| Cristia (2007), CBO Working Paper 2007-11 | Tables 3–4, age-standardized mortality ratios, PDF pp. 38–39; Tables 5–6, logistic regressions, PDF pp. 40–41 | Lifetime-earnings quintiles (own and household); race and ethnicity; education; marital status | Men (Tables 3, 5), women (Tables 4, 6) | 35–75, 35–49, 50–64, 65–75 | Person-years 1983–2003 | Beside, and sensitivities JR-D (§6) and T-E3 (§5) |
+| Cristia (2007), CBO Working Paper 2007-11 | Tables 3–4, age-standardized mortality ratios, PDF pp. 38–39; Tables 5–6, logistic regressions, PDF pp. 40–41 | Lifetime-earnings quintiles (own and household); race and ethnicity; education; marital status | Men (Tables 3, 5), women (Tables 4, 6) | 35–75, 35–49, 50–64, 65–75 | Person-years 1983–2003 | Beside, and sensitivities JR-D (§6) and T-E2 (§5) |
 | CBO publication 41681 (17 April 2008) | pp. 1–3, Figures 1–2 | Synthesis | — | — | — | Context (§7.4 reason) |
 | CBO publication 49659 (7 November 2014) | — | — | — | — | — | Closed; methods open until a validation lane supplies a bounded definitions-only extract |
 | OACT presentation, Tiffany Bosley, 14 January 2025 | Slides 1, 3, 23 | — | — | — | — | Identity of the January 2025 update only (S0.1 §2.1) |
 
-**Bands and years in Study 129.** Each table prints "-" in a band whose
-cohorts are not yet all in the study, which takes only workers reaching
-62 in 1993 or later (notes under Tables 1–12). A band `[a1, a2]` is fully
-supported from year `1993 + (a2 − 62)`: 62–64 from 1995, 65–69 from 2000,
-70–74 from 2005, 75–79 from 2010, 80–84 from 2015 and 85–89 from 2020.
-The printed tables match that schedule. Study 124's Tables 4–8 follow the
-same schedule through 80–84 in 2015.
+**Bands and years in Study 129.** Each table prints "-" for the bands it
+does not report. The study takes only workers reaching 62 in 1993 or later
+(p. 6; notes under Tables 1–12), so a band `[a1, a2]` holds only such
+workers at every one of its ages from year `1993 + (a2 − 62)`, which this
+record calls the band's first fully supported year: 62–64 from 1995,
+65–69 from 2000, 70–74 from 2005, 75–79 from 2010, 80–84 from 2015 and
+85–89 from 2020. The printed "-" cells match that schedule exactly. Study
+124's Tables 4–8 print the same pattern through 80–84 in 2015, although
+that study takes birth cohorts from 1930 (p. 6).
 
 **Printing.** Tables 7–12 print RMRs to two decimals and the share row to
 one decimal; Tables 1–6 print rates to four decimals (counted from the
@@ -149,11 +152,11 @@ quintile-or-total cells, which equals 21 band-years × 2 sexes × 6 rows).
 **Figures as vector content.** Page 34's content stream holds 1,281
 line-to and 846 move-to operators and no raster plot image; pages 34–38
 list no image object at all, and page 33 lists only 14 small 16 × 16
-stencils and one ccitt strip (`pdfimages -list`). A digitizer can
+stencils and one 192 × 2493 ccitt image (`pdfimages -list`). A digitizer can
 therefore recover the annual series from path coordinates (§7.2).
 
 **Appendix lettering.** The body text places Tables 7–12 in Appendix E
-and Figures 7–12 in Appendix F (pp. 7, 9), but the printed headings read
+and Figures 7–12 in Appendix F (pp. 7–9), but the printed headings read
 "D. Age Group Death Rate Figures" (p. 21) and "E. Age Group Relative
 Mortality Ratios by AIME Quintile Levels" above Figure 7 (p. 33), and
 Tables 7–12 carry no letter (p. 27). This record cites tables and figures
@@ -165,7 +168,8 @@ first year (`BAND_BACKCAST_HOLD_FIRST`): 80–84 for 2010–2014 from 2015,
 and 85–89 for 2010–2019 from 2020. These copies are assumptions, not
 published values; they enter no critical-family count as new targets
 (§9.4), and §5 names the alternative. The fit records, and never fits, a
-figure point plotted in a year before its band is fully supported.
+figure point plotted in a year before its band's first fully supported
+year.
 
 ### 3.2 Education
 
@@ -204,11 +208,11 @@ figure point plotted in a year before its band is fully supported.
 - **No later edition.** The NVSR listing fetched on 1 November 2026 holds
   no *Deaths: Final Data for 2023*; its latest final-deaths report is NVSR
   74(4) for 2022. The last observed education year is therefore 2022.
-- **Why 2010–2017 are not fitted.** Their populations are the reporting
-  states, not the United States, so their denominators and composition
-  differ from the reference population (§6). The 2010–2017 category set
-  and age bands were not checked in this job; sensitivity E-S1's loader
-  checks them before use.
+- **Why the fit leaves out 2010–2017.** Their populations are the
+  reporting states, not the United States, so their denominators and
+  composition differ from the reference population (§6). This job did not
+  check their category sets and age bands; sensitivity E-S1's loader checks
+  them before use.
 - **Ages 65 and over and the `some_college`/`college` split.** NCHS
   supplies neither (§4.2). NHIS–LMF supplies both (§3.4).
 
@@ -237,7 +241,8 @@ figure point plotted in a year before its band is fully supported.
   depend on the group (p. 53).
 - **Fit.** Hispanic, NH white and NH black for every knot year 2010–2024
   (bridged race through 2017, single race from 2018, both labeled). The
-  2006–2009 tables lie before the first knot and are not used.
+  2006–2009 tables lie before the first knot, and the fit does not use
+  them.
 - **The `other_non_hispanic` group.** No NCHS table covers it. AIAN and
   Asian NH tables leave out Native Hawaiian and Pacific Islander,
   multiracial and other people, and exist only from 2019, so a weighted
@@ -329,7 +334,9 @@ category `g`'s average annual probability of death over the target's ages,
 weighted by the category's population at each single age, and `H_ref` is
 the same for the reference category. Probabilities are annual `q` at the
 start-of-year age that SM1 and the baseline use (`baselines/base.py:19–28`;
-`mortality_ses/model.py:171–184`).
+`mortality_ses/model.py:171–184`). NHIS targets are hazard ratios, so for
+them the implied quantity converts each normalized `q` to
+`μ = −ln(1 − q)` row by row before averaging, and both sides are hazards.
 
 ### 4.1 OACT relative mortality ratios (lifetime earnings)
 
@@ -353,8 +360,7 @@ start-of-year age that SM1 and the baseline use (`baselines/base.py:19–28`;
   at last birthday.
 - **M-E3, dynamic rank versus frozen rank (assumption).** OACT sorts the
   retired workers with exposure in each year by AIME within sex and
-  single year of age and cuts quintiles there (pp. 3–4), so survivors are
-  ranked anew at every age; the study notes that people in high quintiles
+  single year of age and cuts quintiles there (pp. 3–4), so the study ranks survivors anew at every age; the study notes that people in high quintiles
   at younger ages move into lower quintiles at older ages (p. 2). SM3's
   attribute is a frozen partial-career rank (S0.1 §1.2). The fitted
   coefficients are contrasts between dynamic-rank groups; applying them to
@@ -390,8 +396,9 @@ start-of-year age that SM1 and the baseline use (`baselines/base.py:19–28`;
   closing rate (lines 21–28). The 25–64 and age-adjusted columns are not
   targets, because they repeat the band information.
 - **M-D2, the pooled category.** "Some college or collegiate degree"
-  pools SM's `some_college` and `college`. The model's pooled `q` over both
-  categories, weighted by the reference population, matches its target, so NCHS identifies one combination of the two coefficients.
+  pools SM's `some_college` and `college`. The model's pooled `q` over
+  both categories, weighted by the reference population, matches its
+  target, so NCHS identifies one combination of the two coefficients.
 - **M-D3, the split.** NHIS–LMF supplies
   `ln(h_college / h_some_college)` at attained ages 25–64 by sex, pooled
   over deaths 2009–2019 and held constant over time (§4.5).
@@ -452,7 +459,8 @@ in Figure 2 (race and marital status) appears only as a plotted line.
   Cristia age range `b`, the reference population is the single ages in
   `b`, weighted by the stationary population `Lx` of TR 2026's
   historical period `q` for 1993 (the midpoint of Cristia's 1983–2003
-  observation years), with equal quintile shares. The ranges are 35–49,
+  observation years; if the pinned historical file starts later, its
+  earliest year, reported), with equal quintile shares. The ranges are 35–49,
   50–64 and 65–75. Tables 5–6 print the first range as "30-49", but the
   sample keeps ages 35–75 only (p. 8); this record reads it as 35–49 and
   reports the misprint.
@@ -495,16 +503,18 @@ in Figure 2 (race and marital status) appears only as a plotted line.
 - **Time at risk.** From the middle of the interview quarter
   (`SRVY_YR`, `INTV_QRT`) to the middle of the death quarter (`DODYEAR`,
   `DODQTR`) for `MORTSTAT = 1`, or to 31 December 2019.
-- **Attained age.** `AGE_P` plus elapsed time. Because birth dates are
-  suppressed, the estimator splits each person-year across attained ages on the
-  assumption that birthdays fall uniformly through the year. A person
+- **Attained age.** `AGE_P` plus elapsed time. Because NHIS suppresses
+  birth dates, the estimator splits each person-year across attained ages
+  on the assumption that birthdays fall uniformly through the year. A person
   with `AGE_P = 85` (85 or older at interview) contributes only to the
   85+ band, the one band whose lower bound such a person surely meets.
 - **Model.** For each sex, band and dimension, a survey-weighted Poisson
   regression of deaths on that dimension's category indicators and
   single-year attained-age indicators, with log person-years as offset.
-  The exponentiated category coefficients are the marginal hazard
-  ratios.
+  In the 85+ band the age terms are indicators of attained ages 85–89,
+  90–94 and 95+ for persons interviewed below 85, and one indicator per
+  completed year since interview for persons top-coded at interview. The
+  exponentiated category coefficients are the marginal hazard ratios.
 - **Missing values.** `EDUC1` 97–99, `HISPAN_I` 11 and any race code that
   §8.2 leaves unclassified drop out of that dimension's estimate only,
   and the fit reports their counts.
@@ -537,8 +547,10 @@ the marginal targets.
   65–75 odds ratio, and every ratio stays within `[0.5, 3]`; this record
   fixes both guards to keep a ratio of small numbers from driving the
   sensitivity.
-- **Ages under 25.** Lifetime earnings and completed education are not
-  yet formed for most people under 25, and SM3's population starts at 50.
+- **Ages under 25.** NCHS leaves out ages below 25 because people that
+  young may not have finished their education (NVSR 74(4) p. 127); SM3's
+  earnings proxy counts income from age 22 (S0.1 §1.2); and SM3's
+  population starts at 50.
   The held values below 25 exist because SM1's table must be complete; a
   frame that classifies a person under 25 on either dimension must
   register that use first (§8.3).
@@ -562,9 +574,8 @@ other dimensions' coefficients, weighted by how the other dimensions'
 categories spread across its categories. Adding marginal contrasts as
 coefficients therefore reproduces the marginal targets only in a
 population where the three dimensions are independent within every cell.
-Correlation can make the sum overshoot or undershoot, and its direction
-depends on the joint distribution, and nobody knows it in advance (S0.1
-§2.3). Turning marginal targets into conditional coefficients needs a
+Correlation can make the sum overshoot or undershoot; which one depends
+on the joint distribution, and no one can tell in advance (S0.1 §2.3). Turning marginal targets into conditional coefficients needs a
 **reference joint distribution** of the three attributes by sex and single
 age, and an assumption that the effects add on the log scale.
 
@@ -598,8 +609,13 @@ records which it does), with these attributes:
 - **The joint weights.** At sex `s`, age `a` and year `t`,
   `w(k, d, r) = P(d, r | s, a, t) × P(k | d, r)`: the first factor is the
   ACS weighted share among all persons; the second comes from the ordered
-  logit with cut points `c_k(s, a, t)` recomputed so that every quintile
-  holds exactly one fifth of the full population at that age. The fit
+  logit with cut points `c_k(s, a, t)` recomputed so that, at ages 62–89,
+  every quintile holds exactly one fifth of the subpopulation with positive
+  Social Security income (OACT cuts its quintiles at fifths of the records
+  at each age, though their exposure shares can differ slightly, pp. 3–5),
+  and at other ages one fifth of the whole
+  population. Persons without Social Security income at 62–89 take
+  `P(k | d, r)` from the same model. The fit
   evaluates OACT targets on the subpopulation with positive Social
   Security income (its own `P(d, r | s, a, t)`, the same `P(k | d, r)`);
   every other target on the whole population.
@@ -626,8 +642,8 @@ For each knot `t` and sex `s`, the unknowns are:
 | `other_non_hispanic` | 5 bands | 5 NHIS contrasts (M-R4) |
 
 That is 247 equations in 247 unknowns per knot and sex. Coefficients at
-ages outside these blocks follow §5. Each target's implied value is
-computed by expanding `R_ref(t)` into rows, one per (quintile, education,
+ages outside these blocks follow §5. The fit computes each target's implied value by expanding `R_ref(t)` into
+rows, one per (quintile, education,
 race) combination at each single age, with weight `w`, applying the
 candidate coefficients and SM1's `normalize_probabilities` cell by cell
 against the baseline `q`, and averaging the normalized probabilities over
@@ -727,8 +743,8 @@ marginals"), JR-B (JR-C with `λ = 0`), JR-C with `λ` scaled by 0.5 and by
   gradient stays at its last observed level.
 - **Last observed year per dimension.** Lifetime earnings 2022 (Study 129
   Figures 7–12; the last table year is 2020); education 2022 (NVSR 74(4));
-  race and Hispanic origin 2024 (NVSR 75(5)); the NHIS-based targets are
-  pooled over deaths 2009–2019 and the same at every knot.
+  race and Hispanic origin 2024 (NVSR 75(5)); the NHIS-based targets pool deaths 2009–2019 and stay the same at every
+  knot.
 
 | Knot | Lifetime earnings targets | Education targets, 25–64 | Race and Hispanic origin targets |
 |---|---|---|---|
@@ -745,15 +761,15 @@ marginals"), JR-B (JR-C with `λ = 0`), JR-C with `λ` scaled by 0.5 and by
 | 2024 | Held at 2022 | Held at 2022 | NVSR 75(5) |
 
 Every knot also carries the NHIS-based targets (education at 65+, the
-split, `other_non_hispanic`). "Held" means the same published targets are
-imposed again on that year's reference population, so the conditional
+split, `other_non_hispanic`). "Held" means the fit imposes the same published targets again on that
+year's reference population, so the conditional
 coefficients can still move with the population's composition.
 
 ### 7.2 Extracting and digitizing the earnings gradient [frozen here]
 
-- **Tables.** Tables 1–12 of Study 129 and Tables 4–8 of Study 124 are
-  transcribed twice, by two independent text-layer readers (Poppler's
-  `pdftotext -layout` and a second PDF library); the two transcriptions
+- **Tables.** Two independent text-layer readers
+  (Poppler's `pdftotext -layout` and a second PDF library) each transcribe
+  Tables 1–12 of Study 129 and Tables 4–8 of Study 124; the two transcriptions
   must agree on every printed string, or the job stops and reports the
   cells.
 - **Figures 7–12 (pp. 33–38).** The series are vector paths (§3.1). The
@@ -814,7 +830,7 @@ age and for both sexes, by
 | Education slope `g_D(s)` | `g_E(s, 62–64)` | No national education series longer than five years exists (§3.2); 62–64 is the earnings band nearest NCHS's ages |
 | Race and Hispanic origin | `m(t) = 1`, held flat | CBO 41681 describes differences between black and white Americans narrowing over time (pp. 1–2); no source here supports a widening race path |
 | Ages | Every age 0–120 (the tails follow §5's rules applied to the multiplied coefficients) | One rule for the whole table |
-| Caps | The multiplier stops growing after 30 years (2054) and never exceeds 1.5 | The source series spans 1995–2022, about 30 years; a trend is not carried further than the data it comes from |
+| Caps | The multiplier stops growing after 30 years (2054) and never exceeds 1.5 | The source series spans 1995–2022, about 30 years; the alternative carries no trend further than the data it comes from |
 
 The path's `years` are P-PRIMARY's knots plus 2025–2054; every later year
 returns the 2054 table. SM1 revalidates each returned table and still
@@ -944,7 +960,8 @@ failure stops the procedure (§10, `GATE_FAIL_OR_REGRESSION_FAIL`).
   values `r_k` and `r_ref` with half-width `h`, the interval for
   `L = ln r_k − ln r_ref` uses the transformed endpoints of both:
   `[ln(r_k − h) − ln(r_ref + h), ln(r_k + h) − ln(r_ref − h)]`. The
-  approximation `h / r` is never used as a log tolerance (S0.1 §2.5). The
+  procedure never uses the approximation `h / r` as a log tolerance (S0.1
+  §2.5). The
   half-widths are 0.005 for an RMR; 0.0000005 for a six-decimal `qx`;
   0.05 per 100,000 for an NCHS education rate, carried through
   `q = m / (1 + m/2)`; `δ_dig` (§7.2) for a digitized RMR; and zero for an
@@ -1082,7 +1099,8 @@ reports but which cannot trigger `GRADIENT_SOURCES_INCONSISTENT` (§10).
   each knot's is a member.
 - **What the contrast members test.** For a contrast, the residual is the
   model-implied contrast minus the draw's target after that draw's refit.
-  Because §6.3's system is exactly identified, a contrast member shows
+  Because §6.3's system has as many equations as unknowns, a contrast
+  member shows
   whether every refit reproduces its targets: a reconstruction check. The
   e65 members compare two different constructions (the model on the
   reference population against the source's ratios on the baseline), so
@@ -1237,9 +1255,8 @@ Every published aggregate derived from NHIS, LMF or ACS microdata rests on
 at least **100 unweighted persons** (the SSA MINT8 Table User Guide's
 "Sample Size Restrictions" minimum that S0.1 cites), and every published
 death-based cell on at least **20 deaths** (NCHS's own threshold for
-showing a rate, NVSR 74(4) p. 132). A cell below either floor is
-suppressed together with every complement that would reveal it by
-subtraction, and the writer refuses an artifact that still holds one.
+showing a rate, NVSR 74(4) p. 132). The writer suppresses a cell below either floor together with every
+complement that would reveal it by subtraction, and the writer refuses an artifact that still holds one.
 This is a publication rule, not a precision guarantee (S0.1 §2.5).
 
 ### 11.6 Public files to download
