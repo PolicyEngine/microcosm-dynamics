@@ -20,10 +20,24 @@
         "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
         "location": "411(c), lead-in",
         "quote": "shall have the same meaning as when used in section 162 of the Internal Revenue Code of 1986 , except that such term shall not include"
+      },
+      {
+        "capture": "lii_42_411.html",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984",
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "location": "411(a)(12)",
+        "quote": "There shall be excluded the distributive share of any item of income or loss of a limited partner , as such, other than guaranteed payments described in section 707(c) of the Internal Revenue Code of 1986 to that partner for services actually rendered to or on behalf of the partnership"
+      },
+      {
+        "capture": "uscode_1994_42_411.html",
+        "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1",
+        "authority": "42 USC 411, official 1994 United States Code edition",
+        "location": "411(a)(5)(A), text as printed before Pub. L. 108-203 section 425(a)",
+        "quote": "all of the gross income and deductions attributable to such trade or business shall be treated as the gross income and deductions of the husband unless the wife exercises substantially all of the management and control of such trade or business"
       }
     ],
     "consequence": "covered",
-    "description": "Regular net earnings use trade/business gross income less attributable deductions and partnership ordinary income/loss. Other named definition families supply the historical adjustments. An amount from no trade or business the person carries on, and no distributive share from a partnership of which the person is a member, is not the person's net earnings (411(a)).",
+    "description": "Regular net earnings use trade/business gross income less attributable deductions and partnership ordinary income/loss. Other named definition families supply the historical adjustments. An amount from no trade or business the person carries on, no distributive share or 707(c) guaranteed payment from a partnership of which the person is a member, and no income 411(a)(5) treats as the person's, is not the person's net earnings (411(a)).",
     "effective_end": "2026-12-31",
     "effective_start": "1968-01-01",
     "family": "self_employment_base_definition",
@@ -57,7 +71,8 @@
         "eligible_concept": {
           "cases": {
             "outside_own_trade_or_business_and_partnership": [
-              "trade_or_business"
+              "trade_or_business",
+              "partnership_status"
             ]
           }
         },
@@ -81,17 +96,17 @@
         "case_id": "outside_own_trade_or_business_and_partnership",
         "precedence": 1,
         "when": {
-          "trade_or_business": "the amount is not derived from any trade or business (as 411(c) defines the term) carried on by the person",
-          "partnership_status": "the amount is not the person's distributive share of the ordinary net income or loss from a trade or business carried on by a partnership of which the person is a member"
+          "trade_or_business": "the amount is not derived from any trade or business (as 411(c) defines the term) carried on by the person, and no 411(a)(5) rule treats it as the person's gross income (before taxable years including October 1980, former 411(a)(5)(A) treated all of a community business's gross income and deductions as the husband's unless the wife exercised substantially all of the management and control)",
+          "partnership_status": "the amount is not the person's distributive share of the ordinary net income or loss from a trade or business carried on by a partnership of which the person is a member, and not a guaranteed payment described in section 707(c) from such a partnership"
         },
         "consequence": "noncovered",
-        "description": "411(a): net earnings from self-employment are the gross income \"derived by an individual from any trade or business carried on by such individual\", less attributable deductions, \"plus his distributive share ... from any trade or business carried on by a partnership of which he is a member\". An amount that is neither is not this person's net earnings. 411(c) gives \"trade or business\" its section 162 meaning less the services it lists (public office, employee service other than (c)(2)(A)-(G), railroad service, exempt ministry and Christian Science practice, and service during a 1402(g) exemption); the families for those services apply those limits and their exceptions."
+        "description": "411(a): net earnings from self-employment are the gross income \"derived by an individual from any trade or business carried on by such individual\", less attributable deductions, \"plus his distributive share ... from any trade or business carried on by a partnership of which he is a member\". An amount that is neither is not this person's net earnings. 411(c) gives \"trade or business\" its section 162 meaning less the services it lists (public office, employee service other than (c)(2)(A)-(G), railroad service, exempt ministry and Christian Science practice, and service during a 1402(g) exemption); the families for those services apply those limits and their exceptions. A partner's guaranteed payment under section 707(c) is not her distributive share, but it is her net earnings: 411(a)(12) excludes a limited partner's share \"other than guaranteed payments described in section 707(c)\", and the 1985 Form 1040 instructions say to \"include your entire share of earnings from a partnership, including any guaranteed payments\". And 411(a)(5) assigns community income to one spouse: before taxable years including October 1980, former 411(a)(5)(A) treated a community business's gross income and deductions as the husband's unless the wife exercised substantially all of the management and control, whether or not he carried it on. Neither amount is excluded here; self_employment_limited_partner and self_employment_community_income decide them."
       }
     ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "No case holds: the amount comes from a trade or business the person carries on, or is the person's distributive share from a partnership of which the person is a member. Trade or business gross income less attributable deductions, plus the partnership ordinary share, enters net earnings; the other families make their named adjustments."
+      "description": "No case holds: the amount comes from a trade or business the person carries on, is the person's distributive share from a partnership of which the person is a member or a 707(c) guaranteed payment from it, or is income 411(a)(5) treats as the person's. Trade or business gross income less attributable deductions, plus the partnership ordinary share, enters net earnings; the other families make their named adjustments."
     }
   },
   {

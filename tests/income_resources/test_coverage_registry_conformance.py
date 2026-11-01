@@ -4153,6 +4153,104 @@ def test_nonresident_alien_net_earnings_follow_411b(registry, person):
         ) == (expected == "noncovered")
 
 
+# Review r5 H-5: INVENTED people whose amounts the base definition must
+# keep or exclude, by the texts of the conditions they meet.
+BASE_NOT_OWN_BUSINESS = (
+    "the amount is not derived from any trade or business (as 411(c) "
+    "defines the term) carried on by the person, and no 411(a)(5) rule "
+    "treats it as the person's gross income (before taxable years "
+    "including October 1980, former 411(a)(5)(A) treated all of a "
+    "community business's gross income and deductions as the husband's "
+    "unless the wife exercised substantially all of the management and "
+    "control)"
+)
+BASE_NOT_PARTNERSHIP_INCOME = (
+    "the amount is not the person's distributive share of the ordinary net "
+    "income or loss from a trade or business carried on by a partnership "
+    "of which the person is a member, and not a guaranteed payment "
+    "described in section 707(c) from such a partnership"
+)
+BASE_DEFINITION_PEOPLE = {
+    # A limited partner paid by the partnership for its bookkeeping, 2000:
+    # a 707(c) guaranteed payment, which 411(a)(12) keeps.
+    "limited_partner_guaranteed_payment": (
+        2000,
+        {
+            "trade_or_business": BASE_NOT_OWN_BUSINESS,
+            "partnership_status": (
+                "a guaranteed payment described in section 707(c) from a "
+                "partnership of which the person is a member"
+            ),
+        },
+        "covered",
+        "residual",
+    ),
+    # A general partner's guaranteed payment for the use of capital, 1990:
+    # the 1985 Form 1040 instructions include "any guaranteed payments".
+    "general_partner_capital_payment": (
+        1990,
+        {
+            "trade_or_business": BASE_NOT_OWN_BUSINESS,
+            "partnership_status": (
+                "a guaranteed payment described in section 707(c) from a "
+                "partnership of which the person is a member"
+            ),
+        },
+        "covered",
+        "residual",
+    ),
+    # A husband in a community property State, 1975, whose store a hired
+    # manager runs; his wife does not exercise substantially all of the
+    # management and control, so former 411(a)(5)(A) makes it his.
+    "husband_under_former_411a5a": (
+        1975,
+        {
+            "trade_or_business": (
+                "the amount is not derived from any trade or business "
+                "carried on by the person, but former 411(a)(5)(A) treats "
+                "it as the person's gross income"
+            ),
+            "partnership_status": BASE_NOT_PARTNERSHIP_INCOME,
+        },
+        "covered",
+        "residual",
+    ),
+    # The neighbour who just misses: interest on a savings account, 2000.
+    "savings_interest": (
+        2000,
+        {
+            "trade_or_business": BASE_NOT_OWN_BUSINESS,
+            "partnership_status": BASE_NOT_PARTNERSHIP_INCOME,
+        },
+        "noncovered",
+        "outside_own_trade_or_business_and_partnership",
+    ),
+}
+
+
+@pytest.mark.parametrize("person", sorted(BASE_DEFINITION_PEOPLE))
+def test_base_definition_keeps_guaranteed_payments_and_411a5_income(
+    registry, person
+):
+    """Review r5 H-5: 411(a)(12) excludes a limited partner's share "other
+    than guaranteed payments described in section 707(c)", the 1985 Form
+    1040 instructions include "any guaranteed payments", and former
+    411(a)(5)(A) treated a community business's income "as the gross income
+    and deductions of the husband unless the wife exercises substantially
+    all of the management and control". None of these amounts is outside
+    the person's net earnings, so the base family excludes none of them."""
+    year, facts, expected, decides = BASE_DEFINITION_PEOPLE[person]
+    (rule,) = registry.lookup("self_employment_base_definition", year)
+    decided = rule.resolve(cases_met(rule, facts))
+    assert decided["consequence"] == expected
+    assert decided.get("case_id", "residual") == decides
+    quotes = " ".join(c.quote for c in rule.citations if c.quote)
+    assert "other than guaranteed payments described in section 707(c)" in (
+        quotes
+    )
+    assert "unless the wife exercises substantially all" in quotes
+
+
 # Review r4 M-5: for each REQUIRED_CONDITIONS entry on a covered case,
 # an INVENTED worker who meets the case except for its condition, by fact
 # phrases. "reaches" names the exclusion (or residual) the failure must
