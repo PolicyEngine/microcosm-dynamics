@@ -4175,6 +4175,8 @@ def test_invented_any_year_counts_with_no_date_in_force():
         "<p>Payment levels for 2030</p>",
         f"<p>Payment levels for 2031{INVENTED_LONG_TAIL}</p>",
         "<p>Section 1611 of the Act</p>",
+        "<h5>Section 1611 of the Act</h5>",
+        "<p>Section 2301 of the Act</p>",
         "<p>Invented code 120310</p>",
         "<p>Effective Dates: 02/03/2041 - Present</p>",
         "<p><sup>1</sup>Revised 2031</p>",
