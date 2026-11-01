@@ -51,6 +51,15 @@ Invariants (property tests in ``tests/income_resources``):
   a ``citation`` quoting a capture the row itself cites, so it cannot rest
   on wording alone. No parameter record holds a ``when`` or ``if`` key:
   conditions with consequences live in the schema's cases.
+* A case reaches only the people its source reaches. Where a statute
+  limits an exclusion by employer (the State or local level of 410(a)(7)
+  and 418(b), the federal level of 410(a)(5)-(6)), by worker or by date,
+  the case's ``when`` carries the limit, so a person outside it reaches
+  the row's residual and the other families decide (review r5).
+* Every trigger fact a row lists is read by one of its cases or named,
+  with its reason, in ``parameters.unread_trigger_facts``; a parameter
+  that states a condition in words is tied in ``condition_cases`` to the
+  cases, thresholds or reason that account for it.
 * Cases are ranked rather than required to be mutually exclusive because
   the statutes are drafted as exclusions, exceptions to them and exceptions
   to those exceptions (42 U.S.C. 410(a)(5)(B) with (C)–(H), and Pub. L.
@@ -354,14 +363,14 @@ def _has_chosen_reading(value: Any) -> bool:
 CONDITION_RECORD_KEYS = frozenset({"when", "if"})
 
 
-def _holds_when_record(value: Any) -> bool:
+def _holds_condition_record(value: Any) -> bool:
     """Whether a parameter value nests a record keyed ``when`` or ``if``."""
     if isinstance(value, Mapping):
         return bool(CONDITION_RECORD_KEYS.intersection(value)) or any(
-            _holds_when_record(child) for child in value.values()
+            _holds_condition_record(child) for child in value.values()
         )
     if isinstance(value, (list, tuple)):
-        return any(_holds_when_record(child) for child in value)
+        return any(_holds_condition_record(child) for child in value)
     return False
 
 
@@ -795,8 +804,9 @@ class CoverageRule:
         _require(isinstance(raw["parameters"], Mapping), "parameters object")
         _require(
             "cases" not in raw["parameters"]
-            and not _holds_when_record(raw["parameters"]),
-            "cases belong in the schema: no parameter record has a when key",
+            and not _holds_condition_record(raw["parameters"]),
+            "cases belong in the schema: no parameter record has a when or if "
+            "key",
         )
         if "case_free_basis" in raw["parameters"]:
             _require(

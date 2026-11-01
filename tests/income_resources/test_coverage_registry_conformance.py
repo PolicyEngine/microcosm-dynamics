@@ -30,8 +30,27 @@ Capture-folder invariants:
 Registry-wide checks: an open reading has one name and a prose
 description, and a closed row's named options say which one governs.
 
+Fact-pattern invariants (review r5):
+
+* ``cases_met`` holds a condition only when a text the fixture states
+  for the worker equals it exactly; the worker's facts never come from
+  the row's own `when`. Each fixture names the consequence the sources
+  give and the case (or residual) that decides it.
+* Every case of every row decides at least one INVENTED sweep worker,
+  and every row's residual (or open row) another, so a case reworded,
+  narrowed or broadened, re-ranked or given another consequence fails a
+  worker.
+* A State or local exclusion reaches only the State or local level, and
+  a federal one only service for the United States: a worker with every
+  other fact at another level reaches the residual.
+* Each covered case's statutory condition, when it fails, reaches the
+  exclusion or residual the source gives, by a named path.
+* Every trigger fact a row lists is read by a case or named with its
+  reason, and every parameter that states a condition is tied.
+
 Hypothesis properties test the pdftotext parser and the retention, OCR,
-IRS-quote, fused-token, open-reading and operative-reading checkers.
+IRS-quote, fused-token, open-reading and operative-reading checkers, the
+level properties and the unread-fact and worded-condition checkers.
 """
 
 import gzip
