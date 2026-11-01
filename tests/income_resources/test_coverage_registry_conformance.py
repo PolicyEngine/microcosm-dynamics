@@ -3132,11 +3132,13 @@ def test_cash_equivalent_agricultural_transfer_follows_ssr_95_3p(
     resolved = rule.resolve(matched)
     assert resolved["consequence"] == expected
     assert resolved is not rule.residual_default
-    # A bona fide commodity transfer with dominion stays outside wages.
+    # A bona fide commodity transfer, or lodging and meals in kind, stays
+    # outside wages (409(a)(7)(A); review r4 sweep).
     genuine = {
         c["case_id"]
         for c in rule.cases
-        if "dominion and control" in c["when"].get("cash_remuneration", "")
+        if "any medium other than cash"
+        in c["when"].get("cash_remuneration", "")
     }
     assert len(genuine) == 1
     assert rule.resolve(genuine)["consequence"] == "noncovered"
@@ -4444,7 +4446,7 @@ def published_outcome(registry, rule, example):
             matched = {
                 c["case_id"]
                 for c in rule.cases
-                if "dominion and control"
+                if "any medium other than cash"
                 in c["when"].get("cash_remuneration", "")
             }
             assert matched

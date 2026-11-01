@@ -434,6 +434,404 @@
     "section_218_position": "covered by a section 218 agreement with no election worker exclusion"
    },
    "expected": "covered"
+  },
+  {
+   "rule_id": "agricultural_service_1988",
+   "worker": "INVENTED: in 2000 a farmhand gets rent-free farm housing and daily meals; the operator keeps title to the house and nothing converts to cash [decides: genuine_noncash_with_dominion]",
+   "facts": {
+    "cash_remuneration": [
+     "lodging",
+     "food"
+    ],
+    "noncash_transfer_cash_equivalence": false,
+    "noncash_transfer_dominion_control": "the operator keeps title to the house; nothing converts to cash",
+    "services_performed_date": "on or after 1995-08-07"
+   },
+   "expected": "noncovered",
+   "decides": "genuine_noncash_with_dominion"
+  },
+  {
+   "rule_id": "agricultural_service_1988",
+   "worker": "INVENTED: in 1990 a farmhand gets rent-free farm housing and daily meals, nothing converting to cash [decides: genuine_noncash_with_dominion]",
+   "facts": {
+    "cash_remuneration": [
+     "lodging",
+     "food"
+    ],
+    "noncash_transfer_cash_equivalence": false,
+    "noncash_transfer_dominion_control": "the operator keeps title to the house; nothing converts to cash",
+    "services_performed_date": "before 1995-08-07"
+   },
+   "expected": "noncovered",
+   "decides": "genuine_noncash_with_dominion"
+  },
+  {
+   "rule_id": "agricultural_service_1988",
+   "worker": "INVENTED: in 2000 an operator sells his herd and the buyer pays the hand directly for 'his' 30 head, which the hand never kept apart [decides: cash_equivalent_transfer_from_1995_08_07]",
+   "facts": {
+    "cash_remuneration": "agricultural or horticultural commodities such as livestock",
+    "noncash_transfer_cash_equivalence": true,
+    "noncash_transfer_dominion_control": "employee did not obtain dominion and control",
+    "services_performed_date": "on or after 1995-08-07"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "cash_equivalent_transfer_from_1995_08_07"
+  },
+  {
+   "rule_id": "agricultural_service_1988",
+   "worker": "INVENTED: the same cattle sale in 1993, before SSR 95-3P [decides: cash_equivalent_transfer_before_1995_08_07]",
+   "facts": {
+    "cash_remuneration": "agricultural or horticultural commodities such as livestock",
+    "noncash_transfer_cash_equivalence": true,
+    "noncash_transfer_dominion_control": "employee did not obtain dominion and control",
+    "services_performed_date": "before 1995-08-07"
+   },
+   "expected": "noncovered",
+   "decides": "cash_equivalent_transfer_before_1995_08_07"
+  },
+  {
+   "rule_id": "agricultural_service_1988",
+   "worker": "INVENTED: in 2000 a hand gets 10 head of cattle a month, pastures them at his own cost and sells them himself [decides: genuine_noncash_with_dominion]",
+   "facts": {
+    "cash_remuneration": "livestock",
+    "noncash_transfer_cash_equivalence": false,
+    "noncash_transfer_dominion_control": "employee obtained dominion and control",
+    "services_performed_date": "on or after 1995-08-07"
+   },
+   "expected": "noncovered",
+   "decides": "genuine_noncash_with_dominion"
+  },
+  {
+   "rule_id": "agricultural_service_1988",
+   "worker": "INVENTED: in 2005 a hand earns $900 in cash wages from one orchard [decides: residual]",
+   "facts": {
+    "cash_remuneration": "cash wages",
+    "services_performed_date": "on or after 1995-08-07"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "casual_service_1978",
+   "worker": "INVENTED: in 2010 a housekeeper cleans the farmhouse of a corn farm run for profit and earns $1,200 in cash [decides: domestic_service_in_private_home, defers to domestic_service]",
+   "facts": {
+    "domestic_service": "domestic service in a private home of the employer",
+    "casual_service": "service not in the course of the employer's trade or business, performed on a farm operated for profit",
+    "cash_remuneration": "cash wages"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "casual_service_1978",
+   "worker": "INVENTED: the same housekeeper in 1985; domestic_service_1968 then sends her to agricultural_service [decides: domestic_service_in_private_home, defers to domestic_service]",
+   "facts": {
+    "domestic_service": "domestic service in a private home of the employer",
+    "casual_service": "service not in the course of the employer's trade or business, performed on a farm operated for profit",
+    "cash_remuneration": "cash wages"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "casual_service_1978",
+   "worker": "INVENTED: in 2005 a carpenter builds a gazebo at the farmhouse of a farm run for profit [decides: farm_operated_for_profit, defers to agricultural_service]",
+   "facts": {
+    "domestic_service": "not domestic service",
+    "casual_service": "service not in the course of the employer's trade or business, performed on a farm operated for profit",
+    "cash_remuneration": "cash wages"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "casual_service_1978",
+   "worker": "INVENTED: in 2005 a nanny works in a private home in town [decides: domestic_service_in_private_home, defers to domestic_service]",
+   "facts": {
+    "domestic_service": "domestic service in a private home of the employer",
+    "casual_service": "not on a farm",
+    "cash_remuneration": "cash wages"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "casual_service_1978",
+   "worker": "INVENTED: in 1990 a pallbearer receives $80 in cash from the family [decides: residual]",
+   "facts": {
+    "domestic_service": "not domestic service",
+    "casual_service": "nonbusiness work at a funeral, not on a farm",
+    "cash_remuneration": "cash wages"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "family_service_1968",
+   "worker": "INVENTED: in December 1967 a mother cares at home for the children (aged 4 and 7) of her unremarried widowed daughter, who pays her on 1968-01-05 [decides: parent_for_child_nonbusiness_or_domestic]",
+   "facts": {
+    "family_service": [
+     "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried",
+     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+    ],
+    "services_performed_date": "before 1968-01-01"
+   },
+   "expected": "noncovered",
+   "decides": "parent_for_child_nonbusiness_or_domestic"
+  },
+  {
+   "rule_id": "family_service_1968",
+   "worker": "INVENTED: the same care given and paid in 1978 [decides: parent_domestic_care_exception]",
+   "facts": {
+    "family_service": [
+     "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried",
+     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+    ],
+    "services_performed_date": "on or after 1968-01-01"
+   },
+   "expected": "covered",
+   "decides": "parent_domestic_care_exception"
+  },
+  {
+   "rule_id": "family_service_1968",
+   "worker": "INVENTED: in 1980 a 17-year-old works in his stepfather's shop after his mother, the stepfather's wife, has died [decides: child_under_21]",
+   "facts": {
+    "family_service": "stepchild under 21 employed by a stepparent, also after the natural parent's death"
+   },
+   "expected": "noncovered",
+   "decides": "child_under_21"
+  },
+  {
+   "rule_id": "family_service_1968",
+   "worker": "INVENTED: in 1980 a stepmother keeps house for her married stepson, who has no children, after his father has died [decides: parent_for_child_nonbusiness_or_domestic]",
+   "facts": {
+    "family_service": "stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death"
+   },
+   "expected": "noncovered",
+   "decides": "parent_for_child_nonbusiness_or_domestic"
+  },
+  {
+   "rule_id": "family_service_1968",
+   "worker": "INVENTED: in 1980 an unremarried widowed stepdaughter employs her stepmother at home to care for her children under 18 [decides: parent_domestic_care_exception]",
+   "facts": {
+    "family_service": [
+     "stepparent employed by a stepson or stepdaughter on these terms",
+     "stepparent employed by a stepson or stepdaughter in such service"
+    ],
+    "services_performed_date": "on or after 1968-01-01"
+   },
+   "expected": "covered",
+   "decides": "parent_domestic_care_exception"
+  },
+  {
+   "rule_id": "family_service_1968",
+   "worker": "INVENTED: in 1980 a father works as a carpenter for his contractor son [decides: residual]",
+   "facts": {
+    "family_service": "parent employed by a son in the son's contracting business"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "family_service_1968",
+   "worker": "INVENTED: in 1975 a 19-year-old clerks in his father's store [decides: child_under_21]",
+   "facts": {
+    "family_service": "child under 21 employed by a parent"
+   },
+   "expected": "noncovered",
+   "decides": "child_under_21"
+  },
+  {
+   "rule_id": "family_service_1968",
+   "worker": "INVENTED: in 1985 a 17-year-old works for his father's incorporated firm [decides: corporate_employer]",
+   "facts": {
+    "incorporation": "corporation is the employer",
+    "family_service": "child under 21 employed by a parent"
+   },
+   "expected": "covered",
+   "decides": "corporate_employer"
+  },
+  {
+   "rule_id": "family_service_1988",
+   "worker": "INVENTED: in 2000 a farmer employs his mother to cook and keep house in his farmhouse, where she also feeds his hired hands; his wife can care for their children [decides: parent_for_child_nonbusiness_or_domestic]",
+   "facts": {
+    "family_service": [
+     "parent employed by child in the child's trade or business in a genuine employment relationship",
+     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+    ]
+   },
+   "expected": "noncovered",
+   "decides": "parent_for_child_nonbusiness_or_domestic"
+  },
+  {
+   "rule_id": "family_service_1988",
+   "worker": "INVENTED: in 2005 a woman who runs a daycare in her home pays her husband to clean the home [decides: spouse_nonbusiness_or_domestic]",
+   "facts": {
+    "family_service": [
+     "spouse employed in the employer's trade or business",
+     "individual employed by a spouse in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+    ]
+   },
+   "expected": "noncovered",
+   "decides": "spouse_nonbusiness_or_domestic"
+  },
+  {
+   "rule_id": "family_service_1988",
+   "worker": "INVENTED: in 2011 a union carpenter works part-time for his contractor son, who directs the work [decides: parent_in_child_trade_or_business]",
+   "facts": {
+    "family_service": "parent employed by child in the child's trade or business in a genuine employment relationship"
+   },
+   "expected": "covered",
+   "decides": "parent_in_child_trade_or_business"
+  },
+  {
+   "rule_id": "family_service_1988",
+   "worker": "INVENTED: in 1990 a wife keeps the books for her husband's grocery [decides: spouse_in_trade_or_business]",
+   "facts": {
+    "family_service": "spouse employed in the employer's trade or business"
+   },
+   "expected": "covered",
+   "decides": "spouse_in_trade_or_business"
+  },
+  {
+   "rule_id": "family_service_1988",
+   "worker": "INVENTED: in 2000 an unremarried widow employs her mother at home to care for her three children under 18 [decides: parent_domestic_care_exception]",
+   "facts": {
+    "family_service": [
+     "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried",
+     "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+    ]
+   },
+   "expected": "covered",
+   "decides": "parent_domestic_care_exception"
+  },
+  {
+   "rule_id": "family_service_1988",
+   "worker": "INVENTED: in 2005 a 16-year-old works in her stepmother's shop after her father, the stepmother's husband, has died [decides: child_under_18]",
+   "facts": {
+    "family_service": "stepchild under 18 employed by a stepparent, also after the natural parent's death"
+   },
+   "expected": "noncovered",
+   "decides": "child_under_18"
+  },
+  {
+   "rule_id": "family_service_1988",
+   "worker": "INVENTED: in 2005 a 19-year-old cleans his stepfather's house [decides: child_under_21_nonbusiness_or_domestic]",
+   "facts": {
+    "family_service": "stepchild under 21 employed by a stepparent in such service"
+   },
+   "expected": "noncovered",
+   "decides": "child_under_21_nonbusiness_or_domestic"
+  },
+  {
+   "rule_id": "family_service_1988",
+   "worker": "INVENTED: in 2005 a 19-year-old works in his stepfather's store [decides: residual]",
+   "facts": {
+    "family_service": "stepchild aged 19 working in the stepparent's store"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "family_service_1988",
+   "worker": "INVENTED: in 2000 a 16-year-old stocks shelves in her mother's store [decides: child_under_18]",
+   "facts": {
+    "family_service": "child under 18 employed by a parent"
+   },
+   "expected": "noncovered",
+   "decides": "child_under_18"
+  },
+  {
+   "rule_id": "newspaper_service_1968",
+   "worker": "INVENTED: in 1985 a 16-year-old employee vendor sells papers on the street at the cover price and keeps the margin; the publisher guarantees $10 a week and tops up slow weeks [decides: fixed_price_vendor_minor]",
+   "facts": {
+    "age": "under 18",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay",
+    "direct_seller_contract": "no written contract"
+   },
+   "expected": "noncovered",
+   "decides": "fixed_price_vendor_minor"
+  },
+  {
+   "rule_id": "newspaper_service_1968",
+   "worker": "INVENTED: in 1985 a 30-year-old employee vendor sells at the cover price, keeps the margin and gets credit for unsold copies he turns back (self-employment under 411(c)(2)(A)) [decides: fixed_price_vendor_adult]",
+   "facts": {
+    "age": "18 or older",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back",
+    "direct_seller_contract": "no written contract"
+   },
+   "expected": "covered",
+   "decides": "fixed_price_vendor_adult"
+  },
+  {
+   "rule_id": "newspaper_service_1968",
+   "worker": "INVENTED: in 1980 a 14-year-old carrier employed by a daily paper delivers to homes [decides: under_18_delivery]",
+   "facts": {
+    "age": "under 18",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "delivery or distribution of newspapers or shopping news, not to a point for further delivery or distribution",
+    "direct_seller_contract": "no written contract"
+   },
+   "expected": "noncovered",
+   "decides": "under_18_delivery"
+  },
+  {
+   "rule_id": "newspaper_service_1968",
+   "worker": "INVENTED: in 1980 a 17-year-old employee drives bundles to drop points for other carriers [decides: residual]",
+   "facts": {
+    "age": "under 18",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "drives bundles to drop points where other carriers pick them up",
+    "direct_seller_contract": "no written contract"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "newspaper_service_1996",
+   "worker": "INVENTED: in 2005 a 16-year-old employee vendor has a weekly guarantee that the publisher tops up, and no section 3508 contract [decides: fixed_price_vendor_minor]",
+   "facts": {
+    "age": "under 18",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay",
+    "direct_seller_contract": "no written contract"
+   },
+   "expected": "noncovered",
+   "decides": "fixed_price_vendor_minor"
+  },
+  {
+   "rule_id": "newspaper_service_1996",
+   "worker": "INVENTED: in 2005 a 40-year-old employee vendor sells at the cover price and gets credit for unsold copies [decides: fixed_price_vendor_adult]",
+   "facts": {
+    "age": "18 or older",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back",
+    "direct_seller_contract": "no written contract"
+   },
+   "expected": "covered",
+   "decides": "fixed_price_vendor_adult"
+  },
+  {
+   "rule_id": "newspaper_service_1996",
+   "worker": "INVENTED: in 2005 a 15-year-old carrier paid per paper signs a written contract saying he is not an employee for federal tax purposes [decides: section_3508_direct_seller]",
+   "facts": {
+    "age": "under 18",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "delivery or distribution of newspapers or shopping news, not to a point for further delivery or distribution",
+    "direct_seller_contract": "trade or business of delivering or distributing newspapers or shopping news (including related services); substantially all pay related to sales or other output rather than hours; written contract providing the individual is not an employee for federal tax purposes"
+   },
+   "expected": "covered",
+   "decides": "section_3508_direct_seller"
+  },
+  {
+   "rule_id": "newspaper_service_1996",
+   "worker": "INVENTED: in 2005 a 17-year-old employee with no section 3508 contract drives bundles to drop points [decides: residual]",
+   "facts": {
+    "age": "under 18",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "drives bundles to drop points where other carriers pick them up",
+    "direct_seller_contract": "no written contract"
+   },
+   "expected": "covered",
+   "decides": "residual"
   }
  ]
 }

@@ -920,19 +920,10 @@
     {
       "cases": [
         {
-          "case_id": "genuine_noncash_with_dominion",
-          "consequence": "noncovered",
-          "description": "A bona fide commodity transfer remains outside agricultural cash wages.",
-          "precedence": 1,
-          "when": {
-            "cash_remuneration": "genuine noncash remuneration; employee obtained dominion and control"
-          }
-        },
-        {
           "case_id": "cash_equivalent_transfer_before_1995_08_07",
           "consequence": "noncovered",
           "description": "POMS RS 01402.020 A: before SSA Ruling 95-3P, published August 7, 1995, SSA excluded noncash transfers from wages.",
-          "precedence": 2,
+          "precedence": 1,
           "when": {
             "noncash_transfer_cash_equivalence": true,
             "noncash_transfer_dominion_control": "employee did not obtain dominion and control; transfer is economically a cash payment",
@@ -942,12 +933,24 @@
         {
           "case_id": "cash_equivalent_transfer_from_1995_08_07",
           "consequence": "covered_above_threshold",
-          "description": "Apply the cash-wage tests to cash-equivalent transfers under POMS RS 01402.020 A and D.2-D.3.",
-          "precedence": 3,
+          "description": "Apply the cash-wage tests to cash-equivalent transfers under POMS RS 01402.020 A and D.2-D.3. D.2 lifts the 409(a)(7)(A) noncash exclusion: \"if a bona fide transfer of the noncash medium from the employer to the employee has not occurred and the transaction is, in economic reality, equivalent to a payment in cash, the wage exclusion does not apply\".",
+          "overrides": [
+            "genuine_noncash_with_dominion"
+          ],
+          "precedence": 2,
           "when": {
             "noncash_transfer_cash_equivalence": true,
             "noncash_transfer_dominion_control": "employee did not obtain dominion and control; transfer is economically a cash payment",
             "services_performed_date": "on or after 1995-08-07"
+          }
+        },
+        {
+          "case_id": "genuine_noncash_with_dominion",
+          "consequence": "noncovered",
+          "description": "409(a)(7)(A) excludes \"Remuneration paid in any medium other than cash for agricultural labor\", and POMS RS 01402.020 A counts \"lodging, food, clothing, agricultural or horticultural commodities\" among such in-kind payments. A bona fide commodity transfer and lodging or meals given in kind both stay outside agricultural cash wages. The two cash-equivalent cases rank above this one, so a transfer that is in economic reality a cash payment reaches them first.",
+          "precedence": 3,
+          "when": {
+            "cash_remuneration": "remuneration paid in any medium other than cash, including lodging, food, clothing, and agricultural or horticultural commodities such as livestock, grain and milk products"
           }
         }
       ],
@@ -983,9 +986,30 @@
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
         },
         {
+          "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
+          "capture": "lii_42_409.html",
+          "location": "409(a)(7)(A)",
+          "quote": "(7) (A) Remuneration paid in any medium other than cash for agricultural labor ;",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "SSA POMS RS 01402.020",
+          "capture": "poms_rs_01402020.html",
+          "location": "A, in-kind payments",
+          "quote": "This noncash remuneration, generally referred to as in-kind payments, includes lodging, food, clothing, agricultural or horticultural commodities such as livestock, grain and milk products, and other noncash items.",
+          "sha256": "95d4703893b7c0f8efc546edf535d90b6cff6ec3b1aa1f4afe1ba944e1ae71f2"
+        },
+        {
           "authority": "SSA POMS RS 01402.020",
           "capture": "poms_rs_01402020.html",
           "location": "A; C.1; D.1-D.3; F Examples 1-3",
+          "sha256": "95d4703893b7c0f8efc546edf535d90b6cff6ec3b1aa1f4afe1ba944e1ae71f2"
+        },
+        {
+          "authority": "SSA POMS RS 01402.020",
+          "capture": "poms_rs_01402020.html",
+          "location": "D.2, equivalent to cash",
+          "quote": "Although Section 209(a)(7)(A) of the Act excludes from the definition of wages remuneration paid in any medium other than cash for agricultural labor, if a bona fide transfer of the noncash medium from the employer to the employee has not occurred and the transaction is, in economic reality, equivalent to a payment in cash, the wage exclusion does not apply.",
           "sha256": "95d4703893b7c0f8efc546edf535d90b6cff6ec3b1aa1f4afe1ba944e1ae71f2"
         },
         {
@@ -996,7 +1020,7 @@
         }
       ],
       "consequence": "covered_above_threshold",
-      "description": "Agricultural cash wages count if employee receives at least $150 from one employer in the calendar year or employer expenditures for agricultural labor reach $2,500 in the year. The employer-wide alternative does not apply to the specified seasonal hand-harvest employee paid on a customary piece-rate basis, commuting daily from a permanent residence, who worked in agriculture less than 13 weeks in the preceding year. Genuine noncash remuneration is excluded. Before August 7, 1995, SSA excluded noncash transfers from wages; from that date an economically cash-equivalent noncash transfer is tested as cash wages, based on actual transfer and dominion-and-control facts.",
+      "description": "Agricultural cash wages count if employee receives at least $150 from one employer in the calendar year or employer expenditures for agricultural labor reach $2,500 in the year. The employer-wide alternative does not apply to the specified seasonal hand-harvest employee paid on a customary piece-rate basis, commuting daily from a permanent residence, who worked in agriculture less than 13 weeks in the preceding year. Remuneration paid in any medium other than cash, such as lodging, food, clothing or commodities, is excluded. Before August 7, 1995, SSA excluded noncash transfers from wages; from that date an economically cash-equivalent noncash transfer is tested as cash wages, based on actual transfer and dominion-and-control facts.",
       "effective_end": "2026-12-31",
       "effective_start": "1988-01-01",
       "family": "agricultural_service",
@@ -1766,27 +1790,27 @@
     {
       "cases": [
         {
+          "case_id": "domestic_service_in_private_home",
+          "consequence": "deferred",
+          "defers_to": [
+            "domestic_service"
+          ],
+          "description": "409(a)(6)(C) and POMS RS 01901.520 A exclude domestic service from nonbusiness work. This case ranks above farm_operated_for_profit because 409(a)(6)(B) puts \"domestic service in a private home of the employer (including domestic service on a farm operated for profit)\" under the domestic threshold, and POMS RS 01402.216 A says that from January 1, 1995 such employees \"are no longer treated as agricultural employees\". The domestic rows send farm domestic service paid before 1995 on to agricultural_service.",
+          "precedence": 1,
+          "when": {
+            "domestic_service": "domestic service in a private home of the employer"
+          }
+        },
+        {
           "case_id": "farm_operated_for_profit",
           "consequence": "deferred",
           "defers_to": [
             "agricultural_service"
           ],
           "description": "410(f)(5) makes this agricultural labor, and 409(a)(6)(C) excludes 410(f)(5) service from nonbusiness work.",
-          "precedence": 1,
-          "when": {
-            "casual_service": "service not in the course of the employer's trade or business, performed on a farm operated for profit"
-          }
-        },
-        {
-          "case_id": "domestic_service_in_private_home",
-          "consequence": "deferred",
-          "defers_to": [
-            "domestic_service"
-          ],
-          "description": "409(a)(6)(C) and POMS RS 01901.520 A exclude domestic service from nonbusiness work.",
           "precedence": 2,
           "when": {
-            "domestic_service": "domestic service in a private home of the employer"
+            "casual_service": "service not in the course of the employer's trade or business, performed on a farm operated for profit"
           }
         },
         {
@@ -1816,10 +1840,38 @@
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
         },
         {
+          "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
+          "capture": "lii_42_409.html",
+          "location": "409(a)(6)(B)",
+          "quote": "(B) Cash remuneration paid by an employer in any calendar year to an employee for domestic service in a private home of the employer (including domestic service on a farm operated for profit)",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "2004 amendment note, subsec. (f)(5)",
+          "quote": "2004\u2014Subsec. (f)(5). Pub. L. 108\u2013203 struck out \u201cor is domestic service in a private home of the employer\u201d before period at end.",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
           "location": "410(f)(5)",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "SSA POMS RS 01402.216",
+          "capture": "poms_rs_01402216.html",
+          "location": "A, farm domestic employees from 1995",
+          "quote": "Beginning January 1, 1995, domestic employees on farms operated for profit are no longer treated as agricultural employees. Instead they are subject to the new domestic threshold.",
+          "sha256": "e535abe2282e2e7f6eab472eab2da2df380b201aaaf44454665e23cfd5ceca05"
+        },
+        {
+          "authority": "SSA POMS RS 01901.520",
+          "capture": "poms_rs_01901520.html",
+          "location": "A, definition of nonbusiness work",
+          "quote": "does not include domestic service in a private home of the employer or on a farm;",
+          "sha256": "5d7a5d1a6697cdf8cbf7c9ec60290f034cd4dbfc580fe3611ee0e0f93727a476"
         },
         {
           "authority": "SSA POMS RS 01901.520",
@@ -6569,13 +6621,14 @@
         {
           "case_id": "parent_domestic_care_exception",
           "consequence": "covered",
-          "description": "410(a)(3)(B)(i)-(iii), from 1968; POMS RS 01901.250.",
+          "description": "410(a)(3)(B)(i)-(iii); POMS RS 01901.250 C.1.b. Pub. L. 90-248 section 123(c) applies the exception \"with respect to services performed after December 31, 1967\", and POMS C.1 NOTE keeps earlier service excluded: \"For the years 1961 through 1967 inclusive, domestic service by a parent in a private home of a son or daughter is excluded.\" The family keys on the payment date, so the case carries the service date: care given in 1967 and paid in 1968 stays excluded.",
           "overrides": [
             "parent_for_child_nonbusiness_or_domestic"
           ],
           "precedence": 2,
           "when": {
-            "family_service": "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse in the home unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or needs an adult's care for at least 4 continuous weeks in the quarter"
+            "family_service": "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse in the home unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or needs an adult's care for at least 4 continuous weeks in the quarter; this includes a stepparent employed by a stepson or stepdaughter on these terms, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter on these terms",
+            "services_performed_date": "on or after 1968-01-01"
           }
         },
         {
@@ -6584,7 +6637,7 @@
           "description": "410(a)(3) before the 1987 amendment.",
           "precedence": 3,
           "when": {
-            "family_service": "child under 21 employed by a parent (for a partnership, every partner has this relationship)"
+            "family_service": "child under 21 employed by a parent (for a partnership, every partner has this relationship); this includes a stepchild under 21 employed by a stepparent, also after the natural parent's death, and an adopted or foster child under 21 employed by an adoptive or foster parent"
           }
         },
         {
@@ -6602,7 +6655,7 @@
           "description": "410(a)(3)(B).",
           "precedence": 5,
           "when": {
-            "family_service": "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+            "family_service": "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home; this includes a stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter in such service"
           }
         }
       ],
@@ -6614,14 +6667,35 @@
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "Effective Date of 1968 Amendment note (Pub. L. 90-248 section 123(c))",
+          "quote": "Pub. L. 90\u2013248, title I, \u00a7 123(c) , Jan. 2, 1968 , 81 Stat. 845 , provided that: \u201cThe amendments made by this section [amending this section and section 3121 of Title 26 , Internal Revenue Code ] shall apply with respect to services performed after December 31, 1967 .\u201d",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
           "authority": "SSA POMS RS 01901.250",
           "capture": "poms_rs_01901250.html",
           "location": "A.2; B.1 NOTE (corporation rule); B.2; C.1; D-E",
           "sha256": "8bc190f60363a5498c830bbb29b535be9ee995c940faa86abdf87387d1e04b5f"
+        },
+        {
+          "authority": "SSA POMS RS 01901.250",
+          "capture": "poms_rs_01901250.html",
+          "location": "C.1 NOTE, parent domestic service 1961-1967",
+          "quote": "NOTE: For the years 1961 through 1967 inclusive, domestic service by a parent in a private home of a son or daughter is excluded.",
+          "sha256": "8bc190f60363a5498c830bbb29b535be9ee995c940faa86abdf87387d1e04b5f"
+        },
+        {
+          "authority": "SSA POMS RS 01901.250",
+          "capture": "poms_rs_01901250.html",
+          "location": "D, degree of family relationship",
+          "quote": "Family employment rules apply to: \u2022 foster or step-relationships (step-relationships are deemed to continue after the death of the natural parent); and \u2022 natural or adoptive relationships.",
+          "sha256": "8bc190f60363a5498c830bbb29b535be9ee995c940faa86abdf87387d1e04b5f"
         }
       ],
       "consequence": "covered",
-      "description": "Service by a child under 21 for a parent and service for a spouse is excluded. Service by a parent for a son or daughter is excluded if outside the employer trade/business or domestic in the private home, except qualifying domestic care from 1968. Corporation employment is not family employment; partnership exclusion requires a disqualifying relationship to every partner.",
+      "description": "Service by a child under 21 for a parent and service for a spouse is excluded. Service by a parent for a son or daughter is excluded if outside the employer trade/business or domestic in the private home, except qualifying domestic care performed after 1967. Step, foster and adoptive relationships count as parent and child (POMS RS 01901.250 D). Corporation employment is not family employment; partnership exclusion requires a disqualifying relationship to every partner.",
       "effective_end": "1987-12-31",
       "effective_start": "1968-01-01",
       "family": "family_service",
@@ -6701,7 +6775,8 @@
         "family_service",
         "incorporation",
         "month_or_exposure",
-        "reporting_unit"
+        "reporting_unit",
+        "services_performed_date"
       ],
       "worked_examples": []
     },
@@ -6725,50 +6800,35 @@
           ],
           "precedence": 2,
           "when": {
-            "family_service": "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse in the home unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or needs an adult's care for at least 4 continuous weeks in the quarter"
-          }
-        },
-        {
-          "case_id": "parent_in_child_trade_or_business",
-          "consequence": "covered",
-          "description": "42 U.S.C. 410(a)(3)(B); POMS RS 02101.125 B Example A, subject to other exclusions.",
-          "precedence": 3,
-          "when": {
-            "family_service": "parent employed by child in the child's trade or business in a genuine employment relationship"
-          }
-        },
-        {
-          "case_id": "spouse_in_trade_or_business",
-          "consequence": "covered",
-          "description": "The spousal nonbusiness exclusion does not exclude trade-or-business employment.",
-          "precedence": 4,
-          "when": {
-            "family_service": "spouse employed in the employer's trade or business"
+            "family_service": "parent employed by a son or daughter in domestic service in the employer's home, where the employer is a surviving spouse or divorced and not remarried, or has a spouse in the home unable to care for the child for at least 4 continuous weeks in the quarter, and a son, daughter, stepson or stepdaughter living in the home is under 18 or needs an adult's care for at least 4 continuous weeks in the quarter; this includes a stepparent employed by a stepson or stepdaughter on these terms, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter on these terms"
           }
         },
         {
           "case_id": "child_under_18",
           "consequence": "noncovered",
           "description": "410(a)(3)(A).",
-          "precedence": 5,
+          "precedence": 3,
           "when": {
-            "family_service": "child under 18 employed by a parent (for a partnership, every partner has this relationship)"
+            "family_service": "child under 18 employed by a parent (for a partnership, every partner has this relationship); this includes a stepchild under 18 employed by a stepparent, also after the natural parent's death, and an adopted or foster child under 18 employed by an adoptive or foster parent"
           }
         },
         {
           "case_id": "child_under_21_nonbusiness_or_domestic",
           "consequence": "noncovered",
           "description": "410(a)(3)(B).",
-          "precedence": 6,
+          "precedence": 4,
           "when": {
-            "family_service": "child under 21 employed by a parent in service not in the course of the parent's trade or business, or in domestic service in the parent's private home (for a partnership, every partner has this relationship)"
+            "family_service": "child under 21 employed by a parent in service not in the course of the parent's trade or business, or in domestic service in the parent's private home (for a partnership, every partner has this relationship); this includes a stepchild under 21 employed by a stepparent in such service, also after the natural parent's death, and an adopted or foster child under 21 employed by an adoptive or foster parent in such service"
           }
         },
         {
           "case_id": "spouse_nonbusiness_or_domestic",
           "consequence": "noncovered",
           "description": "410(a)(3)(B).",
-          "precedence": 7,
+          "overrides": [
+            "spouse_in_trade_or_business"
+          ],
+          "precedence": 5,
           "when": {
             "family_service": "individual employed by a spouse in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
           }
@@ -6777,9 +6837,30 @@
           "case_id": "parent_for_child_nonbusiness_or_domestic",
           "consequence": "noncovered",
           "description": "410(a)(3)(B).",
+          "overrides": [
+            "parent_in_child_trade_or_business"
+          ],
+          "precedence": 6,
+          "when": {
+            "family_service": "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home; this includes a stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter in such service"
+          }
+        },
+        {
+          "case_id": "parent_in_child_trade_or_business",
+          "consequence": "covered",
+          "description": "42 U.S.C. 410(a)(3)(B); POMS RS 02101.125 B Example A, subject to other exclusions. It ranks below parent_for_child_nonbusiness_or_domestic because 410(a)(3)(B) excludes \"domestic service in a private home of the employer\" as a prong of its own, so such service stays excluded even where it also serves the employer's business.",
+          "precedence": 7,
+          "when": {
+            "family_service": "parent employed by child in the child's trade or business in a genuine employment relationship"
+          }
+        },
+        {
+          "case_id": "spouse_in_trade_or_business",
+          "consequence": "covered",
+          "description": "The spousal exclusion does not reach trade-or-business employment (POMS RS 01901.250 G Example 1). It ranks below spouse_nonbusiness_or_domestic because POMS A.1 excludes service that is \"domestic service in a private home of the employing spouse\" as its own prong.",
           "precedence": 8,
           "when": {
-            "family_service": "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home"
+            "family_service": "spouse employed in the employer's trade or business"
           }
         }
       ],
@@ -6789,6 +6870,13 @@
           "capture": "ce1c_poms_rs_02101125.html",
           "location": "B, Example A, Sawyer employed as carpenter by contractor son",
           "sha256": "d57b74e28228c3cc8982ec57ba0301dd596e3554253d9dc092fb1e67fe9db21b"
+        },
+        {
+          "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+          "capture": "lii_42_410.html",
+          "location": "410(a)(3)(B)",
+          "quote": "(B) Service not in the course of the employer\u2019s trade or business, or domestic service in a private home of the employer, performed by an individual under the age of 21 in the employ of his father or mother, or performed by an individual in the employ of his spouse or son or daughter;",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
           "authority": "42 U.S.C. 410, pinned Code republication with amendment/effective-date notes",
@@ -6805,12 +6893,26 @@
         {
           "authority": "SSA POMS RS 01901.250",
           "capture": "poms_rs_01901250.html",
+          "location": "A.1, spousal employment after 1987",
+          "quote": "After 1987, service performed for, and paid by, a spouse is excluded from coverage if the service is: \u2022 not in the course of the employing spouse's trade or business, or \u2022 domestic service in a private home of the employing spouse.",
+          "sha256": "8bc190f60363a5498c830bbb29b535be9ee995c940faa86abdf87387d1e04b5f"
+        },
+        {
+          "authority": "SSA POMS RS 01901.250",
+          "capture": "poms_rs_01901250.html",
           "location": "A.1; B.1; C.1; D-E",
+          "sha256": "8bc190f60363a5498c830bbb29b535be9ee995c940faa86abdf87387d1e04b5f"
+        },
+        {
+          "authority": "SSA POMS RS 01901.250",
+          "capture": "poms_rs_01901250.html",
+          "location": "D, degree of family relationship",
+          "quote": "Family employment rules apply to: \u2022 foster or step-relationships (step-relationships are deemed to continue after the death of the natural parent); and \u2022 natural or adoptive relationships.",
           "sha256": "8bc190f60363a5498c830bbb29b535be9ee995c940faa86abdf87387d1e04b5f"
         }
       ],
       "consequence": "covered",
-      "description": "Service by a child under 18 for a parent is excluded; age 18-20 is excluded only for domestic service in the parent private home or service outside the employer trade/business. Spousal trade/business employment is covered subject to other exclusions; spousal nonbusiness/private-home domestic service is excluded. Parent-for-child nonbusiness exclusion and the special domestic-care exception continue.",
+      "description": "Service by a child under 18 for a parent is excluded; age 18-20 is excluded only for domestic service in the parent private home or service outside the employer trade/business. Spousal trade/business employment is covered subject to other exclusions; spousal nonbusiness/private-home domestic service is excluded. Parent-for-child nonbusiness exclusion and the special domestic-care exception continue. Domestic service in the employer's private home stays excluded even where it also serves the employer's business. Step, foster and adoptive relationships count as parent and child (POMS RS 01901.250 D).",
       "effective_end": "2026-12-31",
       "effective_start": "1988-01-01",
       "family": "family_service",
@@ -10962,23 +11064,23 @@
         {
           "case_id": "fixed_price_vendor_adult",
           "consequence": "covered",
-          "description": "410(a)(14)(B) excludes the service from wage employment and 411(c)(2)(A) makes it a trade or business at 18: covered as self-employment.",
+          "description": "410(a)(14)(B) excludes the service from wage employment and 411(c)(2)(A) makes it a trade or business at 18: covered as self-employment. The guarantee and credit clause of 410(a)(14)(B) keeps the exclusion: \"whether or not he is guaranteed a minimum amount of compensation for such service, or is entitled to be credited with the unsold newspapers or magazines turned back\".",
           "precedence": 2,
           "when": {
             "age": "18 or older",
             "employee_self_or_mixed": "employee",
-            "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being the excess over the amount charged to the vendor"
+            "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back"
           }
         },
         {
           "case_id": "fixed_price_vendor_minor",
           "consequence": "noncovered",
-          "description": "410(a)(14)(B); 411(c)(2)(A) applies only from age 18.",
+          "description": "410(a)(14)(B); 411(c)(2)(A) applies only from age 18. The guarantee and credit clause of 410(a)(14)(B) keeps the exclusion: \"whether or not he is guaranteed a minimum amount of compensation for such service, or is entitled to be credited with the unsold newspapers or magazines turned back\".",
           "precedence": 3,
           "when": {
             "age": "under 18",
             "employee_self_or_mixed": "employee",
-            "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being the excess over the amount charged to the vendor"
+            "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back"
           }
         }
       ],
@@ -10999,6 +11101,13 @@
           "authority": "42 U.S.C. 410, United States Code 2023 edition, including historical amendment and effective-date notes",
           "capture": "ce1c_usc2023_42_410.html",
           "location": "410(a)(14)(A)-(B);410(j) employee definition;historical amendment notes",
+          "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2"
+        },
+        {
+          "authority": "42 U.S.C. 410, United States Code 2023 edition, including historical amendment and effective-date notes",
+          "capture": "ce1c_usc2023_42_410.html",
+          "location": "410(a)(14)(B)",
+          "quote": "(B) Service performed by an individual in, and at the time of, the sale of newspapers or magazines to ultimate consumers, under an arrangement under which the newspapers or magazines are to be sold by him at a fixed price, his compensation being based on the retention of the excess of such price over the amount at which the newspapers or magazines are charged to him, whether or not he is guaranteed a minimum amount of compensation for such service, or is entitled to be credited with the unsold newspapers or magazines turned back;",
           "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2"
         },
         {
@@ -11294,23 +11403,23 @@
         {
           "case_id": "fixed_price_vendor_adult",
           "consequence": "covered",
-          "description": "410(a)(14)(B) excludes the service from wage employment and 411(c)(2)(A) makes it a trade or business at 18: covered as self-employment.",
+          "description": "410(a)(14)(B) excludes the service from wage employment and 411(c)(2)(A) makes it a trade or business at 18: covered as self-employment. The guarantee and credit clause of 410(a)(14)(B) keeps the exclusion: \"whether or not he is guaranteed a minimum amount of compensation for such service, or is entitled to be credited with the unsold newspapers or magazines turned back\".",
           "precedence": 3,
           "when": {
             "age": "18 or older",
             "employee_self_or_mixed": "employee",
-            "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being the excess over the amount charged to the vendor"
+            "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back"
           }
         },
         {
           "case_id": "fixed_price_vendor_minor",
           "consequence": "noncovered",
-          "description": "410(a)(14)(B); 411(c)(2)(A) applies only from age 18.",
+          "description": "410(a)(14)(B); 411(c)(2)(A) applies only from age 18. The guarantee and credit clause of 410(a)(14)(B) keeps the exclusion: \"whether or not he is guaranteed a minimum amount of compensation for such service, or is entitled to be credited with the unsold newspapers or magazines turned back\".",
           "precedence": 4,
           "when": {
             "age": "under 18",
             "employee_self_or_mixed": "employee",
-            "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being the excess over the amount charged to the vendor"
+            "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back"
           }
         }
       ],
@@ -11331,6 +11440,13 @@
           "authority": "42 U.S.C. 410, United States Code 2023 edition, including historical amendment and effective-date notes",
           "capture": "ce1c_usc2023_42_410.html",
           "location": "410(a)(14)(A)-(B);410(j) employee definition;historical amendment notes",
+          "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2"
+        },
+        {
+          "authority": "42 U.S.C. 410, United States Code 2023 edition, including historical amendment and effective-date notes",
+          "capture": "ce1c_usc2023_42_410.html",
+          "location": "410(a)(14)(B)",
+          "quote": "(B) Service performed by an individual in, and at the time of, the sale of newspapers or magazines to ultimate consumers, under an arrangement under which the newspapers or magazines are to be sold by him at a fixed price, his compensation being based on the retention of the excess of such price over the amount at which the newspapers or magazines are charged to him, whether or not he is guaranteed a minimum amount of compensation for such service, or is entitled to be credited with the unsold newspapers or magazines turned back;",
           "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2"
         },
         {
