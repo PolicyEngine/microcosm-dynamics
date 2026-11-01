@@ -1239,6 +1239,244 @@
     "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
    },
    "expected": "deferred"
+  },
+  {
+   "rule_id": "se_base_definition_1968_2026",
+   "worker": "INVENTED: 2012, Ohio: Ana's household reports her husband's sole-proprietorship profit as her income; Ana carries on no trade or business and belongs to no partnership.",
+   "facts": {
+    "trade_or_business": "the amount is not derived from any trade or business",
+    "partnership_status": "is not the person's distributive share"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "se_base_definition_1968_2026",
+   "worker": "INVENTED: 2012, Ohio: Ana's own bookkeeping practice, which she runs alone, earns a profit.",
+   "facts": {
+    "trade_or_business": "derived from a trade or business the person carries on",
+    "partnership_status": "is not the person's distributive share"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_base_definition_1968_2026",
+   "worker": "INVENTED: 2015: Ben, a general partner in a two-person landscaping partnership, receives his distributive share of its ordinary income.",
+   "facts": {
+    "trade_or_business": "the amount is not derived from any trade or business",
+    "partnership_status": "is the person's distributive share"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_community_income_1968_1979",
+   "worker": "INVENTED: 1976, California: Carla runs a shop bought with her separate funds; state apportionment makes part of the profit her separate income and part community; her husband shares management. The item is her separate-income part.",
+   "facts": {
+    "community_property_income": "any of whose income is community income",
+    "substantially_all_business_management_and_control": "the person is the wife and does not"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "se_community_income_1968_1979",
+   "worker": "INVENTED: 1976, Ohio (no community property): Dora's shop profit, with her husband sharing management.",
+   "facts": {
+    "community_property_income": "no income of the business is community income",
+    "substantially_all_business_management_and_control": "the person is the wife and does not"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_community_income_1968_1979",
+   "worker": "INVENTED: 1977, Texas: Elena runs her community-property shop alone; the item is the shop's profit, asked for Elena.",
+   "facts": {
+    "community_property_income": "any of whose income is community income",
+    "substantially_all_business_management_and_control": "the person is the wife and exercises substantially all"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_community_income_1968_1979",
+   "worker": "INVENTED: 1975, Texas: Frank is a partner and his wife Gina is not; his share is community income. The item is that share, asked for Gina.",
+   "facts": {
+    "community_property_income": "community income or loss under applicable community property laws",
+    "partnership_status": "the income is the distributive share of the person's spouse, who is the partner"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "se_community_income_2004_2026",
+   "worker": "INVENTED: 2015, California: Hal carries on a shop; his wife Ida owns its building and capital as separate property, so part of the profit is her separate income and the rest community. The item is Ida's separate-income part, asked for Ida.",
+   "facts": {
+    "community_property_income": "any of whose income is community income",
+    "business_operator_spouse": "the other spouse carries on the business"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "se_community_income_2004_2026",
+   "worker": "INVENTED: 2015, California: the same shop, asked for Hal, who carries it on.",
+   "facts": {
+    "community_property_income": "any of whose income is community income",
+    "business_operator_spouse": "the person carries on the business"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_community_income_2004_2026",
+   "worker": "INVENTED: 2015, Ohio (no community property): Jon's wife owns a share of the shop Jon's brother runs; the item is that profit, asked for Jon's wife.",
+   "facts": {
+    "community_property_income": "no income of the business is community income",
+    "business_operator_spouse": "the other spouse carries on the business"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_conservation_reserve_2008_2026",
+   "worker": "INVENTED: 2016: Ruth, 70, draws section 402 retirement benefits and receives an annual Conservation Reserve payment under 16 U.S.C. 3833(a)(2).",
+   "facts": {
+    "conservation_reserve_payment": "16 U.S.C. 3833(a)(2)",
+    "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "se_conservation_reserve_2008_2026",
+   "worker": "INVENTED: 2010: Ruth, 64, draws section 402 retirement benefits and receives an annual Conservation Reserve payment under 16 U.S.C. 3833(2).",
+   "facts": {
+    "conservation_reserve_payment": "16 U.S.C. 3833(2)",
+    "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "se_conservation_reserve_2008_2026",
+   "worker": "INVENTED: 2016: Sam, 50, receives no Social Security benefits and gets an annual Conservation Reserve payment under 16 U.S.C. 3833(a)(2).",
+   "facts": {
+    "conservation_reserve_payment": "16 U.S.C. 3833(a)(2)",
+    "benefit_type": "recipient is not receiving benefits under 42 U.S.C. 402 or 423"
+   },
+   "expected": "refuses"
+  },
+  {
+   "rule_id": "se_conservation_reserve_2008_2026",
+   "worker": "INVENTED: 2016: Tess, 70, a section 402 beneficiary, receives a state conservation cost-share payment that no 16 U.S.C. 3833 provision authorizes.",
+   "facts": {
+    "conservation_reserve_payment": "state conservation cost-share payment",
+    "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_material_participation_1974_2026",
+   "worker": "INVENTED: 1985: real estate dealer Carr Land Co. holds farmland for sale to customers in its dealer business and rents it to a farmer on a cash lease with no participation term; Carr does not participate.",
+   "facts": {
+    "real_estate_dealer_status": "the dealer holds for sale to customers"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "se_material_participation_1974_2026",
+   "worker": "INVENTED: Taxable year beginning 1990-01-01: real estate dealer Dunn Realty rents farmland it holds only for investment to a farmer on a cash lease; Dunn does not participate.",
+   "facts": {
+    "real_estate_dealer_status": "the dealer holds for investment or speculation",
+    "taxable_year_start": "beginning before 1996-04-01"
+   },
+   "expected": "refuses"
+  },
+  {
+   "rule_id": "se_capital_gain_nol_1968_2026",
+   "worker": "INVENTED: Calendar 1995: a commodities dealer registered with a designated contract market realizes a $60,000 gain from actively trading regulated futures in the normal course of that trading; it makes no market.",
+   "facts": {
+    "trade_or_business": "options or commodities dealer, in a taxable year beginning after 1984-07-18",
+    "property_disposition_type": [
+     "trading section 1256 contracts",
+     "capital-asset gain or loss under subtitle A"
+    ]
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "se_capital_gain_nol_1968_2026",
+   "worker": "INVENTED: Calendar 1990: an options dealer under 1256(g)(8) realizes an $80,000 gain on listed options in the normal course of its dealing.",
+   "facts": {
+    "trade_or_business": "options or commodities dealer, in a taxable year beginning after 1984-07-18",
+    "property_disposition_type": [
+     "dealing in or trading section 1256 contracts",
+     "capital-asset gain or loss under subtitle A"
+    ]
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "se_capital_gain_nol_1968_2026",
+   "worker": "INVENTED: 2000: the same options dealer sells a section 1256 position it held as a personal investment, outside its dealing activity.",
+   "facts": {
+    "trade_or_business": "options or commodities dealer, in a taxable year beginning after 1984-07-18",
+    "property_disposition_type": "capital-asset gain or loss under subtitle A"
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "se_capital_gain_nol_1968_2026",
+   "worker": "INVENTED: Calendar 1984 (taxable year begins 1984-01-01): a registered commodities dealer's normal-course trading gain on regulated futures, before 411(h) applies.",
+   "facts": {
+    "trade_or_business": "options or commodities dealer, in a taxable year beginning on 1984-01-01",
+    "property_disposition_type": [
+     "trading section 1256 contracts",
+     "capital-asset gain or loss under subtitle A"
+    ]
+   },
+   "expected": "noncovered"
+  },
+  {
+   "rule_id": "nonprofit_1984_2026",
+   "worker": "INVENTED: 1995: Pastor Lee, with no 1402(e) exemption, is paid $90 by each of five churches for preaching and pastoral work.",
+   "facts": {
+    "ministerial_service": "licensed minister of a church in the exercise of his ministry"
+   },
+   "expected": "deferred"
+  },
+  {
+   "rule_id": "nonprofit_1984_2026",
+   "worker": "INVENTED: 1990: Mia keeps the books for two churches that each have a 3121(w) election in effect; each pays her $60 for that work, which is not part of any unrelated business.",
+   "facts": {
+    "church_employee_service": "in the employ of a church or qualified church-controlled organization that has in effect an election under section 3121(w)"
+   },
+   "expected": "covered"
+  },
+  {
+   "rule_id": "nonprofit_1984_2026",
+   "worker": "INVENTED: 1990: Ned keeps the books for a church with no 3121(w) election and is paid $80 for the year.",
+   "facts": {
+    "church_employee_service": "church that has no election under section 3121(w) in effect"
+   },
+   "expected": "covered_above_threshold"
+  },
+  {
+   "rule_id": "nonprofit_1984_2026",
+   "worker": "INVENTED: 1992: Ora works in the commercial print shop that an electing church runs as an unrelated business and is paid $70 for the year.",
+   "facts": {
+    "church_employee_service": "service in a church-run unrelated trade or business"
+   },
+   "expected": "covered_above_threshold"
+  },
+  {
+   "rule_id": "nonprofit_1984_2026",
+   "worker": "INVENTED: 1990: a museum (a 501(c)(3) organization) pays a weekend docent $80; the docent has no federal retirement coverage.",
+   "facts": {
+    "nonprofit_organization": "501(c)(3) organization",
+    "federal_retirement_system": "not subject to the Civil Service Retirement System"
+   },
+   "expected": "covered_above_threshold"
+  },
+  {
+   "rule_id": "nonprofit_1984_2026",
+   "worker": "INVENTED: 1990: Pat, a federal employee hired in 1975, works for a 501(c)(3) organization and is required by law to stay under the Civil Service Retirement System.",
+   "facts": {
+    "nonprofit_organization": "501(c)(3) organization",
+    "federal_retirement_system": "required by law to be subject to the Civil Service Retirement System"
+   },
+   "expected": "deferred"
   }
  ]
 }

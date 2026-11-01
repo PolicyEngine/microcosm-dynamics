@@ -12448,6 +12448,27 @@
             "federal_retirement_system": "employee required by law to be subject to the Civil Service Retirement System for this service",
             "nonprofit_organization": "501(c)(3) organization"
           }
+        },
+        {
+          "case_id": "ministry_or_order_duties_outside_employment",
+          "consequence": "deferred",
+          "defers_to": [
+            "clergy_religious_service"
+          ],
+          "description": "410(a)(8)(A) takes this service out of \"employment\", and 409(a) defines wages as \"remuneration paid after 1950 for employment\", so the 409(a)(14) $100 wage exclusion and mandatory nonprofit coverage do not reach it; the clergy family decides.",
+          "precedence": 2,
+          "when": {
+            "ministerial_service": "service performed by a duly ordained, commissioned, or licensed minister of a church in the exercise of his ministry, or by a member of a religious order in the exercise of duties required by such order while no election of coverage under section 3121(r) is in effect for the order or for the autonomous subdivision to which the member belongs"
+          }
+        },
+        {
+          "case_id": "electing_church_service_outside_employment",
+          "consequence": "covered",
+          "description": "410(a)(8)(B), for service performed after December 31, 1983 (Pub. L. 98-369 section 2603(e)), takes this service out of \"employment\", so its pay is not wages and the 409(a)(14) $100 per-employer wage exclusion does not reach it. This family excludes nothing; the electing-church family decides it. The case says covered rather than deferred because that family's 1968-1983 residual already defers to this one, and the registry refuses a deferral cycle.",
+          "precedence": 3,
+          "when": {
+            "church_employee_service": "service performed in the employ of a church or qualified church-controlled organization that has in effect an election under section 3121(w), outside any unrelated trade or business (within the meaning of section 513(a))"
+          }
         }
       ],
       "citations": [
@@ -12460,13 +12481,55 @@
         {
           "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
           "capture": "lii_42_409.html",
+          "location": "409(a)(14)",
+          "quote": "Remuneration paid by an organization exempt from income tax under section 501 of the Internal Revenue Code of 1986 in any calendar year to an employee for service rendered in the employ of such organization, if the remuneration paid in such year by the organization to the employee for such service is less than $100",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+          "capture": "lii_42_409.html",
           "location": "409(a)(14), nonprofit annual remuneration exclusion; 1977 amendment and effective-date notes",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+          "capture": "lii_42_409.html",
+          "location": "409(a), lead-in",
+          "quote": "remuneration paid after 1950 for employment",
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
         },
         {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
           "location": "410(a) and amendment/effective-date notes",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "410(a)(8)(A)",
+          "quote": "Service performed by a duly ordained, commissioned, or licensed minister of a church in the exercise of his ministry or by a member of a religious order in the exercise of duties required by such order, except that this subparagraph shall not apply to service performed by a member of such an order in the exercise of such duties, if an election of coverage under section 3121(r) of the Internal Revenue Code of 1986 is in effect with respect to such order, or with respect to the autonomous subdivision thereof to which such member belongs",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "410(a)(8)(B)",
+          "quote": "Service performed in the employ of a church or qualified church-controlled organization if such church or organization has in effect an election under section 3121(w) of the Internal Revenue Code of 1986 , other than service in an unrelated trade or business (within the meaning of section 513(a) of such Code)",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "410(a), lead-in to the exclusions",
+          "quote": "except that, in the case of service performed after 1950, such term shall not include",
+          "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
+        },
+        {
+          "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_410.html",
+          "location": "Effective Date of 1984 Amendment note (Pub. L. 98-369 section 2603(e))",
+          "quote": "shall apply to service performed after December 31, 1983",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
@@ -12489,7 +12552,7 @@
         }
       ],
       "consequence": "covered_above_threshold",
-      "description": "Mandatory nonprofit employment coverage begins January 1, 1984; the $100 annual remuneration exclusion and other service exclusions remain.",
+      "description": "Mandatory nonprofit employment coverage begins January 1, 1984; the $100 annual remuneration exclusion and other service exclusions remain. Service that 410(a)(8)(A) or (B) removes from employment (ministry and order duties; electing-church service) earns no wages, so the $100 wage exclusion does not reach it; the clergy and electing-church families decide.",
       "effective_end": "2026-12-31",
       "effective_start": "1984-01-01",
       "family": "nonprofit_service",
@@ -12609,12 +12672,14 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "Mandatory nonprofit coverage applies once the annual remuneration threshold is met; apply the other families."
+        "description": "No case holds: the service is employment for the organization, so mandatory nonprofit coverage applies once the annual remuneration threshold is met; apply the other families."
       },
       "rule_id": "nonprofit_1984_2026",
       "trigger_facts": [
         "amount",
+        "church_employee_service",
         "federal_retirement_system",
+        "ministerial_service",
         "month_or_exposure",
         "nonprofit_organization",
         "reporting_unit"
@@ -15209,17 +15274,42 @@
       ]
     },
     {
-      "cases": [],
+      "cases": [
+        {
+          "case_id": "outside_own_trade_or_business_and_partnership",
+          "consequence": "noncovered",
+          "description": "411(a): net earnings from self-employment are the gross income \"derived by an individual from any trade or business carried on by such individual\", less attributable deductions, \"plus his distributive share ... from any trade or business carried on by a partnership of which he is a member\". An amount that is neither is not this person's net earnings. 411(c) gives \"trade or business\" its section 162 meaning less the services it lists (public office, employee service other than (c)(2)(A)-(G), railroad service, exempt ministry and Christian Science practice, and service during a 1402(g) exemption); the families for those services apply those limits and their exceptions.",
+          "precedence": 1,
+          "when": {
+            "partnership_status": "the amount is not the person's distributive share of the ordinary net income or loss from a trade or business carried on by a partnership of which the person is a member",
+            "trade_or_business": "the amount is not derived from any trade or business (as 411(c) defines the term) carried on by the person"
+          }
+        }
+      ],
       "citations": [
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
           "capture": "lii_42_411.html",
           "location": "411(a) introductory sentence and paragraphs (1)-(4); concluding partnership-year sentence; 411(d)-(f); current text supports the definition as printed only, not its independent continuity in 1968-1993",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "capture": "lii_42_411.html",
+          "location": "411(a), introductory definition",
+          "quote": "derived by an individual from any trade or business carried on by such individual, less the deductions allowed under such subtitle which are attributable to such trade or business, plus his distributive share (whether or not distributed) of the ordinary net income or loss, as computed under section 702(a)(8) of such Code, from any trade or business carried on by a partnership of which he is a member",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "capture": "lii_42_411.html",
+          "location": "411(c), lead-in",
+          "quote": "shall have the same meaning as when used in section 162 of the Internal Revenue Code of 1986 , except that such term shall not include",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
       "consequence": "covered",
-      "description": "Regular net earnings use trade/business gross income less attributable deductions and partnership ordinary income/loss. Other named definition families supply the historical adjustments.",
+      "description": "Regular net earnings use trade/business gross income less attributable deductions and partnership ordinary income/loss. Other named definition families supply the historical adjustments. An amount from no trade or business the person carries on, and no distributive share from a partnership of which the person is a member, is not the person's net earnings (411(a)).",
       "effective_end": "2026-12-31",
       "effective_start": "1968-01-01",
       "family": "self_employment_base_definition",
@@ -15251,7 +15341,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "Trade or business gross income less attributable deductions, plus the partnership ordinary share, enters net earnings; the other families make their named adjustments."
+        "description": "No case holds: the amount comes from a trade or business the person carries on, or is the person's distributive share from a partnership of which the person is a member. Trade or business gross income less attributable deductions, plus the partnership ordinary share, enters net earnings; the other families make their named adjustments."
       },
       "rule_id": "se_base_definition_1968_2026",
       "trigger_facts": [
@@ -15271,13 +15361,13 @@
           "defers_to": [
             "self_employment_options_dealers"
           ],
-          "description": "411(h) overrides 411(a)(3) for these gains and losses; the options dealer family decides.",
+          "description": "411(h)(1)(A): for an options or commodities dealer, \"notwithstanding subsection (a)(3)(A), there shall not be excluded any gain or loss (in the normal course of the taxpayer's activity of dealing in or trading section 1256 contracts)\" from section 1256 contracts or related property; 411(h)(2)(B) defines a commodities dealer by active trading. The options dealer family decides.",
           "overrides": [
             "excluded_property_gain_or_loss"
           ],
           "precedence": 1,
           "when": {
-            "property_disposition_type": "section 1256 contract or related property, in the normal course of dealing",
+            "property_disposition_type": "gain or loss from section 1256 contracts or property related to such contracts, in the normal course of the taxpayer's activity of dealing in or trading section 1256 contracts",
             "trade_or_business": "options or commodities dealer, in a taxable year beginning after 1984-07-18"
           }
         },
@@ -15311,6 +15401,13 @@
           "authority": "42 USC 411, official 2024 United States Code section granule",
           "capture": "uscode_2024_42_411.html",
           "location": "411(a)(3)(A)-(C), (4); 1964 iron-ore amendment predates 1968; 1984 technical cross-reference substitutions preserve the named concepts",
+          "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
+        },
+        {
+          "authority": "42 USC 411, official 2024 United States Code section granule",
+          "capture": "uscode_2024_42_411.html",
+          "location": "411(h)(1)(A)",
+          "quote": "notwithstanding subsection (a)(3)(A), there shall not be excluded any gain or loss (in the normal course of the taxpayer's activity of dealing in or trading section 1256 contracts) from section 1256 contracts or property related to such contracts",
           "sha256": "3fa2b406dbedd5023e318fd7535e22fa39241cb388dfe58378baba81a859bbcb"
         }
       ],
@@ -16668,10 +16765,10 @@
         {
           "case_id": "business_income_treated_as_other_spouses",
           "consequence": "noncovered",
-          "description": "Former 411(a)(5)(A), quoted in the 2004 amendment note, treated all of a community business's gross income and deductions as the husband's \"unless the wife exercises substantially all of the management and control\", in which case all of it was the wife's; the other spouse's net earnings exclude it.",
+          "description": "Former 411(a)(5)(A) (1994 edition text, replaced in 2004): \"If any of the income derived from a trade or business (other than a trade or business carried on by a partnership) is community income ..., all of the gross income and deductions attributable to such trade or business shall be treated as the gross income and deductions of the husband unless the wife exercises substantially all of the management and control\", in which case all of it was the wife's. The other spouse's net earnings exclude all of it, including any part that is not itself community income.",
           "precedence": 2,
           "when": {
-            "community_property_income": "community income from a trade or business other than a partnership",
+            "community_property_income": "gross income or deductions attributable to a trade or business (other than a trade or business carried on by a partnership) any of whose income is community income under community property laws applicable to such income",
             "substantially_all_business_management_and_control": "former 411(a)(5)(A) treats the income as the other spouse's: the person is the husband and the wife exercises substantially all of the management and control, or the person is the wife and does not"
           }
         }
@@ -16688,6 +16785,13 @@
           "capture": "poms_rs_01802400.html",
           "location": "A, B.1-B.3 and C.3; taxable years including October 1980; spouse allocation and published examples",
           "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b"
+        },
+        {
+          "authority": "42 USC 411, official 1994 United States Code edition",
+          "capture": "uscode_1994_42_411.html",
+          "location": "411(a)(5)(A), text as printed before Pub. L. 108-203 section 425(a)",
+          "quote": "If any of the income derived from a trade or business (other than a trade or business carried on by a partnership) is community income under community property laws applicable to such income, all of the gross income and deductions attributable to such trade or business shall be treated as the gross income and deductions of the husband unless the wife exercises substantially all of the management and control of such trade or business",
+          "sha256": "40c1e80d320da6d6716b360e6920e4cfe7620d83fe84bf9079611a576b4676b1"
         },
         {
           "authority": "42 USC 411, official 1994 United States Code edition",
@@ -16971,11 +17075,11 @@
         {
           "case_id": "business_income_of_other_spouse",
           "consequence": "noncovered",
-          "description": "411(a)(5)(A): community business income is \"treated as the gross income and deductions of the spouse carrying on such trade or business\" or, if jointly operated, of each spouse by their respective distributive shares; the other spouse's net earnings exclude the rest.",
+          "description": "411(a)(5)(A): if any of the income derived from a trade or business (other than a partnership's) is community income, \"the gross income and deductions attributable to such trade or business shall be treated as the gross income and deductions of the spouse carrying on such trade or business\" or, if jointly operated, of each spouse by their respective distributive shares (POMS RS 01802.400 B.1). The other spouse's net earnings exclude the rest, including any part that is not itself community income.",
           "precedence": 2,
           "when": {
             "business_operator_spouse": "the other spouse carries on the business, or, for a jointly operated business, the part that is the other spouse's distributive share",
-            "community_property_income": "community income from a trade or business other than a partnership"
+            "community_property_income": "gross income or deductions attributable to a trade or business (other than a trade or business carried on by a partnership) any of whose income is community income under community property laws applicable to such income"
           }
         }
       ],
@@ -16989,6 +17093,13 @@
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
           "capture": "lii_42_411.html",
+          "location": "411(a)(5)(A)",
+          "quote": "If any of the income derived from a trade or business (other than a trade or business carried on by a partnership) is community income under community property laws applicable to such income, the gross income and deductions attributable to such trade or business shall be treated as the gross income and deductions of the spouse carrying on such trade or business",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "capture": "lii_42_411.html",
           "location": "411(a)(5)(A)-(B); 2004 amendment note",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         },
@@ -16996,6 +17107,13 @@
           "authority": "SSA POMS RS 01802.400 (2024-05-07)",
           "capture": "poms_rs_01802400.html",
           "location": "A, B.1-B.3 and C.3; taxable years including October 1980; spouse allocation and published examples",
+          "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b"
+        },
+        {
+          "authority": "SSA POMS RS 01802.400 (2024-05-07)",
+          "capture": "poms_rs_01802400.html",
+          "location": "B.1, trade or business income",
+          "quote": "Treat income and related deductions from a trade or business that is not a partnership as those of the person carrying on the trade or business.",
           "sha256": "ccc000bf393ec43dff45d2d48ebcbeb3c547f6cedf03ecc0f2d0752196d3f59b"
         }
       ],
@@ -17304,7 +17422,7 @@
           ],
           "precedence": 1,
           "when": {
-            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
+            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears",
             "real_estate_dealer_status": "received in the course of a trade or business as a real estate dealer"
           }
         },
@@ -17326,7 +17444,7 @@
           "precedence": 2,
           "when": {
             "benefit_type": "recipient is not receiving benefits under 42 U.S.C. 402 or 423",
-            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)"
+            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears"
           }
         },
         {
@@ -17341,7 +17459,7 @@
           ],
           "precedence": 3,
           "when": {
-            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)",
+            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears",
             "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
           }
         },
@@ -17352,20 +17470,34 @@
           "precedence": 4,
           "when": {
             "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423",
-            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2)"
+            "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears"
           }
         }
       ],
       "citations": [
         {
+          "authority": "26 U.S.C. 1402, pinned LII republication",
+          "capture": "lii_26_1402.html",
+          "location": "2018 amendment note, subsec. (a)(1) (Pub. L. 115-141 section 401(a)(197))",
+          "quote": "substituted \u201csection 1233(a)(2)\u201d for \u201csection 1233(2)\u201d and \u201c 16 U.S.C. 3833(a)(2) \u201d for \u201c 16 U.S.C. 3833(2) \u201d",
+          "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
+        },
+        {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
           "capture": "lii_42_411.html",
           "location": "411(a)(1); 2008 amendment/effective-date notes for Public Law 110-246 section 15301",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "capture": "lii_42_411.html",
+          "location": "References in Text note, section 3833(2) of title 16",
+          "quote": "which was classified to section 3833(2) of Title 16 , Conservation, prior to the general amendment of section 1233 by Pub. L. 113\u201379, title II, \u00a7 2004 , Feb. 7, 2014 , 128 Stat. 715 . As so amended, the substance of former section 1233(2) now appears in section 1233(a)(2), which is classified to section 3833(a)(2) of Title 16 .",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
       "consequence": "covered",
-      "description": "Exclude Conservation Reserve payments specified in 16 USC 3833(2) to individuals receiving 42 USC 402 or 423 benefits; payments after 2007 are the statutory effective condition.",
+      "description": "Exclude Conservation Reserve payments specified in 16 USC 3833(2) (from 2014-02-07, 3833(a)(2), where the References in Text note places former section 1233(2)) to individuals receiving 42 USC 402 or 423 benefits; payments after 2007 are the statutory effective condition.",
       "effective_end": "2026-12-31",
       "effective_start": "2008-01-01",
       "family": "self_employment_conservation_reserve",
@@ -17430,12 +17562,12 @@
         ],
         "effective_basis": "payment_date",
         "effective_basis_description": "Pub. L. 110-246 section 15301(c), as the 42 U.S.C. 411 Effective Date of 2008 Amendment note summarizes it: the amendment is \"applicable to payments made after Dec. 31, 2007\".",
-        "excluded_concept": "16 USC 3833(2) payments to recipient of 42 USC 402 or 423 benefits"
+        "excluded_concept": "16 USC 3833(2) payments (from 2014-02-07, 16 USC 3833(a)(2)) to recipient of 42 USC 402 or 423 benefits"
       },
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "No case holds: the payment is not a 16 U.S.C. 3833(2) Conservation Reserve payment, so this family does not apply; apply the other families."
+        "description": "No case holds: the payment is not a Conservation Reserve payment under 16 U.S.C. 3833(2) or, from 2014-02-07, 16 U.S.C. 3833(a)(2), so this family does not apply; apply the other families."
       },
       "rule_id": "se_conservation_reserve_2008_2026",
       "trigger_facts": [
@@ -18333,10 +18465,54 @@
     {
       "cases": [
         {
+          "case_id": "real_estate_dealer_rentals",
+          "consequence": "covered",
+          "description": "411(a)(1) excludes rentals \"unless such rentals are received in the course of a trade or business as a real estate dealer\", and the farm proviso only lifts that exclusion, so neither a missing participation term nor missing participation excludes these rentals. 20 CFR 404.1082(b)(3) (1996 and 2024 editions) counts \"only the rental income from the real estate held for sale to customers\". Apply the other families.",
+          "overrides": [
+            "no_actual_material_participation",
+            "arrangement_lacks_participation_term"
+          ],
+          "precedence": 1,
+          "when": {
+            "real_estate_dealer_status": "rentals a real estate dealer receives in the course of that trade or business from real estate the dealer holds for sale to customers"
+          }
+        },
+        {
+          "case_id": "participation_under_required_arrangement",
+          "consequence": "covered",
+          "description": "The owner actually materially participates under the required arrangement; apply other applicable rules.",
+          "precedence": 2,
+          "when": {
+            "material_participation": true,
+            "rental_arrangement_requires_material_participation": true
+          }
+        },
+        {
+          "case_id": "dealer_investment_holdings_before_1996",
+          "consequence": "open",
+          "description": "The same open question as se_rental_income_1968_1996 case dealer_investment_or_speculative_holdings, on this family's taxable-year axis. Ranked below the covered participation case, where both readings include the rentals. From taxable years beginning on or after 1996-04-01 the captured regulation settles it, and the participation cases decide.",
+          "open_alternatives": [
+            {
+              "description": "Treat these rentals as a non-dealer's: they stay excluded unless the farm-rental participation conditions hold, as 20 CFR 404.1082(b)(3) (April 1, 1996 edition) provides.",
+              "name": "apply_1996_holdings_rule"
+            },
+            {
+              "description": "Include them when received in the course of the dealer's trade or business, reading 411(a)(1) without the later regulatory split.",
+              "name": "statutory_dealer_text_only"
+            }
+          ],
+          "open_reason": "RENTAL_DEALER_HOLDINGS_RULE_UNVERIFIED: 411(a)(1) keeps rentals received in the course of a trade or business as a real estate dealer; the rule that a dealer's investment or speculative holdings stay excluded is captured only from the April 1, 1996 edition of 20 CFR 404.1082(b)(3). Where the farm-rental participation conditions fail, the two readings disagree.",
+          "precedence": 3,
+          "when": {
+            "real_estate_dealer_status": "rentals a real estate dealer receives from real estate the dealer holds for investment or speculation",
+            "taxable_year_start": "taxable year beginning before 1996-04-01"
+          }
+        },
+        {
           "case_id": "no_actual_material_participation",
           "consequence": "noncovered",
           "description": "The owner does not materially participate; agent activity alone is not attributable after 1973.",
-          "precedence": 1,
+          "precedence": 4,
           "when": {
             "material_participation": false
           }
@@ -18345,23 +18521,34 @@
           "case_id": "arrangement_lacks_participation_term",
           "consequence": "noncovered",
           "description": "The agricultural rental exception requires an arrangement that provides for material participation.",
-          "precedence": 2,
+          "precedence": 5,
           "when": {
             "rental_arrangement_requires_material_participation": false
-          }
-        },
-        {
-          "case_id": "participation_under_required_arrangement",
-          "consequence": "covered",
-          "description": "The owner actually materially participates under the required arrangement; apply other applicable rules.",
-          "precedence": 3,
-          "when": {
-            "material_participation": true,
-            "rental_arrangement_requires_material_participation": true
           }
         }
       ],
       "citations": [
+        {
+          "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+          "capture": "cfr_1996_20_4041082_r1.txt",
+          "location": "404.1082(b)(3)",
+          "quote": "The rental income from real estate you hold for investment or speculation and the deductions attributable to it are not counted in figuring your net earnings from self-employment.",
+          "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26"
+        },
+        {
+          "authority": "20 CFR 404.1082, official April 1, 1996 edition",
+          "capture": "cfr_1996_20_4041082_r1.txt",
+          "location": "edition header",
+          "quote": "Code of Federal Regulations (annual edition) - April 1, 1996 Edition",
+          "sha256": "d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26"
+        },
+        {
+          "authority": "20 CFR 404.1082, official 2024 edition",
+          "capture": "cfr_2024_20_4041082.xml",
+          "location": "404.1082(b)(3)",
+          "quote": "If you are a real estate dealer, but also hold real estate for investment or speculation in addition to real estate you hold for sale to customers, only the rental income from the real estate held for sale to customers and the deductions attributable to it are included in determining your net earnings from self-employment.",
+          "sha256": "ba3b53c4bb5f923a1ea3bad12514d44d3e37a92ab2f090fe4d53b75d6c35e455"
+        },
         {
           "authority": "20 CFR 404.1053(c)(5), final 1975 regulation",
           "capture": "federal_register_1975_07_10_extract.pdf",
@@ -18377,12 +18564,19 @@
         {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
           "capture": "lii_42_411.html",
+          "location": "411(a)(1), real estate dealer clause",
+          "quote": "unless such rentals are received in the course of a trade or business as a real estate dealer",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+          "capture": "lii_42_411.html",
           "location": "411(a)(1); 1974 amendment/effective-date notes",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],
       "consequence": "open",
-      "description": "Agricultural rental receipts enter net earnings when the arrangement requires material participation and the owner or tenant materially participates; determine participation without activities of an agent.",
+      "description": "Agricultural rental receipts enter net earnings when the arrangement requires material participation and the owner or tenant materially participates; determine participation without activities of an agent. Rentals a real estate dealer receives in that business from real estate held for sale to customers are not excluded (411(a)(1)); for a dealer's investment or speculative holdings the captures settle the rule only from the April 1, 1996 edition of 20 CFR 404.1082(b)(3).",
       "effective_end": "2026-12-31",
       "effective_start": "1974-01-01",
       "family": "self_employment_farm_rental_participation",
@@ -18484,6 +18678,17 @@
           }
         ],
         "condition_cases": {
+          "real_estate_dealer_exception": {
+            "cases": {
+              "dealer_investment_holdings_before_1996": [
+                "real_estate_dealer_status",
+                "taxable_year_start"
+              ],
+              "real_estate_dealer_rentals": [
+                "real_estate_dealer_status"
+              ]
+            }
+          },
           "required_conditions": {
             "cases": {
               "participation_under_required_arrangement": [
@@ -18495,6 +18700,7 @@
         },
         "effective_basis": "taxable_year_start",
         "effective_basis_description": "Pub. L. 93-368 section 10(c), quoted in the 42 U.S.C. 411 notes: the amendments \"shall apply with respect to taxable years beginning after December 31, 1973\".",
+        "real_estate_dealer_exception": "Rentals received in the course of a real-estate-dealer trade or business from real estate held for sale to customers are not excluded; a dealer's investment or speculative holdings are open for taxable years beginning before 1996-04-01 and follow the farm-rental participation conditions after.",
         "required_conditions": [
           "arrangement provides agricultural/horticultural production by another individual",
           "arrangement provides material participation by owner/tenant",
@@ -18511,6 +18717,7 @@
         "agricultural_service",
         "amount",
         "material_participation",
+        "real_estate_dealer_status",
         "rental_arrangement_requires_material_participation",
         "taxable_year_start"
       ],

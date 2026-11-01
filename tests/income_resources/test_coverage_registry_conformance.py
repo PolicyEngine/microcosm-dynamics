@@ -1425,7 +1425,7 @@ def test_open_readings_are_named_once_and_described_in_prose():
     # r4 M-2 adds NONPROFIT_RETROACTIVE_HIRE_UNSETTLED's two readings to
     # each pre-1984 nonprofit row; the r4 sweep adds the Army Corps student
     # aide and the pre-1996 dealer holdings questions.
-    assert described == 46
+    assert described == 48
 
 
 READING_TEXT = {

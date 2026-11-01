@@ -4725,6 +4725,48 @@
         "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
         "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
         "location": "note on Pub. L. 98-369 section 2601(e), services performed for nonprofit organizations by Federal employees"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+        "location": "409(a), lead-in",
+        "quote": "remuneration paid after 1950 for employment"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+        "location": "409(a)(14)",
+        "quote": "Remuneration paid by an organization exempt from income tax under section 501 of the Internal Revenue Code of 1986 in any calendar year to an employee for service rendered in the employ of such organization, if the remuneration paid in such year by the organization to the employee for such service is less than $100"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a), lead-in to the exclusions",
+        "quote": "except that, in the case of service performed after 1950, such term shall not include"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a)(8)(A)",
+        "quote": "Service performed by a duly ordained, commissioned, or licensed minister of a church in the exercise of his ministry or by a member of a religious order in the exercise of duties required by such order, except that this subparagraph shall not apply to service performed by a member of such an order in the exercise of such duties, if an election of coverage under section 3121(r) of the Internal Revenue Code of 1986 is in effect with respect to such order, or with respect to the autonomous subdivision thereof to which such member belongs"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "410(a)(8)(B)",
+        "quote": "Service performed in the employ of a church or qualified church-controlled organization if such church or organization has in effect an election under section 3121(w) of the Internal Revenue Code of 1986 , other than service in an unrelated trade or business (within the meaning of section 513(a) of such Code)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
+        "location": "Effective Date of 1984 Amendment note (Pub. L. 98-369 section 2603(e))",
+        "quote": "shall apply to service performed after December 31, 1983"
       }
     ],
     "trigger_facts": [
@@ -4732,11 +4774,13 @@
       "amount",
       "reporting_unit",
       "month_or_exposure",
-      "federal_retirement_system"
+      "federal_retirement_system",
+      "ministerial_service",
+      "church_employee_service"
     ],
     "consequence": "covered_above_threshold",
     "identification_class": "awaiting_ce2",
-    "description": "Mandatory nonprofit employment coverage begins January 1, 1984; the $100 annual remuneration exclusion and other service exclusions remain.",
+    "description": "Mandatory nonprofit employment coverage begins January 1, 1984; the $100 annual remuneration exclusion and other service exclusions remain. Service that 410(a)(8)(A) or (B) removes from employment (ministry and order duties; electing-church service) earns no wages, so the $100 wage exclusion does not reach it; the clergy and electing-church families decide.",
     "parameters": {
       "mandatory_coverage_start": "1984-01-01",
       "threshold": {
@@ -4863,12 +4907,33 @@
         "defers_to": [
           "federal_retirement_service"
         ]
+      },
+      {
+        "case_id": "ministry_or_order_duties_outside_employment",
+        "precedence": 2,
+        "when": {
+          "ministerial_service": "service performed by a duly ordained, commissioned, or licensed minister of a church in the exercise of his ministry, or by a member of a religious order in the exercise of duties required by such order while no election of coverage under section 3121(r) is in effect for the order or for the autonomous subdivision to which the member belongs"
+        },
+        "consequence": "deferred",
+        "defers_to": [
+          "clergy_religious_service"
+        ],
+        "description": "410(a)(8)(A) takes this service out of \"employment\", and 409(a) defines wages as \"remuneration paid after 1950 for employment\", so the 409(a)(14) $100 wage exclusion and mandatory nonprofit coverage do not reach it; the clergy family decides."
+      },
+      {
+        "case_id": "electing_church_service_outside_employment",
+        "precedence": 3,
+        "when": {
+          "church_employee_service": "service performed in the employ of a church or qualified church-controlled organization that has in effect an election under section 3121(w), outside any unrelated trade or business (within the meaning of section 513(a))"
+        },
+        "consequence": "covered",
+        "description": "410(a)(8)(B), for service performed after December 31, 1983 (Pub. L. 98-369 section 2603(e)), takes this service out of \"employment\", so its pay is not wages and the 409(a)(14) $100 per-employer wage exclusion does not reach it. This family excludes nothing; the electing-church family decides it. The case says covered rather than deferred because that family's 1968-1983 residual already defers to this one, and the registry refuses a deferral cycle."
       }
     ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered_above_threshold",
-      "description": "Mandatory nonprofit coverage applies once the annual remuneration threshold is met; apply the other families."
+      "description": "No case holds: the service is employment for the organization, so mandatory nonprofit coverage applies once the annual remuneration threshold is met; apply the other families."
     }
   },
   {
