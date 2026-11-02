@@ -1240,22 +1240,42 @@ def _hint_code(
     memo: _FoldMemo,
     unexpanded: set[int],
     depth: int,
+    seen: set[str],
 ) -> list[ast.Module]:
     """Parse the statement suites a hint's code calls hold, nested too.
 
-    A literal that spells an expression is the hint checks' to read, so
-    the walk only follows it, one level deeper, for a suite inside. A code
-    call's other literal is code, as it is outside annotations. A spelled
-    part is no node the scan walks, so ``hint`` stands for it, and it goes
-    in ``unexpanded`` when such a part runs code the folder cannot read.
+    Python evaluates a string in a hint as the expression it spells, so
+    each string that spells one is a level of code, counted as a code
+    call's literal is. Its expression is the hint checks' to read, so the
+    walk only follows it, one level deeper, for a suite inside. A sixth
+    level is not followed: ``hint`` goes in ``unexpanded``. Nor is a text
+    the walk has followed before in this hint, in ``seen``, as ``typing``
+    evaluates a forward reference once. The pieces the folder builds a
+    string from are not strings Python evaluates, so the walk skips them.
+    A code call's other literal is code, as it is outside annotations. A
+    spelled part is no node the scan walks, so ``hint`` stands for it, and
+    it goes in ``unexpanded`` when such a part runs code the folder cannot
+    read.
     """
     found = []
-    for node in ast.walk(part):
-        spelled = _spelled(node, memo)
-        if spelled is not None:
+    stack: list[ast.AST] = [part]
+    while stack:
+        node = stack.pop()
+        text = _static_text(node, memo) if isinstance(node, ast.expr) else None
+        if text is not None:
+            spelled = _spelled(node, memo)
+            if spelled is None or text.strip() in seen:
+                continue
+            seen.add(text.strip())
+            if depth > _EMBED_DEPTH:
+                unexpanded.add(id(hint))
+                continue
             _relocate(spelled, hint)
-            found += _hint_code(spelled, hint, memo, unexpanded, depth + 1)
-        elif (
+            found += _hint_code(
+                spelled, hint, memo, unexpanded, depth + 1, seen
+            )
+            continue
+        if (
             isinstance(node, ast.Call)
             and node.args
             and _code_call(node.func)
@@ -1264,6 +1284,7 @@ def _hint_code(
             if part is not hint and _static_text(node.args[0], memo) is None:
                 unexpanded.add(id(hint))
             found += _expanded(node, memo, unexpanded, depth, hint)
+        stack.extend(ast.iter_child_nodes(node))
     return found
 
 
@@ -1289,7 +1310,7 @@ def _embedded(
         ):
             found += _expanded(node, memo, unexpanded, depth, node)
     for hint in hints:
-        found += _hint_code(hint, hint, memo, unexpanded, depth)
+        found += _hint_code(hint, hint, memo, unexpanded, depth, set())
     return found
 
 
@@ -3978,6 +3999,7 @@ _FORCED_HINTS = {
     "class": "class C:\n    v: {}\nC.__annotations__\n",
     "argument": "def g(v: {}):\n    pass\ng.__annotations__\n",
     "return": "def g() -> {}:\n    pass\ng.__annotations__\n",
+    "async return": "async def g() -> {}:\n    pass\ng.__annotations__\n",
 }
 
 
@@ -4020,10 +4042,11 @@ def test_scan_counts_levels_through_every_mix_of_code_calls():
             assert _answers(text) == [True, False]
             line = 3 if place == "class" else 2
             kind = "isinstance" if size < 5 else "dynamic-code"
-            hits = scan_sources([_invented(text)])
-            assert [(hit.line, hit.kind) for hit in hits] == [
-                (line, kind)
-            ], describe(hits)
+            for prune in (True, False):
+                hits = scan_sources([_invented(text)], prune=prune)
+                assert [(hit.line, hit.kind) for hit in hits] == [
+                    (line, kind)
+                ], describe(hits)
 
 
 _RUN_SUITE = _wrapped(_SUITE, 1)
@@ -4121,6 +4144,216 @@ def test_pruning_keeps_each_hint_whole(place):
         ], describe(hits)
 
 
+# Line 9 of each module holds the hint, and f is no check until a hint's
+# code redefines it.
+_HINT_PREAMBLE = (
+    f"import sys\nimport typing\n{_IMPORT} as R\nS = {_SUITE!r}\n"
+    "X = 'exec(S)'\nflag = 1\ndef f(x):\n    return False\n"
+)
+_HINT_READ = "typing.get_type_hints(g)"
+# Each level formats the next level's text, and the last spells exec(S).
+_COUNTDOWN = (
+    "('{{' + str({1})[:1] + '}}').format('', {0!r}, 'exec(S{{2}}')"
+    ".format({0!r}, {1} + 1, ')')"
+)
+
+
+def _hinted(hint, read=_HINT_READ):
+    """Put ``hint`` on line 9 of a module that reads it with ``read``."""
+    return f"{_HINT_PREAMBLE}def g(v: {hint}):\n    pass\n{read}\n"
+
+
+def _strings(value, count):
+    """Nest ``value`` in ``count`` string literals."""
+    for _ in range(count):
+        value = repr(value)
+    return value
+
+
+def _countdown(levels):
+    """Return a string hint whose levels each spell the next, then run."""
+    return repr(_COUNTDOWN.format(_COUNTDOWN, 2002 - levels))
+
+
+# Sources, what f answers once the hint is read, and the hits.
+HINT_TEXT_CASES = {
+    "a string in a typing subscript": (
+        _hinted(f"typing.List[{_RUN_SUITE!r}]"),
+        [True, False],
+        [(9, "isinstance")],
+    ),
+    "a string in a builtin generic": (
+        _hinted(f"dict[{_RUN_SUITE!r}, 'int']"),
+        [True, False],
+        [(9, "isinstance")],
+    ),
+    "a string in a callable's arguments": (
+        _hinted(f"typing.Callable[[{_RUN_SUITE!r}], int]"),
+        [True, False],
+        [(9, "isinstance")],
+    ),
+    "a string a conditional picks": (
+        _hinted(f"{_RUN_SUITE!r} if flag else 'int'"),
+        [True, False],
+        [(9, "isinstance")],
+    ),
+    "a string an and picks": (
+        _hinted(f"flag and {_RUN_SUITE!r}"),
+        [True, False],
+        [(9, "isinstance")],
+    ),
+    "a string a tuple index picks": (
+        _hinted(f"({_RUN_SUITE!r}, 'int')[flag - 1]"),
+        [True, False],
+        [(9, "isinstance")],
+    ),
+    "four strings around a run": (
+        _hinted(_strings(_RUN_SUITE, 4)),
+        [True, False],
+        [(9, "isinstance")],
+    ),
+    "five strings around a run": (
+        _hinted(_strings(_RUN_SUITE, 5)),
+        [True, False],
+        [(9, "dynamic-code")],
+    ),
+    "a string hint around four execs": (
+        _hinted(repr(_wrapped(_SUITE, 4))),
+        [True, False],
+        [(9, "isinstance")],
+    ),
+    "a string hint around five execs": (
+        _hinted(repr(_wrapped(_SUITE, 5))),
+        [True, False],
+        [(9, "dynamic-code")],
+    ),
+    "five strings around a name": (
+        _hinted(_strings("int", 5)),
+        [False, False],
+        [],
+    ),
+    "six strings around a name": (
+        _hinted(_strings("int", 6)),
+        [False, False],
+        [(9, "dynamic-code")],
+    ),
+    "a countdown six levels deep": (
+        _hinted(_countdown(6)),
+        [True, False],
+        [(9, "dynamic-code")],
+    ),
+    "a countdown 50 levels deep": (
+        _hinted(_countdown(50)),
+        [True, False],
+        [(9, "dynamic-code")],
+    ),
+    "a countdown 1002 levels deep": (
+        _hinted(
+            _countdown(1002), f"sys.setrecursionlimit(50000)\n{_HINT_READ}"
+        ),
+        [True, False],
+        [(9, "dynamic-code")],
+    ),
+    "a Literal value": (
+        _hinted(f"typing.Literal[{_RUN_SUITE!r}]"),
+        [False, False],
+        [(9, "isinstance")],
+    ),
+    "Annotated metadata": (
+        _hinted(f"typing.Annotated[int, {_RUN_SUITE!r}]"),
+        [False, False],
+        [(9, "isinstance")],
+    ),
+    "a list item": (
+        _hinted(f"[{_RUN_SUITE!r}]", "g.__annotations__"),
+        [False, False],
+        [(9, "isinstance")],
+    ),
+    "a piece of a folded literal": (
+        _hinted(
+            f"exec('x = ' + repr(repr({_RUN_SUITE!r})))", "g.__annotations__"
+        ),
+        [False, False],
+        [],
+    ),
+    "a piece of a spelled literal": (
+        _hinted(f"{_RUN_SUITE!r}[:4]", "g.__annotations__"),
+        [False, False],
+        [],
+    ),
+    "a name bound to the text": (_hinted("X"), [True, False], []),
+}
+
+
+@pytest.mark.parametrize("case", tuple(HINT_TEXT_CASES))
+def test_scan_reads_each_string_in_a_hint_as_code(case):
+    """Each string in a hint that spells an expression is a level of code.
+
+    Python evaluates a string in a typing subscript, and one a hint picks
+    at run time, so the scan reads every such string, to five levels, and
+    never the same text twice. So a string Python keeps as data gives a hit
+    too, and three cases pin that over-approximation. The scan reads no
+    piece of a folded or spelled literal, and no name bound to text: the
+    last case pins that miss, which limit class 1 states.
+    """
+    text, answers, expected = HINT_TEXT_CASES[case]
+    limit = sys.getrecursionlimit()
+    try:
+        assert _answers(text) == answers
+    finally:
+        sys.setrecursionlimit(limit)
+    for prune in (True, False):
+        hits = scan_sources([_invented(text)], prune=prune)
+        assert [(hit.line, hit.kind) for hit in hits] == expected, describe(
+            hits
+        )
+
+
+@pytest.mark.parametrize("padding", (0, 600))
+def test_scan_follows_a_hint_text_once(padding):
+    """A hint that spells itself is read once, as ``typing`` reads it.
+
+    The module's own check is the only hit. With 600 characters of padding,
+    following the text again at every level ran the folder past its budget.
+    """
+    template = "{0!r}.format({0!r})" + " " * padding
+    text = (
+        f"{_REGISTRY_IMPORT}"
+        f"def g(v: {template.format(template)}):\n    pass\n"
+        "g.__annotations__\n"
+        "def f(x):\n    return isinstance(x, ProjectionRNGRegistry)\n"
+    )
+    assert _answers(text) == [True, False]
+    for prune in (True, False):
+        hits = scan_sources([_invented(text)], prune=prune)
+        assert [(hit.line, hit.kind) for hit in hits] == [
+            (6, "isinstance")
+        ], describe(hits)
+
+
+def test_scan_reads_a_text_again_in_another_hint():
+    """Each hint has its own guard, so each line reports its own hit."""
+    text = (
+        f"import typing\n{_IMPORT} as R\ndef g(\n"
+        f"    v: {_RUN_SUITE!r},\n    w: {_RUN_SUITE!r},\n):\n    pass\n"
+        "typing.get_type_hints(g)\n"
+    )
+    assert _answers(text) == [True, False]
+    for prune in (True, False):
+        hits = scan_sources([_invented(text)], prune=prune)
+        assert [(hit.line, hit.kind) for hit in hits] == [
+            (4, "isinstance"),
+            (5, "isinstance"),
+        ], describe(hits)
+
+
+def test_scan_reports_a_sixth_level_of_hint_text_whatever_the_module_binds():
+    """A sixth level is dynamic code, as a sixth code call's literal is."""
+    text = f"def g(v: {_strings('int', 6)}):\n    pass\n"
+    hits = scan_sources([_invented(text)])
+    assert [(hit.line, hit.kind) for hit in hits] == [(1, "dynamic-code")]
+
+
 @pytest.mark.parametrize(
     "hint",
     (
@@ -4156,7 +4389,8 @@ def test_scan_reads_a_suite_in_a_hint_as_it_reads_one_in_a_statement():
     So the hint gives every check the statement gives, with two exceptions.
     The catch-all reads the string in a statement, where it holds a tracked
     name, and skips it in a trusted annotation. And a hint that names a
-    tracked class makes a namespace read an annotation read.
+    tracked class makes a namespace read, or ``vars`` of a module, an
+    annotation read on the same line.
     """
 
     def checks(text):
@@ -4172,8 +4406,11 @@ def test_scan_reads_a_suite_in_a_hint_as_it_reads_one_in_a_statement():
     for text in texts:
         plain = checks(f"exec({text!r})\n")
         hinted = checks(f"def g(v: exec({text!r})):\n    pass\n")
-        added = {hit.kind for hit in hinted - plain}
-        assert plain <= hinted or added == {"annotation-read"}
+        reads = {hit.line for hit in hinted if hit.kind == "annotation-read"}
+        for hit in plain - hinted:
+            assert hit.kind in {"namespace-read", "module-reference"}, hit
+            assert hit.line in reads, hit
+        assert {hit.kind for hit in hinted - plain} <= {"annotation-read"}
 
 
 def _recursive_module_path(scope, node):
