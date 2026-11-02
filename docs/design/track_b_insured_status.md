@@ -2864,12 +2864,14 @@ record omits, and those could move other results, so `_prior_basis` now refuses
 it by name for every test, with or without an established current period
 (`test_a_prior_no_placement_supports_refuses_for_each_test`,
 `test_unknown_establishment_refuses_a_prior_no_placement_supports`). A flagged
-prior needs a special route on some placement and must stay short of 404.130(b)
-on some placement (`test_a_flagged_prior_no_placement_supports_names_why`). Upper
-credits speak for the route and lower credits for 404.130(b), so an UNKNOWN year
-that could support the prior leaves the decision to placement
+prior's holder passed a special route and not 404.130(b), so that prior refuses
+this way if no placement passes either or every placement passes 404.130(b)
+(`test_a_flagged_prior_no_placement_supports_names_why`). Upper credits speak for
+the first and lower credits for the second, so an UNKNOWN year that could support
+the prior leaves the decision to placement
 (`test_an_unknown_year_can_support_a_prior`,
-`test_an_unknown_year_can_leave_a_flagged_prior_short_of_the_ordinary_rule`).
+`test_an_unknown_year_can_leave_a_flagged_prior_short_of_the_ordinary_rule`,
+`test_an_unknown_year_can_carry_a_flagged_prior_past_the_ordinary_rule`).
 
 This changed five older invented records that listed a prior their credits
 couldn't begin. Their tests ask about other things, so each record gained the QCs
@@ -2902,7 +2904,25 @@ support.
 `test_status_stress_candidate_order_changes_nothing` moved from seed 5000019,
 which now refuses, to 5000059.
 
-ROUND21-RESULTS
+The wide search drew 150 fresh seeds for each of eight checks on
+`basis_prior_declaration`, that record with a current period,
+`two_basis_declaration`, `listed_prior_declaration` and
+`two_prior_declaration` (each with and without a current period) and
+`special_prior_declaration`, plus 150 draws each from `declaration` and
+`subsequent_declaration`, skipping 224 draws with more than 96 placements. All
+1,276 checks held: 884 computed, 286 refused by name and 106 raised
+`InvalidFamilyInput`.
+
+The list of mutations (`scratch/review/round21_mutate.py`) re-derives round 20's
+41 at this round's source, less `unflagged_refuses_unsupported_prior`, whose
+branch the rule no longer has, and adds 17 of this round's own. A first pass of
+all 57 through rounds 19 to 21 ran with no restricted open, and 54 failed a named
+test. Round 2's `test_unknown_period_status_and_dli_bounds_contain_concrete_fillings`
+kills `date_tested_at_query`. `proof_keeps_listed_priors` survived because
+`test_unknown_establishment_needs_the_disregard` had begun to pass on this
+round's new refusal, so that record gained the QCs its prior needs and reaches
+the proof again. `test_an_unknown_year_can_carry_a_flagged_prior_past_the_ordinary_rule`
+now kills `binds_flag_on_lower_credits`.
 
 These tests execute the invariants this round adds:
 
