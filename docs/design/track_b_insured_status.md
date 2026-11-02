@@ -1700,7 +1700,9 @@ and computes no payment.
   00301.230 makes annual placement flexible, and 404.321(a) gives a period one
   start. Where placement can move a start, a result stands only if one filling
   of the years that can move it keeps the start and attains the result. Other
-  years stay flexible for each status.
+  years stay flexible for each status. A record doesn't say which route began
+  an unflagged prior, so that filling has to keep the prior on the strictest
+  route some placement meets (round 21).
 - `us:oasdi-insured-subsequent-special-long-period` (`_witness`,
   `_unknown_prior_joint_shortfall`). Act 223(c)(1)(B)(iii) asks for half the
   quarters after age 21 with no cap, and 404.130(d)(2) caps the test at 20 of
@@ -2563,13 +2565,14 @@ prior listed OBSERVED. A listed prior differs from an unknown one in one way:
 the record names it, so the search can hold it.
 
 `_prior_start_binds` asks whether placement decides a prior's own start. A prior
-that holds on every placement leaves them all open. One that holds on none rests
-on something this record doesn't show, and says nothing about placement. Past
-blindness leaves no trace in the record and asks only for fully insured status
-(404.130(e)), so an unflagged prior needs that much. A flagged prior's holder
+that holds on every placement leaves them all open. A flagged prior's holder
 "were only insured under paragraph (c)" (404.130(d)(1)), so that holder passes
 a special route and not 404.130(b). A prior that every placement carries past
-404.130(b) therefore holds on none.
+404.130(b) therefore holds on none. At this round the predicate read every
+unflagged prior as resting on past blindness, and it let a prior that holds on
+none pass. Round 21 replaces both: `_prior_basis` holds an unflagged prior on
+404.130(b) or (c) wherever a placement meets them, and a prior no placement
+supports refuses by name.
 
 Otherwise the prior picks among placements, and the logged first-start reading
 applies to its start: one filling of the years that can move that start must
@@ -2652,11 +2655,12 @@ These tests execute the invariants this round adds:
 - a start some placement moves stays open, and a start every placement holds
   stands (`test_a_start_some_placement_moves_stays_open`,
   `test_a_fixed_start_is_the_onset`);
-- `_prior_start_binds` answers true only where placement splits the prior or a
-  later prior rests on an earlier one
+- `_prior_start_binds` answers true only where placement splits the prior on
+  the basis it holds or a later prior rests on an earlier one
   (`test_placement_binds_a_prior_only_when_it_splits_them`);
 - a computed result on a listed prior is the best the prior allows, for each
-  status, count and date (`check`, `check_no_period`, and their stress tests);
+  status, count and date, and round 21 asks this of each basis the prior can
+  rest on (`check`, `check_no_period`, and their stress tests);
 - a listed prior that placement decides never moves a result it can't reach, and
   a result no kept filling attains refuses by name
   (`test_a_listed_prior_can_undercut_the_date`,
@@ -2741,8 +2745,7 @@ round:
   `test_an_unknown_year_refuses_that_later_prior`).
   `test_a_later_prior_placement_splits_binds` draws pairs of priors. It checks
   `_prior_passes` on each fixed filling against the oracle, and it checks that
-  `_prior_start_binds` answers true wherever those fillings split and false
-  where none holds the prior.
+  `_prior_start_binds` answers true wherever those fillings split.
 - `flagged_refuses_every_placement` drops the clause that releases a flagged
   prior every placement carries. That prior's holder "were only insured under
   paragraph (c)" (404.130(d)(1)). When every placement passes its route and
@@ -2782,13 +2785,155 @@ These tests execute the invariants this round adds:
   period (`test_an_establishment_counts_no_quarter_of_its_own_period`);
 - `_prior_passes` on a fixed filling agrees with the oracle for a later prior
   counted with an earlier one, and `_prior_start_binds` answers true wherever
-  placement splits the prior and false where no placement holds it
+  placement splits the prior
   (`test_a_later_prior_placement_splits_binds`,
   `test_a_later_prior_on_an_earlier_endpoint_binds`);
 - a flagged prior that every placement carries on its route, short of 20 of
   40, binds nothing
   (`test_a_special_prior_every_placement_carries_binds_nothing`,
   `test_an_unknown_year_leaves_a_special_prior_every_placement_carries`).
+
+## Round 21 a listed prior's basis
+
+Verification class: statutory conformance on invented declarations only.
+This correction admits no population, behavioral, payment, or forecast claim.
+An independent review of `38a573a8` reported one medium and one low (PR #562
+comment 6589002155). Both ask what a listed prior says about placement.
+
+### The record doesn't say why a prior began
+
+A period begins in a quarter its holder was insured (404.320(b)(2),
+404.321(a)). `DisabilityPeriod` records no blindness, and
+`Person.statutory_blindness` speaks only for the present. An unflagged prior
+could rest on past blindness, which asks only for fully insured status
+(404.130(e)), or on 404.130(b) or (c), which ask for that and more. `38a573a8`
+held every unflagged prior to fully insured status alone. That weakest test
+suits a possibility proof, but it let a true status or a date stand where only
+the blind reading reaches it.
+
+An invented person born 1955-02-02 has four QCs in each of 1980 to 1984 and
+1989 to 1992, three in 1993, one in 1998, four in each of 1999 to 2002 and three
+in 2003, with a listed prior from 1998-01-01 through 1999-12-31. For a January
+2008 query, `38a573a8` reported a date last insured of 2008-03-31.
+
+The arithmetic runs by hand. The 39 QCs before 1998 clear the 21 that fully
+insured status asks at the prior's start (the elapsed years 1977 to 1997), so
+past blindness leaves the 1998 QC in any quarter. 404.130(b) also asks 20 of 40.
+The quarters from 1988Q2 through 1997Q4 hold 19 QCs, so it needs the 1998 QC in
+1998Q1. The 40 quarters through 2008Q1 then hold 19 QCs with the period's
+quarters counted, and 17 with its exclusion. The 40 quarters through 2007Q4 hold
+20. The date falls on 2007-12-31 on 404.130(b) and on 2008-03-31 on past
+blindness. With an onset in January 2008, `38a573a8` reported DISABILITY true,
+which only past blindness reaches.
+
+### Each basis the record allows
+
+404.130(b) and (c) each ask for fully insured status too, so every filling that
+begins a prior on them also begins it on past blindness. The rule's results take
+the best lawful filling. A filling that begins the prior on the strictest basis
+and attains a result therefore proves that result on the other basis too, and a
+result no such filling attains differs between them. False results stay false
+on any subset of placements.
+
+`_prior_basis` picks that strictest basis, one prior at a time. It returns false
+where some placement meets 404.130(b) or (c), with the earlier priors, and true
+where only past blindness can begin the prior. `_prior_start_binds` then asks
+whether placement decides the prior on that basis, and `_keeps_priors` tests each
+filling on it, so `binding` now pairs each prior with its basis. A result none of
+those fillings attains refuses by name and keeps the row's weight
+(`test_a_date_only_blindness_reaches_refuses`,
+`test_a_status_only_blindness_reaches_refuses`,
+`test_that_refusal_keeps_the_row`). Round 19's limits apply unchanged: an UNKNOWN
+year with a prior that placement decides refuses
+(`test_an_unknown_year_refuses_a_prior_placement_decides`), and a current period
+after the prior searches the same fillings
+(`test_a_current_period_after_that_prior_refuses`).
+
+This treats a missing fact. It adds no reading of the law, so it adds no entry to
+the register, and the one-filling reading now names the basis. Counts and
+assignments come from the strict basis's fillings, while statuses and the date
+match on every basis. Two priors whose strict bases no one filling can meet
+together refuse, though a weaker basis for one could compute. Refusing keeps the
+row.
+
+### A prior no placement supports
+
+`38a573a8` also computed a record whose listed prior no placement can begin,
+treating that prior as unconstrained. Such a prior rests on credits or facts the
+record omits, and those could move other results, so `_prior_basis` now refuses
+it by name for every test, with or without an established current period
+(`test_a_prior_no_placement_supports_refuses_for_each_test`,
+`test_unknown_establishment_refuses_a_prior_no_placement_supports`). A flagged
+prior needs a special route on some placement and must stay short of 404.130(b)
+on some placement (`test_a_flagged_prior_no_placement_supports_names_why`). Upper
+credits speak for the route and lower credits for 404.130(b), so an UNKNOWN year
+that could support the prior leaves the decision to placement
+(`test_an_unknown_year_can_support_a_prior`,
+`test_an_unknown_year_can_leave_a_flagged_prior_short_of_the_ordinary_rule`).
+
+This changed five older invented records that listed a prior their credits
+couldn't begin. Their tests ask about other things, so each record gained the QCs
+its prior needs, and each test still reaches its own boundary: round 15's "prior
+period year" (`test_an_entitlement_window_cannot_borrow_the_starts_placement`),
+`test_unknown_bounds_with_prior_disability_period`,
+`test_sam_favorable_disregard_counterexample_one_qc_boundary`,
+`test_property_disability_period_exclusion_never_adds_qcs` and
+`test_property_subsequent_special_and_dli_monotonic`. Three round 19 tests that
+pinned the old answer now pin the refusal.
+
+### Oracle and generators
+
+`basis_worlds` replaces `fillings_keeping_priors`. It lists the fillings each
+combination of bases allows, strictest first, and drops an empty combination.
+`check` and `check_no_period` now require each status and the date on every
+combination, the counts on the first, and at least one combination behind any
+computed result. `check_every_history` also reads the fillings that keep a prior
+on 404.130(b) or (c). `basis_prior_declaration` redraws the record above around
+its edge, and `two_basis_declaration` adds a prior with its own basis, in either
+order. `test_each_basis_matches_every_placement` compares `_prior_passes`,
+`_prior_basis` and `_prior_start_binds` on both bases with every placement of the
+drawn records, and that test also checks that each filling passing 404.130(b) or
+(c) passes past blindness.
+
+Refusing a prior no placement supports left 62 percent of
+`subsequent_declaration`'s draws refusing, so that generator now places the QCs
+its prior needs. It computes on 278 of 400 draws, with 11 refusing for want of
+support.
+`test_status_stress_candidate_order_changes_nothing` moved from seed 5000019,
+which now refuses, to 5000059.
+
+ROUND21-RESULTS
+
+These tests execute the invariants this round adds:
+
+- a computed status, date or result on a listed prior holds on each basis some
+  placement allows, and otherwise the row refuses by name and keeps its weight
+  (`check`, `check_no_period`, `test_status_stress_a_prior_on_either_basis`,
+  `test_status_stress_priors_on_different_bases`,
+  `test_status_stress_a_current_period_after_either_basis`,
+  `test_a_date_only_blindness_reaches_refuses`,
+  `test_that_refusal_keeps_the_row`);
+- every filling that passes 404.130(b) or (c) at a prior's start passes past
+  blindness, and `_prior_basis` and `_prior_passes` agree with every placement on
+  both bases (`test_each_basis_matches_every_placement`,
+  `test_a_filling_keeps_a_prior_on_its_own_basis`);
+- `_prior_basis` returns false wherever a placement meets 404.130(b) or (c),
+  including with an earlier prior, and true only where past blindness alone can
+  begin the prior (`test_each_basis_matches_every_placement`,
+  `test_a_prior_only_blindness_can_begin_keeps_that_basis`,
+  `test_a_later_prior_can_rest_on_an_earlier_one_on_either_basis`);
+- `_prior_start_binds` on the first prior answers true exactly where some
+  placement fails its basis, and on a later prior wherever one does
+  (`test_each_basis_matches_every_placement`,
+  `test_every_nonblind_placement_binds_nothing`,
+  `test_one_placement_can_decide_a_nonblind_prior_alone`);
+- a prior no placement supports refuses by name for every test, and an UNKNOWN
+  year that could support it leaves the decision to placement
+  (`test_a_prior_no_placement_supports_refuses_for_each_test`,
+  `test_a_flagged_prior_no_placement_supports_names_why`,
+  `test_unknown_establishment_refuses_a_prior_no_placement_supports`,
+  `test_an_unknown_year_can_support_a_prior`);
+- a flagged prior has one basis (`test_a_flagged_prior_has_one_basis`).
 
 ## Not in scope
 

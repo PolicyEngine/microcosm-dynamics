@@ -366,8 +366,15 @@ def test_unknown_bounds_with_prior_disability_period(counts):
         sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     month = date(2012, 12, 1)
+    # Eight QCs before the prior pass its route at 2004Q2.
     years = history(
-        person, month, dict(zip(range(2005, 2013), counts, strict=True))
+        person,
+        month,
+        {
+            2002: 4,
+            2003: 4,
+            **dict(zip(range(2005, 2013), counts, strict=True)),
+        },
     )
     years[2006] = i.CoverageYear(i.EarningsProvenance.UNKNOWN)
     for kind in (
@@ -378,8 +385,9 @@ def test_unknown_bounds_with_prior_disability_period(counts):
         try:
             result = i.insured_status(person, years, month, test=kind)
         except i.InsuredConfigurationUnsupported as refusal:
-            assert (
-                refusal.reason is i.InsuredUnsupportedReason.UNKNOWN_EARNINGS
+            assert refusal.reason in (
+                i.InsuredUnsupportedReason.UNKNOWN_EARNINGS,
+                i.InsuredUnsupportedReason.SUBSEQUENT_LONG_PERIOD,
             )
             continue
         for count in range(5):

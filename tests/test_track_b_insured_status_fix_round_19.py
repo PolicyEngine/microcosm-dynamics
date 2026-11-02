@@ -405,8 +405,10 @@ def test_a_known_absence_keeps_the_status():
 def test_unknown_establishment_needs_the_disregard():
     # Counting the listed prior reaches back through 1995 for seven of 13, and
     # the disregard finds three. A period on this record joins that prior in
-    # any count, so the listed prior alone can't carry the status.
+    # any count, so the listed prior alone can't carry the status. The 1990 QCs
+    # give that prior the ten fully insured status asks at its start.
     annual = {
+        1990: 4,
         1995: 4,
         1996: 2,
         2000: 1,
@@ -630,11 +632,13 @@ def test_a_prior_every_placement_supports_binds_nothing():
     assert result.dli.upper == date(2008, 3, 31)
 
 
-def test_a_prior_no_placement_supports_stands_as_declared():
-    # Nine QCs are required at 1992Q1 and three can fall by then. The record
-    # doesn't show what insured that start, so it says nothing about placement.
+def test_a_prior_no_placement_supports_refuses():
+    # Nine QCs are required at 1992Q1 and three can fall by then. The prior
+    # rests on credits or facts the record omits, and those could move the
+    # other results.
     prior = i.DisabilityPeriod(date(1992, 1, 1), date(1992, 12, 31))
-    result = _result(
+    _refused_with(
+        ASSIGNMENT,
         _date_person(
             prior_disability_periods=(prior,),
             prior_disability_periods_provenance=OBSERVED,
@@ -643,7 +647,6 @@ def test_a_prior_no_placement_supports_stands_as_declared():
         date(2008, 1, 1),
         test=DISABILITY,
     )
-    assert result.disability.insured
 
 
 def test_a_later_prior_can_rest_on_an_earlier_one():
@@ -757,25 +760,25 @@ def test_a_special_prior_on_every_placement_binds_nothing():
     assert result.fully.insured
 
 
-def test_a_special_prior_no_placement_supports_stands_as_declared():
+def test_a_special_prior_no_placement_supports_refuses():
     # Twenty QCs reach 20 of 40 on every placement, so the holder was never
     # "only insured" under paragraph (c).
-    result = _result(
+    _refused_with(
+        ASSIGNMENT,
         _special_person(),
         _history(1960, 1995, {**SPECIAL_BASE, 1985: 4}),
         date(1995, 1, 1),
     )
-    assert result.fully.insured
 
 
-def test_a_special_prior_short_of_its_route_stands_as_declared():
+def test_a_special_prior_short_of_its_route_refuses():
     # Seventeen QCs miss the 18 required on every placement.
-    result = _result(
+    _refused_with(
+        ASSIGNMENT,
         _special_person(),
         _history(1960, 1995, {**SPECIAL_BASE, 1985: 1}),
         date(1995, 1, 1),
     )
-    assert result.fully.insured
 
 
 # The worst filling.
@@ -841,10 +844,10 @@ def test_the_worst_filling_matches_every_placement(
         ), (annual, day, kind)
 
 
-def _lawful_prior(birth, credits, begins, special):
+def _lawful_prior(birth, credits, begins, special, blind=True):
     at = quarter(begins)
     if not special:
-        return disability(birth, credits, at, (), True)
+        return disability(birth, credits, at, (), blind)
     return (
         disability(birth, credits, at, (), False)
         and recent(usable(credits, at, ()), at, (), 40) < 20
@@ -875,15 +878,22 @@ def test_placement_binds_a_prior_only_when_it_splits_them(
         sspa211_applies=False,
         sspa211_provenance=OBSERVED,
     )
-    held = {
-        _lawful_prior(birth, credits, begins, special)
-        for credits in placements(annual)
-    }
+    month = date(2005, 1, 1)
+    # A prior rests on the strictest basis some placement allows.
+    for blind in (False, True):
+        held = {
+            _lawful_prior(birth, credits, begins, special, blind)
+            for credits in placements(annual)
+        }
+        if True in held or special:
+            break
     credits = _credits(annual)
+    if True not in held:
+        with pytest.raises(i.InsuredConfigurationUnsupported):
+            i._prior_basis(person, credits, credits, 0, month, None)
+        return
+    assert i._prior_basis(person, credits, credits, 0, month, None) is blind
     binds = i._prior_start_binds(
-        person, credits, credits, 0, date(2005, 1, 1), None
+        person, credits, credits, 0, month, None, blind
     )
-    if not special:
-        assert binds is (len(held) == 2), (annual, begins)
-    elif not binds:
-        assert len(held) == 1, (annual, begins)
+    assert binds is (len(held) == 2), (annual, begins)

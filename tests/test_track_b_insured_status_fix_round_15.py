@@ -570,6 +570,8 @@ ENTITLEMENT_CONFLICTS = {
         ),
         month=date(2012, 1, 1),
         counts={
+            1986: 4,
+            1987: 4,
             1990: 4,
             1991: 4,
             2000: 4,

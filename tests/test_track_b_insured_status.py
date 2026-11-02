@@ -805,7 +805,12 @@ def test_property_disability_period_exclusion_never_adds_qcs(
         ),
     )
     month = date(2026, 12, 1)
-    annual = {start_year: counts[0], start_year + 1: counts[1]}
+    # Six full years before the prior insure its start on either basis.
+    annual = {
+        **dict.fromkeys(range(start_year - 6, start_year), 4),
+        start_year: counts[0],
+        start_year + 1: counts[1],
+    }
     plain = compute(person, month, annual)
     excluded = compute(frozen, month, annual)
     for year in plain.qcs_by_year:
@@ -995,12 +1000,13 @@ def test_property_subsequent_special_and_dli_monotonic(year, count):
         sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     month = date(1983, 6, 1)
+    # Eight QCs from 1971Q3 through 1975Q2 pass the prior's route.
     lower = {
         1970: 1,
         1971: 2,
         1972: 3,
         1973: 2,
-        1974: 2,
+        1974: 3,
         1978: 4,
         1979: 1,
         1980: 1,
@@ -1232,9 +1238,11 @@ def test_sam_favorable_disregard_counterexample_one_qc_boundary():
         sspa211_applies=False,
         sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
-    counts = {1983: 1, 1984: 4, 1988: 4, 1989: 4, 1992: 4, 1993: 2}
+    # The 1993 QCs set the boundary, and the 1983 and 1984 QCs pass the prior's
+    # route at 1985Q4.
+    counts = {1983: 2, 1984: 4, 1988: 4, 1989: 4, 1992: 4, 1993: 1}
     below = compute(person, date(1993, 5, 1), counts)
-    counts[1983] = 2
+    counts[1993] = 2
     at = compute(person, date(1993, 5, 1), counts)
     assert not below.disability.insured
     assert at.disability.insured

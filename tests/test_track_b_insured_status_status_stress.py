@@ -12,8 +12,10 @@ blindness in a quarter of cases all vary by seed. A second generator adds a
 DIB entitlement month, which ends a CURRENTLY window before the onset. A third
 draws ages 22-30 at onset, where 404.130(c) applies. A fourth declares a
 special-insured prior after age 31, where 404.130(d) applies. A declared prior
-limits the fillings only through its own start (``prior_holds``). No flags, raw
-earnings or death are claimed, and UNKNOWN facts appear only in
+limits the fillings only through its own start (``prior_holds``), and a record
+doesn't say whether an unflagged prior rested on past blindness, so a computed
+result has to stand on each basis the record allows (``basis_worlds``). No
+flags, raw earnings or death are claimed, and UNKNOWN facts appear only in
 ``check_unknown_ending`` and ``check_every_history``.
 
 Every annual placement and both all-prior treatments are enumerated. A lawful
@@ -455,7 +457,10 @@ def under_31_declaration(seed):
 def subsequent_declaration(seed):
     """Declare a special-insured prior before 31, and an onset after it.
 
-    The special prior opens 404.130(d) at the later onset.
+    The special prior opens 404.130(d) at the later onset. The QCs before it
+    give most draws the half of their quarters that its route asks for, short
+    of 20 of 40, since no placement supports the rest (404.130(d)(1), 404.321(a)).
+    The prior's own year can hold the last of them, so placement can decide it.
     """
     case = declaration(seed)
     draw = random.Random(f"subsequent-{seed}")
@@ -463,7 +468,17 @@ def subsequent_declaration(seed):
     birth = date(onset.year - draw.randint(32, 40), 2, 2)
     begins = date(birth.year + draw.randint(24, 30), 7, 1)
     ends = date(begins.year + draw.randint(0, 1), 12, 31)
+    annual = {y: n for y, n in case["annual"].items() if y > begins.year}
+    attained = quarter(date(birth.year + 21, birth.month, birth.day))
+    needed = max(6, (quarter(begins) - attained) // 2)
+    annual[begins.year] = draw.randint(0, 2)
+    needed += draw.choice((0, 0, 0, 1)) - annual[begins.year]
+    for year in range(begins.year - 1, 1977, -1):
+        annual[year] = min(needed, 4)
+        needed -= annual[year]
+    annual = {y: n for y, n in annual.items() if n}
     case.update(birth=birth, prior=((begins, ends),), special=True)
+    case.update(annual=annual)
     return case
 
 
@@ -505,31 +520,31 @@ def check_diagnostics(case, result, fillings):
     ), (case, upper, own)
 
 
-def prior_can_begin(case, credits, periods):
+def prior_can_begin(case, credits, periods, blind=True):
     """404.130(a), (e): even a blind prior begins fully insured.
 
     Each prior counts the periods before it or disregards them (404.130(f)).
     """
     return all(
         any(
-            disability(case["birth"], credits, quarter(begins), used, True)
+            disability(case["birth"], credits, quarter(begins), used, blind)
             for used in (periods[:index], ())
         )
         for index, (begins, _) in enumerate(periods)
     )
 
 
-def prior_holds(case, credits, index):
-    """One declared prior's own start on one filling.
+def prior_holds(case, credits, index, blind=True):
+    """One declared prior's own start on one filling, on one basis.
 
-    Past blindness leaves no trace in a record, so an unflagged prior needs
-    only full insurance. A flagged prior's holder "were only insured under
-    paragraph (c)" (404.130(d)(1)).
+    An unflagged prior rests on past blindness, which asks only for full
+    insurance (404.130(e)), or on 404.130(b) or (c). A flagged prior's holder
+    "were only insured under paragraph (c)" (404.130(d)(1)).
     """
     at = quarter(case["prior"][index][0])
     if not case.get("special"):
         return any(
-            disability(case["birth"], credits, at, used, True)
+            disability(case["birth"], credits, at, used, blind)
             for used in (case["prior"][:index], ())
         )
     return (
@@ -538,19 +553,31 @@ def prior_holds(case, credits, index):
     )
 
 
-def fillings_keeping_priors(case, fillings):
-    """The fillings the declared priors allow.
+def basis_worlds(case, fillings):
+    """The fillings each basis of the declared priors allows, strictest first.
 
-    A prior no filling supports rests on something the record doesn't show,
-    and says nothing about placement.
+    Past blindness leaves no trace in a record, so each unflagged prior can
+    rest on either basis. The first world is the strictest with a filling, and
+    a prior no filling supports on any basis leaves no world.
     """
-    for index in range(len(case["prior"])):
-        fillings = [
+    count = len(case["prior"])
+    bases = (
+        ((False,) * count,)
+        if case.get("special")
+        else tuple(product((False, True), repeat=count))
+    )
+    worlds = (
+        [
             filling
             for filling in fillings
-            if prior_holds(case, filling[7], index)
-        ] or fillings
-    return fillings
+            if all(
+                prior_holds(case, filling[7], index, blind)
+                for index, blind in enumerate(basis)
+            )
+        ]
+        for basis in bases
+    )
+    return [world for world in worlds if world]
 
 
 def check(case):
@@ -565,23 +592,30 @@ def check(case):
     except InvalidFamilyInput as error:
         assert not any(worlds), (case, error)
         return "invalid"
-    worlds = tuple(fillings_keeping_priors(case, found) for found in worlds)
     actual = tuple(
         getattr(result, name).insured
         for name in ("fully", "currently", "disability")
     )
     start = quarter(result.current_disability_period_start)
-    for fillings in worlds:
-        assert fillings, (case, "computed an impossible start", result)
-        expected = tuple(
-            any(filling[index] for filling in fillings) for index in (1, 2, 3)
-        )
-        assert actual == expected, (case, actual, expected, result)
-        for index, insured in enumerate(actual, 1):
-            assert not insured or any(
-                filling[0] == start and filling[index] for filling in fillings
-            ), (case, actual, start, fillings)
-        check_diagnostics(case, result, fillings)
+    for found in worlds:
+        bases = basis_worlds(case, found)
+        assert bases, (case, "computed an impossible start", result)
+        for fillings in bases:
+            expected = tuple(
+                any(filling[index] for filling in fillings)
+                for index in (1, 2, 3)
+            )
+            assert actual == expected, (case, actual, expected, result)
+            for index, insured in enumerate(actual, 1):
+                assert not insured or any(
+                    filling[0] == start and filling[index]
+                    for filling in fillings
+                ), (case, actual, start, fillings)
+            upper = result.dli.upper
+            assert (None if upper is None else quarter(upper)) == max(
+                filling[6] for filling in fillings if filling[0] == start
+            ), (case, upper, fillings)
+        check_diagnostics(case, result, bases[0])
     return "computed"
 
 
@@ -652,24 +686,28 @@ def check_no_period(case):
     except rule.InsuredConfigurationUnsupported:
         return "refused"
     for reading in READINGS if case.get("special") else READINGS[:1]:
-        fillings = fillings_keeping_priors(
-            case, no_period_fillings(case, reading)
-        )
-        for name, index in (("fully", 1), ("currently", 2), ("disability", 3)):
-            assert getattr(result, name).insured == any(
-                filling[index] for filling in fillings
-            ), (case, name, reading, result)
+        bases = basis_worlds(case, no_period_fillings(case, reading))
+        assert bases, (case, "computed a prior no filling supports", result)
+        for fillings in bases:
+            for name, index in (
+                ("fully", 1),
+                ("currently", 2),
+                ("disability", 3),
+            ):
+                assert getattr(result, name).insured == any(
+                    filling[index] for filling in fillings
+                ), (case, name, reading, result)
+            upper = result.dli.upper
+            assert (None if upper is None else quarter(upper)) == max(
+                (filling[6] for filling in fillings if filling[6] is not None),
+                default=None,
+            ), (case, reading, upper)
         for name, position in (("fully", 4), ("currently", 5)):
             decision = getattr(result, name)
             count = decision.qc_count_upper
             assert (decision.insured, count - decision.required, count) == max(
-                filling[position] for filling in fillings
+                filling[position] for filling in bases[0]
             ), (case, name, reading, result)
-        upper = result.dli.upper
-        assert (None if upper is None else quarter(upper)) == max(
-            (filling[6] for filling in fillings if filling[6] is not None),
-            default=None,
-        ), (case, reading, upper)
     return "computed"
 
 
@@ -931,28 +969,52 @@ def check_every_history(
     lower = None if result.dli is None else result.dli.lower
     for added in ((),) if open_period else ((), *added_priors(case)):
         for ending in endings:
-            held = history_fillings(
+            kept = history_fillings(
                 case, added, start, ending, dated=lower is not None
             )
-            if not held:
-                continue
-            found = (case, added, ending, result)
-            assert (
-                fully is None
-                or not fully.insured
-                or any(filling[1] for filling in held)
-            ), found
-            assert (
-                currently is None
-                or not currently.insured
-                or any(filling[2] for filling in held)
-            ), found
-            assert lower is None or quarter(lower) <= max(
-                -1 if filling[6] is None else filling[6] for filling in held
-            ), found
+            nonblind = [
+                filling
+                for filling in kept
+                if prior_can_begin(case, filling[7], added, blind=False)
+            ]
+            for held in filter(None, (kept, nonblind)):
+                found = (case, added, ending, result)
+                assert (
+                    fully is None
+                    or not fully.insured
+                    or any(filling[1] for filling in held)
+                ), found
+                assert (
+                    currently is None
+                    or not currently.insured
+                    or any(filling[2] for filling in held)
+                ), found
+                assert lower is None or quarter(lower) <= max(
+                    -1 if filling[6] is None else filling[6]
+                    for filling in held
+                ), found
     return "computed"
 
 
+# A prior from 1998Q1 finds 19 QCs from 1988Q2 through 1997Q4, so 404.130(b)
+# holds the 1998 QC in that quarter, while past blindness leaves it open. The 40
+# quarters through 2008Q1 reach 20 only with that QC later.
+BASIS_PRIOR = {
+    "birth": date(1955, 2, 2),
+    "onset": date(2008, 1, 1),
+    "ending": date(2008, 3, 31),
+    "month": date(2008, 1, 1),
+    "blind": False,
+    "prior": ((date(1998, 1, 1), date(1999, 12, 31)),),
+    "annual": {
+        **dict.fromkeys(range(1980, 1985), 4),
+        **dict.fromkeys(range(1989, 1993), 4),
+        1993: 3,
+        1998: 1,
+        **dict.fromkeys(range(1999, 2003), 4),
+        2003: 3,
+    },
+}
 # 18 of 37 elapsed quarters pass the route at 1990Q2, and 20 of 40 pass the
 # ordinary rule.
 SPECIAL_PRIOR = {
@@ -1021,6 +1083,41 @@ def two_prior_declaration(seed):
     return {**case, "prior": (earlier, *case["prior"])}
 
 
+def basis_prior_declaration(seed):
+    """A record whose nonblind prior can hold a QC past blindness leaves open.
+
+    The 1998Q1 prior passes 404.130(e) on every placement, and 404.130(b) only
+    with 20 QCs in its 40 quarters. Each draw keeps the 1990s record near that
+    edge, and moves the 40 quarters through the query around their own.
+    """
+    draw = random.Random(f"basis-{seed}")
+    month = date(draw.randint(2007, 2009), draw.choice((1, 4, 7, 10)), 1)
+    annual = {
+        **BASIS_PRIOR["annual"],
+        1993: draw.randint(2, 4),
+        1998: draw.randint(1, 3),
+        2003: draw.randint(2, 4),
+    }
+    case = {**BASIS_PRIOR, "month": month, "annual": annual}
+    return {**case, "onset": month, "ending": quarter_end(quarter(month))}
+
+
+def two_basis_declaration(seed):
+    """The same record after a prior with its own basis.
+
+    A 1984Q1 prior passes 404.130(c) on 17 QCs. A 1986Q2 prior falls past age
+    31, so with 1980's QCs gone it finds 16 of 40 and past blindness alone can
+    begin it. The two priors can rest on different bases in either order.
+    """
+    case = basis_prior_declaration(seed)
+    if random.Random(f"two-basis-{seed}").random() < 0.5:
+        first = (date(1984, 1, 1), date(1984, 12, 31))
+        return {**case, "prior": (first, *case["prior"])}
+    first = (date(1986, 4, 1), date(1986, 12, 31))
+    annual = {year: n for year, n in case["annual"].items() if year != 1980}
+    return {**case, "annual": annual, "prior": (first, *case["prior"])}
+
+
 def special_prior_declaration(seed):
     """A flagged prior whose route and ordinary rule both turn on 1990."""
     draw = random.Random(seed)
@@ -1042,7 +1139,7 @@ def test_status_stress_year_counts_follow_the_returned_filling(seed):
     assert check(declaration(seed)) == "computed"
 
 
-@pytest.mark.parametrize("seed", (5000005, 5000019))
+@pytest.mark.parametrize("seed", (5000005, 5000059))
 def test_status_stress_candidate_order_changes_nothing(seed, monkeypatch):
     forward = public(declaration(seed))
     candidates = rule._assignment_candidates
@@ -1259,6 +1356,35 @@ def test_status_stress_two_declared_priors(seed):
 def test_status_stress_a_prior_with_no_current_period(seed):
     check_no_period(listed_prior_declaration(seed))
     check_no_period(two_prior_declaration(seed))
+
+
+def test_status_stress_a_nonblind_prior_undercuts_the_date():
+    assert check_no_period(BASIS_PRIOR) == "refused"
+
+
+@settings(max_examples=30, deadline=None, derandomize=True)
+@given(seed=st.integers(0, 2**32 - 1))
+def test_status_stress_a_prior_on_either_basis(seed):
+    check_no_period(basis_prior_declaration(seed))
+
+
+@settings(max_examples=30, deadline=None, derandomize=True)
+@given(seed=st.integers(0, 2**32 - 1))
+def test_status_stress_a_current_period_after_either_basis(seed):
+    case = basis_prior_declaration(seed)
+    check(
+        {
+            **case,
+            "onset": date(2004, 1, 15),
+            "ending": date(2004, 12, 31),
+        }
+    )
+
+
+@settings(max_examples=30, deadline=None, derandomize=True)
+@given(seed=st.integers(0, 2**32 - 1))
+def test_status_stress_priors_on_different_bases(seed):
+    check_no_period(two_basis_declaration(seed))
 
 
 @settings(max_examples=30, deadline=None, derandomize=True)

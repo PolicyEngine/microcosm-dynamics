@@ -253,8 +253,9 @@ def test_a_later_prior_on_an_earlier_endpoint_binds():
         listed, credits, LATER.start, MONTH, None, DISABILITY
     )
     interior = {**credits, 1999: ((1999 * 4 + 1,), 0)}
-    assert not i._prior_passes(person, interior, 1, None)
-    assert i._prior_start_binds(person, credits, credits, 1, MONTH, None)
+    assert not i._prior_passes(person, interior, 1, None, blind=True)
+    assert i._prior_basis(person, credits, credits, 1, MONTH, None) is True
+    assert i._prior_start_binds(person, credits, credits, 1, MONTH, None, True)
 
 
 def test_an_unknown_year_refuses_that_later_prior():
@@ -302,14 +303,17 @@ def test_a_later_prior_placement_splits_binds(
     for credits in placements(annual):
         expected = _later_holds(DATE_BIRTH, credits, earlier, later)
         assert (
-            i._prior_passes(person, _filling(annual, credits), 1, None)
+            i._prior_passes(
+                person, _filling(annual, credits), 1, None, blind=True
+            )
             is expected
         ), (annual, earlier, later, sorted(credits))
         held.add(expected)
     credits = _credits(annual)
-    binds = i._prior_start_binds(person, credits, credits, 1, MONTH, None)
-    assert binds or len(held) == 1, (annual, earlier, later)
-    assert not binds or True in held, (annual, earlier, later)
+    binds = i._prior_start_binds(
+        person, credits, credits, 1, MONTH, None, True
+    )
+    assert binds or held == {True}, (annual, earlier, later)
 
 
 # A special prior every placement carries.
@@ -363,5 +367,7 @@ def test_a_special_prior_every_placement_carries_binds_nothing(
         for credits in placements(annual)
     }
     credits = _credits(annual)
-    binds = i._prior_start_binds(person, credits, credits, 0, MONTH, None)
+    binds = i._prior_start_binds(
+        person, credits, credits, 0, MONTH, None, False
+    )
     assert held != {True} or not binds, (annual, begins)
