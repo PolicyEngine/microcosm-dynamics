@@ -3276,18 +3276,20 @@ This pass added the statutory texts it newly relies on (42 U.S.C.
 (s)) to `lii_usc_402_415_excerpts.txt`, from a re-fetch whose LII body
 matched the pinned 402 SHA-256 byte for byte.
 `tests/test_track_b_readings_20261023.py` pins the bookkeeping for every
-Track B module except the insured-status ones (`insured_status.py` and
+Python and YAML file in the Track B package, subpackages included, except
+the insured-status modules (`insured_status.py` and
 `_insured_status_qc.py`), whose readings the source-conflict rulings log
-but no Track B note yet documents in full. In the other modules, every
-mention of a source conflict must be a one-line `# Source conflict <id>`
-marker. The marker ids must be exactly this pass's ids plus the ids other
-rounds register in that test, each in the G, R2, R3 or grace module, and
-each id must appear whole in a Track B design note. This note and the R2
-and R3 notes must name each of their readings and carry no open "Needs
-Max's judgment" heading, and each statutory passage the test quotes must
-appear verbatim in the capture. The invented conformance lattice is
-unchanged; only the `parent_benefit` witness moved to two parents in the
-band.
+but no Track B note yet documents in full. In the other files, every
+mention of a source conflict, in any spelling, must be a one-line
+`# Source conflict <id>` marker whose id ends at a colon, whitespace, a
+line break or the end of the file. The marker ids must be exactly this
+pass's ids plus the ids other rounds register in that test, each in the
+G, R2, R3 or grace module, and each id must appear whole in a Track B
+design note. This note and the R2 and R3 notes must name each of their
+readings as whole ids and carry no open "Needs Max's judgment" heading,
+and each statutory passage the test quotes must appear verbatim in the
+capture. The invented conformance lattice is unchanged; only the
+`parent_benefit` witness moved to two parents in the band.
 
 ## Round-3 input premises and excluded beneficiaries
 
