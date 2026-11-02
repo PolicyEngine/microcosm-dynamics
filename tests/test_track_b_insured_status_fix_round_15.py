@@ -492,7 +492,11 @@ def test_blind_aggregate_decides_below_six_ordinary_qcs(amount, refused):
 
 
 def test_the_date_last_insured_alone_can_refuse_a_moving_start():
-    """DISABILITY never reads the period, so only the date can differ."""
+    """DISABILITY never reads the period, so only the date can differ.
+
+    The QCs through 2012 give the prior the 18 fully insured status asks at
+    its start on every placement, so only the current start can refuse.
+    """
     person = _person(
         birth=date(1973, 2, 2),
         disability_onset=date(2015, 5, 15),
@@ -503,7 +507,8 @@ def test_the_date_last_insured_alone_can_refuse_a_moving_start():
     )
     month = date(2022, 1, 1)
     counts = {
-        2008: 2,
+        2000: 3,
+        2008: 1,
         2009: 2,
         2010: 4,
         2011: 4,
@@ -514,9 +519,9 @@ def test_the_date_last_insured_alone_can_refuse_a_moving_start():
         2016: 4,
     }
     years = history(person, month, counts)
-    assert _reason(person, years, month, test=i.InsuredTest.DISABILITY) is (
-        ASSIGNMENT
-    )
+    row = _row(person, years, month, test=i.InsuredTest.DISABILITY)
+    assert row.unsupported.reason is ASSIGNMENT
+    assert row.unsupported.detail.startswith("First insured start depends")
 
 
 # An entitlement month ends a currently insured window in a year before the

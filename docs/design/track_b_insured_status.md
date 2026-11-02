@@ -2874,10 +2874,12 @@ the prior leaves the decision to placement
 `test_an_unknown_year_can_leave_a_flagged_prior_short_of_the_ordinary_rule`,
 `test_an_unknown_year_can_carry_a_flagged_prior_past_the_ordinary_rule`).
 
-This changed five older invented records that listed a prior their credits
+This changed six older invented records that listed a prior their credits
 couldn't begin. Their tests ask about other things, so each record gained the QCs
 its prior needs, and each test still reaches its own boundary: round 15's "prior
 period year" (`test_an_entitlement_window_cannot_borrow_the_starts_placement`),
+`test_the_date_last_insured_alone_can_refuse_a_moving_start`, which also gave up a
+2008 QC so the current start still moves,
 `test_unknown_bounds_with_prior_disability_period`,
 `test_sam_favorable_disregard_counterexample_one_qc_boundary`,
 `test_property_disability_period_exclusion_never_adds_qcs` and
@@ -2924,6 +2926,19 @@ kills `date_tested_at_query`. `proof_keeps_listed_priors` survived because
 round's new refusal, so that record gained the QCs its prior needs and reaches
 the proof again. `test_an_unknown_year_can_carry_a_flagged_prior_past_the_ordinary_rule`
 now kills `binds_flag_on_lower_credits`.
+
+A log of every refusal `_prior_basis` raised, across the insured status modules
+other than the stress module, then found one more test resting on the new refusal:
+`test_the_date_last_insured_alone_can_refuse_a_moving_start`. Its new record
+reaches the moving start again, and the test now pins that refusal's detail. The
+list takes round 15's five mutants of that path, re-derived at this source, for
+62 in all. Through round 15's module alone all five fail, four of them first on
+this test and `remove_first_start_check` first on
+`test_no_filling_carries_the_start_and_the_status_together`. The log's other
+entries are the tests that pin this refusal,
+`test_placement_binds_a_prior_only_when_it_splits_them`, which calls `_prior_basis`
+directly, and `test_classification_oracle_prior_and_unknown_completions`, which
+checks only that a row and its weight survive.
 
 These tests execute the invariants this round adds:
 
