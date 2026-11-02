@@ -273,6 +273,22 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         # nothing in the historical projection imports them.
         Path("src/populace_dynamics/data/psid_income_wealth.py"),
         Path("src/populace_dynamics/data/psid_income_wealth_registry.py"),
+        # The SSI interface (SSI0) is opt-in; nothing in the historical
+        # projection imports it.
+        Path("src/populace_dynamics/income_resources/__init__.py"),
+        Path("src/populace_dynamics/income_resources/ssi/__init__.py"),
+        Path("src/populace_dynamics/income_resources/ssi/_child.py"),
+        Path("src/populace_dynamics/income_resources/ssi/contract.py"),
+        Path("src/populace_dynamics/income_resources/ssi/dataset_worker.py"),
+        Path(
+            "src/populace_dynamics/income_resources/ssi/environment_wheels.json"
+        ),
+        Path("src/populace_dynamics/income_resources/ssi/input_contract.json"),
+        Path("src/populace_dynamics/income_resources/ssi/inventory.json"),
+        Path("src/populace_dynamics/income_resources/ssi/pin.json"),
+        Path("src/populace_dynamics/income_resources/ssi/pinning.py"),
+        Path("src/populace_dynamics/income_resources/ssi/records.py"),
+        Path("src/populace_dynamics/income_resources/ssi/runner.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -558,6 +574,22 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "the opt-in PSID income and wealth readers became reachable from "
         "the birth-evidence reducer: "
         f"{sorted(income_wealth_modules & reachable)}"
+    )
+    ssi_modules = {
+        "populace_dynamics.income_resources",
+        "populace_dynamics.income_resources.ssi",
+        "populace_dynamics.income_resources.ssi._child",
+        "populace_dynamics.income_resources.ssi.contract",
+        "populace_dynamics.income_resources.ssi.dataset_worker",
+        "populace_dynamics.income_resources.ssi.pinning",
+        "populace_dynamics.income_resources.ssi.records",
+        "populace_dynamics.income_resources.ssi.runner",
+    }
+    assert ssi_modules.issubset(module_paths)
+    assert ssi_modules.isdisjoint(reachable), (
+        "the opt-in SSI interface became reachable from the "
+        "birth-evidence reducer: "
+        f"{sorted(ssi_modules & reachable)}"
     )
     assert graph_exclusions.isdisjoint(reachable), (
         "opt-in graph modules became reachable from the birth-evidence "
