@@ -1787,7 +1787,18 @@ def _improves(outcome, returned, last_insured):
 def _fillings_keeping_start(
     person, credits, start, month, exit_month, favored
 ):
-    """Each annual placement and treatment that keeps the reported start."""
+    """Each annual placement and treatment that keeps the reported start.
+
+    UNKNOWN priors stand for every prior history, and counting an added prior
+    can take a credited quarter from the record. Only disregarding all periods
+    speaks for every history (404.130(f), RS00301.120), and that drops the
+    current period too, whatever its ending. Each filling then reads the
+    person with no period in force.
+    """
+    every_history = (
+        person.prior_disability_periods_provenance
+        is EarningsProvenance.UNKNOWN
+    )
     horizon = _current_period_start_horizon(person, month)
     witness = set(
         _witness(person, credits, start, exit_month, InsuredTest.DISABILITY)[4]
@@ -1831,7 +1842,7 @@ def _fillings_keeping_start(
             except InvalidFamilyInput:
                 continue
             if own_start == start:
-                yield filling, completed
+                yield filling, person if every_history else completed
 
 
 def _settle_first_start(
@@ -1863,7 +1874,8 @@ def _settle_first_start(
     attains the result. Ties go to ``favored``, the quarters the excluded
     world credits, so the returned filling keeps a year's credits where it
     can. A year that cannot move the start stays flexible, so each status
-    still places it favorably.
+    still places it favorably. Under UNKNOWN priors a filling attains a status
+    only with no period in force (see ``_fillings_keeping_start``).
 
     The same limit binds what a status reports. Its favorable count and
     assignment can rest on a placement that would move the start, so
@@ -1953,12 +1965,9 @@ def _settle_lower_date(
     Each ending's favorable date can rest on a placement that moves the
     reported start (404.321(a), RS00301.230). A lower bound speaks for every
     ending, so each needs a filling that keeps the start and reaches it.
-    UNKNOWN priors include the completion with only the listed periods, and
-    that completion holds every ending.
+    UNKNOWN priors leave one outcome for each filling, the record with no
+    period in force, and it speaks for every ending and prior history.
     """
-    person = replace(
-        person, prior_disability_periods_provenance=EarningsProvenance.OBSERVED
-    )
     # Source conflict us:oasdi-insured-one-filling-first-start
     if _start_fixed(person, credits, start, month, exit_month):
         return

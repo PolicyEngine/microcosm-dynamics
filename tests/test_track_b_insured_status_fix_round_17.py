@@ -299,9 +299,10 @@ def test_twenty_qcs_short_of_half_the_period_compute():
 
 
 def test_poms_mary_brown_keeps_a_computed_date_last_insured():
-    # RS 00301.147 C.1 prints 16 of 32 at the 11/2/82 onset. In 1983Q1 the 33
-    # quarters reduce to 32. In 1983Q2 the 34 quarters need 17, and counting the
-    # prior's quarters under 404.130(f) leaves 20 QCs against 24.
+    # RS 00301.147 C.1 prints 16 of 32 at the 11/2/82 onset and no date last
+    # insured, so this rule derives the date below. In 1983Q1 the 33 quarters
+    # reduce to 32. In 1983Q2 the 34 quarters need 17, and counting the prior's
+    # quarters under 404.130(f) leaves 20 QCs against 24.
     patterns = {
         1970: "NNNC",
         1971: "NNCC",
