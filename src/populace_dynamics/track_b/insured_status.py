@@ -1718,16 +1718,16 @@ def _start_fixed(person, credits, start, month, exit_month):
     )
 
 
-def _prior_passes(person, credits, index, exit_month, **options):
+def _prior_passes(person, credits, index, exit_month, *, blind, **options):
     """Whether a route insures a listed prior's start, with earlier priors.
 
-    Past blindness leaves no trace in the record and asks only for fully
-    insured status (404.130(e)), so an unflagged prior needs that much.
+    ``blind`` reads the holder as blind then, which asks only for fully
+    insured status (404.130(e)).
     """
     period = person.prior_disability_periods[index]
     earlier = replace(
         person,
-        statutory_blindness=not period.special_insured,
+        statutory_blindness=blind,
         prior_disability_periods=person.prior_disability_periods[:index],
     )
     return _witness(
@@ -1741,63 +1741,104 @@ def _prior_passes(person, credits, index, exit_month, **options):
 
 
 def _keeps_priors(person, filling, binding, exit_month):
-    """Whether one filling lets each binding prior begin where it says.
+    """Whether one filling lets each binding prior begin on its basis.
 
     A flagged prior's holder "were only insured under paragraph (c)"
     (404.130(d)(1)), so that holder passes a special route and not 404.130(b).
     """
     return all(
-        _prior_passes(person, filling, index, exit_month)
+        _prior_passes(person, filling, index, exit_month, blind=blind)
         and not (
             person.prior_disability_periods[index].special_insured
             and _prior_passes(
-                person, filling, index, exit_month, ordinary_only=True
+                person,
+                filling,
+                index,
+                exit_month,
+                blind=False,
+                ordinary_only=True,
             )
         )
-        for index in binding
+        for index, blind in binding
     )
 
 
-def _prior_start_binds(person, lower, upper, index, month, exit_month):
-    """Whether annual placement decides a listed prior's own start.
+def _every_placement_begins(
+    person, lower, index, month, exit_month, *, blind, **options
+):
+    """Whether every annual placement insures a listed prior's start.
+
+    Lower credits speak for every completion of an UNKNOWN year. This drops
+    earlier priors, so a later prior resting on one fails here, and the search
+    that follows then keeps the fillings it holds on.
+    """
+    return _every_placement_passes(
+        replace(
+            person, statutory_blindness=blind, prior_disability_periods=()
+        ),
+        lower,
+        person.prior_disability_periods[index].start,
+        month,
+        exit_month,
+        InsuredTest.DISABILITY,
+        **options,
+    )
+
+
+def _prior_basis(person, lower, upper, index, month, exit_month):
+    """Whether past blindness alone can support a listed prior's start.
 
     A period begins in a quarter its holder was insured (404.320(b)(2),
-    404.321(a)), so a prior can force an annual QC into one quarter. A prior
-    that holds on every placement leaves them all open. One that holds on
-    none rests on something this record doesn't show, and says nothing about
-    placement. Otherwise it picks among them. Lower credits speak for every
-    completion of an UNKNOWN year, and upper credits bound them all. ``every``
-    drops earlier priors, so a later prior resting on one counts as picking,
-    and the search that follows then keeps the fillings it holds on.
+    404.321(a)). The record doesn't say whether an unflagged prior rested on
+    past blindness, which asks only for fully insured status (404.130(e)), or
+    on 404.130(b) or (c), which ask for that and more. A result has to stand
+    on each basis some placement allows. Every placement 404.130(b) or (c)
+    allows also passes 404.130(e), so a filling that keeps the prior on them
+    speaks for both, and they hold the prior wherever a placement meets them.
+    A flagged prior's holder "were only insured under paragraph (c)"
+    (404.130(d)(1)), so no placement supports that prior if none passes a
+    route or all of them pass 404.130(b). A prior no placement supports rests
+    on credits or facts this record omits, and those could move other results,
+    so the rule refuses it by name. Upper credits bound every completion of an
+    UNKNOWN year.
     """
-    period = person.prior_disability_periods[index]
-    flagged = period.special_insured
-    bare = replace(
-        person,
-        statutory_blindness=not flagged,
-        prior_disability_periods=(),
-    )
-
-    def every(**options):
-        return _every_placement_passes(
-            bare,
+    if person.prior_disability_periods[index].special_insured:
+        if _prior_passes(
+            person, upper, index, exit_month, blind=False
+        ) and not _every_placement_begins(
+            person,
             lower,
-            period.start,
+            index,
             month,
             exit_month,
-            InsuredTest.DISABILITY,
-            **options,
-        )
+            blind=False,
+            ordinary_only=True,
+        ):
+            return False
+    else:
+        for blind in (False, True):
+            if _prior_passes(person, upper, index, exit_month, blind=blind):
+                return blind
+    _refuse(
+        InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+        "No annual placement supports a listed prior's first insured quarter",
+    )
 
-    def some(**options):
-        return _prior_passes(person, upper, index, exit_month, **options)
 
-    if not flagged:
-        return not every() and some()
-    return (
-        some()
-        and not every(ordinary_only=True)
-        and not (every() and not some(ordinary_only=True))
+def _prior_start_binds(person, lower, upper, index, month, exit_month, blind):
+    """Whether annual placement decides a listed prior's start on its basis.
+
+    A prior that holds on every placement leaves them all open, and otherwise
+    it picks among them. A flagged prior that every placement carries on its
+    route, short of 404.130(b), holds on every placement.
+    """
+    every = _every_placement_begins(
+        person, lower, index, month, exit_month, blind=blind
+    )
+    if not person.prior_disability_periods[index].special_insured:
+        return not every
+    return not every or _prior_passes(
+        person, upper, index, exit_month, blind=False, ordinary_only=True
     )
 
 
@@ -1831,7 +1872,7 @@ def _prior_sensitive_years(person, binding):
     """Years whose annual placement can change a binding prior's start."""
     return {
         year
-        for index in binding
+        for index, _ in binding
         for year in _start_sensitive_years(
             person,
             person.prior_disability_periods[index].start,
@@ -3203,14 +3244,18 @@ def insured_status(
         _settle_every_history(
             person, lower, month, coverage_end_month, decisions, dli
         )
+    bases = tuple(
+        _prior_basis(person, lower, upper, index, month, coverage_end_month)
+        for index in range(len(person.prior_disability_periods))
+    )
     # Every placement attains what the proof above passes, so a prior that
     # picks among them can't move it.
     binding = tuple(
-        index
-        for index in range(len(person.prior_disability_periods))
+        (index, blind)
+        for index, blind in enumerate(bases)
         if not current_unknown
         and _prior_start_binds(
-            person, lower, upper, index, month, coverage_end_month
+            person, lower, upper, index, month, coverage_end_month, blind
         )
     )
     if binding and unknown:
