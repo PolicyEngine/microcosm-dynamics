@@ -1,0 +1,373 @@
+{
+  "schema": "track_b_holdout_registry.v1",
+  "title": "Held-out data registry for Track B and the open-population lane",
+  "purpose": "The single registry of the data that every Track B gate and every open-population gate holds out, set up by the dynamics coordinator on 2026-10-21. It is part of Track B's B0.2 exposure record (design revision 3, section 5.2, elements 4 and 5). Cite it by path, commit and SHA-256. src/populace_dynamics/track_b/holdout_registry.py states and enforces its rules, and tests/test_track_b_holdout_registry.py runs them on every commit.",
+  "rules": [
+    "A gate registers what it holds out here, as a lone candidate entry in a commit of its own, before its record freezes and before its scored run is committed. It moves to frozen, used or withdrawn only in later commits.",
+    "J's candidate holdouts are registered first, because J is on Track B's critical path. OP0.2 registers its picks for OP12's gate_ssa_totals here before it freezes them, and picks from the years J has not taken.",
+    "Every unit key names a source from the controlled vocabulary in src/populace_dynamics/track_b/holdout_registry.py (SOURCES), then its years (a year, an inclusive range, or 'undated'), then optional scope segments. The registry's sources must equal that vocabulary. Each source declares a family, a title, a catalog reference no other source shares, and what its key year means. Adding a source is a reviewed code change, and a new source must not be another name for a declared one.",
+    "Two unit keys share a unit when their source is the same and their years intersect; scope segments describe the unit and never narrow the overlap. Live entries that share a unit, or whose relation is unresolved, list each other in disclosed_overlaps, and both gates' registrations name the overlap. No unit is held out by two gates silently.",
+    "The overlap rule cannot see two sources that share underlying data, or two editions of a publication that report the same data years. So an entry reviews every earlier live entry of the same source family that it neither shares a unit with nor discloses. A review records the outcome 'disjoint', a substantive reason and citations (path:line or https URLs); an unresolved relation is disclosed instead.",
+    "Reference years are recorded separately from interview or publication availability (design section 5.2, element 10): a unit key's year is what its source declares (for PSID, the interview wave; for EPUF, the file's vintage year), and each entry's units state the reference or event years.",
+    "An entry whose gate has scored has status 'used'. Its scored_evidence cites scored-run artifacts listed in the module's SCORED_RUNS, which pins each artifact's gate and the SHA-256 of its bytes; an artifact joins that list, as a reviewed code change, when its gate scores. Each citation also names an identity field (gate, gate.name or registration_id) whose value identifies the gate in gates.yaml or in the module's REGISTRATIONS_OUTSIDE_GATES_YAML. A registration's scored-run bytes must not have been committed, at any path and whether or not they were later moved or deleted, in the history of the commit that first records the entry on the base branch's first-parent chain. Its units are exposure for every later gate and never again an unused holdout (design section 5.2).",
+    "Entries are only appended. An entry's id, provenance, gate, lane, source, units and unit_keys never change; its gate identifiers, evidence, scored evidence, disclosures, reviews and history only extend. Ids are never reused. These rules hold against the base commit, between every pair of consecutive first-parent commits on the base branch (each snapshot also validated against its own commit's tree), and between consecutive commits of a pull request's branch. A newly created registry is admitted against an empty one. A pull request that creates or changes the registry is merged with a merge commit, never rebased, so its draft commits do not enter the base branch's first-parent history.",
+    "A historical import records a gate that scored before this registry existed. It starts as used, and its id, gate, unit keys and scored runs must match an authorization in the module's HISTORICAL_IMPORTS. B0.2's mechanical inventory adds an import it finds, or a correction to an existing one, as a new authorized entry in a reviewed code change. Imports are allowed only while the registry is incomplete.",
+    "The registry is incomplete until completion_record, B0.2's mechanical exposure inventory, exists. It starts with the prior uses verified below; the inventory adds the rest before any B0.2 gate record freezes."
+  ],
+  "status_values": {
+    "candidate": "registered by a gate's B0.2 or OP0.2 record; not yet frozen",
+    "frozen": "fixed in a frozen gate record before that gate's candidates run",
+    "used": "scored by a registered gate; exposure for every later gate",
+    "withdrawn": "released before use, with the reason recorded"
+  },
+  "sources": {
+    "psid": {
+      "family": "psid",
+      "title": "Panel Study of Income Dynamics: family files, cross-year individual file and supplements",
+      "catalog": "University of Michigan Institute for Social Research: Panel Study of Income Dynamics",
+      "key_year": "interview wave (collection year); income reference years are the wave year minus one"
+    },
+    "ssa_epuf": {
+      "family": "ssa_administrative",
+      "title": "SSA Earnings Public-Use File",
+      "catalog": "SSA Office of Research, Evaluation, and Statistics: Earnings Public-Use File",
+      "key_year": "the vintage year in the file's title: the 2006 file holds earnings through 2006 and was released in August 2011"
+    },
+    "ssa_supplement": {
+      "family": "ssa_administrative",
+      "title": "Annual Statistical Supplement to the Social Security Bulletin",
+      "catalog": "SSA Office of Research, Evaluation, and Statistics: Annual Statistical Supplement to the Social Security Bulletin",
+      "key_year": "edition year"
+    },
+    "ssa_di_asr": {
+      "family": "ssa_administrative",
+      "title": "Annual Statistical Report on the Social Security Disability Insurance Program",
+      "catalog": "SSA Office of Research, Evaluation, and Statistics: Annual Statistical Report on the Social Security Disability Insurance Program",
+      "key_year": "edition year"
+    },
+    "census_cps_tables": {
+      "family": "us_cross_section",
+      "title": "U.S. Census Bureau Current Population Survey tables",
+      "catalog": "U.S. Census Bureau: Current Population Survey published tables",
+      "key_year": "table reference year"
+    },
+    "populace_us_frame": {
+      "family": "us_cross_section",
+      "title": "Microcosm US certified frame",
+      "catalog": "hf://policyengine/populace-us/populace_us_2024.h5",
+      "key_year": "frame vintage"
+    },
+    "mermin_smith_anchors": {
+      "family": "literature",
+      "title": "Mermin and Smith published orderings, committed as anchors",
+      "catalog": "gates.yaml gate_w1 holdout_basis: mermin_smith_committed_orderings",
+      "key_year": "undated"
+    }
+  },
+  "complete": false,
+  "completion_record": "docs/design/track_b_b0_2_exposure_inventory.json",
+  "entries": [
+    {
+      "id": "H001",
+      "provenance": "historical_import",
+      "gate": "gate_m6",
+      "gate_identifiers": [
+        "gate_m6",
+        "m6_temporal_holdout_projection_drift"
+      ],
+      "lane": "M6 (locked gate)",
+      "status": "used",
+      "source": "PSID family and cross-year individual files",
+      "units": {
+        "boundary_T_star": 2014,
+        "seed_wave": 2015,
+        "held_out_window": "2015-2022",
+        "gated_flow_event_years": [
+          2015,
+          2016,
+          2017,
+          2018,
+          2019
+        ],
+        "gated_earnings_reference_years": [
+          2016,
+          2018
+        ],
+        "report_only_shock_earnings_reference_years": [
+          2020,
+          2022
+        ],
+        "report_only_shock_flow_event_years": [
+          2020,
+          2021
+        ],
+        "interview_waves": "2015 (seed) to 2023"
+      },
+      "unit_keys": [
+        "psid:2015-2023:held_out_window"
+      ],
+      "evidence": [
+        "gates.yaml:5374-5376 (fit <= T*=2014; score the held-out PSID window 2015-2022)",
+        "gates.yaml:5496-5508 (fit_holdout and shock_window)"
+      ],
+      "scored_evidence": [
+        {
+          "path": "runs/gate_m6_candidate1_v1.json",
+          "field": "gate.name",
+          "equals": "gate_m6"
+        },
+        {
+          "path": "runs/gate_m6_candidate2_v1.json",
+          "field": "gate.name",
+          "equals": "gate_m6"
+        },
+        {
+          "path": "runs/gate_m6_candidate3_v1.json",
+          "field": "gate.name",
+          "equals": "gate_m6"
+        }
+      ],
+      "disclosed_overlaps": [
+        "H002",
+        "H004"
+      ],
+      "overlap_review": [],
+      "history": [
+        {
+          "date": "2026-10-21",
+          "status": "used",
+          "note": "seeded from gates.yaml at 1e739d32; shares PSID interview wave 2015 with B2 (H002) and waves 2015-2023 with gate_m4's panel (H004)"
+        }
+      ]
+    },
+    {
+      "id": "H002",
+      "provenance": "historical_import",
+      "gate": "B2",
+      "gate_identifiers": [
+        "B2",
+        "6252388925"
+      ],
+      "lane": "Track B",
+      "status": "used",
+      "source": "PSID family files FAM2013ER and FAM2015ER, with the cross-year individual file",
+      "units": {
+        "reference_years": [
+          2012,
+          2014
+        ],
+        "interview_waves": [
+          2013,
+          2015
+        ],
+        "anchor_wave_not_held_out": 2011,
+        "ages": "25-64 at the collection wave",
+        "population": "2011 full-anchor persons with a valid 2010 row"
+      },
+      "unit_keys": [
+        "psid:2013:fam2013er",
+        "psid:2015:fam2015er"
+      ],
+      "evidence": [
+        "src/populace_dynamics/track_b/b2.py:64-65",
+        "docs/design/track_b_b0_1_audit.md, section 16 (definitions)",
+        "registration: issue #42 comment 6252388925"
+      ],
+      "scored_evidence": [
+        {
+          "path": "runs/track_b_b2_score.json",
+          "field": "registration_id",
+          "equals": "6252388925"
+        }
+      ],
+      "disclosed_overlaps": [
+        "H001",
+        "H004"
+      ],
+      "overlap_review": [],
+      "history": [
+        {
+          "date": "2026-10-21",
+          "status": "used",
+          "note": "B2 scored on 2026-10-18; seeded at 1e739d32; its 2015 wave is gate_m6's seed wave (H001), and both waves fall in gate_m4's panel (H004)"
+        }
+      ]
+    },
+    {
+      "id": "H003",
+      "provenance": "historical_import",
+      "gate": "gate_epuf_fill",
+      "gate_identifiers": [
+        "gate_epuf_fill",
+        "epuf_career_fill",
+        "2026-10-03-epuf-career-fill"
+      ],
+      "lane": "EPUF career fill (locked gate)",
+      "status": "used",
+      "source": "SSA 2006 Earnings Public-Use File (EPUF)",
+      "units": {
+        "partition": "EPUF2006_TEST_by_salted_person_hash",
+        "earnings_years": "1951-2006"
+      },
+      "unit_keys": [
+        "ssa_epuf:2006:test_partition"
+      ],
+      "evidence": [
+        "gates.yaml:5918 (holdout_basis)",
+        "src/populace_dynamics/data/epuf.py:15 (capped taxable earnings, 1951-2006)"
+      ],
+      "scored_evidence": [
+        {
+          "path": "runs/epuf_fill_gate_test_v1.json",
+          "field": "registration_id",
+          "equals": "2026-10-03-epuf-career-fill"
+        }
+      ],
+      "disclosed_overlaps": [
+        "H004",
+        "H005"
+      ],
+      "overlap_review": [],
+      "history": [
+        {
+          "date": "2026-10-21",
+          "status": "used",
+          "note": "seeded from gates.yaml at 1e739d32; its relation to the DI ASR 2023 (H004, H005) is unresolved and disclosed; the open-population design (PR #557, draft) plans gate_young_earn on a new salt of the same file, which shares this unit and must disclose it"
+        }
+      ]
+    },
+    {
+      "id": "H004",
+      "provenance": "historical_import",
+      "gate": "gate_m4",
+      "gate_identifiers": [
+        "gate_m4",
+        "m4_disability"
+      ],
+      "lane": "M4 disability (locked gate)",
+      "status": "used",
+      "source": "PSID cross-year individual file employment status; SSA Annual Statistical Report on the SSDI Program, 2023",
+      "units": {
+        "holdout": "person-disjoint side-A half of each of 100 split seeds over the work-limitation panel",
+        "employment_status_waves": "1982, 1983, 1993-1997 annual, 1999-2023 biennial",
+        "di_asr_2023_tables": [
+          19,
+          35,
+          36,
+          49,
+          50
+        ]
+      },
+      "unit_keys": [
+        "psid:1982:employment_status",
+        "psid:1983:employment_status",
+        "psid:1993-1997:employment_status",
+        "psid:1999-2023:employment_status",
+        "ssa_di_asr:2023"
+      ],
+      "evidence": [
+        "gates.yaml:2945 (holdout_basis)",
+        "gates.yaml:2946-2953 (data_staged)",
+        "src/populace_dynamics/data/disability.py:19-24 (wave coverage)"
+      ],
+      "scored_evidence": [
+        {
+          "path": "runs/gate_m4_hazard_v1.json",
+          "field": "gate",
+          "equals": "gate_m4"
+        }
+      ],
+      "disclosed_overlaps": [
+        "H001",
+        "H002",
+        "H003",
+        "H005"
+      ],
+      "overlap_review": [],
+      "history": [
+        {
+          "date": "2026-10-21",
+          "status": "used",
+          "note": "seeded from gates.yaml at 1e739d32; its PSID panel shares waves with gate_m6 (H001) and B2 (H002), and the DI ASR 2023 edition with gate_w1 (H005); whether a DI ASR 2023 table reports data years that EPUF 2006 also covers (H003) is unresolved, so it is disclosed"
+        }
+      ]
+    },
+    {
+      "id": "H005",
+      "provenance": "historical_import",
+      "gate": "gate_w1",
+      "gate_identifiers": [
+        "gate_w1",
+        "w1_representative_frame_transport"
+      ],
+      "lane": "W1 frame transport (locked gate)",
+      "status": "used",
+      "source": "SSA Annual Statistical Supplement 2023, section 6.B; SSA Annual Statistical Report on the SSDI Program, 2023; Census CPS tables; the certified 2024 frame; Mermin and Smith orderings",
+      "units": {
+        "holdout_basis": [
+          "populace_us_2024_certified",
+          "ssa_supplement_6b",
+          "di_asr_2023",
+          "mermin_smith_committed_orderings"
+        ],
+        "tables_named": [
+          "Supplement 2023 table 6.B5.1",
+          "Supplement 2023 tables 6.B4 and 6.B3",
+          "DI ASR 2023 table 19",
+          "Census HH-4, reference year 2023",
+          "Census AD-3, reference year 2023"
+        ],
+        "note": "whether each named table was gated or report-only is itemized by B0.2's inventory"
+      },
+      "unit_keys": [
+        "ssa_supplement:2023:6.b5.1",
+        "ssa_supplement:2023:6.b4",
+        "ssa_supplement:2023:6.b3",
+        "ssa_di_asr:2023:table_19",
+        "census_cps_tables:2023:hh-4",
+        "census_cps_tables:2023:ad-3",
+        "populace_us_frame:2024:certified",
+        "mermin_smith_anchors:undated"
+      ],
+      "evidence": [
+        "gates.yaml:3735-3736 (holdout_basis)",
+        "gates.yaml:4582-4584 (sources)",
+        "gates.yaml:4311-4327 (the Census HH-4 and AD-3 2023 sources, recorded as report-only)"
+      ],
+      "scored_evidence": [
+        {
+          "path": "runs/gate_w1_candidate1_v1.json",
+          "field": "gate",
+          "equals": "gate_w1"
+        },
+        {
+          "path": "runs/gate_w1_candidate2_v1.json",
+          "field": "gate",
+          "equals": "gate_w1"
+        },
+        {
+          "path": "runs/gate_w1_candidate3_v1.json",
+          "field": "gate",
+          "equals": "gate_w1"
+        },
+        {
+          "path": "runs/gate_w1_candidate4_v1.json",
+          "field": "gate",
+          "equals": "gate_w1"
+        }
+      ],
+      "disclosed_overlaps": [
+        "H003",
+        "H004"
+      ],
+      "overlap_review": [],
+      "history": [
+        {
+          "date": "2026-10-21",
+          "status": "used",
+          "note": "seeded from gates.yaml at 1e739d32; shares the DI ASR 2023 edition with gate_m4 (H004); whether its 2023 Supplement and DI ASR tables report data years that EPUF 2006 also covers (H003) is unresolved, so it is disclosed"
+        }
+      ]
+    }
+  ]
+}

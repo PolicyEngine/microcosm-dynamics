@@ -1,10 +1,13 @@
 """Held-out target U2: Boomers 2004, 1946-55 column, uniform 13% cut.
 
 Specification ``docs/design/boomers2004_1946_55_comparison.md``
-(``u2-draft-4``), sections 3-15, with section 16a's amendments as Max
+(``u2-ratified-1``), sections 3-15, with section 16a's amendments as Max
 ruled on them: d637 (section 16b) ratified amendments 2-5, amendment 6's
 option 1 and, as Max confirmed on 2026-10-12 (d745), amendment 1's parts
-1a-1c; d1090 (section 16c) ruled on blockers B1 and B2.  Each ruling
+1a-1c; d1090 (section 16c) ruled on blockers B1 and B2; and d1724
+(section 16d) ruled on the birth law's support.  Section 20 step 5
+materialized the final section 15 block and U2's rulings record, which
+:mod:`.rows` holds equal to the code.  Each ruling
 reaches this package through the source registries, one reviewed commit
 per amendment, and through the declared rules where the declared
 interpretation changes.  U2 extends U1's static measurement

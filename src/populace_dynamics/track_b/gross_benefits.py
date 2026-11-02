@@ -6,6 +6,21 @@ configurations below, and nothing else: no population claim, no payment
 timing, no annual earnings or charge determination (R2), and no ARF or
 recomputation (R3). The deduction entry points apply caller-declared monthly
 deductions before redistributing the maximum (203(a)(4)).
+No-care spouse deductions require an unreduced benefit and under-FRA
+status, derived from supplied facts or otherwise attested (203(c)(2);
+20 CFR 404.421(a)).
+Own-work events must withhold a positive amount; a zero deduction is an
+input error and never changes the family-maximum computation. Payable plus
+NH reservation must therefore be strictly below a settled original-benefit
+upper bound. Protected rates can depend on a different PIA; their coverage
+refusal precedes comparisons with the ordinary original benefit.
+An unresolved parent count still permits the one-parent upper bound.
+Historical widow gross can exceed ordinary OB under the sole-survivor
+provision; declared legacy history keeps that early bound unsettled.
+Outside-maximum beneficiaries and their events do not enter governed
+readjustment decisions (203(a)(3)(C); GN 02603.020B). Their own deductions
+still apply. GN 02603.050A.1 and A.2's sole-full and zero-dual exceptions
+have a named composition refusal only when their readings change cash.
 Max's ruling d515 (2026-09-28) adopted §10 question 9's default: a Python
 reference now, with Axiom differential checks as diagnostics once a pinned
 rule exists. At this module's creation rulespec-us had no 42 U.S.C. 403
@@ -229,8 +244,10 @@ RS 00630.400): a qualifying prior month needs a binding maximum, two or
 more entitled persons and an age reduction; the next month's PIA increase
 must itself lower family payment. SavingsClauseGuard computes the protected
 life-case rates, without changing formula FMAX, and carries the protection
-under RS 00615.801B.2. Active-protection membership changes and payment
-procedures not settled by the capture refuse by name. The explicit
+under RS 00615.801B.2. Membership changes at the first qualifying fall or
+during carried protection, and payment procedures not settled by the
+capture, refuse by name. Prior and current subject own-benefit or deduction
+facts are checked before establishing or extending protection. The explicit
 SavingsClauseReading.LITERAL_REFUSAL switch retains the earlier broad
 cross-month refusal reading. Both readings preserve unknown-history refusals.
 
@@ -241,6 +258,7 @@ from __future__ import annotations
 import math
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
+from contextvars import ContextVar
 from dataclasses import dataclass, field, fields
 from datetime import date
 from decimal import Decimal
@@ -406,6 +424,25 @@ _SURVIVOR_PERIODS = frozenset(range(60, 85, 2))
 #: expanded sequence coverage; cohort 1928 is a known over-refusal, not
 #: a method-D source requirement or ambiguity in the SSA cohort input.
 _FIRST_METHOD_B_WIDOW_BIRTH_YEAR = 1929
+# RS 00615.005A.8/.010: RIB no longer carries a prior reduced WIB's
+# reduction for SSA cohorts beginning January 2, 1928.
+_FIRST_OWN_RIB_WITHOUT_WIB_CARRYOVER_BIRTH_YEAR = 1928
+# This cohort reached 50 after 1977, so no benefit reached it reduced by then
+# (RS 00615.005A.7 gives age 50 as the earliest reduced disabled widow(er)).
+_FIRST_COHORT_WITHOUT_PRE_1978_REDUCTION = 1928
+# RS 00615.005A.4 starts reduced disabled widow(er)'s benefits at age 50. RIB
+# and spouse's benefits start at 62 (A.1, A.2) and aged WIB at 60 (A.3).
+# RS 00615.005A.3 starts reduced DIBs. A.1, A.3 and A.4 give each benefit that
+# can come first as (first month, earliest age). The schema records no sex, so
+# women's dates stand for men's later ones.
+_FIRST_REDUCED_DIB_MONTH = (1965, 9)
+_PRIOR_REDUCED_BENEFIT_ROUTES = (
+    ((1956, 11), 62),
+    ((1965, 9), 60),
+    ((1968, 2), 50),
+)
+# This cohort attains 62 no earlier than January 1978 (RS 00615.005C.2).
+_FIRST_COHORT_WITHOUT_PRE_1978_OWN_RIB = 1916
 
 
 # ---------------------------------------------------------------------------
@@ -456,7 +493,13 @@ class UnsupportedReason(Enum):
     PENALTY_DEDUCTION = "penalty_deduction"
     MARITIME_DEDUCTION = "maritime_deduction"
     ELECTION_CERTIFICATE_SUSPENSION = "election_certificate_suspension"
+    #: Deferred coverage: no NH-reservation/age-reduction allocation
+    #: procedure has been derived; no competing authoritative algorithms.
     DEDUCTION_AGE_WORK_INTERACTION = "deduction_age_work_interaction"
+    CARE_MINIMUM_PARTIAL_DEDUCTION = "care_minimum_partial_deduction"
+    SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION = (
+        "sole_full_deduction_zero_dual_composition"
+    )
 
 
 @_sealed_refusal(UnsupportedReason)
@@ -1358,7 +1401,7 @@ def _refuse_historical_own_rib(
         pia > 0
         and reduction_months > 0
         and birth_year is not None
-        and birth_year < 1916
+        and birth_year < _FIRST_COHORT_WITHOUT_PRE_1978_OWN_RIB
     ):
         raise _computed(
             FamilyConfigurationUnsupported,
@@ -1692,6 +1735,440 @@ _BENEFICIARY_CONDITION_REASONS = {
         "implemented",
     ),
 }
+
+
+# Each row explicitly classifies a possible hold, including those that leave
+# all six facts settled. Completeness tests require a decision for new enums.
+# F1 NH OB; F2 DIB gross; F3 RIB gross; F4 auxiliary OB;
+# F5 raw spouse own-PIA eligibility; F6 other own-benefit eligibility.
+_PREFLIGHT_FACT_UNSETTLERS = {
+    RecordCondition.DIB_GUARANTEE_PIA: frozenset(),
+    RecordCondition.DIB_AFTER_REDUCED_RIB: frozenset({"F2"}),
+    RecordCondition.WORKERS_COMPENSATION_OFFSET: frozenset({"F2", "F3"}),
+    # Source conflict us:oasdi-finality-protected-rates-before-coverage
+    RecordCondition.ADMINISTRATIVE_FINALITY: frozenset(
+        {"F1", "F2", "F3", "F4", "F5", "F6"}
+    ),
+    RecordCondition.WORKER_NOT_ENTITLED: frozenset(),
+    RecordCondition.WINDFALL_ELIMINATION_PROVISION: frozenset(),
+    RecordCondition.NON_AIME_FORMULA_PIA: frozenset(),
+    BeneficiaryCondition.ENTITLED_ON_ANOTHER_RECORD: frozenset(),
+    BeneficiaryCondition.DEEMED_OR_PUTATIVE_SPOUSE: frozenset(),
+    BeneficiaryCondition.LEGAL_SPOUSE_WITH_DEEMED_SPOUSE: frozenset(),
+    BeneficiaryCondition.GOVERNMENT_PENSION_OFFSET: frozenset(),
+    BeneficiaryCondition.RATE_PROTECTED_BY_FINALITY: frozenset(
+        {"F4", "F5", "F6"}
+    ),
+    BeneficiaryCondition.DIB_BETWEEN_SPOUSE_BENEFIT_AND_RIB: frozenset(),
+    BeneficiaryCondition.WIDOW_DRC_SAVINGS_CLAUSE: frozenset({"F4"}),
+    UnsupportedReason.ELIGIBILITY_BEFORE_1983: frozenset(),
+    UnsupportedReason.PAYMENT_MONTH_BEFORE_1983: frozenset({"F3", "F4", "F6"}),
+    UnsupportedReason.DI_ENTITLEMENT_BEFORE_JULY_1980: frozenset(),
+    UnsupportedReason.COMBINED_FAMILY_MAXIMUM: frozenset(),
+    UnsupportedReason.DEEMED_SPOUSE: frozenset(),
+    UnsupportedReason.PARENT_BENEFIT: frozenset({"F4", "F6"}),
+    UnsupportedReason.DISABLED_WIDOW_UNDER_60: frozenset(),
+    UnsupportedReason.DIB_GUARANTEE_PIA: frozenset(),
+    UnsupportedReason.DIB_AFTER_REDUCED_RIB: frozenset({"F2"}),
+    UnsupportedReason.WORKERS_COMPENSATION_OFFSET: frozenset({"F2", "F3"}),
+    UnsupportedReason.GOVERNMENT_PENSION_OFFSET: frozenset(),
+    UnsupportedReason.ADMINISTRATIVE_FINALITY: frozenset(
+        {"F1", "F2", "F3", "F4", "F5", "F6"}
+    ),
+    UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE: frozenset({"F2", "F3", "F6"}),
+    UnsupportedReason.PARISI_AMBIGUOUS: frozenset(),
+    UnsupportedReason.PARISI_BEFORE_OCTOBER_1999: frozenset(),
+    UnsupportedReason.INDEPENDENT_DIVORCED_SPOUSE: frozenset(),
+    UnsupportedReason.NON_AIME_FORMULA_PIA: frozenset(),
+    UnsupportedReason.MULTIPLE_AUXILIARY_RECORDS: frozenset(),
+    UnsupportedReason.SAVINGS_CLAUSE: frozenset(),
+    UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN: frozenset(),
+    UnsupportedReason.SAVINGS_CLAUSE_MEMBERSHIP_CHANGE: frozenset(),
+    UnsupportedReason.SAVINGS_CLAUSE_RATE_PROCEDURE: frozenset(),
+    UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE: frozenset({"F4"}),
+    UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN: frozenset(
+        {"F4"}
+    ),
+    UnsupportedReason.WIDOW_CHILD_IN_CARE_UNKNOWN: frozenset(),
+    UnsupportedReason.DIVORCED_SPOUSE_CHILD_IN_CARE_UNKNOWN: frozenset(),
+    UnsupportedReason.DIVORCED_SPOUSE_CARE_HISTORY: frozenset(),
+    UnsupportedReason.DELAYED_CREDITS_BEFORE_1917: frozenset({"F3", "F6"}),
+    UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978: frozenset(
+        {"F2", "F3", "F6"}
+    ),
+    UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978: frozenset(
+        {"F2", "F3", "F6"}
+    ),
+    UnsupportedReason.PRISONER_SUSPENSION: frozenset(),
+    UnsupportedReason.DRUG_ADDICTION_SUSPENSION: frozenset(),
+    UnsupportedReason.FOREIGN_WORK_DEDUCTION: frozenset(),
+    UnsupportedReason.PENALTY_DEDUCTION: frozenset(),
+    UnsupportedReason.MARITIME_DEDUCTION: frozenset(),
+    UnsupportedReason.ELECTION_CERTIFICATE_SUSPENSION: frozenset(),
+    UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION: frozenset(),
+    UnsupportedReason.CARE_MINIMUM_PARTIAL_DEDUCTION: frozenset(),
+    UnsupportedReason.SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION: frozenset(),
+}
+# These holds can only lower an NH rate (402(q)(2), 224; 20 CFR 404.408(c)(1),
+# 404.411(b)-(c)), so the rate an unheld record would pay stays its cap. Pre-1978
+# money history is the exception for an own RIB, which it can raise above
+# today's formula (_historical_own_rib_possible).
+_NH_REDUCTION_ONLY_HOLDS = frozenset(
+    {
+        RecordCondition.DIB_AFTER_REDUCED_RIB,
+        RecordCondition.WORKERS_COMPENSATION_OFFSET,
+        UnsupportedReason.DIB_AFTER_REDUCED_RIB,
+        UnsupportedReason.WORKERS_COMPENSATION_OFFSET,
+        UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
+        UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978,
+        UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
+    }
+)
+_PRE_1978_HISTORY_HOLDS = frozenset(
+    {
+        UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978,
+        UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
+    }
+)
+# Each opens F2 only through a prior reduced benefit. A workers' compensation
+# offset and administrative finality don't, so no age limits them.
+_PRIOR_REDUCED_BENEFIT_HOLDS = _PRE_1978_HISTORY_HOLDS | {
+    RecordCondition.DIB_AFTER_REDUCED_RIB,
+    UnsupportedReason.DIB_AFTER_REDUCED_RIB,
+    UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
+}
+# _is_entitled compares these roles' actual own RIB. A spouse's test reads the
+# raw own PIA (F5), which no reduction history changes.
+_OWN_RIB_AMOUNT_TEST_ROLES = _WIDOW_ROLES | {Role.MOTHER_FATHER, Role.PARENT}
+# With no delayed credits, none of these can lift an own RIB past its PIA.
+# RS 00615.101 rounds a reduced RIB up to the next dime before 6/82, and a
+# dime rounding cannot pass a PIA that G already holds to dimes.
+_PIA_CAP_KEEPING_HOLDS = _NH_REDUCTION_ONLY_HOLDS | {
+    UnsupportedReason.DELAYED_CREDITS_BEFORE_1917,
+    UnsupportedReason.PAYMENT_MONTH_BEFORE_1983,
+}
+
+
+def _declared_fact_holds(state, beneficiary=None):
+    holds = set(state.conditions)
+    if state.deferred_refusal is not None:
+        holds.add(state.deferred_refusal[0])
+    if beneficiary is not None:
+        holds.update(beneficiary.conditions)
+    return holds
+
+
+def _wib_carryover_possible(own, birth_year):
+    """Whether a prior reduced WIB could lower this own RIB.
+
+    RS 00615.005A.8 ends the carryover for workers born 1/2/28 or later, and
+    20 CFR 404.411(c)(2) keeps it before then, even with no current WIB.
+    """
+    return (
+        own is not None
+        and own.kind is OwnBenefitKind.OLD_AGE
+        and own.pia > 0
+        and (
+            birth_year is None
+            or birth_year < _FIRST_OWN_RIB_WITHOUT_WIB_CARRYOVER_BIRTH_YEAR
+        )
+    )
+
+
+def _historical_own_rib_possible(own, birth_year):
+    """Whether pre-1978 money history could set this own RIB.
+
+    RS 00615.005C.2's money reduction can exceed today's fraction. Undated
+    inputs stay in the current-formula domain, so only a declared history
+    hold reaches an omitted cohort. A zero PIA or no remaining reduction
+    needs no historical reduction amount (_refuse_historical_own_rib).
+    """
+    return (
+        own is not None
+        and own.kind is OwnBenefitKind.OLD_AGE
+        and own.pia > 0
+        and own.reduction_months > 0
+        and (
+            birth_year is None
+            or birth_year < _FIRST_COHORT_WITHOUT_PRE_1978_OWN_RIB
+        )
+    )
+
+
+def _prior_reduced_benefit_possible(birth_year, payment_month):
+    """Whether a reduced benefit could precede and lower this DIB month.
+
+    RS 00615.010 says "DIB is not reduced unless there was prior entitlement
+    to reduced RIB (or WIB prior to 1/90)", and it counts "months of WIB
+    entitlement before the first MOET to DIB". So a route needs a month
+    before this one. RS 00615.005A.1-A.4 date each route, and an SSA cohort
+    attains an age no earlier than January of that year. The schema doesn't
+    say which route a hold took, so every hold shares the earliest of any
+    route. ``first_dib_entitlement`` is the first-ever DIB month, not the
+    latest period's, so only the payment month bounds that period's start.
+    """
+    if payment_month is None:
+        return True
+    month = (payment_month.year, payment_month.month)
+    if month < _FIRST_REDUCED_DIB_MONTH:
+        return False
+    return birth_year is None or any(
+        max(first_month, (birth_year + age, 1)) < month
+        for first_month, age in _PRIOR_REDUCED_BENEFIT_ROUTES
+    )
+
+
+def _tested_pia(state, beneficiary):
+    """The PIA an own-RIB test reads; a widow(er)'s OB can deem a higher one."""
+    if beneficiary is None:
+        return state.pia
+    return beneficiary.original_benefit_basis or state.pia
+
+
+def _hold_unsettles_fact(
+    hold,
+    fact,
+    state,
+    beneficiary,
+    *,
+    payment_month,
+    beneficiaries,
+    params,
+    upper_bound=False,
+    pia_cap=False,
+):
+    if fact not in _PREFLIGHT_FACT_UNSETTLERS[hold]:
+        return False
+    if pia_cap and hold in _PIA_CAP_KEEPING_HOLDS:
+        return False
+    tested_pia = _tested_pia(state, beneficiary)
+    if fact in ("F3", "F6") and hold in _PRE_1978_HISTORY_HOLDS:
+        own, cohort = (
+            (state.worker, state.worker_birth_year)
+            if beneficiary is None
+            else (beneficiary.own_benefit, beneficiary.birth_year)
+        )
+        # A declared history reaches past the undated current formula, in
+        # either direction. A zero PIA fails every RIB on every filling.
+        if tested_pia > 0 and _historical_own_rib_possible(own, cohort):
+            return True
+    if (
+        upper_bound
+        and hold in _NH_REDUCTION_ONLY_HOLDS
+        and fact in ("F2", "F3")
+    ):
+        return False
+    # 404.411(b) reduces a DIB after a reduced RIB and after a WIB under
+    # (b)(2). The schema omits the onset that scopes (b)(2), so only each
+    # route's dates and the pre-1978 cohort limit a hold on either benefit.
+    if (
+        fact == "F2"
+        and hold in _PRIOR_REDUCED_BENEFIT_HOLDS
+        and not _prior_reduced_benefit_possible(
+            state.worker_birth_year, payment_month
+        )
+    ):
+        return False
+    if fact == "F2" and hold in _PRE_1978_HISTORY_HOLDS:
+        cohort = state.worker_birth_year
+        return (
+            cohort is None or cohort < _FIRST_COHORT_WITHOUT_PRE_1978_REDUCTION
+        )
+    if fact == "F3" and hold in (
+        UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
+        UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
+    ):
+        return _wib_carryover_possible(state.worker, state.worker_birth_year)
+    if hold in (
+        UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978,
+        UnsupportedReason.DELAYED_CREDITS_BEFORE_1917,
+    ):
+        own = state.worker if beneficiary is None else beneficiary.own_benefit
+        if own is None:
+            return False
+        # Every nonnegative RIB meets a zero threshold, so its amount can't
+        # change the result.
+        if fact == "F6" and tested_pia == 0:
+            return False
+        try:
+            _own_monthly_benefit_validated(own, params)
+        except FamilyConfigurationUnsupported:
+            return True
+        return False
+    if hold is UnsupportedReason.PARENT_BENEFIT:
+        if beneficiary is None or beneficiary.role is not Role.PARENT:
+            return False
+        # RS 00209.001/.015: count changes 82.5% to 75%, so uncertainty
+        # about exact OB cannot invalidate the one-parent upper bound.
+        if upper_bound:
+            return False
+        try:
+            _entitled_parent_count(state, beneficiaries, params)
+        except FamilyConfigurationUnsupported:
+            return True
+        return False
+    if hold is UnsupportedReason.PAYMENT_MONTH_BEFORE_1983:
+        if fact == "F4":
+            if (
+                state.kind is FamilyKind.SURVIVOR
+                and beneficiary is not None
+                and beneficiary.role in _WIDOW_ROLES
+            ):
+                # RS 00615.005A.2/.5: exact ordinary WIB became 100%
+                # of PIA in January 1973. A gross upper bound additionally
+                # needs the separate historical-minimum check below.
+                return payment_month is None or (
+                    payment_month.year,
+                    payment_month.month,
+                ) < (1973, 1)
+            # Historical rounding is outside G's supported interval.
+            # The captures do not settle modern dime-floored nonwidow OB
+            # for every refused historical month (RS 00615.101).
+            return (
+                payment_month is None
+                or (
+                    payment_month.year,
+                    payment_month.month,
+                )
+                < FIRST_SUPPORTED_PAYMENT_MONTH
+            )
+        return (
+            payment_month is None
+            or (
+                payment_month.year,
+                payment_month.month,
+            )
+            < FIRST_SUPPORTED_PAYMENT_MONTH
+        )
+    if hold in (
+        BeneficiaryCondition.WIDOW_DRC_SAVINGS_CLAUSE,
+        UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE,
+        UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN,
+    ):
+        # RS 00615.712 protects survivors; a deferred reason cannot
+        # change a living record's original benefits. DRCs enter only a
+        # widow(er)'s OB: "The child's original rate is $300" on the same
+        # PIA, and the clause protects the child's adjusted cash.
+        return state.kind is FamilyKind.SURVIVOR and (
+            upper_bound or beneficiary.role in _WIDOW_ROLES
+        )
+    if fact == "F6" and hold in (
+        UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
+        UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
+    ):
+        if beneficiary is None:
+            return True
+        # RS 00615.005A.8/.010 can change the own RIB before cohort 1928.
+        # Modern DWB election still requires eligibility and keeps the
+        # PIA/RFs unchanged (RS 00615.315). A nonnegative RIB cannot be
+        # less than a zero deemed-death PIA (402(e)(1)(D)).
+        return (
+            beneficiary.role in _OWN_RIB_AMOUNT_TEST_ROLES
+            and tested_pia > 0
+            and _wib_carryover_possible(
+                beneficiary.own_benefit, beneficiary.birth_year
+            )
+        )
+    return True
+
+
+def _fact_is_settled(
+    fact,
+    state,
+    beneficiary=None,
+    *,
+    payment_month=None,
+    beneficiaries=(),
+    params=None,
+    upper_bound=False,
+    pia_cap=False,
+):
+    """Whether ordinary G can establish this fact before a coverage hold.
+
+    Record conditions apply to everyone; beneficiary conditions and their
+    implicit coverage holds apply only to that person. Inspect every
+    declared condition even when another condition would refuse first.
+    Canonical money helpers may still refuse a fact that passes this test.
+    An upper-bound request asks only for a cap: the one-parent OB without
+    an exact parent count, or an NH rate a reduction-only hold can lower.
+    A PIA-cap request asks only whether a RIB with no delayed credits stays
+    at or below its PIA, a weaker cap that survives money history.
+    """
+    if beneficiary is not None:
+        beneficiary = _with_effective_cohort(beneficiary)
+    holds = _declared_fact_holds(state, beneficiary)
+    if any(
+        _hold_unsettles_fact(
+            hold,
+            fact,
+            state,
+            beneficiary,
+            payment_month=payment_month,
+            beneficiaries=beneficiaries,
+            params=params,
+            upper_bound=upper_bound,
+            pia_cap=pia_cap,
+        )
+        for hold in holds
+    ):
+        return False
+    if (
+        payment_month is not None
+        and (payment_month.year, payment_month.month)
+        < FIRST_SUPPORTED_PAYMENT_MONTH
+    ):
+        holds.add(UnsupportedReason.PAYMENT_MONTH_BEFORE_1983)
+    if beneficiary is not None:
+        if state.kind is FamilyKind.SURVIVOR:
+            if state.widow_drc_savings_clause is True:
+                holds.add(UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE)
+            elif state.widow_drc_savings_clause is None and fact == "F4":
+                possible = _declared_widow_drc_protection_possible(
+                    state, beneficiaries, params, payment_month
+                )
+                if _widow_drc_history_unknown(state, possible):
+                    holds.add(
+                        UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN
+                    )
+        if payment_month is not None:
+            try:
+                resolved = _with_effective_cohort(beneficiary)
+                if (
+                    resolved.role in _AGED_WIDOW_ROLES
+                    and resolved.own_benefit is not None
+                    and resolved.own_benefit.kind is OwnBenefitKind.OLD_AGE
+                    and resolved.birth_year is None
+                ):
+                    # R2 can reach this helper before G's family input
+                    # checks. Preserve their canonical error; this branch
+                    # cannot repeat validation on a valid declaration.
+                    _check_beneficiary_inputs(resolved, state, params)
+                # Conditions were classified individually above. A generic
+                # reason shared by several conditions must not broaden one
+                # condition's scope or mask a later implicit history hold.
+                _refuse_beneficiary(
+                    _replace_declared(
+                        resolved,
+                        conditions=frozenset(),
+                    ),
+                    payment_month,
+                )
+            except FamilyConfigurationUnsupported as error:
+                holds.add(error.reason)
+    return not any(
+        _hold_unsettles_fact(
+            hold,
+            fact,
+            state,
+            beneficiary,
+            payment_month=payment_month,
+            beneficiaries=beneficiaries,
+            params=params,
+            upper_bound=upper_bound,
+            pia_cap=pia_cap,
+        )
+        for hold in holds
+    )
 
 
 class OwnBenefitKind(Enum):
@@ -2259,15 +2736,31 @@ class BenefitDeduction:
     own-work deductions have ``permanent=False``; all other supported events
     are permanent. Dual entitlement is already declared by ``OwnBenefit``;
     an explicit marker must agree with the ordinary G payable.
+    ``under_full_retirement_age`` attests a spouse no-care deduction only
+    when the supplied cohort does not settle age (203(c)(2); 20 CFR
+    404.421(a)). Supplied facts take priority over the attestation.
+    Own-work payables must be strictly below the ordinary rate after NH
+    reservations. R2 emits only strictly positive own-work deductions.
     """
 
     reason: DeductionReason
     payable: Fraction = Fraction(0)
     permanent: bool = True
+    under_full_retirement_age: bool | None = None
 
     def __post_init__(self):
         _input_type(self.reason, DeductionReason, "deduction reason")
         _input_type(self.permanent, bool, "permanent")
+        if self.under_full_retirement_age is not None:
+            _input_type(
+                self.under_full_retirement_age,
+                bool,
+                "under_full_retirement_age",
+            )
+            if self.reason is not DeductionReason.NO_CHILD_IN_CARE:
+                raise InvalidFamilyInput(
+                    "Under-FRA attestation describes a no-child-in-care deduction"
+                )
         object.__setattr__(self, "payable", _exact(self.payable, "payable"))
         if self.payable < 0:
             raise InvalidFamilyInput("payable must be nonnegative")
@@ -3373,6 +3866,22 @@ def _parent_entitlement_thresholds(pia: Fraction) -> tuple[Fraction, Fraction]:
     return pia * Fraction(165, 200), pia * Fraction(3, 4)
 
 
+def _parent_threshold(
+    pia: Fraction, parents: tuple[int, frozenset[str]], beneficiary_id: str
+) -> Fraction:
+    """One parent's 402(h)(1)(D) own-RIB threshold in the resolved set.
+
+    ``parents`` is ``_entitled_parent_count``'s (count, excluded ids). An
+    entitled parent is tested at its own rate; an excluded parent at the
+    two-parent rate it would share.
+    """
+    parent_count, excluded = parents
+    one_rate, two_rate = _parent_entitlement_thresholds(pia)
+    if parent_count == 2 or beneficiary_id in excluded:
+        return two_rate
+    return one_rate
+
+
 def _entitled_parent_count(
     state: RecordState,
     beneficiaries: Sequence[Beneficiary],
@@ -3451,28 +3960,41 @@ def _mother_father_care_rate(
     for a surviving divorced caregiver (RS 00615.682). Only the actual
     202(e)/(f) surviving divorced spouse stays outside (403(a)(3)(C)).
     The comparison has no age reduction or RIB-LIM; its own-benefit offset
-    is applied by the actual widow computation. Other care flags are
-    cleared so this comparison cannot recursively compare widow floors.
+    is applied by the actual widow computation. 402(q)(5)(D) substitutes
+    only this caregiver's entitlement, so another caregiver keeps its care
+    facts and its own minimum in the comparison.
     """
-    comparison = []
-    for member in beneficiaries:
-        if member.beneficiary_id == caregiver.beneficiary_id:
-            comparison.append(
-                _replace_declared(
-                    member,
-                    role=Role.MOTHER_FATHER,
-                    reduction_months=0,
-                    reduction_period_months=None,
-                    original_benefit_basis=None,
-                    child_in_care=None,
-                )
-            )
-        elif member.role in _WIDOW_ROLES:
-            comparison.append(_replace_declared(member, child_in_care=False))
-        else:
-            comparison.append(member)
-    result = _family_benefits(state, comparison, payment_month, params)
+    comparison = _mother_father_comparison(beneficiaries, caregiver)
+    result = _care_comparison(
+        ("ordinary", state, comparison, payment_month, id(params)),
+        lambda: _family_benefits(state, comparison, payment_month, params),
+    )
     return result.by_id()[caregiver.beneficiary_id].age_adjusted_rate
+
+
+def _mother_father_comparison(beneficiaries, caregiver):
+    return tuple(
+        (
+            _replace_declared(
+                member,
+                role=Role.MOTHER_FATHER,
+                reduction_months=0,
+                reduction_period_months=None,
+                original_benefit_basis=None,
+                child_in_care=None,
+            )
+            if member.beneficiary_id == caregiver.beneficiary_id
+            else member
+        )
+        for member in beneficiaries
+    )
+
+
+def _care_comparison(key, compute):
+    cache = _CARE_COMPARISONS.get()
+    if key not in cache:
+        cache[key] = compute()
+    return cache[key]
 
 
 def _refuse_widow_drc_savings_clause(
@@ -3500,21 +4022,8 @@ def _refuse_widow_drc_savings_clause(
         )
     if state.widow_drc_savings_clause is False:
         return
-    subject = [row for row in rows if row.subject]
-    possible_drc_protection = len(subject) > 1 and any(
-        row.beneficiary.role in _WIDOW_ROLES and row.ob > state.pia
-        for row in subject
-    )
-    if (
-        state.eligibility_year is None
-        or state.eligibility_year < FIRST_SUPPORTED_ELIGIBILITY_YEAR
-        or (
-            state.first_dib_entitlement is not None
-            and state.first_dib_entitlement
-            <= _construct_declared(YearMonth, 1978, 5)
-        )
-        or (state.first_dib_entitlement is None and possible_drc_protection)
-    ):
+    possible_drc_protection = _possible_widow_drc_protection(rows, state.pia)
+    if _widow_drc_history_unknown(state, possible_drc_protection):
         raise _computed(
             FamilyConfigurationUnsupported,
             UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN,
@@ -3524,6 +4033,181 @@ def _refuse_widow_drc_savings_clause(
         )
 
 
+def _widow_drc_history_unknown(state, possible_drc_protection):
+    """The same protected-history predicate for G and its fact preflight."""
+    return (
+        state.eligibility_year is None
+        or state.eligibility_year < FIRST_SUPPORTED_ELIGIBILITY_YEAR
+        or (
+            state.first_dib_entitlement is not None
+            and state.first_dib_entitlement
+            <= _construct_declared(YearMonth, 1978, 5)
+        )
+        or (state.first_dib_entitlement is None and possible_drc_protection)
+    )
+
+
+def _possible_widow_drc_protection(rows, pia):
+    subject = [row for row in rows if row.subject]
+    return len(subject) > 1 and any(
+        row.beneficiary.role in _WIDOW_ROLES and row.ob > pia
+        for row in subject
+    )
+
+
+def _declared_widow_drc_protection_possible(
+    state, beneficiaries, params, payment_month
+):
+    """Bound protection from the roster, then resolve each relevant row.
+
+    One person's unresolved own benefit cannot invent a protected widow
+    or hide another person's independently settled disqualification.
+    Unresolved entitlement remains possible, using the canonical G rule.
+    """
+    candidates = [b for b in beneficiaries if b.role not in _OUTSIDE_MAXIMUM]
+
+    def possible_drc_basis(member):
+        return member.role in _WIDOW_ROLES and (
+            (
+                member.original_benefit_basis is not None
+                and member.original_benefit_basis > state.pia
+            )
+            or any(
+                _hold_unsettles_fact(
+                    hold,
+                    "F4",
+                    state,
+                    member,
+                    payment_month=payment_month,
+                    beneficiaries=beneficiaries,
+                    params=params,
+                )
+                for hold in _declared_fact_holds(state, member)
+            )
+        )
+
+    if len(candidates) <= 1 or not any(map(possible_drc_basis, candidates)):
+        return False
+    possible_count = 0
+    possible_widow = False
+    for member in candidates:
+        try:
+            if not _fact_is_settled(
+                "F6",
+                state,
+                member,
+                payment_month=payment_month,
+                beneficiaries=beneficiaries,
+                params=params,
+            ):
+                possible_count += 1
+                possible_widow |= possible_drc_basis(member)
+                continue
+            parents = (
+                _entitled_parent_count(state, beneficiaries, params)
+                if member.role is Role.PARENT
+                else (1, frozenset())
+            )
+            row = _original_entitlement_rows(
+                state,
+                (_with_effective_cohort(member),),
+                params,
+                payment_month,
+                parents,
+            )[0]
+            subject = row.subject
+        except FamilyConfigurationUnsupported:
+            subject = True
+        if subject:
+            possible_count += 1
+            possible_widow |= possible_drc_basis(member)
+    return possible_count > 1 and possible_widow
+
+
+def _original_entitlement_rows(
+    state, beneficiaries, params, payment_month, parents=None
+):
+    """G's OB and own-benefit entitlement, before any family allocation.
+
+    ``parents`` is ``_entitled_parent_count``'s (count, excluded ids) for
+    the whole roster; an excluded parent is tested at the two-parent rate.
+    """
+    if parents is None:
+        parents = _entitled_parent_count(state, beneficiaries, params)
+    rows = []
+    for beneficiary in beneficiaries:
+        own_base = own_mba = None
+        if beneficiary.own_benefit is not None:
+            own_base, own_mba = _own_monthly_benefit_validated(
+                beneficiary.own_benefit, params
+            )
+        ob = _original_benefit_validated(
+            beneficiary.role,
+            state.kind,
+            state.pia,
+            beneficiary.original_benefit_basis,
+            parent_count=(
+                parents[0] if beneficiary.role is Role.PARENT else None
+            ),
+        )
+        entitled, note = _is_entitled(
+            beneficiary,
+            state.pia,
+            own_mba,
+            parent_threshold=_parent_threshold(
+                state.pia, parents, beneficiary.beneficiary_id
+            ),
+        )
+        rows.append(
+            _Row(
+                beneficiary=beneficiary,
+                entitled=entitled,
+                subject=entitled and beneficiary.role not in _OUTSIDE_MAXIMUM,
+                ob=ob if entitled else Fraction(0),
+                own_base=own_base,
+                own_mba=own_mba,
+                note=note,
+                dwb_under_60=_dwb_under_60(beneficiary, payment_month),
+            )
+        )
+    return rows
+
+
+def _declared_worker_entitled(state: RecordState) -> bool:
+    """Resolve NH entitlement from the record kind and declared condition.
+
+    A survivor record has no living NH benefit. A disability record has
+    DIB; a retirement record has RIB unless WORKER_NOT_ENTITLED is declared.
+    This identity is knowable before any statutory coverage refusal.
+    """
+    return state.kind is FamilyKind.DISABILITY or (
+        state.kind is FamilyKind.RETIREMENT
+        and RecordCondition.WORKER_NOT_ENTITLED not in state.conditions
+    )
+
+
+# Each nested comparison turns one more caregiver into a mother or father, so
+# the recursion ends. A family is fixed by which caregivers it has turned, so
+# one call computes each of its at most 2**k comparison families once.
+_CARE_COMPARISONS = ContextVar("_CARE_COMPARISONS", default=None)
+
+
+def _care_scope(function):
+    """Share one call's comparison families with each nested comparison."""
+
+    def scoped(*args):
+        if _CARE_COMPARISONS.get() is not None:
+            return function(*args)
+        token = _CARE_COMPARISONS.set({})
+        try:
+            return function(*args)
+        finally:
+            _CARE_COMPARISONS.reset(token)
+
+    return scoped
+
+
+@_care_scope
 def _family_benefits(
     state: RecordState,
     beneficiaries: Sequence[Beneficiary],
@@ -3566,58 +4250,24 @@ def _family_benefits(
             "IEDS before January 1985, or on a WEP-affected worker record "
             "before January 2024, is not implemented (RS 00202.100)",
         )
-    parent_count, excluded_parents = _entitled_parent_count(
-        state, beneficiaries, params
-    )
-    one_rate, two_rate = _parent_entitlement_thresholds(state.pia)
-    parent_threshold = two_rate if parent_count == 2 else one_rate
+    parents = _entitled_parent_count(state, beneficiaries, params)
     life_case = state.kind is not FamilyKind.SURVIVOR and not ieds
     worker_benefit = None
-    if state.kind is FamilyKind.RETIREMENT and not ieds:
-        worker_benefit = _own_monthly_benefit_validated(state.worker, params)[
-            1
-        ]
-    elif state.kind is FamilyKind.DISABILITY:
-        worker_benefit = state.pia
+    if _declared_worker_entitled(state):
+        if state.kind is FamilyKind.RETIREMENT:
+            worker_benefit = _own_monthly_benefit_validated(
+                state.worker, params
+            )[1]
+        else:
+            worker_benefit = state.pia
 
-    rows: list[_Row] = []
-    for beneficiary in beneficiaries:
-        own_base = own_mba = None
-        if beneficiary.own_benefit is not None:
-            own_base, own_mba = _own_monthly_benefit_validated(
-                beneficiary.own_benefit, params
-            )
-        ob = _original_benefit_validated(
-            beneficiary.role,
-            state.kind,
-            state.pia,
-            beneficiary.original_benefit_basis,
-            parent_count=(
-                parent_count if beneficiary.role is Role.PARENT else None
-            ),
-        )
-        entitled, note = _is_entitled(
-            beneficiary,
-            state.pia,
-            own_mba,
-            parent_threshold=(
-                two_rate
-                if beneficiary.beneficiary_id in excluded_parents
-                else parent_threshold
-            ),
-        )
-        rows.append(
-            _Row(
-                beneficiary=beneficiary,
-                entitled=entitled,
-                subject=entitled and beneficiary.role not in _OUTSIDE_MAXIMUM,
-                ob=ob if entitled else Fraction(0),
-                own_base=own_base,
-                own_mba=own_mba,
-                note=note,
-                dwb_under_60=_dwb_under_60(beneficiary, payment_month),
-            )
-        )
+    rows = _original_entitlement_rows(
+        state,
+        beneficiaries,
+        params,
+        payment_month,
+        parents,
+    )
 
     _refuse_widow_drc_savings_clause(state, rows)
     available = state.family_maximum - (state.pia if life_case else 0)
@@ -3828,7 +4478,12 @@ _DEDUCTION_REFUSALS = {
 
 
 def _check_deduction_inputs(
-    beneficiaries, deductions, households, worker_deductions
+    beneficiaries,
+    deductions,
+    households,
+    worker_deductions,
+    payment_month,
+    params,
 ):
     members = {b.beneficiary_id: b for b in beneficiaries}
     for label, mapping in (
@@ -3847,8 +4502,10 @@ def _check_deduction_inputs(
         raise InvalidFamilyInput(
             "Temporary deductions require every beneficiary's household"
         )
-    for key, event in deductions.items():
-        member = members[key]
+    for member in beneficiaries:
+        event = deductions.get(member.beneficiary_id)
+        if event is None:
+            continue
         if (
             event.reason is DeductionReason.DUAL_ENTITLEMENT
             and member.own_benefit is None
@@ -3866,6 +4523,44 @@ def _check_deduction_inputs(
                 raise InvalidFamilyInput(
                     "No-child-in-care deduction needs a spouse or mother/father"
                 )
+            if member.role in _SPOUSE_ROLES:
+                if member.reduction_months:
+                    raise InvalidFamilyInput(
+                        "No-child-in-care deduction excludes age-reduced spouses"
+                    )
+                under_fra = None
+                if member.birth_year is not None:
+                    # SSA cohorts run Jan 2 through Jan 1 of the next
+                    # year, with age attained the day before the birthday
+                    # (RS 00615.003/.010). A cohort gives an interval,
+                    # not an exact birthday or FRA-attainment month.
+                    earliest_fra = member.birth_year * 12 + _fra_months(
+                        member.birth_year, params
+                    )
+                    latest_fra = earliest_fra + 11
+                    month = payment_month.year * 12 + payment_month.month - 1
+                    if month < earliest_fra:
+                        under_fra = True
+                    elif month >= latest_fra:
+                        under_fra = False
+                own = member.own_benefit
+                if own is not None and own.delayed_credit_months:
+                    # Credits accrue only after FRA (Act 202(w)). Prior
+                    # own-RIB reduction months instead persist after FRA
+                    # and cannot establish the person's current age.
+                    under_fra = False
+                if under_fra is False:
+                    raise InvalidFamilyInput(
+                        "No-child-in-care deduction contradicts the birth cohort "
+                        "or supplied post-FRA credits"
+                    )
+                if event.under_full_retirement_age is False or (
+                    under_fra is None
+                    and event.under_full_retirement_age is not True
+                ):
+                    raise InvalidFamilyInput(
+                        "No-child-in-care spouse deduction requires under-FRA status"
+                    )
             if isinstance(member.child_in_care, str):
                 raise InvalidFamilyInput(
                     "No-child-in-care deduction conflicts with current care"
@@ -3875,16 +4570,66 @@ def _check_deduction_inputs(
             raise InvalidFamilyInput("Worker deductions must be nonnegative")
 
 
+def _historical_widow_gross_bound_unsettled(state, member, payment_month):
+    """Declared legacy history does not establish an ordinary-OB gross cap.
+
+    RS 00615.010's sole-survivor alternative can exceed ordinary WIB.
+    Its elimination depends on NH death and eligibility history, not just
+    the payment month. Preserve the existing refusal on a declared legacy
+    path; this does not compute that minimum or expand G's cash scope.
+    """
+    if (
+        state.kind is not FamilyKind.SURVIVOR
+        or member.role not in _WIDOW_ROLES
+    ):
+        return False
+    return (
+        (state.eligibility_year is not None and state.eligibility_year < 1983)
+        or (payment_month.year, payment_month.month) < (1983, 1)
+        or (
+            state.first_dib_entitlement is not None
+            and state.first_dib_entitlement
+            < _construct_declared(YearMonth, 1982, 1)
+        )
+        or (
+            state.deferred_refusal is not None
+            and state.deferred_refusal[0]
+            in {
+                UnsupportedReason.ELIGIBILITY_BEFORE_1983,
+                UnsupportedReason.DI_ENTITLEMENT_BEFORE_JULY_1980,
+            }
+        )
+    )
+
+
 def _check_deduction_amount_bounds(
-    state, beneficiaries, deductions, worker_deductions
+    state, beneficiaries, deductions, worker_deductions, params, payment_month
 ):
     """Reject impossible amounts before any statutory coverage refusal.
 
-    The original benefit is an unconditional upper bound on a post-work
-    payable. For a parent, the one-parent OB is the conservative upper
-    bound until a supported computation resolves entitlement/count.
+    Ordinary OB bounds gross only when the declared conditions settle
+    that upper bound (GN 02603.050A). Administrative finality can protect
+    a rate based on another PIA (RS 00615.754A.3); the historical
+    sole-survivor alternative can also exceed ordinary OB (RS 00615.010),
+    and RS 00615.712 states no cap on protected cash.
+    For a parent, the one-parent OB is the conservative upper bound until
+    a supported computation resolves entitlement/count.
+    Own-work events need strictly positive withholding after NH reserves;
+    equality to a settled upper bound is impossible on a refused record.
     """
     for member in beneficiaries:
+        if not _fact_is_settled(
+            "F4",
+            state,
+            member,
+            beneficiaries=beneficiaries,
+            params=params,
+            payment_month=payment_month,
+            upper_bound=True,
+        ) or _historical_widow_gross_bound_unsettled(
+            state, member, payment_month
+        ):
+            continue
         bid = member.beneficiary_id
         original = _original_benefit_validated(
             member.role, state.kind, state.pia, member.original_benefit_basis
@@ -3898,6 +4643,14 @@ def _check_deduction_amount_bounds(
         if event is not None and event.payable + nh > original:
             raise InvalidFamilyInput(
                 "Deductee payable and NH reservation exceed the original benefit"
+            )
+        if (
+            event is not None
+            and event.reason is DeductionReason.OWN_EARNINGS_TEST
+            and event.payable + nh == original
+        ):
+            raise InvalidFamilyInput(
+                "Own-earnings-test event must withhold a positive amount"
             )
 
 
@@ -3917,9 +4670,14 @@ def family_benefits_after_deductions(
 
     Mappings preserve associations; beneficiaries is an ordered tuple/list.
     Households are monthly membership IDs, required for all beneficiaries
-    whenever an own-work event is estimated. Empty deductions returns G's
-    ordinary result. ``worker_deductions`` reserves NH work deductions;
+    whenever an own-work event is estimated. No events or NH reservations
+    returns G's ordinary result. ``worker_deductions`` reserves NH deductions;
     these never release room (GN 02603.040B; RS 02501.155B.3.c).
+    Concurrent NH reservations and auxiliary age reductions have deferred
+    allocation coverage and refuse as ``deduction_age_work_interaction``;
+    no procedure has been derived for that combination.
+    A widow(er) with a child in care keeps the mother or father amount for
+    this month, under these same events (402(q)(5)(D)).
     R2 owns earnings, charge order, grace years and permanent determinations.
     """
     if standalone is not True:
@@ -3931,10 +4689,20 @@ def family_benefits_after_deductions(
     )
     worker_deductions = {} if worker_deductions is None else worker_deductions
     _check_deduction_inputs(
-        beneficiaries, deductions, households, worker_deductions
+        beneficiaries,
+        deductions,
+        households,
+        worker_deductions,
+        payment_month,
+        params,
     )
     _check_deduction_amount_bounds(
-        state, beneficiaries, deductions, worker_deductions
+        state,
+        beneficiaries,
+        deductions,
+        worker_deductions,
+        params,
+        payment_month,
     )
     return _after_deductions(
         state,
@@ -3947,6 +4715,7 @@ def family_benefits_after_deductions(
     )
 
 
+@_care_scope
 def _after_deductions(
     state,
     beneficiaries,
@@ -3974,6 +4743,13 @@ def _after_deductions(
                 "Deductee payable exceeds the pre-deduction rate"
             )
         if (
+            event.reason is DeductionReason.OWN_EARNINGS_TEST
+            and event.payable == gross
+        ):
+            raise InvalidFamilyInput(
+                "Own-earnings-test event must withhold a positive amount"
+            )
+        if (
             event.reason is DeductionReason.DUAL_ENTITLEMENT
             and event.payable != gross
         ):
@@ -3994,17 +4770,146 @@ def _after_deductions(
         for bid, event in deductions.items()
         if event.reason is not DeductionReason.DUAL_ENTITLEMENT
     }
-    if not events:
+    if not events and not any(worker_deductions.values()):
         return baseline
-    # Source conflict us:oasdi-nh-charge-age-reduction-interaction
-    if any(worker_deductions.values()) and any(
-        row.age_reduction_factor != 1 for row in baseline.beneficiaries
-    ):
+    return _readjusted_for_events(
+        state,
+        beneficiaries,
+        payment_month,
+        params,
+        baseline,
+        events,
+        households,
+        worker_deductions,
+    )
+
+
+def _current_caregivers(beneficiaries):
+    """Widow(er)s whom 402(q)(5)(D) compares with a mother or father."""
+    return [
+        member
+        for member in beneficiaries
+        if member.role in _WIDOW_ROLES
+        and isinstance(member.child_in_care, str)
+    ]
+
+
+@dataclass(frozen=True)
+class _CareMinimum:
+    """A month's 402(q)(5)(D) minimum: what it sets and how high it can go."""
+
+    floor: Fraction
+    ceiling: Fraction
+
+
+def _care_minimums_after_deductions(
+    state,
+    beneficiaries,
+    payment_month,
+    params,
+    baseline,
+    events,
+    households,
+    worker_deductions,
+):
+    """402(q)(5)(D): the minimum "for such month", with its deductions.
+
+    RS 00615.340 compares what a mother or father would receive, so the
+    comparison family takes this month's events and households. A deductee
+    keeps its rate in either family (GN 02603.050B.3), so its own minimum
+    stays G's ordinary one. Another caregiver keeps its care facts in the
+    comparison, so a deducted one keeps that ordinary minimum there too.
+
+    An event's ``payable`` belongs to the actual family's rate, and no source
+    carries a partial amount to a comparison rate. Treating every event as
+    full gives the highest minimum the month can reach, and the ordinary
+    minimum is the lowest. The two bound any reading, and a rate between
+    them refuses (``_refuse_unsettled_care_minimum``).
+    """
+    by_id = baseline.by_id()
+    caregivers = [
+        member
+        for member in _current_caregivers(beneficiaries)
+        if member.beneficiary_id not in events
+        and by_id[member.beneficiary_id].entitled
+    ]
+    if not caregivers:
+        return {}
+    if any(worker_deductions.values()):
         raise _computed(
             FamilyConfigurationUnsupported,
             UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION,
-            "Concurrent NH reservations and age reductions need a pinned allocation reading",
+            "Concurrent NH reservations and a child-in-care comparison have "
+            "deferred allocation coverage",
         )
+    minimums = {}
+    full = {
+        bid: _replace_declared(event, payable=Fraction(0))
+        for bid, event in events.items()
+    }
+    for caregiver in caregivers:
+        cid = caregiver.beneficiary_id
+        comparison = _mother_father_comparison(beneficiaries, caregiver)
+        ordinary = _care_comparison(
+            ("ordinary", state, comparison, payment_month, id(params)),
+            lambda comparison=comparison: _family_benefits(
+                state, comparison, payment_month, params
+            ),
+        )
+        highest = _care_comparison(
+            (
+                "events",
+                state,
+                comparison,
+                payment_month,
+                id(params),
+                tuple(sorted(full.items())),
+                tuple(sorted(households.items())),
+            ),
+            lambda comparison=comparison, ordinary=ordinary: (
+                _readjusted_for_events(
+                    state,
+                    comparison,
+                    payment_month,
+                    params,
+                    ordinary,
+                    full,
+                    households,
+                    {},
+                )
+            ),
+        )
+        ceiling = highest.by_id()[cid].age_adjusted_rate
+        settled = all(event.payable == 0 for event in events.values())
+        minimums[cid] = _CareMinimum(
+            ceiling if settled else ordinary.by_id()[cid].age_adjusted_rate,
+            ceiling,
+        )
+    return minimums
+
+
+def _refuse_unsettled_care_minimum(minimum, age_adjusted, beneficiary_id):
+    if minimum.ceiling > age_adjusted:
+        raise _computed(
+            FamilyConfigurationUnsupported,
+            UnsupportedReason.CARE_MINIMUM_PARTIAL_DEDUCTION,
+            "A partial deduction leaves the child-in-care comparison open "
+            "where it can change this rate; no source carries a partial "
+            "amount to the mother or father family",
+            beneficiary_id=beneficiary_id,
+        )
+
+
+def _readjusted_for_events(
+    state,
+    beneficiaries,
+    payment_month,
+    params,
+    baseline,
+    events,
+    households,
+    worker_deductions,
+):
     subject = [
         row for row in baseline.beneficiaries if row.subject_to_family_maximum
     ]
@@ -4013,6 +4918,113 @@ def _after_deductions(
     }
     # The existing Parisi result fixes which dual beneficiaries are deductees.
     # In particular .050A.2 disregards a zero dual rate regardless of other events.
+    dual = {
+        row.beneficiary_id for row in subject if row.own_benefit is not None
+    }
+    reserve = sum(
+        (
+            worker_deductions.get(row.beneficiary_id, Fraction(0))
+            for row in subject
+        ),
+        Fraction(0),
+    )
+    # Source conflict us:oasdi-nh-charge-age-reduction-interaction
+    if reserve and any(row.age_reduction_factor != 1 for row in subject):
+        raise _computed(
+            FamilyConfigurationUnsupported,
+            UnsupportedReason.DEDUCTION_AGE_WORK_INTERACTION,
+            "Concurrent NH reservations and age reductions have deferred allocation coverage",
+        )
+    # GN 02603.050A.1 expressly overrides the C formula for one full,
+    # permanent subject deduction and no other subject deduction event.
+    # Act 203(a)(3)(C), GN 02603.020B: outside events affect only their cash.
+    disregard_full = {
+        bid
+        for bid in explicit
+        if len(explicit) == 1
+        and not dual
+        and not reserve
+        and events[bid].permanent
+        and events[bid].payable == 0
+    }
+    arguments = (
+        state,
+        beneficiaries,
+        payment_month,
+        params,
+        baseline,
+        events,
+        households,
+        worker_deductions,
+        _care_minimums_after_deductions(
+            state,
+            beneficiaries,
+            payment_month,
+            params,
+            baseline,
+            events,
+            households,
+            worker_deductions,
+        ),
+    )
+    result = _readjust_deduction_rows(*arguments, disregard_full)
+    zero_dual = {
+        row.beneficiary_id
+        for row in subject
+        if row.beneficiary_id in dual
+        and row.auxiliary_payable == row.counted_against_maximum == 0
+    }
+    if (
+        len(explicit) == 1
+        and zero_dual
+        and dual == zero_dual
+        and not reserve
+        and all(
+            events[bid].permanent and events[bid].payable == 0
+            for bid in explicit
+        )
+    ):
+        # Source conflict us:oasdi-sole-full-deduction-zero-dual-composition:
+        # GN 02603.050A.1's "no other deduction" can include dual entitlement
+        # (.040A); A.2 disregards zero dual rows regardless of other deductions.
+        # Neither composition is adopted when their actual payments differ.
+        alternative = _readjust_deduction_rows(*arguments, explicit)
+        alternative_rows = alternative.by_id()
+        if any(
+            row.auxiliary_payable
+            != alternative_rows[row.beneficiary_id].auxiliary_payable
+            for row in result.beneficiaries
+            if row.subject_to_family_maximum
+        ):
+            raise _computed(
+                FamilyConfigurationUnsupported,
+                UnsupportedReason.SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION,
+                "GN 02603.050A.1 and A.2 do not settle how a sole full "
+                "permanent deduction composes with a zero-rate dual row; "
+                "the competing readings produce different payments",
+            )
+    return result
+
+
+def _readjust_deduction_rows(
+    state,
+    beneficiaries,
+    payment_month,
+    params,
+    baseline,
+    events,
+    households,
+    worker_deductions,
+    care_minimums,
+    disregard_full,
+):
+    """Use GN 02603.050C-D with one explicit A.1 disregard decision."""
+    subject = [
+        row for row in baseline.beneficiaries if row.subject_to_family_maximum
+    ]
+    explicit = {
+        row.beneficiary_id for row in subject if row.beneficiary_id in events
+    }
     dual = {
         row.beneficiary_id for row in subject if row.own_benefit is not None
     }
@@ -4025,17 +5037,6 @@ def _after_deductions(
         ),
         Fraction(0),
     )
-    # GN 02603.050A.1 expressly overrides the C formula for one full,
-    # permanent deduction and no other deduction event: disregard the row.
-    disregard_full = {
-        bid
-        for bid in explicit
-        if len(events) == 1
-        and not dual
-        and not reserve
-        and events[bid].permanent
-        and events[bid].payable == 0
-    }
     results = []
     for old in baseline.beneficiaries:
         bid = old.beneficiary_id
@@ -4130,14 +5131,12 @@ def _after_deductions(
                 counted=rate,
                 dwb_under_60=_dwb_under_60(member, payment_month),
             )
-            if (
-                isinstance(member.child_in_care, str)
-                and member.role in _WIDOW_ROLES
-            ):
-                row.mother_father_rate = _mother_father_care_rate(
-                    state, beneficiaries, member, payment_month, params
-                )
+            minimum = care_minimums.get(bid)
+            if minimum is not None:
+                row.mother_father_rate = minimum.floor
             age_adjusted, payable = _reduce_and_offset(row, state, params)
+            if minimum is not None:
+                _refuse_unsettled_care_minimum(minimum, age_adjusted, bid)
             values.update(
                 family_maximum_rate=rate,
                 counted_against_maximum=rate + worker_deductions.get(bid, 0),
@@ -4160,6 +5159,23 @@ def _after_deductions(
                 whole_dollar_auxiliary=_whole_dollars_validated(payable),
                 deduction=nh_deduction,
                 reserved_work_deduction=nh_deduction,
+            )
+        elif bid in care_minimums:
+            # 402(q)(5)(D) also reaches a rate no redistribution re-rates. A
+            # surviving divorced caregiver sits outside the actual maximum,
+            # while the mother or father it compares with sits inside.
+            minimum = care_minimums[bid]
+            age_adjusted = max(old.age_adjusted_rate, minimum.floor)
+            _refuse_unsettled_care_minimum(minimum, age_adjusted, bid)
+            payable = (
+                age_adjusted
+                if old.own_benefit is None
+                else max(Fraction(0), age_adjusted - old.own_benefit)
+            )
+            values.update(
+                age_adjusted_rate=age_adjusted,
+                auxiliary_payable=payable,
+                whole_dollar_auxiliary=_whole_dollars_validated(payable),
             )
         results.append(_computed(BeneficiaryBenefit, **values))
     family = {
@@ -4505,33 +5521,59 @@ def household_benefits_after_deductions(
         b for record in records.values() for b in record.beneficiaries
     )
     _check_deduction_inputs(
-        all_members, deductions, households, worker_deductions
+        all_members,
+        deductions,
+        households,
+        worker_deductions,
+        payment_month,
+        params,
     )
     for record in records.values():
         _check_family_inputs(
             record.state, record.beneficiaries, payment_month, params
         )
         _check_deduction_amount_bounds(
-            record.state, record.beneficiaries, deductions, worker_deductions
+            record.state,
+            record.beneficiaries,
+            deductions,
+            worker_deductions,
+            params,
+            payment_month,
         )
-    _refuse_household(held)
     results = {}
+    family_refusals = []
     for rid in sorted(records):
         record = records[rid]
         ids = {b.beneficiary_id for b in record.beneficiaries}
-        results[rid] = _after_deductions(
-            record.state,
-            record.beneficiaries,
-            payment_month,
-            params,
-            {bid: value for bid, value in deductions.items() if bid in ids},
-            {bid: value for bid, value in households.items() if bid in ids},
-            {
-                bid: value
-                for bid, value in worker_deductions.items()
-                if bid in ids
-            },
-        )
+        try:
+            results[rid] = _after_deductions(
+                record.state,
+                record.beneficiaries,
+                payment_month,
+                params,
+                {
+                    bid: value
+                    for bid, value in deductions.items()
+                    if bid in ids
+                },
+                {
+                    bid: value
+                    for bid, value in households.items()
+                    if bid in ids
+                },
+                {
+                    bid: value
+                    for bid, value in worker_deductions.items()
+                    if bid in ids
+                },
+            )
+        except FamilyConfigurationUnsupported as error:
+            family_refusals.append(error)
+    # Amount-dependent errors on every computable record precede either
+    # household coverage or a different record's held coverage refusal.
+    _refuse_household(held)
+    if family_refusals:
+        raise family_refusals[0]
     return _computed(
         HouseholdBenefits, payment_month, MappingProxyType(results)
     )
@@ -4692,33 +5734,45 @@ class SavingsClauseReading(Enum):
 
 
 def _savings_membership(result: FamilyBenefits) -> tuple:
-    """Membership is unordered; a change of record kind changes it too."""
+    """Operational membership excludes everyone outside 203(a)(3)(C)."""
     return (
         result.kind,
         result.worker_benefit is not None,
         frozenset(
             (row.beneficiary_id, row.role)
             for row in result.beneficiaries
-            if row.entitled
+            if row.subject_to_family_maximum
         ),
     )
 
 
 def _operational_age_reduced(result: FamilyBenefits) -> bool:
+    """An outside spouse cannot supply another person's age trigger."""
     return result.worker_reduced_for_age or any(
-        row.entitled and row.age_reduction_factor < 1
+        row.subject_to_family_maximum and row.age_reduction_factor < 1
         for row in result.beneficiaries
     )
 
 
+def _operational_qualifies(result: FamilyBenefits) -> bool:
+    """Apply 203(a)(3)(C)'s as-if-absent rule to the entitled-person count.
+
+    The literal reading deliberately retains its old count in _qualifies.
+    """
+    persons = sum(
+        row.subject_to_family_maximum for row in result.beneficiaries
+    ) + (result.worker_benefit is not None)
+    return result.family_maximum_binding and persons >= 2
+
+
 def _savings_age_basis(result: FamilyBenefits) -> tuple:
-    """Do not attribute a simultaneous change of age factors to the PIA."""
+    """Only governed age-factor changes can confound the PIA's effect."""
     return (
         result.worker_age_reduction_factor,
         frozenset(
             (row.beneficiary_id, row.age_reduction_factor)
             for row in result.beneficiaries
-            if row.entitled
+            if row.subject_to_family_maximum
         ),
     )
 
@@ -4732,6 +5786,14 @@ def _savings_has_deductions(result: FamilyBenefits) -> bool:
             or row.deduction
             or row.reserved_work_deduction
         )
+        for row in result.beneficiaries
+    )
+
+
+def _savings_has_own_benefits(result: FamilyBenefits) -> bool:
+    """Subject own benefits need an uncaptured dual-entitlement procedure."""
+    return any(
+        row.subject_to_family_maximum and row.own_benefit is not None
         for row in result.beneficiaries
     )
 
@@ -4831,15 +5893,21 @@ class SavingsClauseGuard:
     ``reading`` is an exact canonical SavingsClauseReading enum; its default
     SSA_OPERATIONAL follows d1338 and POMS RS 00630.400. Protection starts
     only after an age-reduced, maximum-reduced month with at least two
-    entitled persons, followed by a PIA increase that lowers payment with
-    unchanged membership. The two captured life-case procedures compute
-    protected auxiliary payments. Formula FMAX and its counted shares stay
-    unchanged. RS 00615.801B.2 carries the protected total, including a
-    period when the formula payment overtakes it and it later becomes
-    payable again. Membership changes during that carried protection refuse
-    with SAVINGS_CLAUSE_MEMBERSHIP_CHANGE. Survivor, dual-entitlement,
-    deduction and unspecified reduced-auxiliary procedures refuse with
-    SAVINGS_CLAUSE_RATE_PROCEDURE when protection would change money.
+    entitled persons, followed by a PIA increase that lowers payment.
+    Persons outside the maximum do not enter operational membership, age
+    conditions, or the entitled-person count (203(a)(3)(C)); their own
+    rates remain unchanged. The
+    two captured life-case procedures compute protected auxiliary payments.
+    Formula FMAX and its counted shares stay unchanged. RS 00615.801B.2
+    carries the protected total, including a period when the formula payment
+    overtakes it and it later becomes payable again. Membership changes at
+    that first qualifying fall or during carried protection refuse with
+    SAVINGS_CLAUSE_MEMBERSHIP_CHANGE.
+    Subject own benefits or deductions in either the prior or current
+    month refuse with SAVINGS_CLAUSE_RATE_PROCEDURE before establishing or
+    extending protection, retaining uncertain history. Survivor and
+    unspecified reduced-auxiliary procedures also refuse when protection
+    would change money.
 
     LITERAL_REFUSAL retains G v2: every qualifying month followed by a PIA
     increase protects its total, without an age condition or immediate fall.
@@ -4955,7 +6023,7 @@ class SavingsClauseGuard:
     @property
     @_validated_entry
     def refused_since(self) -> YearMonth | None:
-        """The first month whose total fell below the protected total."""
+        """The first refused fall or membership change in this history."""
         return (
             None
             if self._refused_since is None
@@ -5081,8 +6149,9 @@ class SavingsClauseGuard:
             raise _computed(
                 FamilyConfigurationUnsupported,
                 UnsupportedReason.SAVINGS_CLAUSE_MEMBERSHIP_CHANGE,
-                "membership changed while 203(a)(5) protection was active; "
-                "RS 00630.400 does not establish the successor protection",
+                "membership changed at a qualifying fall or while "
+                "203(a)(5) protection was active; RS 00630.400 does not "
+                "establish the successor protection",
             )
         if self._unknown_since is not None and _governed(result):
             raise _computed(
@@ -5093,34 +6162,53 @@ class SavingsClauseGuard:
             )
         if self._floor is not None and (
             _savings_has_deductions(result)
+            or _savings_has_own_benefits(result)
             or (
                 prior is not None
                 and prior.result is not None
-                and _savings_has_deductions(prior.result)
+                and (
+                    _savings_has_deductions(prior.result)
+                    or _savings_has_own_benefits(prior.result)
+                )
             )
         ):
             self._unknown_since = self._unknown_since or result.payment_month
             raise _computed(
                 FamilyConfigurationUnsupported,
                 UnsupportedReason.SAVINGS_CLAUSE_RATE_PROCEDURE,
-                "deductions in the current or prior month interact with "
-                "carried protection; pre-offset age rates do not establish "
-                "the protected payment under RS 00630.400",
+                "own benefits or deductions in the current or prior month "
+                "interact with carried protection; pre-offset age rates "
+                "do not establish the protected payment under RS 00630.400",
             )
         if (
             prior is not None
             and prior.result is not None
-            and _qualifies(prior.result)
+            and _operational_qualifies(prior.result)
             and _operational_age_reduced(prior.result)
             and result.pia > prior.pia
-            and membership == _savings_membership(prior.result)
             and total < _savings_clause_total_validated(prior.result)
         ):
+            if membership != _savings_membership(prior.result):
+                self._unknown_since = (
+                    self._unknown_since or result.payment_month
+                )
+                self._refused_since = (
+                    self._refused_since or result.payment_month
+                )
+                raise _computed(
+                    FamilyConfigurationUnsupported,
+                    UnsupportedReason.SAVINGS_CLAUSE_MEMBERSHIP_CHANGE,
+                    "membership changed with a qualifying PIA increase "
+                    "and lower payment; RS 00630.400 does not establish "
+                    "the successor protection",
+                )
             if (
                 _savings_age_basis(result) != _savings_age_basis(prior.result)
                 or result.family_maximum < prior.result.family_maximum
                 or _savings_has_deductions(result)
                 or _savings_has_deductions(prior.result)
+                or _savings_has_own_benefits(result)
+                or _savings_has_own_benefits(prior.result)
             ):
                 self._unknown_since = (
                     self._unknown_since or result.payment_month
@@ -5129,9 +6217,10 @@ class SavingsClauseGuard:
                     FamilyConfigurationUnsupported,
                     UnsupportedReason.SAVINGS_CLAUSE_RATE_PROCEDURE,
                     "age factors changed, the formula maximum fell, or "
-                    "either month has deductions, with a PIA increase and "
-                    "lower pre-offset total; the snapshots do not isolate "
-                    "the PIA's effect or establish the protected payment",
+                    "either month has own benefits or deductions, with a "
+                    "PIA increase and lower pre-offset total; the snapshots "
+                    "do not isolate the PIA's effect or establish the "
+                    "protected payment",
                 )
             protected = _savings_clause_total_validated(prior.result)
             if self._floor is None or protected > self._floor:

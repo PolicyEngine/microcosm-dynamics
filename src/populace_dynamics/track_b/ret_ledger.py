@@ -20,6 +20,22 @@ Auxiliary work readjusts binding family-maximum rates through G when the
 caller supplies the monthly statutory and household facts. Other deduction
 events remain refused. No unsupported row is dropped
 from an outcome denominator or silently computed as a single worker.
+G's declared monthly own-benefit facts establish two-record entitlement;
+an optional annual declaration must agree with those facts. Actual or
+estimated excess on two records remains refused (RS 02501.145-.150).
+Supplied G cohorts constrain the RET FRA declaration to the whole possible
+attainment-month interval, for the NH and every auxiliary. The old-age FRA
+governs all roles, including survivors (Act 203(f)(9); RS 02501.021B.3).
+Applied own delayed credits establish FRA by the supplied context month;
+age reductions and the deceased worker's credits do not establish a
+survivor's current age. Contradictions error before coverage refusals.
+Every known cohort for one person agrees across monthly contexts,
+including record and own-benefit fields; missing cohorts add no constraint.
+Declared NH entitlement agrees with RET before any coverage refusal.
+Rate and own-benefit eligibility comparisons precede a held refusal only
+when no declared condition can change that fact. G's explicit fact table
+and canonical benefit helpers establish those comparisons; protected or
+otherwise unresolved facts retain their original coverage refusal.
 Every raw month-set element must be an integer month before deduplication;
 malformed input raises before a coverage refusal can become an outcome.
 
@@ -248,6 +264,9 @@ class RETBeneficiary:
     under a disability (402(s)(2)); recovery may come before or after the
     marriage. CFR .420 omits that residual case, so it stays refused. Own
     two-record excess is still refused.
+    ``two_record_entitlement=None`` derives entitlement from supplied G
+    monthly own-benefit facts, or asserts no known two-record entitlement
+    without context. An explicit boolean must agree with those G facts.
     ``own_work_exempt_months`` must stay empty: Act 203(f)(1)(C) reaches
     only a child under a disability that month or three months before
     (202(s)(3)), and (D)'s widow(er) entitled before 60 is a disabled
@@ -275,7 +294,7 @@ class RETBeneficiary:
     )
     death_month: int | None = None
     own_work_exempt_months: frozenset[int] = field(default_factory=frozenset)
-    two_record_entitlement: bool = False
+    two_record_entitlement: bool | None = None
 
     def __post_init__(self):
         _identity(self.beneficiary_id, "A beneficiary")
@@ -297,10 +316,16 @@ class RETBeneficiary:
             "nh_entitled_before_divorce",
             "deemed_entitled",
             "deemed_married_to_nh",
-            "two_record_entitlement",
         ):
             if type(getattr(self, name)) is not bool:
                 raise InvalidFamilyInput(f"{name} must be boolean")
+        if (
+            self.two_record_entitlement is not None
+            and type(self.two_record_entitlement) is not bool
+        ):
+            raise InvalidFamilyInput(
+                "two_record_entitlement must be boolean or None"
+            )
         _fra(self.fra_month)
         if not isinstance(self.earnings, WorkEarnings) or (
             self.estimated_earnings is not None
@@ -411,6 +436,55 @@ class RETFamilyMonth:
         object.__setattr__(self, "households", dict(self.households))
 
 
+def _check_fra_facts(
+    beneficiary: RETBeneficiary,
+    year: int,
+    month: int,
+    birth_year: int | None,
+    own: g.OwnBenefit | None,
+    params: g.SSAParameters,
+) -> None:
+    """Reject only FRA declarations impossible under supplied G facts.
+
+    Act 203(f)(9), CFR .430(b)/.434(c), RS 02501.021B.3: every role uses
+    old-age FRA, not the widow's age-reduction schedule. SSA cohort years
+    run Jan 2 through the following Jan 1 (RS 00615.003); age attainment
+    precedes the birthday, so the possible FRA months span eleven months
+    after the earliest one. Missing dates leave the entire interval open.
+    Own DRCs establish only that FRA has occurred by this snapshot; do
+    not infer an exact FRA date or use another person's inherited DRCs.
+    """
+    if own is not None and own.birth_year is not None:
+        if birth_year is not None and birth_year != own.birth_year:
+            raise InvalidFamilyInput(
+                "G own and beneficiary birth cohorts differ"
+            )
+        birth_year = own.birth_year
+    earliest = latest = None
+    if birth_year is not None:
+        earliest = birth_year * 12 + g._fra_months(birth_year, params)
+        latest = earliest + 11
+    if own is not None and own.delayed_credit_months:
+        known_by = year * 12 + month - 1
+        latest = known_by if latest is None else min(latest, known_by)
+    fra = beneficiary.fra_month
+    if fra is None:
+        consistent = latest is None or latest >= (year + 1) * 12
+    elif fra == 0:
+        consistent = earliest is None or earliest < year * 12
+    else:
+        declared = year * 12 + fra - 1
+        consistent = (earliest is None or earliest <= declared) and (
+            latest is None or declared <= latest
+        )
+    if earliest is not None and latest is not None and earliest > latest:
+        consistent = False
+    if not consistent:
+        raise InvalidFamilyInput(
+            "RET FRA declaration contradicts G birth cohort or own delayed credits"
+        )
+
+
 @_declared_input
 @dataclass(frozen=True)
 class RecordYear:
@@ -508,6 +582,21 @@ class RecordYear:
             RecordKind.DISABILITY: g.FamilyKind.DISABILITY,
             RecordKind.DECEASED: g.FamilyKind.SURVIVOR,
         }[self.kind]
+        contextual_people = set()
+        contextual_two_records = set()
+        cohorts: dict[str, int] = {}
+
+        def remember_cohort(person: str, cohort: int | None) -> None:
+            # As in G's household check: one identity has one SSA cohort
+            # (402(q)(6); RS 00615.003/.010). Omission is not disagreement.
+            if cohort is None:
+                return
+            if person in cohorts and cohorts[person] != cohort:
+                raise InvalidFamilyInput(
+                    f"{person}'s birth_year differs across monthly contexts"
+                )
+            cohorts[person] = cohort
+
         for month, context in self.family_months.items():
             if context.state.kind is not expected_kind:
                 raise InvalidFamilyInput("G and RET record kinds differ")
@@ -534,11 +623,51 @@ class RecordYear:
                 g.Role.DISABLED_WIDOW: (BenefitType.DWB,),
             }
             ret_people = {b.beneficiary_id: b for b in beneficiaries}
+            if self.kind is not RecordKind.DECEASED:
+                _check_fra_facts(
+                    ret_people[self.nh_id],
+                    self.year,
+                    month,
+                    context.state.worker_birth_year,
+                    context.state.worker,
+                    context.params,
+                )
+            remember_cohort(self.nh_id, context.state.worker_birth_year)
+            if context.state.worker is not None:
+                remember_cohort(self.nh_id, context.state.worker.birth_year)
             for auxiliary in context.beneficiaries:
+                _check_fra_facts(
+                    ret_people[auxiliary.beneficiary_id],
+                    self.year,
+                    month,
+                    auxiliary.birth_year,
+                    auxiliary.own_benefit,
+                    context.params,
+                )
+                remember_cohort(auxiliary.beneficiary_id, auxiliary.birth_year)
+                if auxiliary.own_benefit is not None:
+                    remember_cohort(
+                        auxiliary.beneficiary_id,
+                        auxiliary.own_benefit.birth_year,
+                    )
+                contextual_people.add(auxiliary.beneficiary_id)
+                if auxiliary.own_benefit is not None:
+                    contextual_two_records.add(auxiliary.beneficiary_id)
                 if ret_people[auxiliary.beneficiary_id].benefit_types[
                     month - 1
                 ] not in role_types.get(auxiliary.role, ()):
                     raise InvalidFamilyInput("G and RET benefit types differ")
+        for beneficiary in beneficiaries:
+            key = beneficiary.beneficiary_id
+            if (
+                key in contextual_people
+                and beneficiary.two_record_entitlement is not None
+                and beneficiary.two_record_entitlement
+                != (key in contextual_two_records)
+            ):
+                raise InvalidFamilyInput(
+                    "G and RET two-record entitlement facts differ"
+                )
         object.__setattr__(self, "family_months", dict(self.family_months))
 
 
@@ -1026,6 +1155,186 @@ def _divorced_excluded(b: RETBeneficiary, month: int) -> bool:
     )
 
 
+def _care_minimum_can_move(record, month, deductees):
+    """Whether another person's deduction can raise a 402(q)(5)(D) minimum.
+
+    G settles it where a context names the caregiver. Without one, a reduced
+    surviving-spouse rate below an entitled child's original rate stays open,
+    and the caller's refusal names the missing facts. A survivor child's OB
+    and a mother's are both 3/4 of the PIA (402(d)(2), 402(g)(2)), and no
+    readjustment pays past an OB, so no minimum reaches a rate at or above
+    a child's.
+    """
+    if record.kind is not RecordKind.DECEASED:
+        return False
+    context = record.family_months.get(month)
+    if context is not None:
+        return bool(g._current_caregivers(context.beneficiaries))
+    entitled = [b for b in record.beneficiaries if month in b.entitled_months]
+    children = [
+        b.original_rates[month - 1]
+        for b in entitled
+        if b.benefit_types[month - 1] in (BenefitType.CHILD, BenefitType.CDB)
+    ]
+    return bool(children) and any(
+        b.beneficiary_id not in deductees
+        and b.benefit_types[month - 1] in (BenefitType.WIDOW, BenefitType.DWB)
+        and b.gross_rates[month - 1]
+        < min(b.original_rates[month - 1], max(children))
+        for b in entitled
+    )
+
+
+def _check_settled_family_facts(record: RecordYear) -> None:
+    """Compare declarations only where G can establish the underlying fact.
+
+    Entitlement to the NH benefit is an identity between declarations.
+    Money and own-benefit eligibility use G's canonical rules and its
+    condition table. A rule's coverage refusal leaves that fact unsettled;
+    an input error always propagates. A hold that can only reduce an NH
+    rate leaves equality open and keeps its cap. Whole-family allocations
+    stay after G.
+    """
+    people = {b.beneficiary_id: b for b in record.beneficiaries}
+    # These identities hold even under protected monetary rates.
+    if record.kind is not RecordKind.DECEASED:
+        nh = people[record.nh_id]
+        for month, context in record.family_months.items():
+            if g._declared_worker_entitled(context.state) != (
+                month in nh.entitled_months
+            ):
+                raise InvalidFamilyInput(
+                    "G and RET NH entitlement facts differ"
+                )
+    for month, context in record.family_months.items():
+        state = context.state
+        payment_month = _construct_declared(g.YearMonth, record.year, month)
+
+        def settled(
+            fact,
+            member=None,
+            *,
+            upper_bound=False,
+            pia_cap=False,
+            state=state,
+            payment_month=payment_month,
+            context=context,
+        ):
+            return g._fact_is_settled(
+                fact,
+                state,
+                member,
+                payment_month=payment_month,
+                beneficiaries=context.beneficiaries,
+                params=context.params,
+                upper_bound=upper_bound,
+                pia_cap=pia_cap,
+            )
+
+        if record.kind is not RecordKind.DECEASED:
+            nh = people[record.nh_id]
+            if month in nh.entitled_months:
+                if settled("F1") and nh.original_rates[month - 1] != state.pia:
+                    raise InvalidFamilyInput(
+                        "G context does not match RET rates"
+                    )
+                declared = nh.gross_rates[month - 1]
+                if record.kind is RecordKind.DISABILITY:
+                    if (settled("F2") and declared != state.pia) or (
+                        settled("F2", upper_bound=True)
+                        and declared > state.pia
+                    ):
+                        raise InvalidFamilyInput(
+                            "G context does not match RET rates"
+                        )
+                else:
+                    # RS 00615.005C.2 subtracts a money reduction from the
+                    # new PIA, so with no delayed credits history leaves a
+                    # RIB at or below that PIA, whatever the exact rate.
+                    if (
+                        declared > state.pia
+                        and state.worker.delayed_credit_months == 0
+                        and settled("F3", pia_cap=True)
+                    ):
+                        raise InvalidFamilyInput(
+                            "G context does not match RET rates"
+                        )
+                    if settled("F3", upper_bound=True):
+                        try:
+                            gross = g._own_monthly_benefit_validated(
+                                state.worker, context.params
+                            )[1]
+                        except FamilyConfigurationUnsupported:
+                            pass
+                        else:
+                            if declared > gross or (
+                                settled("F3") and declared != gross
+                            ):
+                                raise InvalidFamilyInput(
+                                    "G context does not match RET rates"
+                                )
+        parents = None
+        for auxiliary in context.beneficiaries:
+            auxiliary = g._with_effective_cohort(auxiliary)
+            person = people[auxiliary.beneficiary_id]
+            original = None
+            if settled("F4", auxiliary) or settled("F6", auxiliary):
+                try:
+                    if auxiliary.role is g.Role.PARENT and parents is None:
+                        parents = g._entitled_parent_count(
+                            state, context.beneficiaries, context.params
+                        )
+                    original = g._original_benefit_validated(
+                        auxiliary.role,
+                        state.kind,
+                        state.pia,
+                        auxiliary.original_benefit_basis,
+                        parent_count=(
+                            parents[0]
+                            if auxiliary.role is g.Role.PARENT
+                            else None
+                        ),
+                    )
+                except FamilyConfigurationUnsupported:
+                    pass
+            fact = "F5" if auxiliary.role in g._SPOUSE_ROLES else "F6"
+            if settled(fact, auxiliary) and not (
+                auxiliary.role is g.Role.PARENT and original is None
+            ):
+                own_mba = None
+                if auxiliary.own_benefit is not None and fact == "F6":
+                    try:
+                        own_mba = g._own_monthly_benefit_validated(
+                            auxiliary.own_benefit, context.params
+                        )[1]
+                    except FamilyConfigurationUnsupported:
+                        # No RIB falls below zero, so a test that a zero RIB
+                        # fails holds on every filling of the missing amount.
+                        own_mba = Fraction(0)
+                entitled, _ = g._is_entitled(
+                    auxiliary,
+                    state.pia,
+                    own_mba,
+                    parent_threshold=(
+                        g._parent_threshold(
+                            state.pia, parents, auxiliary.beneficiary_id
+                        )
+                        if auxiliary.role is g.Role.PARENT
+                        else None
+                    ),
+                )
+                if not entitled:
+                    raise InvalidFamilyInput(
+                        "G and RET auxiliary entitlement facts differ"
+                    )
+            if (
+                settled("F4", auxiliary)
+                and original is not None
+                and person.original_rates[month - 1] != original
+            ):
+                raise InvalidFamilyInput("G context does not match RET rates")
+
+
 @_validated_entry
 def apply_ret_year(
     record: RecordYear,
@@ -1052,6 +1361,7 @@ def apply_ret_year(
         raise InvalidFamilyInput("Use an explicit NESE proration policy")
     if parameters is not None and not isinstance(parameters, RETParameters):
         raise InvalidFamilyInput("Use R1 RETParameters")
+    _check_settled_family_facts(record)
     # Retain the G facts needed for money-changing readjustment. A caller's
     # reduced rates cannot identify age reductions or dual entitlement.
     held_family_refusals = []
@@ -1070,18 +1380,6 @@ def apply_ret_year(
             held_family_refusals.append(error)
             continue
         baseline_rows = {b.beneficiary_id: b for b in baseline.beneficiaries}
-        if record.kind is not RecordKind.DECEASED:
-            nh = next(
-                b
-                for b in record.beneficiaries
-                if b.beneficiary_id == record.nh_id
-            )
-            if (baseline.worker_benefit is not None) != (
-                month in nh.entitled_months
-            ):
-                raise InvalidFamilyInput(
-                    "G and RET NH entitlement facts differ"
-                )
         if baseline.family_maximum_binding != (
             month in record.family_maximum_binding_months
         ):
@@ -1105,6 +1403,13 @@ def apply_ret_year(
                 or original != beneficiary.original_rates[month - 1]
             ):
                 raise InvalidFamilyInput("G context does not match RET rates")
+    # R1 availability is an input requirement, so a held G coverage
+    # refusal cannot turn a missing supported year into a denominator row.
+    year = None
+    if record.year >= 2000:
+        year = (
+            parameters if parameters is not None else load_ret_parameters()
+        ).for_year(record.year)
     if held_family_refusals:
         raise held_family_refusals[0]
     if record.year < 2000:
@@ -1113,9 +1418,6 @@ def apply_ret_year(
             UnsupportedReason.YEAR_BEFORE_2000,
             "FRA-year rules in this form start in 2000",
         )
-    year = (
-        parameters if parameters is not None else load_ret_parameters()
-    ).for_year(record.year)
     refusals = (
         (record.fiscal_year, UnsupportedReason.FISCAL_YEAR),
         (record.short_taxable_year, UnsupportedReason.SHORT_TAXABLE_YEAR),
@@ -1167,6 +1469,12 @@ def apply_ret_year(
         for b in sorted(record.beneficiaries, key=lambda b: b.beneficiary_id)
     }
     facts = {}
+    contextual_two_records = {
+        b.beneficiary_id
+        for context in record.family_months.values()
+        for b in context.beneficiaries
+        if b.own_benefit is not None
+    }
     for key, b in people.items():
         higher = b.fra_month is not None and b.fra_month > 0
         exempt = (
@@ -1199,7 +1507,9 @@ def apply_ret_year(
             exempt,
             rate,
         )
-        if b.two_record_entitlement and (excess or estimate):
+        if (b.two_record_entitlement or key in contextual_two_records) and (
+            excess or estimate
+        ):
             raise _computed(
                 RETConfigurationUnsupported,
                 UnsupportedReason.TWO_RECORD_EARNINGS,
@@ -1286,7 +1596,10 @@ def apply_ret_year(
         # RS 02501.155A.2: charge every worker against their own adjusted
         # rate first. Redistribute only after all that month's workers have
         # been charged, so changing beneficiary order cannot change excess.
-        for m in sorted(record.family_maximum_binding_months):
+        # 402(q)(5)(D) reads this month's deductions with or without a
+        # binding actual maximum, because a surviving divorced caregiver
+        # sits outside it and the mother or father it compares with inside.
+        for m in range(1, 13):
             deductees = {
                 k: net[k, m]
                 for k in people
@@ -1298,6 +1611,11 @@ def apply_ret_year(
                 m in b.entitled_months and b.original_rates[m - 1] > 0
                 for k, b in people.items()
                 if k not in deductees
+            ):
+                continue
+            if (
+                m not in record.family_maximum_binding_months
+                and not _care_minimum_can_move(record, m, deductees)
             ):
                 continue
             if m not in record.family_months:

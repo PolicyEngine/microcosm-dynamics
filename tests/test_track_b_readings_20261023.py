@@ -2,9 +2,9 @@
 
 Verification class: statutory conformance and documentation integrity on
 captured sources only. No population, behavioral or forecast claim.
-Every ``# Source conflict`` marker in the Track B modules names a logged
-reading, every logged reading has a marker, and no design note keeps an
-open "Needs Max's judgment" heading.
+Every ``# Source conflict`` marker in the Track B modules names a reading
+documented in a design note, every reading of this pass has a marker, and
+no design note keeps an open "Needs Max's judgment" heading.
 """
 
 import re
@@ -61,23 +61,26 @@ def _module_markers():
     return found
 
 
-def test_markers_and_logged_readings_match_in_both_directions():
+def test_each_reading_of_this_pass_has_a_marker_in_its_module():
     markers = _module_markers()
-    logged = set().union(*READINGS.values())
-    # Modules outside G, R2 and R3 (insured status) log their own readings.
-    outside = {
-        name
-        for name, files in markers.items()
-        if files <= {"insured_status.py", "_insured_status_qc.py"}
-    }
-    assert set(markers) - outside == logged
-    for name in logged:
+    for name in set().union(*READINGS.values()):
+        assert name in markers, name
         assert markers[name] <= {
             "gross_benefits.py",
             "ret_ledger.py",
             "ret_grace.py",
             "arf.py",
         }, name
+
+
+def test_every_marker_names_a_reading_documented_in_a_design_note():
+    # Later rounds log their own readings; each must still be documented.
+    notes = " ".join(
+        path.read_text()
+        for path in (ROOT / "docs" / "design").glob("track_b_*.md")
+    )
+    for name in _module_markers():
+        assert name in notes, name
 
 
 @pytest.mark.parametrize("note", sorted(NOTES))

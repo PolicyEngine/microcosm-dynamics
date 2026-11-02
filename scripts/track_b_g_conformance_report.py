@@ -282,6 +282,58 @@ def _deduction_witness(reason, *, age_worker=False):
     )
 
 
+def _care_minimum_partial_witness():
+    """A partial deduction leaves the 402(q)(5)(D) comparison open."""
+    return g.family_benefits_after_deductions(
+        _survivor(),
+        (
+            g.Beneficiary(
+                "w",
+                g.Role.WIDOW,
+                reduction_months=60,
+                reduction_period_months=60,
+                child_in_care="c1",
+            ),
+            g.Beneficiary("c1", g.Role.CHILD),
+            g.Beneficiary("c2", g.Role.CHILD),
+        ),
+        payment_month=NOW,
+        params=PARAMS,
+        deductions={
+            "c2": g.BenefitDeduction(
+                g.DeductionReason.OWN_EARNINGS_TEST, F(100), True
+            )
+        },
+        households={"w": "h", "c1": "h", "c2": "h"},
+        standalone=True,
+    )
+
+
+def _zero_dual_composition_witness():
+    """GN 02603.050 A.1/A.2 disagree on C's $175 versus $200 rate."""
+    return g.family_benefits_after_deductions(
+        _retired(pia=400, maximum=600),
+        (
+            g.Beneficiary(
+                "b", g.Role.SPOUSE, birth_year=1960, reduction_months=36
+            ),
+            g.Beneficiary("c", g.Role.CHILD),
+            g.Beneficiary(
+                "z",
+                g.Role.CHILD,
+                own_benefit=g.OwnBenefit(g.OwnBenefitKind.DISABILITY, F(400)),
+            ),
+        ),
+        payment_month=NOW,
+        params=PARAMS,
+        deductions={
+            "b": g.BenefitDeduction(g.DeductionReason.OWN_EARNINGS_TEST)
+        },
+        households={},
+        standalone=True,
+    )
+
+
 def _operational_savings_witness(*, membership):
     month = g.YearMonth(2026, 1)
     guard = g.SavingsClauseGuard(month, earlier_months_unknown=False)
@@ -596,6 +648,14 @@ def refusal_witnesses() -> dict[g.UnsupportedReason, tuple[str, Callable]]:
             lambda: _deduction_witness(
                 g.DeductionReason.OWN_EARNINGS_TEST, age_worker=True
             ),
+        ),
+        reasons.SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION: (
+            "GN 02603.050 A.1 and A.2 compose differently: child 175 versus 200",
+            _zero_dual_composition_witness,
+        ),
+        reasons.CARE_MINIMUM_PARTIAL_DEDUCTION: (
+            "No source carries a partial deduction to a child-in-care comparison",
+            _care_minimum_partial_witness,
         ),
         reasons.WIDOW_DRC_SAVINGS_CLAUSE: (
             "May 1978 survivor protected from widow deceased-worker DRCs",

@@ -17,17 +17,26 @@ estimator.U2IncomeSpec`; the defaults of those classes are U0.
   (``uniform_cut_track_u.runner.NAMED_DELTAS``) is untouched.
 * :data:`U2_RULINGS` -- U2's own rulings record: Max's decision d514
   (2026-09-28) adopting every section 16 default and ratification of the
-  specification, as the specification's header and section 20 step 1
-  record it.  :func:`check_u2_rulings_against_block` refuses a block
-  whose ``decisions`` differ, and refuses U1's ``MAX_RULINGS`` outright:
-  copying U1's authorization is insufficient (section 14).  The current
-  ``u2-draft-4`` block still records ``u2_ratification: pending_Max``;
-  section 20 step 5 materializes the final block, so a registered run
-  refuses.
+  specification, and every later U2 ruling: d637 and its confirmation
+  d745 (section 16b), d1090 (section 16c), d1242 (section 19), d1597
+  (section 13), d1649 (section 20 step 4) and d1724 (section 16d).  The
+  entries for the registry-applied rulings are built from the registry
+  module's own scopes (:data:`~populace_dynamics.data.u2_source_registry.
+  RATIFIED_AMENDMENTS` and ``RATIFIED_EXCLUSIONS``), and
+  :func:`check_rulings_against_code` holds the rest to the code and the
+  committed registries.  :func:`check_u2_rulings_against_block` refuses a
+  block whose ``decisions`` differ, and refuses U1's ``MAX_RULINGS``
+  outright: copying U1's authorization is insufficient (section 14).
+* :func:`expected_specification_block` -- the complete section 15 block
+  as the code states it, and :func:`check_block_against_code`, which
+  refuses a block that differs in any key or leaf (section 20 step 5:
+  exact code/specification agreement).  Section 20 step 5 materialized
+  the final block, ``u2-ratified-1``, so the committed block passes it.
 """
 
 from __future__ import annotations
 
+import inspect
 import json
 import re
 from collections.abc import Mapping
@@ -35,7 +44,20 @@ from dataclasses import dataclass, field, fields
 from pathlib import Path
 from typing import Any
 
-from populace_dynamics.uniform_cut_track_u2 import identity
+from populace_dynamics.data import family_income
+from populace_dynamics.data import u2_source_registry as _registry
+from populace_dynamics.estimates import adjusted_poverty as ap
+from populace_dynamics.estimates import career
+from populace_dynamics.estimates import uniform_cut_tabulation as ut
+from populace_dynamics.uniform_cut_track_u2 import (
+    cohort,
+    identity,
+    loader,
+    memo,
+    parameters,
+    sources,
+    tabulation,
+)
 from populace_dynamics.uniform_cut_track_u2.cohort import U2CohortSpec
 from populace_dynamics.uniform_cut_track_u2.estimator import U2IncomeSpec
 
@@ -45,12 +67,18 @@ __all__ = [
     "NAMED_DELTAS",
     "REGISTERED_ROWS",
     "ROW_IDS",
+    "RULING_DECISIONS",
     "SENSITIVITIES_UNSCORED",
+    "SPECIFICATION_STATUS",
+    "SPECIFICATION_VERSION",
     "U2_RULINGS",
     "U2Row",
+    "check_block_against_code",
     "check_named_deltas_against_specification",
     "check_rows_against_block",
+    "check_rulings_against_code",
     "check_u2_rulings_against_block",
+    "expected_specification_block",
     "named_deltas_in_specification",
     "specification_block",
 ]
@@ -271,9 +299,90 @@ NAMED_DELTAS: tuple[str, ...] = (
     "identity is preserved",
 )
 
-#: U2's own rulings record (d514; specification header and section 20
-#: step 1: Max approved the section 16 defaults and ratification).  The
-#: keys follow section 16's decision table and section 15's identity.
+#: The specification's version and status once section 20 step 5
+#: materialized the final block (ratified by merge, section 20 step 6).
+SPECIFICATION_VERSION = "u2-ratified-1"
+SPECIFICATION_STATUS = "ratified_frozen"
+#: U1's ratified specification version, which U2 inherits (section 15
+#: ``inherits``; the U1 block's ``version``).
+_U1_VERSION = "u1-ratified-1"
+#: The structure-only U1 load's pin (section 13; d1597).
+_U1_INPUT_FRAMES_SHA256 = (
+    "43c41f444128ecf72ce9f8c5e64a7cda61a6fccaa2a58ff60ae7ce91356c4271"
+)
+#: The two section 20 step-4 passes (section 20 step 4; section 16d).
+_STEP_4_FIRST_HEAD = "640adccf84f9f68c0fb893a834cfdfaca20e7888"
+_STEP_4_SECOND_HEAD = "1e739d328b73c99d259a72952b3452546721bfb8"
+_STEP_4_SECOND_TESTS_RUN = 39502262845
+
+
+def _ruled(scope: Mapping[str, Any], **record: Any) -> dict[str, Any]:
+    """A rulings-record entry for one registry scope of a ruling.
+
+    ``scope`` is a :data:`~populace_dynamics.data.u2_source_registry.
+    RATIFIED_AMENDMENTS` value: the entry names the registry entries the
+    ruling governs and copies the ruling's decision, date, section and
+    any confirmation or draft-3 lines exactly as the registry validator
+    holds them.
+    """
+
+    ruling = scope["ruling"]
+    entry = {
+        **record,
+        "registry_entries": [
+            f"{scope['registry']}:{name}" for name in scope["entries"]
+        ],
+        "specification_section": ruling["specification_section"],
+        "decision_record": ruling["decision"],
+        "ruled_on": ruling["date"],
+    }
+    for key in ("confirmed_by", "confirmed_on", "option"):
+        if key in ruling:
+            entry[key] = ruling[key]
+    for key in ("amends_draft_3_lines", "replaces_draft_3_lines"):
+        if key in ruling:
+            entry[key] = list(ruling[key])
+    return entry
+
+
+def _excluded(disposition: str, **record: Any) -> dict[str, Any]:
+    """A rulings-record entry for one family-unit exclusion (d1090).
+
+    Built from :data:`~populace_dynamics.data.u2_source_registry.
+    RATIFIED_EXCLUSIONS`, the scope the registry validator holds each role
+    entry to.
+    """
+
+    scope = _registry.RATIFIED_EXCLUSIONS[disposition]
+    ruling = scope["ruling"]
+    entry = {
+        **record,
+        "disposition": disposition,
+        "excluded_from": "every_row",
+        "member_condition": (
+            None if scope["condition"] is None else dict(scope["condition"])
+        ),
+        "registry_entries": [f"roles:{name}" for name in scope["entries"]],
+        "option": ruling["option"],
+        "amends_draft_3_lines": list(ruling["amends_draft_3_lines"]),
+        "specification_section": ruling["specification_section"],
+        "decision_record": ruling["decision"],
+        "ruled_on": ruling["date"],
+    }
+    if "amended_waves" in ruling:
+        entry["amended_waves"] = list(ruling["amended_waves"])
+    return entry
+
+
+_AMENDMENTS = _registry.RATIFIED_AMENDMENTS
+
+#: U2's own rulings record.  The first eleven entries are d514
+#: (specification header and section 20 step 1: Max approved the section
+#: 16 defaults and ratification); their keys follow section 16's decision
+#: table and section 15's identity.  The later entries record d637 and its
+#: confirmation d745 (section 16b), d1090 (section 16c), d1242, d1597,
+#: d1649 and d1724 (section 16d); section 20 step 5 materialized them in
+#: the section 15 block's ``decisions``.
 U2_RULINGS: dict[str, dict[str, Any]] = {
     "claim_class": {
         "ruling": "track_u_psid_realized_measurement_not_a_projection",
@@ -335,9 +444,220 @@ U2_RULINGS: dict[str, dict[str, Any]] = {
         "u1_rulings": "precedent_not_u2_execution_authorization",
         "decision_record": "d514",
     },
+    # d637 (2026-09-30) and d745 (2026-10-12): section 16b.
+    "amendment_1a_documented_routes": _ruled(
+        _AMENDMENTS["1a"],
+        ruling="ratified_as_written",
+        registration_discloses=(
+            "ofum_route_documented_reporting_completeness_for_withheld_"
+            "answers_not_documented"
+        ),
+    ),
+    "amendment_1b_2013_inherited_meanings": _ruled(
+        _AMENDMENTS["1b"], ruling="ratified_as_written"
+    ),
+    "amendment_1c_first_year_cohabitor": _ruled(
+        _AMENDMENTS["1c"],
+        ruling="ratified_as_written",
+        convention=(
+            "ofum_family_basis_outside_the_spouse_slot_no_legal_spouse_"
+            "life_no_marital_resolution_inherited_birth_support"
+        ),
+    ),
+    "amendment_2_annuitant_input_precedence": _ruled(
+        _AMENDMENTS["2"],
+        ruling="ratified_as_written",
+        rule=(
+            "recorded_sex_er32000_and_derived_income_year_age_family_file_"
+            "spouse_age_and_sex_slot_metadata_only"
+        ),
+    ),
+    "amendment_3_spouse_retirement_crosswalk": _ruled(
+        _AMENDMENTS["3"],
+        ruling="ratified_as_written",
+        rule="non_executable_metadata_components_counted_once_in_money_income",
+    ),
+    "amendment_4_wealth_accuracy_flags": _ruled(
+        _AMENDMENTS["4"],
+        ruling="ratified_as_written",
+        rule="imputation_diagnostics_only_never_amounts_or_sample_inclusion",
+    ),
+    "amendment_5a_later_pension_routes": _ruled(
+        _AMENDMENTS["5a"],
+        ruling="ratified_as_written",
+        previous_routes="income_concept.employer_dc.previous_routes",
+    ),
+    "amendment_5b_2015_checkpoint": _ruled(
+        _AMENDMENTS["5b"],
+        ruling="ratified_as_written",
+        refused_branch=_AMENDMENTS["5b"]["fields"]["refused_branch"],
+        off_route_disposition=_AMENDMENTS["5b"]["fields"][
+            "off_route_disposition"
+        ],
+    ),
+    "amendment_6_blocker_b3_2017_weight": _ruled(
+        _AMENDMENTS["6"],
+        ruling="use_the_released_weight_and_disclose",
+        weight=_AMENDMENTS["6"]["fields"]["variable"],
+        registration_discloses=(
+            "weights:2017.cross_section_weight.registration_disclosure"
+        ),
+    ),
+    "psid_documentary_questions": {
+        "ruling": "send_all_three_now_as_a_held_draft_for_max",
+        "sent_on": "2026-09-30",
+        "answered_on": "2026-10-07",
+        "research_record": "docs/design/u2_m1b_psid_research.md",
+        "specification_section": "16b",
+        "decision_record": "d637",
+        "ruled_on": "2026-09-30",
+    },
+    # d1090 (2026-10-10): section 16c.
+    "blocker_b1_male_code_20_2015": _excluded(
+        sources.MALE_CODE_20_2015,
+        ruling="exclude_and_disclose",
+        supersedes="d637_hold_for_psid",
+        disclosed_count=(
+            "persons_recorded_male_with_2015_code_20_in_family_units_that_"
+            "would_otherwise_supply_an_observation"
+        ),
+        count_decides="nothing",
+    ),
+    "blocker_b2_codes_90_92_2019_2023": _excluded(
+        sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER,
+        ruling="exclude_and_disclose",
+        supersedes="d637_hold_for_psid",
+        disclosed_count=(
+            "persons_with_code_90_or_92_in_2019_2021_2023_family_units_"
+            "that_would_otherwise_supply_an_observation"
+        ),
+        count_decides="nothing",
+    ),
+    "amendment_5c_u7_2015_spouse_slot": {
+        "ruling": "follows_blocker_b1",
+        "registry_entries": ["pension:2015.route.respondent_slots"],
+        "option": "1d-2",
+        "specification_section": "16c",
+        "decision_record": "d1090",
+        "ruled_on": "2026-10-10",
+    },
+    # d1242 (2026-10-16): recorded in section 19.
+    "b2_disclosed_count": {
+        "ruling": (
+            "persons_with_code_90_or_92_in_2019_2021_2023_family_units_that_"
+            "would_otherwise_supply_an_observation"
+        ),
+        "person_counted_exclusions": list(sources.PERSON_COUNTED_EXCLUSIONS),
+        "disclosed_per_row": ["per_wave", "distinct_persons"],
+        "count_decides": "nothing",
+        "specification_section": "19",
+        "decision_record": "d1242",
+        "ruled_on": "2026-10-16",
+    },
+    # d1597 (2026-10-16): section 13's optional structure-only U1 load,
+    # run before each step-4 pass (d1649's condition, which d1724's rerun
+    # keeps).
+    "u1_input_pin_check": {
+        "ruling": "run_the_optional_structure_only_u1_load_before_step_4",
+        "u1_input_frames_sha256": _U1_INPUT_FRAMES_SHA256,
+        "statistic_computed": None,
+        "authorization_used": [
+            {
+                "on": "2026-10-19",
+                "head": _STEP_4_FIRST_HEAD,
+                "before": "the_d1649_pass",
+                "result": "pin_matched",
+            },
+            {
+                "on": "2026-10-21",
+                "head": _STEP_4_SECOND_HEAD,
+                "before": "the_d1724_pass",
+                "result": "pin_matched",
+            },
+        ],
+        "specification_section": "13",
+        "decision_record": "d1597",
+        "ruled_on": "2026-10-16",
+    },
+    # d1649 (2026-10-16): the section 20 step-4 pass.
+    "preregistration_pass": {
+        "ruling": "authorize_the_step_4_pass_once",
+        "scope": [
+            "structural_counts",
+            "dispositions",
+            "join_and_reconciliation_counts",
+            "named_f17_component_summaries",
+        ],
+        "not_computed": [
+            "income_concept",
+            "poverty_threshold_assignment",
+            "poverty_status",
+        ],
+        "registered_run_frame_environment": (
+            "the_preregistration_evidence_pandas_version_and_string_"
+            "inference_setting"
+        ),
+        "authorization_used": [
+            {
+                "on": "2026-10-19",
+                "head": _STEP_4_FIRST_HEAD,
+                "result": "stopped_in_the_birth_law_without_output",
+            }
+        ],
+        "specification_section": "20",
+        "decision_record": "d1649",
+        "ruled_on": "2026-10-16",
+    },
+    # d1724 (2026-10-19; widening approved 2026-10-20): section 16d.
+    "seed_birth_year_support": {
+        "ruling": "count_out_or_reseed_before_the_birth_law_then_rerun_once",
+        "support": [career.DERIVED_BIRTH_MIN, career.DERIVED_BIRTH_MAX],
+        "counted_out": list(cohort.SEED_BIRTH_COUNTED_OUT),
+        "disclosure_keys": [
+            "n_seed_birth_year_counted_out",
+            "n_seed_birth_year_reseeded",
+        ],
+        "count_decides": "nothing",
+        "estimates_career": "unchanged",
+        "widening_approved_on": "2026-10-20",
+        "authorization_used": [
+            {
+                "on": "2026-10-21",
+                "head": _STEP_4_SECOND_HEAD,
+                "tests_run": _STEP_4_SECOND_TESTS_RUN,
+                "result": "completed",
+            }
+        ],
+        "specification_section": "16d",
+        "decision_record": "d1724",
+        "ruled_on": "2026-10-19",
+    },
 }
 _RULED_ON = "2026-09-28"
+#: Every decision the rulings record must cover (section 20 step 5).
+RULING_DECISIONS: tuple[str, ...] = (
+    "d514",
+    "d637",
+    "d745",
+    "d1090",
+    "d1242",
+    "d1597",
+    "d1649",
+    "d1724",
+)
 _BLOCK_SECTION = "\n## 15. Machine-readable parameter block"
+
+
+def _no_repeated_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    """A JSON object, refused if it names a key twice: ``json.loads``
+    would keep the last silently, so an earlier draft value could stand
+    in the text while the check saw the later one."""
+
+    keys = [key for key, _ in pairs]
+    repeated = sorted({key for key in keys if keys.count(key) > 1})
+    if repeated:
+        raise ValueError(f"the section 15 block repeats keys {repeated}")
+    return dict(pairs)
 
 
 def specification_block(
@@ -345,7 +665,8 @@ def specification_block(
 ) -> dict[str, Any]:
     """The U2 specification's machine-readable JSON block (section 15).
 
-    Only section 15 is searched, and it must hold exactly one JSON block.
+    Only section 15 is searched, and it must hold exactly one JSON block,
+    in which no object may name a key twice.
     Other sections may quote JSON fragments (``u2-draft-4``'s section 16a
     proposes a replacement ``previous_routes`` fragment); a proposal is
     not the contract, so it is never read as the block.
@@ -366,7 +687,7 @@ def specification_block(
             f"{path} section 15 must hold exactly one JSON block, found "
             f"{len(blocks)}"
         )
-    block = json.loads(blocks[0])
+    block = json.loads(blocks[0], object_pairs_hook=_no_repeated_keys)
     identity.refuse_u1_identity(
         {"specification": block.get("specification")},
         what="the specification block",
@@ -475,6 +796,541 @@ def check_u2_rulings_against_block(
             f"{differing} or their values"
         )
     return {"rulings_checked": sorted(U2_RULINGS), "rulings_equal": True}
+
+
+def check_rulings_against_code(
+    registries: sources.RegistrySet | None = None,
+) -> dict[str, Any]:
+    """Hold :data:`U2_RULINGS` to the code and the committed registries.
+
+    Every decision in :data:`RULING_DECISIONS` has an entry and no entry
+    names another; each registry entry a ruling names exists, is RESOLVED
+    and records that ruling's decision (and option, for d1090); the d637
+    entries are exactly the registry module's ratified scopes, and each
+    d1090 exclusion names exactly the role entries that carry it in the
+    committed roles registry; B2's disclosed count is a person count the
+    structural pass makes (d1242); and the d1724 support and reasons are
+    the cohort code's.  Refuses on the first difference.
+    """
+
+    registries = (
+        sources.RegistrySet.committed() if registries is None else registries
+    )
+    named = sorted(
+        {entry["decision_record"] for entry in U2_RULINGS.values()}
+        | {
+            entry["confirmed_by"]
+            for entry in U2_RULINGS.values()
+            if "confirmed_by" in entry
+        },
+        key=lambda d: int(d[1:]),
+    )
+    if named != list(RULING_DECISIONS):
+        raise ValueError(
+            f"the rulings record names {named}, not {list(RULING_DECISIONS)}"
+        )
+    by_id = {
+        name: {entry["id"]: entry for entry in registries.entries(name)}
+        for name in _registry.REGISTRY_NAMES
+    }
+    for key, entry in U2_RULINGS.items():
+        for reference in entry.get("registry_entries", ()):
+            name, entry_id = reference.split(":", 1)
+            found = by_id.get(name, {}).get(entry_id)
+            if found is None or found.get("status") != "RESOLVED":
+                raise ValueError(
+                    f"{key}: {reference} is not a RESOLVED registry entry"
+                )
+            recorded = found.get("ruling") or {}
+            if recorded.get("decision") != entry["decision_record"]:
+                raise ValueError(
+                    f"{key}: {reference} records "
+                    f"{recorded.get('decision')!r}, not "
+                    f"{entry['decision_record']!r}"
+                )
+            if "option" in entry and recorded.get("option") != entry["option"]:
+                raise ValueError(f"{key}: {reference} records another option")
+    applied = sorted(
+        reference
+        for entry in U2_RULINGS.values()
+        if entry["decision_record"] == "d637"
+        for reference in entry.get("registry_entries", ())
+    )
+    scoped = sorted(
+        f"{scope['registry']}:{entry}"
+        for scope in _AMENDMENTS.values()
+        for entry in scope["entries"]
+    )
+    if applied != scoped:
+        raise ValueError(
+            "the d637 entries differ from the registry's ratified scopes: "
+            f"{sorted(set(applied) ^ set(scoped))}"
+        )
+    for disposition in sources.FAMILY_UNIT_EXCLUSIONS:
+        entry = next(
+            (
+                e
+                for e in U2_RULINGS.values()
+                if e.get("disposition") == disposition
+            ),
+            None,
+        )
+        if entry is None:
+            raise ValueError(
+                f"the rulings record has no entry for the d1090 exclusion "
+                f"{disposition!r}"
+            )
+        carrying = sorted(
+            f"roles:{role['id']}"
+            for role in registries.entries("roles")
+            if (role.get("family_unit_exclusion") or {}).get("disposition")
+            == disposition
+        )
+        if carrying != sorted(entry["registry_entries"]):
+            raise ValueError(
+                f"{disposition!r}: the roles registry carries it on "
+                f"{carrying}, the rulings record on {entry['registry_entries']}"
+            )
+    if set(sources.PERSON_COUNTED_EXCLUSIONS) != set(
+        sources.FAMILY_UNIT_EXCLUSIONS
+    ) or U2_RULINGS["b2_disclosed_count"]["person_counted_exclusions"] != (
+        list(sources.PERSON_COUNTED_EXCLUSIONS)
+    ):
+        raise ValueError("B2's disclosed person count is not made (d1242)")
+    support = U2_RULINGS["seed_birth_year_support"]
+    if support["support"] != [
+        career.DERIVED_BIRTH_MIN,
+        career.DERIVED_BIRTH_MAX,
+    ] or support["counted_out"] != list(cohort.SEED_BIRTH_COUNTED_OUT):
+        raise ValueError("the d1724 support or reasons differ from the code")
+    return {
+        "decisions": list(RULING_DECISIONS),
+        "entries": len(U2_RULINGS),
+        "rulings_equal_the_code": True,
+    }
+
+
+def _relative(path: Path) -> str:
+    return str(Path(path).resolve().relative_to(identity.ROOT))
+
+
+def _existing(relative: str) -> str:
+    """``relative``, refused unless it names a file in the repository."""
+
+    if not (identity.ROOT / relative).is_file():
+        raise ValueError(f"the block names {relative}, which does not exist")
+    return relative
+
+
+def _registry_variable(
+    entries: Mapping[str, Mapping[str, Any]], entry_id: str
+) -> str:
+    entry = entries[entry_id]
+    if entry.get("status") != "RESOLVED":
+        raise ValueError(f"{entry_id} is not RESOLVED")
+    return str(entry["variable"])
+
+
+def _block_row(row: U2Row) -> dict[str, Any]:
+    """A row as the section 15 block writes it (the inverse of
+    :func:`_parse_block_row`)."""
+
+    inverse = {
+        (target, name, override): (key, value)
+        for (key, value), (target, name, override) in (
+            _BLOCK_KEY_OVERRIDES.items()
+        )
+    }
+    entry: dict[str, Any] = {}
+    for target, overrides in (("cohort", row.cohort), ("income", row.income)):
+        for name, value in overrides.items():
+            key, written = inverse.get((target, name, value), (name, value))
+            entry[key] = written
+    return entry
+
+
+def expected_specification_block(
+    registries: sources.RegistrySet | None = None,
+) -> dict[str, Any]:
+    """The complete section 15 block as the code states it.
+
+    Every value the code holds comes from the code: the identity, plans,
+    support waves and their registry variables, the income-concept,
+    annuity, threshold, cut and SSI parameters and their capture pins,
+    the cells, floor and design settings, the memo rules, the rows, the
+    entry points, the pre-registration evidence pin, the labels and U2's
+    rulings record.  The descriptive
+    values the code does not otherwise hold (the Report's citation, the
+    unit and financial-asset definitions, the comparator boundary, the
+    cleared extracts' hashes and the wording keys) are written here once,
+    so that :func:`check_block_against_code` holds the whole block, not
+    only its executable part.
+    """
+
+    registries = (
+        sources.RegistrySet.committed() if registries is None else registries
+    )
+    individual = {e["id"]: e for e in registries.entries("individual")}
+    wealth = {e["id"]: e for e in registries.entries("wealth")}
+    design = {e["id"]: e for e in registries.entries("design")}
+    pension = registries.entries("pension")
+    if any(entry.get("status") != "RESOLVED" for entry in pension):
+        raise ValueError("a pension registry entry is not RESOLVED")
+    spec = U2IncomeSpec()
+    population = U2CohortSpec()
+    tabulated = tabulation.U2TabulationConfig().as_dict()
+    refused = _AMENDMENTS["5b"]
+    (refused_wave,) = {
+        entry["wave"] for entry in pension if entry["id"] in refused["entries"]
+    }
+    reader = inspect.getsourcefile(sources.employer_dc_balances)
+    thresholds = parameters.load_u2_thresholds()
+    ssi = parameters.load_u2_ssi_parameters()
+    return {
+        "specification": identity.SPECIFICATION_ID,
+        "target_id": identity.TARGET_ID,
+        "version": SPECIFICATION_VERSION,
+        "status": SPECIFICATION_STATUS,
+        "inherits": {
+            "file": _relative(identity.U1_SPECIFICATION_PATH),
+            "version": _U1_VERSION,
+            "sha256": identity.U1_SPECIFICATION_SHA256,
+        },
+        "claim_class": {"class": U2_RULINGS["claim_class"]["ruling"]},
+        "target": {
+            "report": (
+                "Butrica and Uccello (2004), How Will Boomers Fare at "
+                "Retirement?, AARP PPI #2004-05"
+            ),
+            "tables": ["19", "21"],
+            "column": identity.COMPARATOR_COLUMN,
+            "birth_years": [identity.BIRTH_YEARS[0], identity.BIRTH_YEARS[-1]],
+            "age": identity.TARGET_AGE,
+            "cut_rate": spec.cut_rate,
+            "report_rows": len(tabulation.REPORT_ROWS)
+            + sum(
+                len(entry["rows"])
+                for entry in tabulation.NOT_COMPUTED_REPORT_ROWS.values()
+            ),
+            "unit": "individual_with_household_income_and_wealth_including_"
+            "spouse",
+            "financial_assets": "non_pension_wealth_plus_ira_keogh_401k_"
+            "balances",
+            "comparator_values": "sealed_comparator_side_not_opened_by_"
+            "builder",
+            "printed_precision": "whole_numbers",
+            "definitions_extract": [
+                {
+                    "file": "EVID/exercise2-definitions-cleared-20260924.md",
+                    "sha256": "a3978b683b4275424b6d12e9fe45f021fae277ccf9"
+                    "731a7883952564b6ed0384",
+                },
+                {
+                    "file": "EVID/u2-target-availability-cleared-20260928.md",
+                    "sha256": "2ffa3092d297418c58868f7e5326c3e4c8047b1291"
+                    "71b40b66fde5ee07702211",
+                },
+            ],
+        },
+        "population": {
+            "primary_row": HEADLINE_ROW,
+            "headline": {"rule": HEADLINE_RULE, "fallback_row": None},
+            "support_waves": list(cohort.SUPPORT_WAVES),
+            "primary_waves": list(cohort.PRIMARY_WAVES),
+            "primary_birth_years": list(cohort.PRIMARY_BIRTH_YEARS),
+            "u1_birth_years": [
+                cohort.ALL_BIRTH_YEARS[0],
+                cohort.ALL_BIRTH_YEARS[-1],
+            ],
+            "u1_even_birth_year_weight": cohort.U1_EVEN_BIRTH_YEAR_WEIGHT,
+            "u1_single_observation_weight": (
+                cohort.U1_SINGLE_OBSERVATION_WEIGHT
+            ),
+            "u1_even_birth_ages": list(cohort.U1_EVEN_BIRTH_AGES),
+            "missing_observation_reweighting": (
+                population.missing_observation_reweighting
+            ),
+            "waves": {
+                str(wave): {
+                    "income_year": wave - 1,
+                    "weight": _registry_variable(individual, f"{wave}.weight"),
+                    "family_unit_id": _registry_variable(
+                        individual, f"{wave}.interview"
+                    ),
+                    "wealth1": _registry_variable(
+                        wealth, f"wealth.{wave}.wealth1"
+                    ),
+                    "wealth_source": "family_file",
+                }
+                for wave in cohort.SUPPORT_WAVES
+            },
+            "presence": population.presence,
+            "birth_year_law": (
+                f"estimates.career.{career.derive_birth_years.__name__}"
+            ),
+            "seed_wave_rule": population.seed_wave_rule,
+            "separated_is_married": population.separated_is_married,
+            "unresolved_marital_status": population.unresolved_marital_status,
+            "annuitant_age_source": population.annuitant_age_source,
+            "institution_income_rule": population.institution_income_rule,
+            "relationship_rules": (
+                "section_3_role_amendment_with_section_16a_amendment_1"
+            ),
+            "relationship_codes_tested": list(sources.RELATIONSHIP_CODES),
+            "design": {
+                "stratum": _registry_variable(design, "common.stratum"),
+                "cluster": _registry_variable(design, "common.cluster"),
+            },
+        },
+        "income_concept": {
+            "income_unit": spec.income_unit,
+            "money_income": "TOTAL FAMILY INCOME",
+            "asset_income_rule": spec.asset_income_rule,
+            "asset_income_items": list(family_income.ASSET_INCOME_CONCEPTS),
+            "retirement_account_income_rule": (
+                spec.retirement_account_income_rule
+            ),
+            "retirement_account_income_items": list(
+                ap.RETIREMENT_ACCOUNT_INCOME_CONCEPTS
+            ),
+            "farm_asset_share": spec.farm_asset_share,
+            "farm_loss": ap.FARM_LOSS_RULE,
+            "financial_assets": spec.financial_assets,
+            "employer_dc": {
+                "row": "U7",
+                "reader": str(
+                    Path(reader)
+                    .resolve()
+                    .relative_to(identity.ROOT / "src" / "populace_dynamics")
+                ),
+                "persons": list(sources.DC_PERSONS),
+                "role_meaning": (
+                    "reference_person_and_designated_spouse_income_slot"
+                ),
+                "current_job": "account_amount_when_plan_type_has_an_account",
+                "previous_plans": list(sources.DC_PLANS),
+                "previous_routes": {
+                    "both_items": ["both"],
+                    "account_items_by_wave": {
+                        str(wave): list(items)
+                        for wave, items in (
+                            sources.DECLARED_PREVIOUS_ACCOUNT_ITEMS.items()
+                        )
+                    },
+                    "refused_branches": {
+                        str(refused_wave): refused["fields"]["refused_branch"]
+                    },
+                },
+                "unreported_amount": "zero_counted",
+                "route_source": "later_wave_questionnaire_adjudication",
+                "later_wave_mapping_status": (
+                    "resolved_in_the_pension_registry_under_amendment_5"
+                ),
+                "counted_disposition": "left_to_accumulate",
+                "excluded": [
+                    "rolled_over_into_ira",
+                    "both_plan_account_items_reasked",
+                    refused["fields"]["off_route_disposition"],
+                ],
+                "top_code": "as_recorded",
+                "brackets": "not_used",
+            },
+            "annuitized_share": spec.annuitized_share,
+            "annuity": {
+                "real_interest_rate": spec.real_interest_rate,
+                "timing": spec.annuity_timing,
+                "load": spec.annuity_load,
+                "survivor_share": spec.survivor_share,
+                "mortality_basis": spec.mortality_basis,
+                "terminal_closure": spec.terminal_closure,
+                "lives": spec.annuity_lives,
+                "negative_wealth": spec.negative_wealth_rule,
+            },
+            "sensitivities_unscored": {
+                key: list(value)
+                for key, value in SENSITIVITIES_UNSCORED.items()
+            },
+        },
+        "threshold": {
+            "rule": spec.threshold_rule,
+            "years": [
+                parameters.REQUIRED_INCOME_YEARS[0],
+                parameters.REQUIRED_INCOME_YEARS[-1],
+            ],
+            "required_income_years": list(parameters.REQUIRED_INCOME_YEARS),
+            "values": "weighted_averages_as_printed_in_thresh_workbooks",
+            "capture_status": "captured",
+            "capture": {
+                "file": _relative(parameters.THRESHOLDS_PATH),
+                "sha256": parameters.THRESHOLDS_SHA256,
+            },
+            "overlap_2012": thresholds.provenance["overlap_2012"],
+            "poor_if": "income_below_threshold",
+        },
+        "cut": {
+            "rate": spec.cut_rate,
+            "base": "all_social_security_of_the_unit",
+            "behavior": "none",
+            "start_year": spec.cut_start_year,
+            "start_year_rule": ap.CUT_START_YEAR_RULE,
+        },
+        "ssi": {
+            "rule": spec.ssi_rule,
+            "deeming": spec.ssi_deeming,
+            "ofum_unit": spec.ofum_ssi_unit,
+            "parameters": {
+                "file": _relative(parameters.SSI_PATH),
+                "sha256": parameters.SSI_SHA256,
+                "years": list(parameters.SSI_YEARS),
+                "checked_against": "section_8_federal_register_cola_notices",
+                "revision_rule": "refuse_missing_empty_or_unknown",
+                "overlap_2012": ssi.provenance["overlap_2012"],
+            },
+        },
+        "statistic": {
+            "headline": "delta",
+            "secondary": ["baseline_rate", "reform_rate"],
+            "unit": "percentage_points",
+        },
+        "cells": {
+            "column": identity.COMPARATOR_COLUMN,
+            "scored": list(tabulation.DEFAULT_CELLS),
+            "secondary": list(tabulation.OPTIONAL_CELLS),
+            "diagnostic": "birth_year",
+            "report_labels": "tables_19_21_stub_labels_cleared_extract",
+            "unclassified_marital_cells": (
+                tabulated["unclassified_marital_cells"]
+            ),
+            "not_computed": list(tabulation.NOT_COMPUTED_REPORT_ROWS),
+        },
+        "uncertainty": {
+            "draws": tabulated["draws"],
+            "floor": {
+                "seeds": tabulated["floor_seeds"],
+                "fraction": ut.FLOOR_FRACTION,
+                "split_unit": ut.FLOOR_SPLIT_UNIT,
+                "summary": ["mean", "sample_sd"],
+                "min_usable_seeds": ut.MIN_FLOOR_SEEDS,
+            },
+            "design_se": {
+                "method": "taylor_linearization",
+                "domain": tabulated["design_se_domain"],
+                "outside_cell": "zero",
+                "singleton_strata": "excluded_counted_and_listed",
+            },
+        },
+        "comparison": {
+            "gap": "model_minus_report",
+            "comparator_interval": memo.INTERVAL_ID,
+            "acceptance": {
+                "rule": U2_RULINGS["comparison_publication"]["acceptance_rule"]
+            },
+            "memo_small_cells": {
+                "flag_unweighted_n_below": memo.SMALL_CELL_THRESHOLD,
+                "unweighted_n": "n_observations",
+                "no_switcher_cell": memo.NO_SWITCHER_WORDING.replace(" ", "_"),
+            },
+        },
+        "rows": {
+            row_id: _block_row(row) for row_id, row in REGISTERED_ROWS.items()
+        },
+        "diagnostics_f17": {
+            "row": "headline",
+            "official_concept_poverty_rate": "registered_run_only",
+            "components": [
+                "social_security",
+                "ssi",
+                "wealth1",
+                "fu_size_record_counts",
+            ],
+            "component_timing": "permitted_before_registration",
+            "social_security_published": (
+                "ssa_supplement_2025_table_5a4_december_retired_workers"
+            ),
+            "ssi_published": "federal_benefit_rate_capture_only",
+            "wealth1_published": None,
+        },
+        "entry_points": {
+            "dry_run": _existing("scripts/track_u2_dry_run.py"),
+            "registered_run": _existing("scripts/run_track_u2_registered.py"),
+            "registered_artifact": _relative(identity.ARTIFACT_PATH),
+            "environment": _relative(identity.SIDECAR_PATH),
+            "structure": _existing("scripts/track_u2_structure.py"),
+            "component_diagnostics": _existing(
+                "scripts/track_u2_component_diagnostics.py"
+            ),
+        },
+        "preregistration_evidence": {
+            "file": _relative(loader.PREREGISTRATION_EVIDENCE_PATH),
+            "sha256": loader.PREREGISTRATION_EVIDENCE_SHA256,
+            "schema_version": loader.PREREGISTRATION_SCHEMA,
+            "written_by": _existing("scripts/track_u2_structure.py"),
+            "authorized_by": U2_RULINGS["seed_birth_year_support"][
+                "decision_record"
+            ],
+            "pinned_from": "EV/track-u2-step4-pass-20261021-run2/MANIFEST.md",
+        },
+        "acceptance_rule": None,
+        "labels": list(ap.OUTPUT_LABELS),
+        "decisions": {"ruled_by": "Max", "ruled_on": _RULED_ON, **U2_RULINGS},
+        "blocked_by": [],
+    }
+
+
+def _differing_paths(
+    observed: Any, expected: Any, path: str = ""
+) -> list[str]:
+    """The paths at which ``observed`` and ``expected`` differ, comparing
+    keys, list lengths, types and values, each leaf as canonical JSON
+    (``True`` is not ``1``, ``1`` is not ``1.0`` and ``-0.0`` is not
+    ``0.0``)."""
+
+    if isinstance(expected, Mapping) and isinstance(observed, Mapping):
+        found: list[str] = []
+        for key in sorted(set(observed) | set(expected), key=str):
+            where = f"{path}.{key}" if path else str(key)
+            if key not in observed or key not in expected:
+                found.append(where)
+            else:
+                found += _differing_paths(observed[key], expected[key], where)
+        return found
+    if isinstance(expected, list) and isinstance(observed, list):
+        if len(observed) != len(expected):
+            return [path]
+        found = []
+        for index, (a, b) in enumerate(zip(observed, expected, strict=True)):
+            found += _differing_paths(a, b, f"{path}[{index}]")
+        return found
+    if type(observed) is not type(expected) or observed != expected:
+        return [path]
+    if json.dumps(observed) != json.dumps(expected):
+        return [path]
+    return []
+
+
+def check_block_against_code(
+    block: Mapping[str, Any],
+    registries: sources.RegistrySet | None = None,
+) -> dict[str, Any]:
+    """Refuse a section 15 block that differs from the code in any way.
+
+    The block must equal :func:`expected_specification_block` exactly:
+    the same keys at every level, the same list lengths and the same
+    values of the same JSON types (equal under ``==`` and as canonical
+    JSON).  The refusal names every differing path.
+    """
+
+    expected = expected_specification_block(registries)
+    differing = _differing_paths(block, expected)
+    if differing or _canonical(block) != _canonical(expected):
+        raise ValueError(
+            "the section 15 block differs from the code at "
+            f"{differing or ['(canonical encoding)']}"
+        )
+    return {
+        "specification_version": block["version"],
+        "block_equals_code": True,
+    }
 
 
 _DELTA = re.compile(r"^- \*\*D(\d{2}):\*\* (.+)$", re.MULTILINE)

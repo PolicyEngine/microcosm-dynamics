@@ -554,3 +554,52 @@ def test_nonfinite_statutory_fields_never_create_arf_results_or_refusals(
     assert label in errors[0]
     assert errors[0] == errors[1] == errors[2]
     assert calls == ["compute"] * 3
+
+
+@settings(deadline=None)
+@example(F(650), [1], 2)
+@given(
+    amounts,
+    st.lists(st.integers(0, 59), unique=True, max_size=12),
+    st.integers(0, 59),
+)
+def test_reentitled_spouse_keeps_original_months_until_fra(
+    amount, terminated, offset
+):
+    """402(q)(1)(B): terminated months leave the factor only at FRA.
+
+    Source conflict us:oasdi-arf-spouse-reentitlement-credits. Before
+    FRA every reentitled history pays exactly the never-terminated claim
+    and G's 60-month spouse reduction (zero-tolerance differential); at
+    FRA each terminated month before FRA is one credit, so the benefit
+    cannot fall from any pre-FRA month to the FRA month.
+    """
+    base = 2022 * 12
+    history = {
+        g.YearMonth((base + i) // 12, (base + i) % 12 + 1) for i in terminated
+    }
+    claim = a.ARFClaim(
+        a.ARFBenefitKind.SPOUSE,
+        date(1960, 1, 2),
+        (2022, 1),
+        amount,
+        nonentitlement_months=history,
+    )
+    plain = replace(claim, nonentitlement_months=frozenset())
+    payment = g.YearMonth((base + offset) // 12, (base + offset) % 12 + 1)
+    before = a.apply_arf(claim, payment_month=payment, params=PARAMS)
+    expected = g.floor_dime(
+        amount - g.ceil_dime(amount * g.spouse_reduction_fraction(60, PARAMS))
+    )
+    assert before.adjusted_reduction_months == 60
+    assert before.crediting_months == frozenset()
+    assert before.benefit == expected
+    assert before == a.apply_arf(claim, payment_month=payment, params=PARAMS)
+    assert (
+        before.benefit
+        == a.apply_arf(plain, payment_month=payment, params=PARAMS).benefit
+    )
+    final = at_fra(claim)
+    assert final.crediting_months == frozenset(history)
+    assert final.adjusted_reduction_months == 60 - len(history)
+    assert final.benefit >= before.benefit

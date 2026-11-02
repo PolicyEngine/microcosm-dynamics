@@ -315,6 +315,7 @@
     },
     "refused_by_reason": {
       "administrative_finality": 9831,
+      "care_minimum_partial_deduction": 0,
       "combined_family_maximum": 4860,
       "deduction_age_work_interaction": 0,
       "deemed_or_putative_spouse": 9720,
@@ -347,6 +348,7 @@
       "savings_clause_history_unknown": 0,
       "savings_clause_membership_change": 0,
       "savings_clause_rate_procedure": 0,
+      "sole_full_deduction_zero_dual_composition": 0,
       "widow_child_in_care_unknown": 168,
       "widow_drc_savings_clause": 4860,
       "widow_drc_savings_clause_history_unknown": 0,
@@ -508,7 +510,7 @@
         ]
       }
     },
-    "sha256": "a06a3f7158b6b5e4ce6901fd8de94bdf30e485ebbc3e967cdb9422ebd955abb6",
+    "sha256": "58bc989f71090b513f9ed86fd22935e37d8237501477fee38eaef82952bab036",
     "supported_classes": [
       "cola_path",
       "credits:own_rib",
@@ -562,12 +564,13 @@
   "supplemental_refusal_witnesses": {
     "denominator": {
       "invalid": 0,
-      "refused": 37,
-      "rows": 37,
+      "refused": 39,
+      "rows": 39,
       "supported": 0
     },
     "refused_by_reason": {
       "administrative_finality": 1,
+      "care_minimum_partial_deduction": 1,
       "combined_family_maximum": 1,
       "deduction_age_work_interaction": 1,
       "deemed_or_putative_spouse": 1,
@@ -600,6 +603,7 @@
       "savings_clause_history_unknown": 1,
       "savings_clause_membership_change": 1,
       "savings_clause_rate_procedure": 1,
+      "sole_full_deduction_zero_dual_composition": 1,
       "widow_child_in_care_unknown": 1,
       "widow_drc_savings_clause": 1,
       "widow_drc_savings_clause_history_unknown": 1,
@@ -611,6 +615,12 @@
         "description": "Declared finality protection",
         "id": "administrative_finality",
         "reason": "administrative_finality",
+        "status": "refused"
+      },
+      {
+        "description": "No source carries a partial deduction to a child-in-care comparison",
+        "id": "care_minimum_partial_deduction",
+        "reason": "care_minimum_partial_deduction",
         "status": "refused"
       },
       {
@@ -803,6 +813,12 @@
         "description": "A reduced spouse alone has no captured allocation procedure",
         "id": "savings_clause_rate_procedure",
         "reason": "savings_clause_rate_procedure",
+        "status": "refused"
+      },
+      {
+        "description": "GN 02603.050 A.1 and A.2 compose differently: child 175 versus 200",
+        "id": "sole_full_deduction_zero_dual_composition",
+        "reason": "sole_full_deduction_zero_dual_composition",
         "status": "refused"
       },
       {

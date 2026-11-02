@@ -25,8 +25,9 @@ arbitrary iterators and unordered event containers are input errors. Scalar
 money, dates and canonical enum members are checked immediately. Repeated original-claim
 evaluation preserves both dollar amounts and coverage refusals. Contents
 are validated before coverage is decided, without consuming caller state.
-Pre-FRA spouse reentitlement is refused because RS 00615.201A.1 and
-.491A conflict on when termination months leave the reduction factor.
+A spouse reentitled before FRA keeps the original reduction months until
+FRA, when the ARF removes the terminated months (402(q)(1)(B), (q)(7)(C);
+RS 00615.201A.1). RS 00615.491A's earlier removal is not followed.
 
 Unsupported configurations raise ARFConfigurationUnsupported, in the shared
 FamilyConfigurationUnsupported family, with exactly ARFUnsupportedReason.
@@ -110,7 +111,6 @@ class ARFBenefitKind(Enum):
 class ARFUnsupportedReason(Enum):
     INITIAL_ENTITLEMENT_BEFORE_1978 = "arf_initial_entitlement_before_1978"
     PAYMENT_BEFORE_1983 = "arf_payment_before_1983"
-    SPOUSE_REENTITLEMENT_BEFORE_FRA = "arf_spouse_reentitlement_before_fra"
     DISABLED_WIDOW = "arf_disabled_widow"
     WIDOW_DUAL_DIB = "arf_widow_dual_dib"
     WIDOW_DUAL_RIB = "arf_widow_dual_rib"
@@ -420,14 +420,6 @@ class ARFResult(_SealedResult):
             or (
                 own is not None
                 and own.sequence is SpouseOwnSequence.AFTER_SPOUSE_BEFORE_ARF
-            )
-            or (
-                claim.kind is ARFBenefitKind.SPOUSE
-                and payment < fra
-                and any(
-                    first <= month < payment
-                    for month in claim.nonentitlement_months
-                )
             )
         ):
             raise InvalidFamilyInput(
@@ -791,19 +783,6 @@ def apply_arf(
             reason, "this exceptional ARF history requires a separate rule"
         )
     if (
-        claim.kind is ARFBenefitKind.SPOUSE
-        and payment < fra
-        and any(
-            first <= month < payment for month in claim.nonentitlement_months
-        )
-    ):
-        # Source conflict us:oasdi-arf-spouse-reentitlement-credits
-        _refuse(
-            ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA,
-            "RS 00615.201A.1 and .491A conflict on pre-FRA reentitlement timing; "
-            "this module supports the final FRA adjustment only",
-        )
-    if (
         own is not None
         and own.sequence is SpouseOwnSequence.AFTER_SPOUSE_BEFORE_ARF
     ):
@@ -812,6 +791,9 @@ def apply_arf(
             "RS 00615.500 does not supply this entitlement sequence's procedure",
         )
     age62 = _age_attainment_month_validated(claim.birth_date, 744)
+    # Source conflict us:oasdi-arf-spouse-reentitlement-credits
+    # 402(q)(1)(B) adjusts only at 62 or FRA, so a reentitled spouse keeps
+    # the original reduction months until FRA (RS 00615.201A.1, not .491A).
     effective = fra if payment >= fra else None
     if claim.kind is ARFBenefitKind.WIDOW and first <= age62 <= payment < fra:
         effective = age62

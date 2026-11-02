@@ -1938,6 +1938,34 @@ def _unsupported_cases():
             )
         ),
         g.UnsupportedReason.SAVINGS_CLAUSE: lambda: _savings_clause_case(),
+        g.UnsupportedReason.SOLE_FULL_DEDUCTION_ZERO_DUAL_COMPOSITION: (
+            lambda: _zero_dual_composition_case()
+        ),
+        g.UnsupportedReason.CARE_MINIMUM_PARTIAL_DEDUCTION: lambda: (
+            g.family_benefits_after_deductions(
+                _survivor_state(),
+                (
+                    g.Beneficiary(
+                        "W",
+                        g.Role.WIDOW,
+                        reduction_months=60,
+                        reduction_period_months=60,
+                        child_in_care="C1",
+                    ),
+                    g.Beneficiary("C1", g.Role.CHILD),
+                    g.Beneficiary("C2", g.Role.CHILD),
+                ),
+                payment_month=NOW,
+                params=PARAMS,
+                deductions={
+                    "C2": g.BenefitDeduction(
+                        g.DeductionReason.OWN_EARNINGS_TEST, F(100), True
+                    )
+                },
+                households={"W": "h", "C1": "h", "C2": "h"},
+                standalone=True,
+            )
+        ),
         g.UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN: lambda: (
             _guard(NOV, unknown=True).admit(_review_m2_path()[0])
         ),
@@ -2048,6 +2076,30 @@ def _unsupported_cases():
             )
         ),
     }
+
+
+def _zero_dual_composition_case():
+    return g.family_benefits_after_deductions(
+        _retired(400, 600),
+        (
+            g.Beneficiary(
+                "B", g.Role.SPOUSE, birth_year=1960, reduction_months=36
+            ),
+            g.Beneficiary("C", g.Role.CHILD),
+            g.Beneficiary(
+                "Z",
+                g.Role.CHILD,
+                own_benefit=g.OwnBenefit(DISABILITY, F(400)),
+            ),
+        ),
+        payment_month=NOW,
+        params=PARAMS,
+        deductions={
+            "B": g.BenefitDeduction(g.DeductionReason.OWN_EARNINGS_TEST)
+        },
+        households={},
+        standalone=True,
+    )
 
 
 def _savings_clause_case():

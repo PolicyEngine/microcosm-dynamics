@@ -58,9 +58,9 @@ from tests.track_b_gross_benefit_support import (
         ),
         pytest.param(
             "apply_arf",
-            "ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA,",
+            "effective = fra if payment >= fra else None",
             "us:oasdi-arf-spouse-reentitlement-credits",
-            id="spouse-reentitlement-refusal",
+            id="spouse-reentitlement-timing",
         ),
     ],
 )
@@ -425,8 +425,8 @@ SPOUSE_REENTITLEMENT_QUOTES = {
 }
 
 
-def test_spouse_reentitlement_conflict_quotes_and_refusal_are_documented():
-    """Both already captured POMS readings must remain visible to review."""
+def test_spouse_reentitlement_quotes_and_reading_are_documented():
+    """Both captured POMS readings and the reading taken stay visible."""
     # The .201 source is listed in G's manifest rather than R3's. Check
     # those referenced bytes here as well as the verbatim quoted text.
     entry = next(
@@ -445,35 +445,54 @@ def test_spouse_reentitlement_conflict_quotes_and_refusal_are_documented():
         Path(__file__).parents[1] / "docs/design/track_b_r3_arf_recompute.md"
     ).read_text()
     judgment = " ".join(
-        note.split("## Findings and readings requiring judgment", 1)[1]
+        note.split("## Readings taken and refusals kept", 1)[1]
         .split("## Monthly assembly inputs", 1)[0]
         .split()
     )
-    refusal_row = next(
+    support_row = next(
         line
         for line in note.splitlines()
-        if line.startswith("| Earlier reentitled spouse adjustment |")
+        if line.startswith("| Spouse reentitled before FRA |")
     )
     for authority, quote in SPOUSE_REENTITLEMENT_QUOTES.items():
         assert quote in texts[authority]
         assert quote in judgment
-        assert authority in refusal_row
-    assert "conflict" in refusal_row
-    assert "arf_spouse_reentitlement_before_fra" in refusal_row
+        assert authority in support_row
+    assert "Supported" in support_row
+    assert "not followed" in support_row
+    assert "us:oasdi-arf-spouse-reentitlement-credits" in judgment
+    assert "arf_spouse_reentitlement_before_fra" not in support_row
     for amount in ("$422.50", "$425.20", "$2.70"):
         assert amount in judgment
 
 
-def test_spouse_reentitlement_counterfactual_readings_keep_named_refusal():
-    """Invented 1960-01-02 spouse: $650, 60 RF versus 59 RF.
+def test_spouse_reentitlement_takes_the_statutory_timing():
+    """Invented 1960-01-02 spouse: $650, 60 RF before FRA, 59 at FRA.
 
     First entitlement 2022-01, termination 2022-02, reentitlement
-    2022-03. The .201 reading preserves 60 RF: 35% reduction gives
-    $422.50/$422. The .491 reading removes the terminated month: 59 RF
-    has reduction 83/240, rounded upward from $224.7916... to $224.80,
-    giving $425.20/$425. These are counterfactual arithmetic diagnostics;
-    neither reading is admitted by the refused pre-FRA claim.
+    2022-03. 402(q)(1)(B)(i) applies the reduction period's 60 months
+    to every month before FRA; (ii) applies the adjusted period, which
+    (q)(7)(C) shortens by the terminated month, only in the month of
+    attaining 62 or retirement age. RS 00615.201A.1 states that timing.
+    The .491A alternative (59 months from reentitlement) would pay
+    $425.20/$425 instead of $422.50/$422 for March 2022 through December
+    2026; it is kept as a counterfactual and not admitted.
     """
+    statute = " ".join(source_text("lii_usc_402q_415f_excerpts").split())
+    for quote in (
+        "the number of months in the reduction period for such benefit "
+        "(determined under paragraph (6)), if such benefit is for a month "
+        "before the month in which such individual attains retirement age",
+        "if less, the number of such months in the adjusted reduction "
+        "period for such benefit (determined under paragraph (7)), if such "
+        "benefit is (I) for the month in which such individual attains age "
+        "62, or (II) for the month in which such individual attains "
+        "retirement age",
+        "any month for which such individual was not entitled to such "
+        "benefits because of the occurrence of an event that terminated "
+        "her or his entitlement to such benefits",
+    ):
+        assert quote in statute
     params = ssa_params()
     unreduced = Fraction(650)
     amounts = tuple(
@@ -496,11 +515,10 @@ def test_spouse_reentitlement_counterfactual_readings_keep_named_refusal():
         unreduced_benefit=unreduced,
         nonentitlement_months=frozenset({(2022, 2)}),
     )
-    with pytest.raises(
-        gross_benefits.FamilyConfigurationUnsupported
-    ) as caught:
-        arf.apply_arf(claim, payment_month=(2022, 3), params=params)
-    assert (
-        caught.value.reason
-        is arf.ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA
-    )
+    reentitled = arf.apply_arf(claim, payment_month=(2022, 3), params=params)
+    assert reentitled.adjusted_reduction_months == 60
+    assert reentitled.benefit == amounts[0]
+    assert gross_benefits.whole_dollars(reentitled.benefit) == 422
+    at_fra = arf.apply_arf(claim, payment_month=(2027, 1), params=params)
+    assert at_fra.adjusted_reduction_months == 59
+    assert at_fra.benefit == amounts[1]
