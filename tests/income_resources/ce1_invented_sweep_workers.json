@@ -16798,6 +16798,56 @@
    },
    "expected": "noncovered",
    "decides": "no_effective_waiver"
+  },
+  {
+   "rule_id": "se_religious_sect_1968_1985",
+   "worker": "INVENTED (review r6 M-11): 1985: an Old Order Amish member with an approved 1402(g) exemption who is paid as the bookkeeper of an electing church: whether the exemption reaches church employee income before 1402(g)(5) is open, so the case refuses.",
+   "facts": {
+    "clergy_or_religious_exemption": "approved section 1402(g) religious-sect exemption, effective for the period",
+    "church_employee_service": "church employee income: remuneration for service described in 410(a)(8)(B), in the employ of an electing church or qualified church-controlled organization"
+   },
+   "expected": "refuses",
+   "decides": "sect_member_church_employee_income_open"
+  },
+  {
+   "rule_id": "se_religious_sect_1968_1985",
+   "worker": "INVENTED (review r6 M-11, just misses): 1985: the same member's net earnings from his own farm: not church employee income, so the exemption excludes them.",
+   "facts": {
+    "clergy_or_religious_exemption": "approved section 1402(g) religious-sect exemption, effective for the period",
+    "church_employee_service": "net earnings from his own farm, not church employee income"
+   },
+   "expected": "noncovered",
+   "decides": "effective_1402g_exemption"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1973_1987",
+   "worker": "INVENTED (review r6 M-11): 1980: a retired pastor, no exemption, receives a pension for his past ministry from a denominational plan that is not a church plan: no capture states the 1973-1987 rule, so the case refuses.",
+   "facts": {
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
+    "retirement_payment": "pension payment or retirement allowance received for past ministerial services"
+   },
+   "expected": "refuses",
+   "decides": "past_ministerial_service_pension_open"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1973_1987",
+   "worker": "INVENTED (review r6 M-11): 1980: a pastor whose church contributes to a tax-sheltered annuity for him, left out of his gross income: the 1973-1987 rule is not captured, so the case refuses.",
+   "facts": {
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
+    "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister, including any salary reduction contributions (elective deferrals), that are not included in the minister's gross income"
+   },
+   "expected": "refuses",
+   "decides": "church_tsa_contributions_open"
+  },
+  {
+   "rule_id": "se_religious_sect_1968_1985",
+   "worker": "INVENTED (review r6 M-11, just misses on the exemption): 1985: a church bookkeeper who belongs to no sect and has no 1402(g) exemption: 411(c)(6) excludes nothing.",
+   "facts": {
+    "clergy_or_religious_exemption": "no section 1402(g) exemption",
+    "church_employee_service": "church employee income: remuneration for service described in 410(a)(8)(B), in the employ of an electing church or qualified church-controlled organization"
+   },
+   "expected": "covered",
+   "decides": "residual"
   }
  ]
 }

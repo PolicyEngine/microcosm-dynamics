@@ -1459,8 +1459,10 @@ def test_open_readings_are_named_once_and_described_in_prose():
     # readings each (84). The review r6 fix settles the Army Corps aide
     # case in four rows and the (k)(4)(C) case, and drops the 1968-1972
     # CNMI ministry case (72); it opens the 521 cooperative, the pre-1983
-    # agreement exemption and the non-individual farm arrangement (78).
-    assert described == 78
+    # agreement exemption and the non-individual farm arrangement (78), and
+    # the sect member's 1984-85 church income and the 1973-1987 pensions
+    # and church annuity contributions (84).
+    assert described == 84
 
 
 READING_TEXT = {
@@ -2001,7 +2003,7 @@ def test_every_trigger_fact_is_read_by_a_case_or_named_with_its_reason():
             len(row["parameters"].get("unread_trigger_facts", {}))
             for row in rows
         )
-        == 374
+        == 371
     )
 
 
@@ -5317,7 +5319,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 352
+    assert sum(len(row["cases"]) for row in rows) == 355
     deferred = [
         w for w in INVENTED_SWEEP_WORKERS if w["expected"] == "deferred"
     ]

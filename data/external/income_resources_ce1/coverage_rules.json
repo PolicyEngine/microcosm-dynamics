@@ -18789,10 +18789,31 @@
     {
       "cases": [
         {
+          "case_id": "sect_member_church_employee_income_open",
+          "consequence": "open",
+          "description": "Church employee income arises only from 1984, when 410(a)(8)(B) elections began, so the case reaches 1984-85. Pub. L. 99-514 section 1882(a) later added 1402(g)(5), which keeps a 1402(g) exemption from reaching church employee income; no capture dates subsection (a), which is the question that makes se_religious_sect_1986_1989 open (review r6 M-11: this row had decided it). Ranked above effective_1402g_exemption, whose condition this worker also meets.",
+          "open_alternatives": [
+            {
+              "description": "Before 1402(g)(5) took effect the exemption reached all chapter 2 income, church employee income included: noncovered.",
+              "name": "exemption_reaches_all_chapter_2_income"
+            },
+            {
+              "description": "1402(g)(5)'s limit applies to 1984-85 church employee income: the exemption does not reach it, and the residual applies (covered).",
+              "name": "section_1882a_reaches_1984"
+            }
+          ],
+          "open_reason": "SECT_CHURCH_EMPLOYEE_INCOME_1984_1985_UNSETTLED: the captured notes date Pub. L. 99-514 section 1882(b) but not subsection (a), which added 1402(g)(5); whether the exemption reached a sect member's church employee income in 1984-85 is therefore not settled, so the case refuses.",
+          "precedence": 1,
+          "when": {
+            "church_employee_service": "church employee income: remuneration for service described in 410(a)(8)(B), in the employ of an electing church or qualified church-controlled organization",
+            "clergy_or_religious_exemption": "approved section 1402(g) religious-sect exemption, effective for the period"
+          }
+        },
+        {
           "case_id": "effective_1402g_exemption",
           "consequence": "noncovered",
           "description": "411(c)(6).",
-          "precedence": 1,
+          "precedence": 2,
           "when": {
             "clergy_or_religious_exemption": "approved section 1402(g) religious-sect exemption, effective for the period"
           }
@@ -18893,7 +18914,6 @@
         "electingchurch_income_exists_from": 1984,
         "general1402g_exemption": "Applies when approved and effective",
         "unread_trigger_facts": {
-          "church_employee_service": "Before Pub. L. 99-514 section 1882(a) added 1402(g)(5) the exemption reached all chapter 2 income, church employee income included, so the fact changes no outcome (no capture dates section 1882(a)).",
           "taxable_year_start": "The taxable-year axis lookup_date reads (effective_basis taxable_year_start)."
         }
       },
@@ -19560,6 +19580,46 @@
             "ministerial_service": "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401",
             "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
           }
+        },
+        {
+          "case_id": "past_ministerial_service_pension_open",
+          "consequence": "open",
+          "description": "Review r6 M-11: the row counted this amount in the covered residual on no source. The 1987 row's case of the same text excludes it.",
+          "open_alternatives": [
+            {
+              "description": "The 1987 row's reading reaches 1973-1987: the amount stays out of net earnings (noncovered).",
+              "name": "later_guidance_applies"
+            },
+            {
+              "description": "No captured rule excludes the amount before 1987-12-22: the covered residual includes it.",
+              "name": "no_exclusion_before_1987"
+            }
+          ],
+          "open_reason": "PAST_MINISTRY_PENSION_1973_1987_UNSETTLED: the only captured source for leaving a pension for past ministerial services, from a plan that is not a church plan, out of net earnings is Publication 517 (2025), which se_clergy_gross_concept_1987_2026 applies; no capture states the rule for 1973-1987, so the case refuses.",
+          "precedence": 4,
+          "when": {
+            "retirement_payment": "pension payment or retirement allowance received for past ministerial services"
+          }
+        },
+        {
+          "case_id": "church_tsa_contributions_open",
+          "consequence": "open",
+          "description": "Review r6 M-11: the row counted this amount in the covered residual on no source. The 1987 row's case of the same text excludes it.",
+          "open_alternatives": [
+            {
+              "description": "The 1987 row's reading reaches 1973-1987: the amount stays out of net earnings (noncovered).",
+              "name": "later_guidance_applies"
+            },
+            {
+              "description": "No captured rule excludes the amount before 1987-12-22: the covered residual includes it.",
+              "name": "no_exclusion_before_1987"
+            }
+          ],
+          "open_reason": "CHURCH_TSA_CONTRIBUTIONS_1973_1987_UNSETTLED: se_clergy_gross_concept_1987_2026 leaves church contributions to a tax-sheltered annuity out of net earnings, reading 411(a)'s start from subtitle A gross income with Publication 517 (2025); no capture prints 411(a) or the Publication 517 list as in force in 1973-1987, so whether the same holds then is not settled, and the case refuses.",
+          "precedence": 5,
+          "when": {
+            "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister, including any salary reduction contributions (elective deferrals), that are not included in the minister's gross income"
+          }
         }
       ],
       "citations": [
@@ -19791,8 +19851,6 @@
         "service_exemption_decided_by": "clergy_religious_service family",
         "unread_trigger_facts": {
           "amount": "The amount the computation includes; no threshold.",
-          "clergy_remuneration": "The salary, parsonage and meals-and-lodging values the covered residual includes; the church tax-sheltered annuity case exists only from 1987-12-22.",
-          "retirement_payment": "No case reads it: the only captured source for excluding a pension for past ministerial services from a plan that is not a church plan is Publication 517 (2025), later-edition guidance; se_clergy_gross_concept_1987_2026 applies it (case past_ministerial_service_pension) and this row does not, so such a pension takes the covered residual here. No capture states the rule for 1973-1987.",
           "taxable_year_start": "The taxable-year axis lookup_date reads."
         }
       },
