@@ -3275,11 +3275,15 @@ This pass added the statutory texts it newly relies on (42 U.S.C.
 402(d)(1)(D), (d)(5), (e)(1), (h)(1)(D), (h)(2), (k)(3)(A), (k)(4) and
 (s)) to `lii_usc_402_415_excerpts.txt`, from a re-fetch whose LII body
 matched the pinned 402 SHA-256 byte for byte.
-`tests/test_track_b_readings_20261023.py` pins the bookkeeping. The
-`# Source conflict` markers in the G, R2, R3 and grace modules must be
-exactly this pass's ids plus the ids other rounds register in that test,
-and every marker must name a whole id that a Track B design note
-documents. This note and the R2 and R3 notes must carry no open "Needs
+`tests/test_track_b_readings_20261023.py` pins the bookkeeping for every
+Track B module except the insured-status ones (`insured_status.py` and
+`_insured_status_qc.py`), whose readings the source-conflict rulings log
+but no Track B note yet documents in full. In the other modules, every
+mention of a source conflict must be a one-line `# Source conflict <id>`
+marker. The marker ids must be exactly this pass's ids plus the ids other
+rounds register in that test, each in the G, R2, R3 or grace module, and
+each id must appear whole in a Track B design note. This note and the R2
+and R3 notes must name each of their readings and carry no open "Needs
 Max's judgment" heading, and each statutory passage the test quotes must
 appear verbatim in the capture. The invented conformance lattice is
 unchanged; only the `parent_benefit` witness moved to two parents in the

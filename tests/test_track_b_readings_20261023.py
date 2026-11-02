@@ -2,10 +2,12 @@
 
 Verification class: statutory conformance and documentation integrity on
 captured sources only. No population, behavioral or forecast claim.
-The ``# Source conflict`` markers in the G, R2, R3 and grace modules are
-exactly this pass's readings plus those other rounds register here, each
-marker names a whole id that a Track B design note documents, and no
-design note keeps an open "Needs Max's judgment" heading.
+Outside the exempt insured-status modules, every mention of a source
+conflict in a Track B module is a ``# Source conflict <id>`` marker, the
+marker ids are exactly this pass's readings plus those other rounds
+register here, each in the G, R2, R3 or grace module, and each id appears
+whole in a Track B design note. Each note names its readings and keeps no
+open "Needs Max's judgment" heading.
 """
 
 import re
@@ -57,17 +59,31 @@ OTHER_ROUNDS = {
     "us:oasdi-finality-protected-rates-before-coverage",
     "us:oasdi-sole-full-deduction-zero-dual-composition",
 }
-#: Insured-status modules keep their own register of readings.
+#: Exempt: the insured-status modules (#562). The source-conflict rulings
+#: log their readings, but no Track B note documents all of them yet.
 OWN_REGISTERS = {"insured_status.py", "_insured_status_qc.py"}
 ID = r"us:oasdi-[a-z0-9]+(?:-[a-z0-9]+)*"
-MARKER = re.compile(rf"# Source conflict ({ID})")
+#: A marker's id ends at a colon, whitespace or the end of the file.
+MARKER = re.compile(rf"# Source conflict ({ID})(?=:|\s|$)")
+#: A whole id in a note: no id character or hyphen follows it.
+DOCUMENTED = re.compile(rf"{ID}(?![A-Za-z0-9_-])")
+MENTION = re.compile(r"source\s+conflict", re.IGNORECASE)
 
 
 def _module_markers():
+    """Marker ids by module, leaving out ids only exempt modules carry.
+
+    Outside the exempt modules every mention of a source conflict must
+    parse as a marker, so a wrapped, mistyped or reworded one fails.
+    """
     found = {}
     for path in sorted(MODULES.glob("*.py")):
-        for match in MARKER.finditer(path.read_text()):
-            found.setdefault(match.group(1), set()).add(path.name)
+        text = path.read_text()
+        names = MARKER.findall(text)
+        if path.name not in OWN_REGISTERS:
+            assert len(MENTION.findall(text)) == len(names), path.name
+        for name in names:
+            found.setdefault(name, set()).add(path.name)
     return {
         name: files
         for name, files in found.items()
@@ -92,7 +108,7 @@ def test_every_marker_names_a_reading_documented_in_a_design_note():
     # Whole ids, so a truncated or misspelled marker cannot match a prefix.
     documented = set()
     for path in (ROOT / "docs" / "design").glob("track_b_*.md"):
-        documented.update(re.findall(ID, path.read_text()))
+        documented.update(DOCUMENTED.findall(path.read_text()))
     for name in _module_markers():
         assert name in documented, name
 
