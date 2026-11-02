@@ -229,10 +229,14 @@ def mint_interval(cell, reading="S"):
             # integral double with a non-significant ".0". normalize()
             # drops it, so the count is that of the shortest decimal
             # string that denotes the double (review r1b, finding 1).
-            stored = Decimal(repr(double)).normalize()
-            if _percent_format(number_format):
-                stored = stored.scaleb(2)
-            stored_decimals = max(0, -stored.as_tuple().exponent)
+            # normalize() and scaleb() round to the context's precision,
+            # so both run at PRECISION, not the caller's (review r2, 3).
+            with localcontext() as context:
+                context.prec = PRECISION
+                stored = Decimal(repr(double)).normalize()
+                if _percent_format(number_format):
+                    stored = stored.scaleb(2)
+                stored_decimals = max(0, -stored.as_tuple().exponent)
     elif reading == "L":
         stored = _decimal(cell.get("xlsx_value_pct"))
         stored_decimals = _decimals(cell.get("xlsx_decimals_pct"))
@@ -392,6 +396,106 @@ def _registration_checks(record, keys):
     }
 
 
+def oact_footer_matches(footer):
+    """Whether a transcribed OACT footer has the registered words.
+
+    Whitespace runs of any kind (``str.split`` also splits on no-break
+    and thin spaces) and any run of periods and whitespace after the last
+    word are transcription details, not words of the footer (reviews
+    r1b, finding 2, and r2, finding 1). Every word must match.
+    """
+    return " ".join(footer.split()).rstrip(". ") == OACT_FOOTER
+
+
+def _written_decimals(value):
+    """The decimals in a value as the record writes it, else None.
+
+    ``_load`` keeps each JSON number as an int or as a Decimal built from
+    its literal, and the Decimal constructor keeps the literal's exponent
+    without normalizing it, so a trailing zero counts as written:
+    "12.30" has two decimals and "12.300" three. A string is read the
+    same way. A float has lost its written digits, and a value that
+    writes no finite number has none to count.
+    """
+    if isinstance(value, (bool, float)):
+        return None
+    if isinstance(value, int):
+        return 0
+    if isinstance(value, str):
+        try:
+            value = Decimal(value)
+        except ArithmeticError:
+            return None
+    if not isinstance(value, Decimal) or not value.is_finite():
+        return None
+    return max(0, -value.as_tuple().exponent)
+
+
+def decimal_count_mismatches(comparator):
+    """Locate each decimal count that differs from its value as written.
+
+    It checks every count the comparison computes with: ``decimals`` of
+    OACT's two cost-rate columns, PWBM's ``stored_decimals`` of its two
+    2030 cost rates, and ``html_decimals`` of each MINT band's
+    ``median_diff_pct`` cell. A count matches when it equals the decimals
+    its value writes, trailing zeros included (:func:`_written_decimals`).
+    A count that is not a nonnegative integer, or a value that writes no
+    finite number, never matches. A float value never matches either:
+    load records with :func:`_load`, which yields none. A missing value
+    or count is not checked; the conversion reports it as undefined.
+    Returns ``(cell, field)`` locators, never a value, and needs nothing
+    but the comparator record (review r2, finding 4).
+    """
+    mismatches = []
+
+    def check(cell, field, value, count):
+        if value is None or count is None:
+            return
+        try:
+            parsed = _decimals(count)
+        except (ArithmeticError, TypeError, ValueError):
+            parsed = None
+        written = _written_decimals(value)
+        if parsed is None or written is None or parsed != written:
+            mismatches.append((cell, field))
+
+    oact = comparator.get("oact") or {}
+    columns = {
+        column["key"]: column
+        for column in (oact.get("columns") or [])
+        if column is not None
+    }
+    for key in ("proposal_cost_rate", "change_cost_rate"):
+        column = columns.get(key) or {}
+        check(
+            f"oact.columns.{key}",
+            "decimals",
+            column.get("value"),
+            column.get("decimals"),
+        )
+    pwbm = comparator.get("pwbm") or {}
+    row = pwbm.get("row_2030") or {}
+    counts = pwbm.get("stored_decimals") or {}
+    for key in ("Baseline cost rate", "A1 cost rate"):
+        check(
+            f"pwbm.row_2030.{key}",
+            "stored_decimals",
+            row.get(key),
+            counts.get(key),
+        )
+    mint = comparator.get("mint5") or {}
+    bands = (mint.get("table1") or {}).get("rows") or {}
+    for band in BANDS:
+        cell = (bands.get(band) or {}).get("median_diff_pct") or {}
+        check(
+            f"mint5.table1.rows.{band}.median_diff_pct",
+            "html_decimals",
+            cell.get("html_value"),
+            cell.get("html_decimals"),
+        )
+    return mismatches
+
+
 def build_comparison(artifact, comparator):
     """Consume the stage-1 artifact shape without dropping undefined rows."""
     if comparator.get("schema_version") != "acola-comparator-v1":
@@ -400,13 +504,7 @@ def build_comparison(artifact, comparator):
         comparator.get(key) or {} for key in ("oact", "pwbm", "mint5")
     )
     footer = oact.get("footer_verbatim")
-    # Whitespace runs, no-break spaces included, and final periods are
-    # transcription details, not words of the footer (review r1b, 2).
-    if (
-        footer is not None
-        and " ".join(footer.replace("\xa0", " ").split()).rstrip(".")
-        != OACT_FOOTER
-    ):
+    if footer is not None and not oact_footer_matches(footer):
         raise ValueError("OACT footer does not match registration")
     for key in (
         "footer_matches_registration",
@@ -414,6 +512,12 @@ def build_comparison(artifact, comparator):
     ):
         if oact.get(key) is False:
             raise ValueError(f"OACT {key} is false")
+    mismatches = decimal_count_mismatches(comparator)
+    if mismatches:
+        raise ValueError(
+            "decimal counts differ from the values as written at: "
+            + "; ".join(f"{cell} ({field})" for cell, field in mismatches)
+        )
     nulls, rows = artifact.get("nulls") or {}, artifact.get("rows") or {}
     cost = {}
     for name, record, conversion in (

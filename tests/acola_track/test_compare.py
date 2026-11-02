@@ -3,11 +3,16 @@
 from __future__ import annotations
 
 import ast
+import decimal
 import hashlib
 import importlib.util
+import itertools
 import json
+import re
+import sys
+from collections import Counter
 from copy import deepcopy
-from decimal import ROUND_HALF_UP, Decimal, localcontext
+from decimal import ROUND_HALF_UP, Decimal, getcontext, localcontext
 from pathlib import Path
 
 import pytest
@@ -181,7 +186,7 @@ def invented_artifact():
     }
 
 
-def write_inputs(tmp_path, artifact=None):
+def write_inputs(tmp_path, artifact=None, comparator=None):
     artifact_path, record_path = (
         tmp_path / "invented.json",
         tmp_path / "reconciled.json",
@@ -194,7 +199,7 @@ def write_inputs(tmp_path, artifact=None):
         ).hexdigest(),
     }
     artifact_path.with_suffix(".env.json").write_text(json.dumps(sidecar))
-    record_path.write_text(json.dumps(invented_comparator()))
+    record_path.write_text(json.dumps(comparator or invented_comparator()))
     extra = tmp_path / "invented.txt"
     extra.write_text("INVENTED source bytes")
     files = {
@@ -490,6 +495,79 @@ def test_reading_s_counts_the_shortest_string_of_the_stored_double(
         assert literal[key] == shortest[key]
 
 
+def test_reading_s_counts_decimals_under_a_small_ambient_precision():
+    """Review r2 finding 3: normalization runs at PRECISION.
+
+    INVENTED cell. An ambient precision of 6 is too small for the 12
+    significant digits of the stored double; the count stays 11. The
+    ``with`` block restores the test's own context on exit, whether the
+    assertions pass or fail, and the call leaves the ambient one alone.
+    """
+    cell = invented_cell(xlsx_raw="-7.32123456789", xlsx_number_format="0.00")
+    expected = compare.mint_interval(cell)
+    outer = getcontext().prec
+    with localcontext() as context:
+        context.prec = 6
+        shortest = compare.mint_interval(cell)
+        ambient = getcontext().prec
+    assert getcontext().prec == outer
+    assert ambient == 6
+    assert expected["stored_decimals_pct"] == 11
+    assert shortest["stored_decimals_pct"] == 11
+    assert repr(shortest) == repr(expected)
+
+
+ROUNDINGS = (
+    decimal.ROUND_05UP,
+    decimal.ROUND_CEILING,
+    decimal.ROUND_DOWN,
+    decimal.ROUND_FLOOR,
+    decimal.ROUND_HALF_DOWN,
+    decimal.ROUND_HALF_EVEN,
+    decimal.ROUND_HALF_UP,
+    decimal.ROUND_UP,
+)
+
+
+@given(
+    text=invented_shortest_decimals(),
+    percent=st.booleans(),
+    html_places=st.integers(0, 6),
+    precision=st.integers(1, 28),
+    rounding=st.sampled_from(ROUNDINGS),
+)
+@settings(max_examples=200, deadline=None)
+def test_reading_s_does_not_depend_on_the_ambient_decimal_context(
+    text, percent, html_places, precision, rounding
+):
+    """Property: reading S gives one result under any ambient context.
+
+    INVENTED stored doubles, as in the shortest-string property. Under
+    an ambient precision from 1 to 28 digits and any rounding mode, the
+    stored value, its count, the branch and the interval equal their
+    values at the default context.
+    """
+    value = D(text)
+    stored = value.scaleb(2) if percent else value
+    with localcontext() as context:
+        context.prec = compare.PRECISION
+        display = stored.quantize(
+            D(1).scaleb(-html_places), rounding=ROUND_HALF_UP
+        )
+    cell = invented_cell(
+        html_value=str(display),
+        html_decimals=html_places,
+        xlsx_raw=text,
+        xlsx_number_format="0.0%" if percent else "0.00",
+    )
+    expected = compare.mint_interval(cell)
+    with localcontext() as context:
+        context.prec = precision
+        context.rounding = rounding
+        got = compare.mint_interval(cell)
+    assert repr(got) == repr(expected)
+
+
 def test_interval_subtraction_and_null_propagation():
     left = compare._interval(D(2), D(1), D(3))
     right = compare._interval(D(6), D(4), D(8))
@@ -681,11 +759,21 @@ def test_wrong_oact_footer_refuses_without_substitution():
         compare.OACT_FOOTER + ".\n",
         compare.OACT_FOOTER + ". ",
         compare.OACT_FOOTER.replace(" ", "\xa0") + ".",
+        compare.OACT_FOOTER + " .",
     ],
-    ids=["trailing_newline", "trailing_space", "no_break_spaces"],
+    ids=[
+        "trailing_newline",
+        "trailing_space",
+        "no_break_spaces",
+        "space_before_period",
+    ],
 )
 def test_oact_footer_accepts_transcribed_whitespace(footer):
-    """Review r1b finding 2: whitespace after the period is not refused."""
+    """Whitespace on either side of the final period is not refused.
+
+    Review r1b finding 2 named the first three cases; review r2 finding 1
+    named the fourth, which fix r1's check refused.
+    """
     record = invented_comparator()
     record["oact"]["footer_verbatim"] = footer
     compare.build_comparison(invented_artifact(), record)
@@ -702,19 +790,21 @@ FOOTER_SPACES = (" ", "  ", "\t", "\n", "\r\n", "\xa0", "\u2009", "\u202f")
         max_size=len(FOOTER_TOKENS) - 1,
     ),
     lead=st.sampled_from(("",) + FOOTER_SPACES),
+    before=st.sampled_from(("",) + FOOTER_SPACES),
     tail=st.sampled_from(("",) + FOOTER_SPACES),
     periods=st.integers(0, 2),
     changed=st.one_of(st.none(), st.integers(0, len(FOOTER_TOKENS) - 1)),
 )
 @settings(max_examples=150, deadline=None)
 def test_oact_footer_check_ignores_only_whitespace_and_final_periods(
-    gaps, lead, tail, periods, changed
+    gaps, lead, before, tail, periods, changed
 ):
     """Any whitespace run and final periods pass; a changed word refuses.
 
     INVENTED transcriptions of the registered footer: whitespace of any
-    kind and length between, before and after its words, and up to two
-    final periods. Changing one word (an appended "X") always refuses.
+    kind and length between, before and after its words, before and
+    after up to two final periods. Changing one word (an appended "X")
+    always refuses.
     """
     tokens = list(FOOTER_TOKENS)
     if changed is not None:
@@ -723,12 +813,568 @@ def test_oact_footer_check_ignores_only_whitespace_and_final_periods(
         token + gap for token, gap in zip(tokens, [*gaps, ""], strict=True)
     )
     record = invented_comparator()
-    record["oact"]["footer_verbatim"] = lead + words + "." * periods + tail
+    record["oact"]["footer_verbatim"] = (
+        lead + words + before + "." * periods + tail
+    )
     if changed is None:
         compare.build_comparison(invented_artifact(), record)
     else:
         with pytest.raises(ValueError, match="footer"):
             compare.build_comparison(invented_artifact(), record)
+
+
+def pre_r1_footer_matches(footer):
+    """The footer check before fix r1, copied as the reference.
+
+    ``scripts/compare_acola.py:399`` at ``6abb6726`` refused a footer
+    unless ``footer.rstrip(".").strip() == OACT_FOOTER``.
+    """
+    return footer.rstrip(".").strip() == compare.OACT_FOOTER
+
+
+def r1_footer_matches(footer):
+    """Fix r1's footer check (``0a3299df``), kept to pin its regression."""
+    return (
+        " ".join(footer.replace("\xa0", " ").split()).rstrip(".")
+        == compare.OACT_FOOTER
+    )
+
+
+def test_footer_whitespace_before_final_periods_passes_again():
+    """Review r2 finding 1: the pre-r1 check accepted these, r1 refused.
+
+    INVENTED footers: whitespace of several kinds directly before the
+    final period or periods. The new check accepts them again.
+    """
+    for space in (" ", "\t", "\n", "\xa0", "\u2009", " \t "):
+        for periods in (".", ".."):
+            footer = compare.OACT_FOOTER + space + periods
+            assert pre_r1_footer_matches(footer)
+            assert not r1_footer_matches(footer)
+            assert compare.oact_footer_matches(footer)
+
+
+FOOTER_LEADS = ("", " ", "\t\n", "\xa0", ".", "X")
+FOOTER_JOINERS = (
+    (" ",),
+    ("\xa0",),
+    ("\t",),
+    ("  \n",),
+    (" ", "\u2009", "\r\n"),
+)
+FOOTER_BEFORES = ("", " ", "\xa0", "\n")
+FOOTER_PERIODS = ("", ".", "..")
+FOOTER_TAILS = ("", " ", "\r\n", " .", "X")
+
+
+def footer_word_variants():
+    """The registered words, then 52 ways to change, drop or add a word.
+
+    Each word changed (an appended "X"), dropped or recased (the year has
+    no case, so 8 recasings); a period after each word but the last; an
+    "X" added at each of the 10 positions; and each adjacent pair joined.
+    """
+    tokens = list(FOOTER_TOKENS)
+    yield tokens
+    for index, token in enumerate(tokens):
+        yield tokens[:index] + [token + "X"] + tokens[index + 1 :]
+        yield tokens[:index] + tokens[index + 1 :]
+        if token.swapcase() != token:
+            yield tokens[:index] + [token.swapcase()] + tokens[index + 1 :]
+        if index < len(tokens) - 1:
+            yield tokens[:index] + [token + "."] + tokens[index + 1 :]
+    for index in range(len(tokens) + 1):
+        yield tokens[:index] + ["X"] + tokens[index:]
+    for index in range(len(tokens) - 1):
+        joined = tokens[index] + tokens[index + 1]
+        yield tokens[:index] + [joined] + tokens[index + 2 :]
+
+
+def enumerated_footers():
+    """Every INVENTED footer from the small alphabets above."""
+    for lead, tokens, joiner, before, periods, tail in itertools.product(
+        FOOTER_LEADS,
+        list(footer_word_variants()),
+        FOOTER_JOINERS,
+        FOOTER_BEFORES,
+        FOOTER_PERIODS,
+        FOOTER_TAILS,
+    ):
+        gaps = [joiner[index % len(joiner)] for index in range(len(tokens))]
+        words = "".join(
+            token + gap
+            for token, gap in zip(tokens, [*gaps[:-1], ""], strict=True)
+        )
+        end = before + periods + tail
+        yield lead + words + end, tokens == FOOTER_TOKENS, lead, end
+
+
+def test_footer_check_keeps_everything_the_pre_r1_check_accepted():
+    """Enumerated: whatever the pre-r1 check accepted still passes.
+
+    The intended difference between the pre-r1 check (``6abb6726``) and
+    this one, in both directions:
+
+    - **Accepted before, refused now: none.** The pre-r1 check accepted
+      exactly the registered words joined by single ASCII spaces, with any
+      whitespace before them and any whitespace, then any periods, after
+      them. Each such footer passes now. Fix r1 meant to refuse changed,
+      added, dropped and joined words, and the pre-r1 check refused those
+      too, so no accepted case needs an exception.
+    - **Refused before, accepted now:** any whitespace run between words
+      other than one ASCII space (tabs, line breaks, no-break, thin and
+      narrow no-break spaces, or runs of them), whitespace after a final
+      period (``"Report.\\n"``, ``"Report. "``), and periods separated by
+      whitespace (``"Report. ."``).
+
+    The INVENTED footers combine 6 leads, 53 word sequences
+    (:func:`footer_word_variants`), 5 joiners, 4 gaps before the
+    periods, 3 period runs and 5 tails, 95,400 in all. The check accepts
+    exactly the registered words with only whitespace before them and
+    only whitespace and periods after them.
+    """
+    outcomes = Counter()
+    for footer, registered, lead, end in enumerated_footers():
+        old = pre_r1_footer_matches(footer)
+        new = compare.oact_footer_matches(footer)
+        expected = (
+            registered
+            and not lead.strip()
+            and not end.replace(".", "").strip()
+        )
+        assert new == expected, repr(footer)
+        assert new or not old, repr(footer)
+        outcomes[old, new] += 1
+    assert sum(outcomes.values()) == 95_400
+    assert outcomes[True, False] == 0
+    assert outcomes[True, True] > 0
+    assert outcomes[False, True] > 0
+    assert outcomes[False, False] > 0
+
+
+UNICODE_SPACES = tuple(
+    chr(code) for code in range(sys.maxunicode + 1) if chr(code).isspace()
+)
+NOT_SPACES = ("\u200b", "\u2060", "\ufeff", "\u00ad", "\u180e")
+
+
+def test_footer_check_and_pre_r1_check_share_one_whitespace_set():
+    """Every character ``str.isspace`` accepts is whitespace to both.
+
+    INVENTED footers put each Unicode whitespace character before the
+    words, between them, after them and around the final period. Zero-width
+    and format characters are not whitespace, so both checks refuse them.
+    """
+    footer = compare.OACT_FOOTER
+    assert not any(char.isspace() for char in NOT_SPACES)
+    for space in UNICODE_SPACES:
+        accepted_before = (
+            space + footer,
+            footer + space,
+            footer + space + ".",
+        )
+        for case in accepted_before:
+            assert pre_r1_footer_matches(case), repr(case)
+            assert compare.oact_footer_matches(case), repr(case)
+        for case in (footer.replace(" ", space), footer + "." + space):
+            assert compare.oact_footer_matches(case), repr(case)
+    for char in NOT_SPACES:
+        cases = (
+            char + footer,
+            footer + char,
+            footer.replace(" ", char),
+            footer + "." + char,
+        )
+        for case in cases:
+            assert not pre_r1_footer_matches(case), repr(case)
+            assert not compare.oact_footer_matches(case), repr(case)
+
+
+@given(
+    lead=st.text(st.sampled_from(UNICODE_SPACES), max_size=3),
+    before=st.text(st.sampled_from(UNICODE_SPACES), max_size=3),
+    periods=st.integers(0, 3),
+    prefix=st.text(
+        st.sampled_from(UNICODE_SPACES + NOT_SPACES + (".", "X")), max_size=3
+    ),
+    suffix=st.text(
+        st.sampled_from(UNICODE_SPACES + NOT_SPACES + (".", "X")), max_size=4
+    ),
+    gap=st.text(
+        st.sampled_from(UNICODE_SPACES + NOT_SPACES), min_size=1, max_size=2
+    ),
+)
+@settings(max_examples=300, deadline=None)
+def test_footer_check_accepts_whatever_the_pre_r1_check_accepted(
+    lead, before, periods, prefix, suffix, gap
+):
+    """Property: the pre-r1 accept set is inside the new one.
+
+    INVENTED footers. ``lead + footer + before + periods`` is the shape of
+    every footer the pre-r1 check accepted, so both checks accept it. On
+    a footer with arbitrary leading, joining and trailing characters, the
+    pre-r1 check's acceptance implies the new check's.
+    """
+    footer = compare.OACT_FOOTER
+    accepted = lead + footer + before + "." * periods
+    assert pre_r1_footer_matches(accepted)
+    assert compare.oact_footer_matches(accepted)
+    noisy = prefix + footer.replace(" ", gap, 1) + suffix
+    assert compare.oact_footer_matches(noisy) or not pre_r1_footer_matches(
+        noisy
+    )
+
+
+DECIMAL_COUNT_CELLS = {
+    "oact_proposal": ("oact.columns.proposal_cost_rate", "decimals"),
+    "oact_change": ("oact.columns.change_cost_rate", "decimals"),
+    "pwbm_baseline": ("pwbm.row_2030.Baseline cost rate", "stored_decimals"),
+    "pwbm_reform": ("pwbm.row_2030.A1 cost rate", "stored_decimals"),
+    "mint": ("mint5.table1.rows.70-79.median_diff_pct", "html_decimals"),
+}
+
+
+def write_value(record, field, value, count):
+    """Set one counted INVENTED value and its decimal count in a record."""
+    if field.startswith("oact"):
+        index = 0 if field == "oact_proposal" else 1
+        record["oact"]["columns"][index].update(value=value, decimals=count)
+    elif field.startswith("pwbm"):
+        key = (
+            "Baseline cost rate"
+            if field == "pwbm_baseline"
+            else "A1 cost rate"
+        )
+        record["pwbm"]["row_2030"][key] = value
+        record["pwbm"]["stored_decimals"][key] = count
+    else:
+        cell = record["mint5"]["table1"]["rows"]["70-79"]["median_diff_pct"]
+        cell.update(html_value=value, html_decimals=count)
+    return record
+
+
+@pytest.mark.parametrize("field", sorted(DECIMAL_COUNT_CELLS))
+@pytest.mark.parametrize(
+    "value,count",
+    [
+        ("12.30", 2),
+        ("12.300", 3),
+        ("0.750", 3),
+        ("12", 0),
+        ("12.", 0),
+        (D("12.30"), 2),
+        (D("12.300"), 3),
+        (12, 0),
+    ],
+)
+def test_decimal_count_matches_the_value_as_written(field, value, count):
+    """Review r2 finding 4: the check counts trailing zeros as written.
+
+    INVENTED values. "12.30" with a count of 2 passes, and so does
+    "12.300" with a count of 3, as a string or a Decimal; an integer
+    writes no decimal.
+    """
+    record = write_value(invented_comparator(), field, value, count)
+    assert compare.decimal_count_mismatches(record) == []
+    compare.build_comparison(invented_artifact(), record)
+
+
+@pytest.mark.parametrize("field", sorted(DECIMAL_COUNT_CELLS))
+@pytest.mark.parametrize(
+    "value,count",
+    [
+        ("12.30", 1),
+        ("12.30", 3),
+        ("12.300", 2),
+        ("12.3", 0),
+        ("12", 1),
+        (D("12.30"), 1),
+        (12, 2),
+    ],
+)
+def test_wrong_decimal_count_refuses_naming_the_cell_only(field, value, count):
+    """A count unlike the written decimals refuses, with no value shown."""
+    record = write_value(invented_comparator(), field, value, count)
+    locator = DECIMAL_COUNT_CELLS[field]
+    assert compare.decimal_count_mismatches(record) == [locator]
+    with pytest.raises(ValueError, match="decimal counts") as error:
+        compare.build_comparison(invented_artifact(), record)
+    assert f"{locator[0]} ({locator[1]})" in str(error.value)
+    assert str(value) not in str(error.value)
+
+
+@pytest.mark.parametrize(
+    "value,count",
+    [
+        ("12.30", -1),
+        ("12.30", 2.5),
+        ("12.30", "two"),
+        ("12.30", True),
+        ("NaN", 0),
+        ("Infinity", 0),
+        ("twelve", 0),
+        (True, 0),
+        (12.3, 1),
+    ],
+)
+def test_unreadable_count_or_value_never_matches(value, count):
+    """INVENTED unreadable entries are mismatches, never guesses.
+
+    Each of these but the last already refused before the check, when the
+    conversion parsed it; the check now names its cell first. The last is
+    a float: it has lost its written digits, so it never matches.
+    ``_load`` yields none, since it reads each JSON number as an int or a
+    Decimal; only a record built in memory can hold one.
+    """
+    record = write_value(invented_comparator(), "mint", value, count)
+    assert compare.decimal_count_mismatches(record) == [
+        DECIMAL_COUNT_CELLS["mint"]
+    ]
+
+
+@given(
+    field=st.sampled_from(sorted(DECIMAL_COUNT_CELLS)),
+    whole=st.integers(0, 10**9),
+    fraction=st.text(st.sampled_from("0123456789"), max_size=12),
+    negative=st.booleans(),
+    form=st.sampled_from(("string", "decimal", "json")),
+    other=st.integers(0, 20),
+)
+@settings(max_examples=300, deadline=None)
+def test_value_written_with_n_decimals_matches_only_a_count_of_n(
+    field, whole, fraction, negative, form, other
+):
+    """Property (review r2, finding 4): n written decimals need count n.
+
+    INVENTED values with n written decimals, trailing zeros included,
+    written as a string, as a Decimal, or as a JSON number read the way
+    ``_load`` reads one. Each passes with a count of n and refuses with
+    any other count, naming only its cell and field.
+    """
+    text = ("-" if negative else "") + str(whole)
+    if fraction:
+        text += "." + fraction
+    value = {
+        "string": text,
+        "decimal": D(text),
+        "json": json.loads(text, parse_float=D),
+    }[form]
+    written = len(fraction)
+    record = write_value(invented_comparator(), field, value, written)
+    assert compare.decimal_count_mismatches(record) == []
+    record = write_value(invented_comparator(), field, value, other)
+    if other == written:
+        assert compare.decimal_count_mismatches(record) == []
+    else:
+        assert compare.decimal_count_mismatches(record) == [
+            DECIMAL_COUNT_CELLS[field]
+        ]
+        with pytest.raises(ValueError, match="decimal counts"):
+            compare.build_comparison(invented_artifact(), record)
+
+
+def test_decimal_count_check_names_every_counted_cell_and_needs_no_other():
+    """It reads only the comparator record and covers nine counts.
+
+    INVENTED record with every counted value given one extra trailing
+    zero: both OACT cost rates, both PWBM cost rates and the five MINT
+    bands. Income-rate columns and memo cells carry no count it checks.
+    """
+    assert compare.decimal_count_mismatches({}) == []
+    record = invented_comparator()
+    for column in record["oact"]["columns"][:2]:
+        column["value"] += "0"
+    for key in ("Baseline cost rate", "A1 cost rate"):
+        record["pwbm"]["row_2030"][key] += "0"
+    for band in compare.BANDS:
+        record["mint5"]["table1"]["rows"][band]["median_diff_pct"][
+            "html_value"
+        ] += "0"
+    record["oact"]["columns"][2]["decimals"] = 9
+    record["pwbm"]["stored_decimals"]["A1 income rate"] = 9
+    assert compare.decimal_count_mismatches(record) == [
+        ("oact.columns.proposal_cost_rate", "decimals"),
+        ("oact.columns.change_cost_rate", "decimals"),
+        ("pwbm.row_2030.Baseline cost rate", "stored_decimals"),
+        ("pwbm.row_2030.A1 cost rate", "stored_decimals"),
+        *(
+            (f"mint5.table1.rows.{band}.median_diff_pct", "html_decimals")
+            for band in compare.BANDS
+        ),
+    ]
+
+
+def numbers_as_json_numbers(record):
+    """The record as JSON with every numeric string written as a number."""
+    return re.sub(
+        r'": "(-?[0-9]+(?:\.[0-9]+)?)"', r'": \1', json.dumps(record)
+    )
+
+
+def whole_invented_records():
+    """Every whole INVENTED record a build_comparison test accepts."""
+    yield "base", invented_comparator()
+    for median_type in (
+        "median_of_individual_differences",
+        "difference_of_medians",
+        "unsettled",
+        None,
+    ):
+        record = invented_comparator()
+        record["mint5"]["median_type"] = median_type
+        yield f"median type {median_type}", record
+    record = invented_comparator()
+    record["oact"]["columns"][0]["value"] = None
+    record["pwbm"]["stored_decimals"]["A1 cost rate"] = None
+    record["mint5"]["table1"]["rows"]["90+"]["median_diff_pct"] = None
+    record["mint5"]["start_date_reading"] = None
+    yield "null fields", record
+    record = invented_comparator()
+    record["mint5"]["start_date_reading"] = "M1"
+    record["oact"]["prints_oasi_di_split_2030"] = True
+    record["oact"]["invented_split_fields"] = {"retained": "123"}
+    yield "flags and split", record
+    record = invented_comparator()
+    record["oact"]["footer_matches_registration"] = None
+    yield "missing registration flags", record
+    for footer in (
+        compare.OACT_FOOTER + ".\n",
+        compare.OACT_FOOTER + " .",
+        compare.OACT_FOOTER.replace(" ", "\xa0") + ".",
+    ):
+        record = invented_comparator()
+        record["oact"]["footer_verbatim"] = footer
+        yield "footer", record
+    yield "read back from JSON", json.loads(json.dumps(invented_comparator()))
+    yield "JSON numbers", json.loads(
+        numbers_as_json_numbers(invented_comparator()), parse_float=D
+    )
+
+
+def test_decimal_count_check_accepts_every_record_that_passed_before():
+    """Ruling 3: each whole invented record that passed still passes.
+
+    The records are those of this module's build_comparison and CLI
+    tests, plus the same record read back from JSON with its numbers
+    written as strings and as JSON numbers. The conversion fixtures that
+    now refuse are named in the next test.
+    """
+    for label, record in whole_invented_records():
+        assert compare.decimal_count_mismatches(record) == [], label
+        compare.build_comparison(invented_artifact(), record)
+
+
+@pytest.mark.parametrize(
+    "field,value,count,source",
+    [
+        (
+            "oact_proposal",
+            "21.75",
+            0,
+            "test_oact_decimals_are_not_hard_coded_and_every_corner_positive",
+        ),
+        (
+            "oact_proposal",
+            "7",
+            3,
+            "test_oact_corners_contain_point_and_monotonicity",
+        ),
+        (
+            "oact_change",
+            "-0.09999999999999999999999999999999999",
+            2,
+            "test_oact_precision_gate_boundary",
+        ),
+        (
+            "pwbm_baseline",
+            "25.000000",
+            15,
+            "test_pwbm_decimal_branches_and_point_containment",
+        ),
+        (
+            "pwbm_reform",
+            "24.000000",
+            5,
+            "test_pwbm_decimal_branches_and_point_containment",
+        ),
+        (
+            "pwbm_baseline",
+            "7",
+            2,
+            "test_pwbm_corner_interval_contains_point",
+        ),
+        (
+            "pwbm_baseline",
+            "0.001",
+            0,
+            "test_pwbm_refuses_nonpositive_corner_and_wrong_year",
+        ),
+    ],
+)
+def test_conversion_fixtures_whose_counts_differ_from_their_values_refuse(
+    field, value, count, source
+):
+    """Ruling 3: the invented records the check now refuses, each named.
+
+    These fixtures pair a value with a count it does not write, on
+    purpose, to drive one conversion's precision branches; their own
+    tests call ``oact_comparison`` or ``pwbm_comparison`` directly and
+    still pass. As whole records they contradict themselves: an interval
+    would rest on a precision the written value does not show. So
+    ``build_comparison`` now refuses them, as intended.
+    """
+    assert callable(globals()[source])
+    record = write_value(invented_comparator(), field, value, count)
+    assert compare.decimal_count_mismatches(record) == [
+        DECIMAL_COUNT_CELLS[field]
+    ]
+    with pytest.raises(ValueError, match="decimal counts"):
+        compare.build_comparison(invented_artifact(), record)
+
+
+def test_decimal_count_check_follows_seal_and_sidecar_and_precedes_arithmetic(
+    tmp_path, monkeypatch
+):
+    """The check runs after the seal and sidecar checks, before any sum.
+
+    INVENTED inputs: a sealed record whose MINT 70-79 count is wrong.
+    """
+    record = write_value(invented_comparator(), "mint", "-7.30", 1)
+    artifact, record_path, seal = write_inputs(tmp_path, comparator=record)
+    for name in ("oact_comparison", "pwbm_comparison", "mint_interval"):
+        monkeypatch.setattr(
+            compare,
+            name,
+            lambda *args, **kwargs: pytest.fail("arithmetic before check"),
+        )
+    with pytest.raises(ValueError, match="decimal counts"):
+        compare.compare_files(artifact, record_path, seal)
+    sidecar = artifact.with_suffix(".env.json")
+    sidecar.write_text(json.dumps({"artifact": "another.json"}))
+    with pytest.raises(ValueError, match="sidecar"):
+        compare.compare_files(artifact, record_path, seal)
+    (tmp_path / "invented.txt").write_text("TAMPERED")
+    with pytest.raises(ValueError, match="seal"):
+        compare.compare_files(artifact, record_path, seal)
+
+
+def test_load_keeps_each_written_decimal_for_the_check(tmp_path):
+    """``_load`` keeps trailing zeros, so the check sees what is written.
+
+    INVENTED record written as JSON with its numbers unquoted, then read
+    with ``_load``: "25.000000" is a Decimal with six decimals.
+    """
+    path = tmp_path / "numbers.json"
+    path.write_text(numbers_as_json_numbers(invented_comparator()))
+    record = compare._load(path)
+    value = record["pwbm"]["row_2030"]["Baseline cost rate"]
+    assert isinstance(value, Decimal)
+    assert value.as_tuple().exponent == -6
+    assert compare.decimal_count_mismatches(record) == []
+    bad = write_value(record, "pwbm_baseline", D("25.0000000"), 6)
+    assert compare.decimal_count_mismatches(bad) == [
+        DECIMAL_COUNT_CELLS["pwbm_baseline"]
+    ]
 
 
 @pytest.mark.parametrize(

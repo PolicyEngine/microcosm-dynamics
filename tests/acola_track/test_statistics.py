@@ -7,12 +7,27 @@ from copy import deepcopy
 from fractions import Fraction
 
 import numpy as np
+import pandas as pd
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics import scenario_benefits as sb
 from populace_dynamics.acola_track import statistics as ac
+from populace_dynamics.cola_track_a.benefits import (
+    BenefitContext,
+    reference_benefit_rows,
+)
+from populace_dynamics.cola_track_a.config import (
+    INVENTED_COHORT_LABEL,
+    RegisteredRow,
+    TrackAConfig,
+)
+from populace_dynamics.cola_track_a.opening import (
+    OpeningStockRecord,
+    TrackACohort,
+)
+from populace_dynamics.engine.loop import ProjectionResult
 from populace_dynamics.estimates import cola_age_profile as a7
 from populace_dynamics.ss import benefits as ss_benefits
 from populace_dynamics.ss.params import SSAParameters
@@ -776,6 +791,361 @@ def test_larger_or_earlier_cut_weakly_lowers_p_and_every_benefit(
     }
     assert p["larger"] <= p["smaller"] <= 0
     assert p["earlier"] <= p["smaller"]
+
+
+OWN_COMPONENTS = frozenset(("retired_worker", "disabled_worker"))
+AUXILIARY_COMPONENTS = frozenset(("spouse", "aged_widow", "disabled_widow"))
+
+
+def emitter_inputs(people):
+    """An INVENTED cohort and 2030 projected state for the emitter.
+
+    Built from public classes only (``TrackACohort``,
+    ``OpeningStockRecord``, ``ProjectionResult``). Each spec is (kind,
+    birth year, earnings level, claim age, partner's level, year offset,
+    opening component). Kinds: an unmarried retired worker; an entitled
+    or a converted disabled worker; a married couple of retired workers,
+    whose lower earner can draw a spouse's excess; a widow(er) without or
+    with an own claim, whose late spouse dies after the opening; and an
+    opening-stock recipient of any component, born 15 years after the
+    drawn year. Nobody here is real.
+    """
+    persons, careers, opening = [], {}, {}
+    initial, departed, final = [], [], []
+
+    def add(birth, level, rows=final, status="none", **state):
+        pid = len(persons) + 1
+        persons.append(
+            {
+                "person_id": pid,
+                "family_unit_id": pid,
+                "birth_year": birth,
+                "opening_status": status,
+                "ss_receipt_opening": status != "none",
+            }
+        )
+        careers[pid] = {
+            year: float(level)
+            for year in range(max(1951, birth + 22), min(2011, birth + 62))
+        }
+        row = {
+            "person_id": pid,
+            "year": 2030,
+            "birth_year": birth,
+            "weight": float(pid),
+            "di_entitled": False,
+            "di_award_year": pd.NA,
+            "di_conversion_year": pd.NA,
+            "di_recovery_year": pd.NA,
+            "claimed": False,
+            "claim_year": pd.NA,
+            "marital_status": "never_married",
+            "spouse_person_id": pd.NA,
+            "late_spouse_person_id": pd.NA,
+            "widowhood_year": pd.NA,
+        }
+        row.update(state)
+        rows.append(row)
+        initial.append({**row, "year": 2010})
+        return row
+
+    def claim(birth, age):
+        year = birth + age
+        return {"claimed": True, "claim_year": year} if year <= 2030 else {}
+
+    for kind, birth, level, age, other, offset, component in people:
+        award = min(2030, max(1979, birth + 40 + offset))
+        if kind == "worker":
+            add(birth, level, **claim(birth, age))
+        elif kind == "disabled_worker":
+            add(birth, level, di_entitled=True, di_award_year=award)
+        elif kind == "converted_worker" and birth + 66 <= 2030:
+            add(
+                birth,
+                level,
+                claimed=True,
+                claim_year=birth + 66,
+                di_award_year=min(award, birth + 66),
+                di_conversion_year=birth + 66,
+            )
+        elif kind == "converted_worker":
+            add(birth, level, di_entitled=True, di_award_year=award)
+        elif kind == "couple":
+            first = add(
+                birth, level, marital_status="married", **claim(birth, age)
+            )
+            partner_birth = min(1965, birth + offset % 5)
+            second = add(
+                partner_birth,
+                other,
+                marital_status="married",
+                spouse_person_id=first["person_id"],
+                **claim(partner_birth, 62 + offset % 9),
+            )
+            first["spouse_person_id"] = second["person_id"]
+        elif kind in ("widow", "working_widow"):
+            death = 2011 + offset
+            late_birth = max(1917, birth - 2)
+            late = add(
+                late_birth,
+                other,
+                rows=departed,
+                marital_status="married",
+                **(claim(late_birth, age) if late_birth + age < death else {}),
+            )
+            late["year"] = death - 1
+            add(
+                birth,
+                level,
+                marital_status="widowed",
+                late_spouse_person_id=late["person_id"],
+                widowhood_year=death,
+                **(claim(birth, age) if kind == "working_widow" else {}),
+            )
+        else:
+            # Fifteen years later, so an opening disabled widow(er) can
+            # still be under 60 in 2030 and keep that component.
+            status = "survivor" if "widow" in component else component
+            row = add(birth + 15, level, status=status)
+            if component == "disabled_worker":
+                row.update(di_entitled=True, di_award_year=2008)
+            opening[row["person_id"]] = OpeningStockRecord(
+                person_id=row["person_id"],
+                status=status,
+                component=component,
+                observed_annual_amount=float(level),
+                clock_year=2008,
+                clock_rule="INVENTED fixed opening clock",
+                entitlement_year=2009,
+                entitlement_clamped=False,
+            )
+    cohort = TrackACohort(
+        persons=pd.DataFrame(persons),
+        careers=careers,
+        initial_slice=pd.DataFrame(initial),
+        opening=opening,
+        data_provenance="invented",
+        labels=(INVENTED_COHORT_LABEL,),
+        diagnostics={},
+    )
+    slices = [pd.DataFrame(initial)]
+    if departed:
+        slices.append(pd.DataFrame(departed))
+    slices.append(pd.DataFrame(final))
+    return cohort, ProjectionResult(
+        slices=tuple(slices), traces=(), draw_index=0
+    )
+
+
+def emitter_rows(cohort, result, reduction, first, clock, period, cache):
+    """``reference_benefit_rows`` for one invented cut, keyed by person."""
+    context = BenefitContext(
+        cohort,
+        invented_params(),
+        invented_baseline(),
+        TrackAConfig(
+            rows=("R0",), draw_indices=(0,), annual_reduction=reduction
+        ),
+    )
+    row = RegisteredRow(
+        row_id="INVENTED",
+        field_changed=None,
+        first_reduced_determination_year=first,
+        exposure_clock=clock,
+        benefit_period=period,
+        components=a7.PRIMARY_COMPONENTS,
+        headline_statistic="ratio_of_scenario_means",
+    )
+    rows, _ = reference_benefit_rows(
+        result, draw=0, row=row, context=context, pia_cache=cache
+    )
+    return {person["person_id"]: person for person in rows}
+
+
+EMITTER_PERSON = st.tuples(
+    st.sampled_from(
+        (
+            "worker",
+            "disabled_worker",
+            "converted_worker",
+            "couple",
+            "widow",
+            "working_widow",
+            "opening",
+        )
+    ),
+    st.integers(1917, 1965),  # birth year
+    st.integers(1_000, 90_000),  # earnings level, or opening amount
+    st.integers(62, 70),  # claim age
+    st.integers(1_000, 90_000),  # partner's earnings level
+    st.integers(0, 19),  # year offset for DI awards and deaths
+    st.sampled_from(a7.PRIMARY_COMPONENTS),  # opening-stock component
+)
+#: One INVENTED person of every kind, with a dually entitled spouse and
+#: widow(er), and one opening-stock recipient of each component.
+EMITTER_COVERAGE_PEOPLE = [
+    ("worker", 1950, 40_000, 66, 1_000, 0, "spouse"),
+    ("disabled_worker", 1960, 30_000, 62, 1_000, 5, "spouse"),
+    ("converted_worker", 1955, 30_000, 62, 1_000, 0, "spouse"),
+    ("couple", 1950, 2_000, 66, 80_000, 2, "spouse"),
+    ("widow", 1952, 1_000, 66, 60_000, 9, "spouse"),
+    ("working_widow", 1952, 2_000, 66, 70_000, 9, "spouse"),
+    *(
+        ("opening", 1960, 12_000, 62, 1_000, 0, component)
+        for component in a7.PRIMARY_COMPONENTS
+    ),
+]
+#: The same people without the two dually entitled kinds, so P is checked.
+SINGLY_ENTITLED_PEOPLE = [
+    person
+    for person in EMITTER_COVERAGE_PEOPLE
+    if person[0] not in ("couple", "working_widow")
+]
+
+
+@given(
+    people=st.lists(EMITTER_PERSON, min_size=1, max_size=6),
+    cuts=st.tuples(st.integers(0, 200), st.integers(0, 200)),
+    firsts=st.tuples(
+        st.sampled_from((2010, 2011, 2027)),
+        st.sampled_from((2010, 2011, 2027)),
+    ),
+    clock=st.sampled_from(tuple(sb.ExposureClock)),
+    period=st.sampled_from(tuple(sb.BenefitPeriod)),
+)
+@example(
+    people=EMITTER_COVERAGE_PEOPLE,
+    cuts=(50, 150),
+    firsts=(2010, 2027),
+    clock=sb.ExposureClock.ELIGIBILITY,
+    period=sb.BenefitPeriod.CALENDAR_YEAR,
+)
+@example(
+    people=SINGLY_ENTITLED_PEOPLE,
+    cuts=(50, 150),
+    firsts=(2010, 2027),
+    clock=sb.ExposureClock.ENTITLEMENT,
+    period=sb.BenefitPeriod.DECEMBER,
+)
+@settings(max_examples=40, deadline=None)
+def test_registered_emitter_is_monotone_in_the_cut_outside_dual_entitlement(
+    people, cuts, firsts, clock, period
+):
+    """Monotonicity on ``reference_benefit_rows`` itself (review r2, 2).
+
+    INVENTED cohorts (:func:`emitter_inputs`) go through the registered
+    emitter under a smaller and a larger ``TrackAConfig.annual_reduction``,
+    and an earlier and a later ``RegisteredRow``
+    ``first_reduced_determination_year``. Membership and baseline amounts
+    do not move. Every person's benefit, and every component, weakly
+    falls under the stronger cut, and so does P. Dual entitlement is the
+    intended exception: an auxiliary excess paid beside the person's own
+    worker benefit (``spouse`` or ``aged_widow``) can rise, so it, the
+    person's total and P go unasserted when a dually entitled person is
+    present. Their own worker component still weakly falls. Two explicit
+    examples run every time: the coverage cohort, and the same people
+    without dual entitlement, so P is checked.
+    """
+    smaller, larger = (cut / 10_000 for cut in sorted(cuts))
+    earlier, later = sorted(firsts)
+    cohort, result = emitter_inputs(people)
+    cache = {}
+    runs = {
+        name: emitter_rows(
+            cohort, result, reduction, first, clock, period, cache
+        )
+        for name, reduction, first in (
+            ("smaller", smaller, later),
+            ("larger", larger, later),
+            ("earlier", smaller, earlier),
+        )
+    }
+    dual = {
+        pid
+        for pid, person in runs["smaller"].items()
+        if OWN_COMPONENTS & set(person["benefit_components"])
+        and AUXILIARY_COMPONENTS & set(person["benefit_components"])
+    }
+    for stronger in ("larger", "earlier"):
+        assert set(runs[stronger]) == set(runs["smaller"])
+        for pid, weak in runs["smaller"].items():
+            strong = runs[stronger][pid]
+            assert strong["benefit_base"] == weak["benefit_base"] > 0
+            components = weak["benefit_components"]
+            assert set(strong["benefit_components"]) == set(components)
+            for name, amounts in components.items():
+                if pid in dual and name in AUXILIARY_COMPONENTS:
+                    continue  # the intended dual-entitlement exception
+                assert (
+                    strong["benefit_components"][name]["reform"]
+                    <= amounts["reform"]
+                    <= amounts["base"]
+                )
+            if pid not in dual:
+                assert (
+                    strong["benefit_reform"]
+                    <= weak["benefit_reform"]
+                    <= weak["benefit_base"]
+                )
+    if runs["smaller"] and not dual:
+        p = {
+            name: ac.summarize_cost(
+                list(rows.values()), draw_indices=(0,), floor_seeds=(0, 1)
+            )["per_draw"][0][ac.P]
+            for name, rows in runs.items()
+        }
+        assert p["larger"] <= p["smaller"] <= 0
+        assert p["earlier"] <= p["smaller"]
+
+
+def test_emitter_cohort_reaches_every_path_and_dual_entitlement():
+    """The invented cohort builder reaches each emitter path it names.
+
+    The coverage cohort (one INVENTED person of every kind) gives
+    benefits on every primary component, a projected and an opening-stock
+    basis, and a dually entitled person, so the property above, whose
+    explicit example it is, is not vacuous. Without the dually entitled
+    kinds, nobody is dually entitled, so that example checks P.
+    """
+    cohort, result = emitter_inputs(EMITTER_COVERAGE_PEOPLE)
+    rows = emitter_rows(
+        cohort,
+        result,
+        0.01,
+        2027,
+        sb.ExposureClock.ELIGIBILITY,
+        sb.BenefitPeriod.CALENDAR_YEAR,
+        {},
+    )
+    components = set().union(
+        *(person["benefit_components"] for person in rows.values())
+    )
+    assert components == set(a7.PRIMARY_COMPONENTS)
+    assert {person["basis"] for person in rows.values()} == {
+        "projected",
+        "opening_stock",
+    }
+    assert any(
+        OWN_COMPONENTS & set(person["benefit_components"])
+        and AUXILIARY_COMPONENTS & set(person["benefit_components"])
+        for person in rows.values()
+    )
+    cohort, result = emitter_inputs(SINGLY_ENTITLED_PEOPLE)
+    single = emitter_rows(
+        cohort,
+        result,
+        0.01,
+        2027,
+        sb.ExposureClock.ENTITLEMENT,
+        sb.BenefitPeriod.DECEMBER,
+        {},
+    )
+    assert single
+    assert not any(
+        OWN_COMPONENTS & set(person["benefit_components"])
+        and AUXILIARY_COMPONENTS & set(person["benefit_components"])
+        for person in single.values()
+    )
 
 
 def test_component_membership_can_disappear_without_refusing_cost_split():

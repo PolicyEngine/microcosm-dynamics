@@ -39,7 +39,7 @@ test paths are under `tests/acola_track/`.
 | Unscaled 2030 beneficiary-count context | `nulls.py`: `extract_context_count`; `runner.py` | `test_nulls.py`, `test_runner.py` |
 | REFUSE, no-drop refusals and null serialization | `runner.py`: `_check_floor`, refusal records; `statistics.py`: `_refused_cell` | `test_runner.py`, `test_statistics.py` |
 | Exact pointer, SHA, HEAD, clean tree, specification and one-shot output guards; artifact and environment hash sidecar | `scripts/run_acola_registered.py`: `preflight`, `write_artifact` | `test_registered_run_script.py`, `test_runner.py` |
-| OACT/PWBM conversion, precision branches and four-corner intervals; MINT S/L readings, headline choice, gaps and metadata; seal and sidecar verification; JSON and Markdown | `scripts/compare_acola.py` | `test_compare.py` |
+| OACT/PWBM conversion, precision branches and four-corner intervals; MINT S/L readings, headline choice, gaps and metadata; seal and sidecar verification; footer and decimal-count checks; JSON and Markdown | `scripts/compare_acola.py` | `test_compare.py` |
 | Historical mechanism-L equivalence and delayed-credit disclosure | `scripts/acola_mechanism_l_equivalence.py`, historical golden and provenance | `test_mechanism_l_equivalence.py`, `test_delayed_credit_disclosure.py` |
 | Independent TR 2026 COLA cross-check | `nulls.py`: capture extractor; `data.tr2026.cola_path(2027, 2029)` | `test_tr2026_crosscheck.py` |
 
@@ -147,9 +147,19 @@ Comparison arithmetic uses `Decimal` for printed and stored decimal
 strings. Four-corner tests check containment, monotonicity and positive
 denominators; interval subtraction is `[a,b]-[c,d]=[a-d,b-c]`. Seal files
 are checked before comparison, and the artifact is checked against its
-sidecar. The OACT footer check compares words only: it ignores whitespace
-runs, no-break spaces included, and final periods, and refuses any other
-difference. No acceptance threshold, pass band or verdict is computed.
+sidecar. The OACT footer check (`oact_footer_matches`) compares words
+only: it ignores whitespace runs of any kind, no-break and thin spaces
+included, and any run of periods and whitespace after the last word, and
+refuses any other difference. It accepts every footer the check before
+review r1b's fix accepted (review r2, finding 1). Before any arithmetic,
+`decimal_count_mismatches` compares each decimal count the arithmetic
+uses with the decimals its value writes, trailing zeros included: OACT's
+`decimals` for the two cost rates, PWBM's `stored_decimals` for the two
+2030 cost rates and MINT's `html_decimals` for each band's cell. The
+comparison refuses on any mismatch and names cells and fields, never
+values (finding 4). Reading S normalizes the stored double at 50
+significant digits, whatever the caller's decimal context (finding 3).
+No acceptance threshold, pass band or verdict is computed.
 
 ## Disclosures for the second registration comment
 
