@@ -3282,12 +3282,15 @@ matched the pinned 402 SHA-256 byte for byte.
   except the two insured-status modules that #562 adds at the top of the
   package (`insured_status.py` and `_insured_status_qc.py`). Those keep
   their own register of readings, with a test of its own, and this test
-  does not read them.
+  does not read them. It reads these files and the design notes as
+  UTF-8, so a file that doesn't decode fails.
 - **Markers.** Code logs a reading only as the text
-  `# Source conflict <id>`, with exactly that spelling, case and spacing,
-  where the id ends at a colon, whitespace or the end of the file. With
-  those markers removed, a file the test reads may not contain, in any
-  case:
+  `# Source conflict <id>`, with exactly that spelling, case and spacing.
+  An id is `us:oasdi-` and then one or more words of the letters a to z
+  and the digits 0 to 9, joined by single hyphens, and it ends at a
+  colon, whitespace or the end of the file. With those markers removed, a
+  file the test reads may not contain any of the following, in any case,
+  where a letter is one of A to Z and a digit one of 0 to 9:
   - "source" or "sources", with no letter just before it, then
     "conflict", with nothing but whitespace, `#`, `-` or `_` between;
   - "us", with no letter or digit just before it, then "oasdi", with at
@@ -3302,34 +3305,40 @@ matched the pinned 402 SHA-256 byte for byte.
 - **Ids.** The marker ids must be exactly this pass's ids plus the ids
   other rounds register in that test, each in the G, R2, R3 or grace
   module. Each must appear in a Track B design note as a whole token,
-  with no letter, digit, underscore or hyphen on either side, and this
-  note and the R2 and R3 notes must name each of their own readings that
-  way.
-- **Headings.** None of those three notes may have a heading line whose
-  text starts with "Needs Max's judgment". In every line, code blocks
-  included, the test first removes leading whitespace, `>` characters
-  and list markers with a space or tab and more text after them. It then
-  reads these as heading lines:
-  - the text after the `#` run of a line that starts with one to six `#`
-    and then a space, a tab or the end of the line;
-  - a line that starts with `**` or `__`;
-  - the text after each `<h1>` to `<h6>` opening tag, up to its closing
-    tag or the end of the note;
-  - for each line of only `=` or only `-` characters, the text from each
-    line of the non-blank run directly above it down to that line.
+  with no letter A to Z, digit 0 to 9, underscore or hyphen on either
+  side, and this note and the R2 and R3 notes must name each of their own
+  readings that way.
+- **Openings.** None of those three notes may open a heading, paragraph,
+  list item, table row or other block with "Needs Max's judgment". The
+  test reads every line, code blocks included. A non-blank line
+  continues the line above it only when both start with a letter A to Z
+  after the same leading whitespace and neither holds `>` or `|`. Every
+  other non-blank line opens, so a line after a blank line, or one that
+  starts with markup such as `#`, `*`, `-`, `>`, `|` or `<`, always opens.
+  What a line opens runs to the end of its run of non-blank lines. The
+  text after each `<h1>` to `<h6>` opening tag, up to its closing tag or
+  the end of the note, also counts as an opening. The test reads that
+  tag as ending at its first `>`, and again as ending at its first `>`
+  outside quotes.
 
-  It decodes HTML entities; removes HTML tags, `*`, `_`, backticks,
-  backslashes, square brackets, soft hyphens and the zero-width
-  characters U+200B to U+200D, U+2060 and U+FEFF; and skips any
-  characters before the first letter A to Z. It then matches in any case,
-  with any whitespace between the words, a straight apostrophe or U+2018,
-  U+2019 or U+02BC, and "judgment" or "judgement". These rules can flag
-  lines that CommonMark would not read as headings, such as lines in code
-  blocks.
+  The test decodes HTML entities in each opening and reads it twice:
+  once with HTML tags and Markdown link targets (a `(...)` or `[...]`
+  right after a `]`) removed, and once as written. Each reading applies
+  Unicode compatibility decomposition (NFKD) and keeps only the letters
+  A to Z, in lower case. An opening fails when either reading starts
+  with "needsmaxsjudgment" or "needsmaxsjudgement". So punctuation,
+  apostrophes of any kind, digits, whitespace, markup and invisible
+  characters can't hide the phrase. Only letters can: a letter A to Z
+  that a reading keeps, including one that a character such as U+2122
+  (the trademark sign) decomposes to, or a letter from another script
+  that looks like a Latin one, such as the Cyrillic U+0435, which the
+  readings drop. These rules can flag lines that CommonMark would not
+  read as opening a block, such as lines in code blocks.
 - **Quotes.** Each statutory passage the test quotes must appear in the
-  capture verbatim up to whitespace. The capture helper also reads
-  zero-width and non-breaking spaces as spaces and curly apostrophes as
-  straight ones.
+  capture verbatim, once each run of whitespace in the capture reads as
+  one space. Before that, the capture helper reads zero-width spaces
+  (U+200B) and non-breaking spaces as spaces, and U+2019 as a straight
+  apostrophe.
 
 The invented conformance lattice stays the same; only the
 `parent_benefit` witness moved to two parents in the band.
