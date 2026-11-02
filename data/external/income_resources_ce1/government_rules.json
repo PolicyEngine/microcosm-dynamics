@@ -5111,7 +5111,7 @@
           "federal_service": "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10"
         },
         "consequence": "covered",
-        "description": "Pub. L. 100-647 section 8015(c)(1) inserted 'any such service performed on or after any date on which such individual performs'; section 8015(c)(3), as the 26 U.S.C. 3121 note sets it out, makes the amendments \"apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act ... on or after the date of the enactment of this Act\", November 10, 1988; the LII note on 42 U.S.C. 410 paraphrases it.",
+        "description": "Pub. L. 100-647 section 8015(c)(1) inserted 'any such service performed on or after any date on which such individual performs'; section 8015(c)(3), as the 26 U.S.C. 3121 note sets it out, makes the amendments \"apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act ... on or after the date of the enactment of this Act\", November 10, 1988; the LII note on 42 U.S.C. 410 paraphrases it. It overrides defra_2601d_requalification on this reading: section 8015(c)(1) lifts paragraph (5) from service on or after an after-official date whoever the individual is, and section 2601(d) requalification places an individual back under subchapter III without making later service paragraph (5) service that the after-official rule cannot reach (review r6 M-10).",
         "overrides": [
           "defra_2601d_requalification",
           "grandfathered_continuous_service",
@@ -5602,7 +5602,7 @@
         "precedence": 4,
         "when": {
           "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
-          "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+          "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
         },
         "consequence": "covered_above_threshold",
         "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it. C.2 makes the deemed waiver \"effective with the first day of the quarter for which payments were made\", so it reaches only service from that day. Former 410(a)(10)(A)'s $50 quarterly remuneration test applies (threshold nonprofit_remuneration_quarter)."
@@ -5688,12 +5688,32 @@
         },
         "consequence": "covered_above_threshold",
         "description": "The 1977 amendment note to 3121(b)(10) says Pub. L. 95-216 section 356(c) \"struck out subpar. (A) which related to service performed in any calendar quarter in the employ of any organization exempt from income tax under section 501(a) (other than an organization described in section 401(a) or under section 521, if the remuneration for such service was less than $50\", and the 42 U.S.C. 410 note on subsec. (a)(10) says Pub. L. 95-216 \"struck out subpar. (A) which related to service performed in the employ of any exempt organization under section 101 of the Internal Revenue Code of 1939\". Neither limits the test to 501(c)(3) organizations, so the row applies it to service for another 501(a) organization, which former 410(a)(8)(B) does not exclude (see the residual): covered above former 410(a)(10)(A)'s $50 quarterly test (threshold nonprofit_remuneration_quarter). The 3121 note's parenthesis never closes, so its words do not settle whether \"or under section 521\" put 521 cooperatives inside the test, as 3121(a)(16) does from 1978, or inside the 401(a) exception. The text leaves 521 out; a 521 cooperative's employee takes the residual."
+      },
+      {
+        "case_id": "cooperative_521_small_remuneration",
+        "precedence": 11,
+        "when": {
+          "nonprofit_organization": "employer is a farmers' cooperative exempt from income tax under section 521"
+        },
+        "consequence": "open",
+        "description": "The 1978 row reads former 410(a)(10)'s small-remuneration test as reaching an organization exempt \"under 521\"; for 1968-1977 the 1977 note's parenthesis does not close, so its words do not say which side 521 was on (review r6 M-8: the case leaves the question open rather than choosing the covered residual).",
+        "open_reason": "COOPERATIVE_521_SMALL_REMUNERATION_UNSETTLED: no CE1 capture prints former 410(a)(10) as in force in 1968-1977, and the 1977 amendment note that records the 521 wording does not close its parenthesis, so whether a 521 farmers' cooperative's employees fell under the small-remuneration test before 1978 is not settled; the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "inside_small_remuneration_test",
+            "description": "Read 521 inside the test, as the 1978 row does: remuneration below the threshold is excluded (covered_above_threshold)."
+          },
+          {
+            "name": "outside_small_remuneration_test",
+            "description": "Read 521 outside the test before 1978: former 410(a)(10) does not reach the cooperative, and the residual applies (covered)."
+          }
+        ]
       }
     ],
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "No case holds, so the employer is neither an organization described in 501(c)(3) and exempt under 501(a) nor another organization exempt under 501(a) (other than one described in 401(a)): former 410(a)(8)(B) does not exclude the service and no case of this row applies its remuneration test; apply the other families (exempt_organization_small_remuneration states the doubt for a 521 cooperative)."
+      "description": "No case holds, so the employer is neither an organization described in 501(c)(3) and exempt under 501(a) nor another organization exempt under 501(a) (other than one described in 401(a)): former 410(a)(8)(B) does not exclude the service and no case of this row applies its remuneration test; apply the other families (a 521 cooperative's employee reaches the open case cooperative_521_small_remuneration)."
     }
   },
   {
@@ -6029,7 +6049,7 @@
         "precedence": 2,
         "when": {
           "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
-          "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+          "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
         },
         "consequence": "covered_above_threshold",
         "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it. C.2 makes the deemed waiver \"effective with the first day of the quarter for which payments were made\", so it reaches only service from that day. From 1978, 409(a)(14)'s $100 annual remuneration test applies (threshold nonprofit_remuneration_year). 3121(k)(4)(C)'s window, which the Pub. L. 95-216 section 312(c) note dates \"before July 1, 1977\", closed before this row begins."

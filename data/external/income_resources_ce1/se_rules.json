@@ -2283,10 +2283,10 @@
         "overrides": [
           "crp_payment_to_beneficiary"
         ],
-        "description": "411(a)(1)'s proviso: the exclusion does not apply to income an owner or tenant derives under a production arrangement with material participation; the farm rental participation family decides.",
+        "description": "411(a)(1)'s proviso: the exclusion does not apply to income an owner or tenant derives under a production arrangement with material participation; the farm rental participation family decides. 411(a)(1)'s proviso reaches an arrangement \"between the owner or tenant and another individual\" (review r6 M-13).",
         "when": {
           "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears",
-          "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+          "rental_income": "income of an owner or tenant of land under an arrangement between the owner or tenant and another individual which provides that the other individual shall produce agricultural or horticultural commodities on it"
         }
       },
       {

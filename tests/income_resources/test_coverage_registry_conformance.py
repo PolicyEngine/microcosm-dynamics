@@ -1457,8 +1457,9 @@ def test_open_readings_are_named_once_and_described_in_prose():
     # certificate (52); the review r5 sweep adds 16 open cases with two
     # readings each (84). The review r6 fix settles the Army Corps aide
     # case in four rows and the (k)(4)(C) case, and drops the 1968-1972
-    # CNMI ministry case (72).
-    assert described == 72
+    # CNMI ministry case (72); it opens the 521 cooperative, the pre-1983
+    # agreement exemption and the non-individual farm arrangement (78).
+    assert described == 78
 
 
 READING_TEXT = {
@@ -4053,7 +4054,9 @@ NONPROFIT_DEEMED = (
     "certificate deemed filed under the 1976 amendments' constructive-filing "
     "provisions (no refund before 9/9/76), in effect for the service: the "
     "service falls on or after the first day of the first quarter for which "
-    "the taxes were paid (RS 01901.540 C.2)"
+    "the taxes were paid (RS 01901.540 C.2); taxes paid while the employer "
+    "was waiting for an IRS ruling on its 501(c)(3) status do not count "
+    "toward the constructive filing (RS 01901.540 D.8)"
 )
 NONPROFIT_NOT_IN_EFFECT = (
     "no actual or deemed certificate in effect for this service: none filed "
@@ -5298,7 +5301,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 350
+    assert sum(len(row["cases"]) for row in rows) == 352
     deferred = [
         w for w in INVENTED_SWEEP_WORKERS if w["expected"] == "deferred"
     ]

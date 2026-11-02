@@ -6679,6 +6679,7 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers (POMS SL 30001.357 C: \"the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies it per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12).",
         "agreement_has_no_exclusion": "covered_from_first_dollar",
         "agreement_threshold": "named_required_fact_if_agreement_excludes_election_workers",
         "code_edition_evidence": [
@@ -6729,6 +6730,15 @@
           }
         ],
         "condition_cases": {
+          "agreement_amount_input": {
+            "cases": {
+              "agreement_with_lower_threshold": [
+                "election_work",
+                "government_level",
+                "section_218_position"
+              ]
+            }
+          },
           "agreement_has_no_exclusion": {
             "cases": {
               "agreement_without_election_exclusion": [
@@ -7033,6 +7043,7 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers (POMS SL 30001.357 C: \"the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies it per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12).",
         "agreement_has_no_exclusion": "covered_from_first_dollar",
         "agreement_threshold": "named_required_fact_if_agreement_excludes_election_workers",
         "boundary_clause": {
@@ -7093,6 +7104,15 @@
           }
         ],
         "condition_cases": {
+          "agreement_amount_input": {
+            "cases": {
+              "agreement_with_lower_threshold": [
+                "election_work",
+                "government_level",
+                "section_218_position"
+              ]
+            }
+          },
           "agreement_has_no_exclusion": {
             "cases": {
               "agreement_without_election_exclusion": [
@@ -7479,6 +7499,7 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers (POMS SL 30001.357 C: \"the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies it per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12).",
         "agreement_has_no_exclusion": "covered_from_first_dollar",
         "agreement_threshold": "named_required_fact_if_agreement_excludes_election_workers",
         "code_edition_evidence": [
@@ -7551,6 +7572,22 @@
           }
         ],
         "condition_cases": {
+          "agreement_amount_input": {
+            "cases": {
+              "agreement_with_lower_threshold_member": [
+                "election_work",
+                "government_level",
+                "public_retirement_system_participation",
+                "section_218_position"
+              ],
+              "agreement_with_lower_threshold_nonmember": [
+                "election_work",
+                "government_level",
+                "public_retirement_system_participation",
+                "section_218_position"
+              ]
+            }
+          },
           "agreement_has_no_exclusion": {
             "cases": {
               "agreement_without_election_exclusion": [
@@ -7951,6 +7988,7 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers (POMS SL 30001.357 C: \"the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies it per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12).",
         "agreement_has_no_exclusion": "covered_from_first_dollar",
         "agreement_threshold": "named_required_fact_if_agreement_excludes_election_workers",
         "boundary_clause": {
@@ -8013,6 +8051,22 @@
           }
         ],
         "condition_cases": {
+          "agreement_amount_input": {
+            "cases": {
+              "agreement_with_lower_threshold_member": [
+                "election_work",
+                "government_level",
+                "public_retirement_system_participation",
+                "section_218_position"
+              ],
+              "agreement_with_lower_threshold_nonmember": [
+                "election_work",
+                "government_level",
+                "public_retirement_system_participation",
+                "section_218_position"
+              ]
+            }
+          },
           "agreement_has_no_exclusion": {
             "cases": {
               "agreement_without_election_exclusion": [
@@ -10194,7 +10248,7 @@
         {
           "case_id": "after_official_service_from_1988_11_10",
           "consequence": "covered",
-          "description": "Pub. L. 100-647 section 8015(c)(1) inserted 'any such service performed on or after any date on which such individual performs'; section 8015(c)(3), as the 26 U.S.C. 3121 note sets it out, makes the amendments \"apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act ... on or after the date of the enactment of this Act\", November 10, 1988; the LII note on 42 U.S.C. 410 paraphrases it.",
+          "description": "Pub. L. 100-647 section 8015(c)(1) inserted 'any such service performed on or after any date on which such individual performs'; section 8015(c)(3), as the 26 U.S.C. 3121 note sets it out, makes the amendments \"apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act ... on or after the date of the enactment of this Act\", November 10, 1988; the LII note on 42 U.S.C. 410 paraphrases it. It overrides defra_2601d_requalification on this reading: section 8015(c)(1) lifts paragraph (5) from service on or after an after-official date whoever the individual is, and section 2601(d) requalification places an individual back under subchapter III without making later service paragraph (5) service that the after-official rule cannot reach (review r6 M-10).",
           "overrides": [
             "defra_2601d_requalification",
             "grandfathered_continuous_service",
@@ -14256,7 +14310,7 @@
           "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it. C.2 makes the deemed waiver \"effective with the first day of the quarter for which payments were made\", so it reaches only service from that day. Former 410(a)(10)(A)'s $50 quarterly remuneration test applies (threshold nonprofit_remuneration_quarter).",
           "precedence": 4,
           "when": {
-            "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)",
+            "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)",
             "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
           }
         },
@@ -14340,6 +14394,26 @@
           "precedence": 10,
           "when": {
             "nonprofit_organization": "employer is an organization exempt from income tax under 501(a), other than one described in 401(a) or in 501(c)(3)"
+          }
+        },
+        {
+          "case_id": "cooperative_521_small_remuneration",
+          "consequence": "open",
+          "description": "The 1978 row reads former 410(a)(10)'s small-remuneration test as reaching an organization exempt \"under 521\"; for 1968-1977 the 1977 note's parenthesis does not close, so its words do not say which side 521 was on (review r6 M-8: the case leaves the question open rather than choosing the covered residual).",
+          "open_alternatives": [
+            {
+              "description": "Read 521 inside the test, as the 1978 row does: remuneration below the threshold is excluded (covered_above_threshold).",
+              "name": "inside_small_remuneration_test"
+            },
+            {
+              "description": "Read 521 outside the test before 1978: former 410(a)(10) does not reach the cooperative, and the residual applies (covered).",
+              "name": "outside_small_remuneration_test"
+            }
+          ],
+          "open_reason": "COOPERATIVE_521_SMALL_REMUNERATION_UNSETTLED: no CE1 capture prints former 410(a)(10) as in force in 1968-1977, and the 1977 amendment note that records the 521 wording does not close its parenthesis, so whether a 521 farmers' cooperative's employees fell under the small-remuneration test before 1978 is not settled; the case refuses.",
+          "precedence": 11,
+          "when": {
+            "nonprofit_organization": "employer is a farmers' cooperative exempt from income tax under section 521"
           }
         }
       ],
@@ -14656,7 +14730,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "No case holds, so the employer is neither an organization described in 501(c)(3) and exempt under 501(a) nor another organization exempt under 501(a) (other than one described in 401(a)): former 410(a)(8)(B) does not exclude the service and no case of this row applies its remuneration test; apply the other families (exempt_organization_small_remuneration states the doubt for a 521 cooperative)."
+        "description": "No case holds, so the employer is neither an organization described in 501(c)(3) and exempt under 501(a) nor another organization exempt under 501(a) (other than one described in 401(a)): former 410(a)(8)(B) does not exclude the service and no case of this row applies its remuneration test; apply the other families (a 521 cooperative's employee reaches the open case cooperative_521_small_remuneration)."
       },
       "rule_id": "nonprofit_1968_1977",
       "trigger_facts": [
@@ -14689,7 +14763,7 @@
           "description": "POMS RS 01901.540 D.7: under the 1976 amendments' constructive filing, an organization that paid the taxes for three consecutive quarters beginning with or after the September 1973 quarter and obtained no refund before 9/9/76 is deemed to have filed a valid waiver covering all employees, so no concurrence list limits it. C.2 makes the deemed waiver \"effective with the first day of the quarter for which payments were made\", so it reaches only service from that day. From 1978, 409(a)(14)'s $100 annual remuneration test applies (threshold nonprofit_remuneration_year). 3121(k)(4)(C)'s window, which the Pub. L. 95-216 section 312(c) note dates \"before July 1, 1977\", closed before this row begins.",
           "precedence": 2,
           "when": {
-            "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)",
+            "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)",
             "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
           }
         },
@@ -20861,14 +20935,14 @@
           "defers_to": [
             "self_employment_farm_rental_participation"
           ],
-          "description": "411(a)(1)'s proviso: the exclusion does not apply to income an owner or tenant derives under a production arrangement with material participation; the farm rental participation family decides.",
+          "description": "411(a)(1)'s proviso: the exclusion does not apply to income an owner or tenant derives under a production arrangement with material participation; the farm rental participation family decides. 411(a)(1)'s proviso reaches an arrangement \"between the owner or tenant and another individual\" (review r6 M-13).",
           "overrides": [
             "crp_payment_to_beneficiary"
           ],
           "precedence": 2,
           "when": {
             "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears",
-            "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+            "rental_income": "income of an owner or tenant of land under an arrangement between the owner or tenant and another individual which provides that the other individual shall produce agricultural or horticultural commodities on it"
           }
         },
         {
@@ -23981,12 +24055,19 @@
       "cases": [
         {
           "case_id": "foreign_agreement_sole_coverage",
-          "consequence": "noncovered",
-          "description": "Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c), headed for \"AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\" (an individual, not a minister alone), replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a person subject only to the partner country's laws meets both wordings. Publication 517 (2025) states the exception for ministers and points to Pub. 54's \"Bilateral Social Security (Totalization) Agreements\", the guide for citizens and resident aliens abroad. Date: section 415 has no effective-date clause and dates only the \"exclusively\" wording (\"Approved March 2, 2004.\"); the captures hold neither 42 U.S.C. 433 nor the text of 26 U.S.C. 1401(c), so they date neither the exemption nor any agreement. The condition can hold only while such an agreement is in effect, so the case sits in every row from 1968 and its condition carries the date. The captures also hold no title II provision that keeps these earnings out of self-employment income; clergy_religious_service's case foreign_agreement_sole_coverage rests on the same captures. It overrides territorial_resident and cnmi_noncitizen_resident: on either CNMI reading the agreement leaves the person subject only to the foreign country's laws.",
-          "overrides": [
-            "territorial_resident",
-            "cnmi_noncitizen_resident"
+          "consequence": "open",
+          "description": "Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c), headed for \"AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\" (an individual, not a minister alone), replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a person subject only to the partner country's laws meets both wordings. Publication 517 (2025) states the exception for ministers and points to Pub. 54's \"Bilateral Social Security (Totalization) Agreements\", the guide for citizens and resident aliens abroad. Date: section 415 has no effective-date clause and dates only the \"exclusively\" wording (\"Approved March 2, 2004.\"); the captures hold neither 42 U.S.C. 433 nor the text of 26 U.S.C. 1401(c), so they date neither the exemption nor any agreement. The condition can hold only while such an agreement is in effect, so the case sits in every row from 1968 and its condition carries the date. The captures also hold no title II provision that keeps these earnings out of self-employment income; clergy_religious_service's case foreign_agreement_sole_coverage rests on the same captures. It overrides territorial_resident and cnmi_noncitizen_resident: on either CNMI reading the agreement leaves the person subject only to the foreign country's laws. Review r6 M-9: this row's own 411(b) text says no agreement lifted the nonresident-alien exclusion before 1983-04-20, and the clergy rows read their agreement case from 1982; no capture holds 1401(c) or dates its agreement exemption, so before 1983-04-20 the case refuses rather than excluding a citizen abroad.",
+          "open_alternatives": [
+            {
+              "description": "An agreement in effect for the year exempts the income, as from 1983-04-20: noncovered.",
+              "name": "agreement_exemption_in_force"
+            },
+            {
+              "description": "No agreement exempted self-employment income before 1983-04-20, so the remaining cases decide (usually covered for a citizen).",
+              "name": "no_exemption_before_1983"
+            }
           ],
+          "open_reason": "AGREEMENT_EXEMPTION_BEFORE_1983_UNDATED: no CE1 capture holds 26 U.S.C. 1401(c) or 42 U.S.C. 433, or dates when a social security agreement first exempted self-employment income from SECA, so for taxable years in this row whether an agreement made the person subject only to another country's laws is not settled.",
           "precedence": 1,
           "when": {
             "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
@@ -27574,13 +27655,13 @@
           "defers_to": [
             "self_employment_farm_rental_participation"
           ],
-          "description": "411(a)(1) proviso; the farm rental participation family decides.",
+          "description": "411(a)(1) proviso; the farm rental participation family decides. 411(a)(1)'s proviso reaches an arrangement \"between the owner or tenant and another individual\" (review r6 M-13).",
           "overrides": [
             "real_estate_rentals"
           ],
           "precedence": 5,
           "when": {
-            "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+            "rental_income": "income of an owner or tenant of land under an arrangement between the owner or tenant and another individual which provides that the other individual shall produce agricultural or horticultural commodities on it"
           }
         },
         {
@@ -27745,13 +27826,33 @@
           "defers_to": [
             "self_employment_farm_rental_participation"
           ],
-          "description": "411(a)(1) proviso; the farm rental participation family decides.",
+          "description": "411(a)(1) proviso; the farm rental participation family decides. 411(a)(1)'s proviso reaches an arrangement \"between the owner or tenant and another individual\" (review r6 M-13).",
           "overrides": [
             "real_estate_rentals"
           ],
           "precedence": 4,
           "when": {
-            "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+            "rental_income": "income of an owner or tenant of land under an arrangement between the owner or tenant and another individual which provides that the other individual shall produce agricultural or horticultural commodities on it"
+          }
+        },
+        {
+          "case_id": "farm_arrangement_with_non_individual",
+          "consequence": "open",
+          "description": "411(a)(1)'s proviso reaches an arrangement \"between the owner or tenant and another individual\", while 20 CFR 404.1082(c), captured from its April 1, 1996 edition, speaks of another person (review r6 M-13). Ranked below farm_rental_arrangement and above real_estate_rentals, whose condition this payment also meets.",
+          "open_alternatives": [
+            {
+              "description": "Only an arrangement with an individual takes the proviso; the payments stay rentals from real estate that 411(a)(1) excludes (real_estate_rentals).",
+              "name": "statutory_individual_only"
+            },
+            {
+              "description": "The CFR's wording reaches an arrangement with any person, so the farm-rental participation family decides the payments, as farm_rental_arrangement defers them.",
+              "name": "cfr_any_person"
+            }
+          ],
+          "open_reason": "FARM_ARRANGEMENT_NON_INDIVIDUAL_UNSETTLED: the statute's farm-rental proviso names an arrangement with \"another individual\"; the 1996 and later CFR edition the row cites names another person. No capture says whether an arrangement with a corporation or other entity that produces the crop takes the rent out of 411(a)(1)'s exclusion, so the case refuses.",
+          "precedence": 5,
+          "when": {
+            "rental_income": "income of an owner or tenant of land under an arrangement for a corporation, partnership, trust or other person who is not an individual to produce agricultural or horticultural commodities on it"
           }
         },
         {
@@ -27769,7 +27870,7 @@
             }
           ],
           "open_reason": "RENTAL_OTHER_SPACE_SERVICES_RULE_UNSETTLED: 20 CFR 404.1082(d)(2)(i) includes \"Payments you receive for renting living quarters where services are also provided to the occupant\", under the heading \"(d) Rental income from living quarters\", and adds only parking, warehouse and storage space, while (d)(2)(ii) measures services against those \"usually provided in connection with the rental of rooms or other space for occupancy only\". No CE1 capture says whether services provided with other space take the payments out of 411(a)(1)'s rental exclusion, so the case refuses.",
-          "precedence": 5,
+          "precedence": 6,
           "when": {
             "services_to_occupants": "space other than living quarters, parking lots, warehouses or storage garages (such as offices or shops), rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
           }
@@ -27778,7 +27879,7 @@
           "case_id": "real_estate_rentals",
           "consequence": "noncovered",
           "description": "411(a)(1); 20 CFR 404.1082(a) and (d)(1).",
-          "precedence": 6,
+          "precedence": 7,
           "when": {
             "rental_income": "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions"
           }

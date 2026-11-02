@@ -6321,7 +6321,7 @@
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": [
      "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period and after the last calendar quarter for which the organization paid the taxes",
-     "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+     "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
     ],
     "historical_fica_treatment": "the employee filed a request under Pub. L. 95-216 section 312(c) on or before April 15, 1980, with full payment of the employee taxes (or an installment arrangement under 3121(k)(8))"
    },
@@ -6335,7 +6335,7 @@
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": [
      "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period and after the last calendar quarter for which the organization paid the taxes",
-     "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+     "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
     ],
     "historical_fica_treatment": "the employee filed a request under Pub. L. 95-216 section 312(c) on 1980-06-01, after April 15, 1980"
    },
@@ -6347,7 +6347,7 @@
    "worker": "INVENTED: Jo, at Hana's college, worked only 1977 Q3-Q4 and filed a 312(c) request anyway. Just misses the 312(c) case: the note reaches only service before July 1, 1977; the deemed certificate covers her (D.7).",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
-    "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)",
+    "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)",
     "historical_fica_treatment": "the employee filed a request under Pub. L. 95-216 section 312(c) on or before April 15, 1980, with full payment of the employee taxes (or an installment arrangement under 3121(k)(8))"
    },
    "expected": "covered_above_threshold",
@@ -6360,7 +6360,7 @@
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": [
      "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period and after the last calendar quarter for which the organization paid the taxes",
-     "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+     "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
     ]
    },
    "expected": "noncovered",
@@ -6371,7 +6371,7 @@
    "worker": "INVENTED: Lena, at a 501(c)(3) museum that paid FICA taxes from 1973 Q3 through 1977 without filing and without refund (it never stopped paying). Service 1976. Just misses the K4C case: D.8's forgiveness reaches only employers that stopped paying before 10/19/76.",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
-    "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+    "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
    },
    "expected": "covered_above_threshold",
    "decides": "deemed_waiver_all_employees"
@@ -6381,7 +6381,7 @@
    "worker": "INVENTED: Max, at Hana's college, worked only in 1975 Q3-Q4, quarters for which the college paid the taxes. Just misses the K4C case: the service is not after the last paid quarter.",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
-    "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+    "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
    },
    "expected": "covered_above_threshold",
    "decides": "deemed_waiver_all_employees"
@@ -6391,7 +6391,7 @@
    "worker": "INVENTED: Nia, hired 1975 by a 501(c)(3) settlement house that never filed a certificate but paid FICA taxes every quarter from 1974 Q1 on, with no refund. Service 1976, $1,200 a quarter. Reach: D.7 deemed waiver covering all employees, effective from 1974 Q1 (C.2).",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
-    "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+    "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
    },
    "expected": "covered_above_threshold",
    "decides": "deemed_waiver_all_employees"
@@ -6671,7 +6671,7 @@
    "worker": "INVENTED: Mae, at a 501(c)(3) college that has paid FICA taxes since 1974 Q1 without filing and never sought a refund (deemed certificate). Service 1979. Reach (D.7, C.2).",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
-    "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2)"
+    "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
    },
    "expected": "covered_above_threshold",
    "decides": "deemed_waiver_all_employees"
@@ -12804,7 +12804,7 @@
    "facts": {
     "conservation_reserve_payment": "payment under 16 U.S.C. 3833(2), or, after Pub. L. 113-79 generally amended section 1233 of the Food Security Act of 1985 on 2014-02-07, under 16 U.S.C. 3833(a)(2), where the substance of former section 1233(2) now appears",
     "benefit_type": "recipient is receiving benefits under 42 U.S.C. 402 or 423",
-    "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+    "rental_income": "income of an owner or tenant of land under an arrangement between the owner or tenant and another individual which provides that the other individual shall produce agricultural or horticultural commodities on it"
    },
    "expected": "deferred",
    "decides": "crp_payment_under_farm_arrangement",
@@ -14158,7 +14158,7 @@
   },
   {
    "rule_id": "se_nonresident_alien_1968_1983",
-   "worker": "INVENTED: Cora, a US citizen consultant living abroad, calendar 1980, whom a social security agreement makes subject only to the foreign country's laws (hypothetical: it assumes an agreement in force, which no capture dates). The agreement case decides from 1968 because its condition carries the date.",
+   "worker": "INVENTED: Cora, a US citizen consultant living abroad, calendar 1980, whom a social security agreement makes subject only to the foreign country's laws (hypothetical: it assumes an agreement in force, which no capture dates). The agreement case decides from 1968 because its condition carries the date. Review r6 M-9: no capture dates the agreement exemption before 1983-04-20, so the case refuses.",
    "facts": {
     "citizenship": "a citizen of the United States",
     "country_of_residence": "a resident of a country with a social security agreement with the United States",
@@ -14166,7 +14166,7 @@
     "taxable_year_start": "1980-01-01",
     "residence_period": "all of 1980"
    },
-   "expected": "noncovered",
+   "expected": "refuses",
    "decides": "foreign_agreement_sole_coverage"
   },
   {
@@ -14910,7 +14910,7 @@
    "worker": "INVENTED: 1975; a landowner's crop-share income under an arrangement for a tenant to raise wheat on the land. The farm rental participation family decides material participation.",
    "facts": {
     "rental_income": [
-     "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it",
+     "income of an owner or tenant of land under an arrangement between the owner or tenant and another individual which provides that the other individual shall produce agricultural or horticultural commodities on it",
      "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions"
     ]
    },
@@ -15060,7 +15060,7 @@
    "worker": "INVENTED: 2000; a landowner's crop-share income under an arrangement for a tenant to grow soybeans on the land. Deferred to the farm rental participation family.",
    "facts": {
     "rental_income": [
-     "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it",
+     "income of an owner or tenant of land under an arrangement between the owner or tenant and another individual which provides that the other individual shall produce agricultural or horticultural commodities on it",
      "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions"
     ]
    },
@@ -16749,6 +16749,55 @@
    },
    "expected": "noncovered",
    "decides": "effective_1402e_exemption"
+  },
+  {
+   "rule_id": "se_rental_income_1996_2026",
+   "worker": "INVENTED (review r6 M-13): 2005: a landowner rents cropland to a farming corporation that grows the crop: the statute's proviso names another individual, the CFR another person, so the case refuses.",
+   "facts": {
+    "rental_income": [
+     "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions",
+     "income of an owner or tenant of land under an arrangement for a corporation, partnership, trust or other person who is not an individual to produce agricultural or horticultural commodities on it"
+    ]
+   },
+   "expected": "refuses",
+   "decides": "farm_arrangement_with_non_individual"
+  },
+  {
+   "rule_id": "se_rental_income_1996_2026",
+   "worker": "INVENTED (review r6 M-13, its neighbour): 2005: the same land rented to a neighbouring farmer, an individual, under a crop-share arrangement: the proviso reaches it and the farm-rental participation family decides.",
+   "facts": {
+    "rental_income": [
+     "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions",
+     "income of an owner or tenant of land under an arrangement between the owner or tenant and another individual which provides that the other individual shall produce agricultural or horticultural commodities on it"
+    ]
+   },
+   "expected": "deferred",
+   "decides": "farm_rental_arrangement",
+   "defers_to": [
+    "self_employment_farm_rental_participation"
+   ]
+  },
+  {
+   "rule_id": "nonprofit_1968_1977",
+   "worker": "INVENTED (review r6 M-8): 1972: an employee of a farmers' cooperative exempt under section 521: whether former 410(a)(10)'s small-remuneration test reached the cooperative before 1978 is open, so the case refuses.",
+   "facts": {
+    "nonprofit_organization": "employer is a farmers' cooperative exempt from income tax under section 521"
+   },
+   "expected": "refuses",
+   "decides": "cooperative_521_small_remuneration"
+  },
+  {
+   "rule_id": "nonprofit_1978_1983",
+   "worker": "INVENTED (review r6 M-8, just misses deemed_waiver_all_employees): 1979: a hospital paid FICA for three quarters only while awaiting its 501(c)(3) ruling: POMS RS 01901.540 D.8 says such taxes do not constitute constructive filing, so no certificate is deemed filed.",
+   "facts": {
+    "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
+    "nonprofit_coverage_waiver": [
+     "no actual or deemed certificate in effect for this service: none filed or deemed filed; the service falls before the certificate's effective date (for a deemed certificate, before the first day of the first quarter for which the taxes were paid); a termination took effect before the service; or the only certificate covers another 3121(k)(1)(E) group",
+     "taxes paid only while the employer was waiting for an IRS ruling on its 501(c)(3) status; no actual certificate filed"
+    ]
+   },
+   "expected": "noncovered",
+   "decides": "no_effective_waiver"
   }
  ]
 }

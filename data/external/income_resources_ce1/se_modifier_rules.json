@@ -165,10 +165,10 @@
         "case_id": "farm_rental_arrangement",
         "precedence": 5,
         "when": {
-          "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+          "rental_income": "income of an owner or tenant of land under an arrangement between the owner or tenant and another individual which provides that the other individual shall produce agricultural or horticultural commodities on it"
         },
         "consequence": "deferred",
-        "description": "411(a)(1) proviso; the farm rental participation family decides.",
+        "description": "411(a)(1) proviso; the farm rental participation family decides. 411(a)(1)'s proviso reaches an arrangement \"between the owner or tenant and another individual\" (review r6 M-13).",
         "overrides": [
           "real_estate_rentals"
         ],
@@ -437,10 +437,10 @@
         "case_id": "farm_rental_arrangement",
         "precedence": 4,
         "when": {
-          "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
+          "rental_income": "income of an owner or tenant of land under an arrangement between the owner or tenant and another individual which provides that the other individual shall produce agricultural or horticultural commodities on it"
         },
         "consequence": "deferred",
-        "description": "411(a)(1) proviso; the farm rental participation family decides.",
+        "description": "411(a)(1) proviso; the farm rental participation family decides. 411(a)(1)'s proviso reaches an arrangement \"between the owner or tenant and another individual\" (review r6 M-13).",
         "overrides": [
           "real_estate_rentals"
         ],
@@ -449,8 +449,28 @@
         ]
       },
       {
-        "case_id": "services_to_occupants_other_space",
+        "case_id": "farm_arrangement_with_non_individual",
         "precedence": 5,
+        "when": {
+          "rental_income": "income of an owner or tenant of land under an arrangement for a corporation, partnership, trust or other person who is not an individual to produce agricultural or horticultural commodities on it"
+        },
+        "consequence": "open",
+        "description": "411(a)(1)'s proviso reaches an arrangement \"between the owner or tenant and another individual\", while 20 CFR 404.1082(c), captured from its April 1, 1996 edition, speaks of another person (review r6 M-13). Ranked below farm_rental_arrangement and above real_estate_rentals, whose condition this payment also meets.",
+        "open_reason": "FARM_ARRANGEMENT_NON_INDIVIDUAL_UNSETTLED: the statute's farm-rental proviso names an arrangement with \"another individual\"; the 1996 and later CFR edition the row cites names another person. No capture says whether an arrangement with a corporation or other entity that produces the crop takes the rent out of 411(a)(1)'s exclusion, so the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "statutory_individual_only",
+            "description": "Only an arrangement with an individual takes the proviso; the payments stay rentals from real estate that 411(a)(1) excludes (real_estate_rentals)."
+          },
+          {
+            "name": "cfr_any_person",
+            "description": "The CFR's wording reaches an arrangement with any person, so the farm-rental participation family decides the payments, as farm_rental_arrangement defers them."
+          }
+        ]
+      },
+      {
+        "case_id": "services_to_occupants_other_space",
+        "precedence": 6,
         "when": {
           "services_to_occupants": "space other than living quarters, parking lots, warehouses or storage garages (such as offices or shops), rented with services primarily for the occupant's convenience beyond those usually provided with occupancy only"
         },
@@ -470,7 +490,7 @@
       },
       {
         "case_id": "real_estate_rentals",
-        "precedence": 6,
+        "precedence": 7,
         "when": {
           "rental_income": "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions"
         },
@@ -1464,12 +1484,19 @@
         "when": {
           "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
         },
-        "consequence": "noncovered",
-        "overrides": [
-          "territorial_resident",
-          "cnmi_noncitizen_resident"
-        ],
-        "description": "Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c), headed for \"AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\" (an individual, not a minister alone), replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a person subject only to the partner country's laws meets both wordings. Publication 517 (2025) states the exception for ministers and points to Pub. 54's \"Bilateral Social Security (Totalization) Agreements\", the guide for citizens and resident aliens abroad. Date: section 415 has no effective-date clause and dates only the \"exclusively\" wording (\"Approved March 2, 2004.\"); the captures hold neither 42 U.S.C. 433 nor the text of 26 U.S.C. 1401(c), so they date neither the exemption nor any agreement. The condition can hold only while such an agreement is in effect, so the case sits in every row from 1968 and its condition carries the date. The captures also hold no title II provision that keeps these earnings out of self-employment income; clergy_religious_service's case foreign_agreement_sole_coverage rests on the same captures. It overrides territorial_resident and cnmi_noncitizen_resident: on either CNMI reading the agreement leaves the person subject only to the foreign country's laws."
+        "description": "Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c), headed for \"AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\" (an individual, not a minister alone), replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a person subject only to the partner country's laws meets both wordings. Publication 517 (2025) states the exception for ministers and points to Pub. 54's \"Bilateral Social Security (Totalization) Agreements\", the guide for citizens and resident aliens abroad. Date: section 415 has no effective-date clause and dates only the \"exclusively\" wording (\"Approved March 2, 2004.\"); the captures hold neither 42 U.S.C. 433 nor the text of 26 U.S.C. 1401(c), so they date neither the exemption nor any agreement. The condition can hold only while such an agreement is in effect, so the case sits in every row from 1968 and its condition carries the date. The captures also hold no title II provision that keeps these earnings out of self-employment income; clergy_religious_service's case foreign_agreement_sole_coverage rests on the same captures. It overrides territorial_resident and cnmi_noncitizen_resident: on either CNMI reading the agreement leaves the person subject only to the foreign country's laws. Review r6 M-9: this row's own 411(b) text says no agreement lifted the nonresident-alien exclusion before 1983-04-20, and the clergy rows read their agreement case from 1982; no capture holds 1401(c) or dates its agreement exemption, so before 1983-04-20 the case refuses rather than excluding a citizen abroad.",
+        "consequence": "open",
+        "open_reason": "AGREEMENT_EXEMPTION_BEFORE_1983_UNDATED: no CE1 capture holds 26 U.S.C. 1401(c) or 42 U.S.C. 433, or dates when a social security agreement first exempted self-employment income from SECA, so for taxable years in this row whether an agreement made the person subject only to another country's laws is not settled.",
+        "open_alternatives": [
+          {
+            "name": "agreement_exemption_in_force",
+            "description": "An agreement in effect for the year exempts the income, as from 1983-04-20: noncovered."
+          },
+          {
+            "name": "no_exemption_before_1983",
+            "description": "No agreement exempted self-employment income before 1983-04-20, so the remaining cases decide (usually covered for a citizen)."
+          }
+        ]
       },
       {
         "case_id": "territorial_resident",

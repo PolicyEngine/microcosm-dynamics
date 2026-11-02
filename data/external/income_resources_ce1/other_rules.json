@@ -2807,6 +2807,15 @@
               "section_218_position"
             ]
           }
+        },
+        "agreement_amount_input": {
+          "cases": {
+            "agreement_with_lower_threshold": [
+              "election_work",
+              "government_level",
+              "section_218_position"
+            ]
+          }
         }
       },
       "scope": "Service as an election official or election worker (418(c)(8)) in the employ of a State, a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)). \"State\" here means one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands. 410(h) makes the District of Columbia, Puerto Rico, the Virgin Islands, Guam and American Samoa States for the subchapter; the family leaves the District of Columbia, Guam and American Samoa, whose service current 410(a)(7)(C)-(E) treat separately, to the open row state_local_territories_history_open. Grounds by case: the agreement cases (agreement_with_statutory_threshold_paid_after_1977, agreement_with_lower_threshold and agreement_with_statutory_threshold) take 418(b)(1), under which \"State\" for a section 418 agreement does not include the District of Columbia, Guam or American Samoa; outside_agreement applies the general 410(a)(7) exclusion, whose \"State\" is 410(h)'s, less the carve under 410(a)(7)(C)-(E) above. Other service falls to other families.",
@@ -2825,7 +2834,8 @@
         "public_retirement_system_participation": "Before 410(a)(7)(F) (service after 1991-07-01) membership does not change the 410(a)(7) exclusion; it matters only to how a 218 coverage group forms (418(d) referendum, divided systems), which section_218_position states.",
         "reporting_unit": "The employer unit over which the threshold aggregates remuneration (aggregation_scope employer_employee_quarter/year); not a case condition.",
         "section_218_group": "section_218_group names the coverage group (418(b)(5), 418(d)(4)); whether the group, and this position in it, is under an effective agreement is the judgement section_218_position states, so no case reads the group name."
-      }
+      },
+      "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers (POMS SL 30001.357 C: \"the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies it per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12)."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3171,6 +3181,15 @@
               "section_218_position"
             ]
           }
+        },
+        "agreement_amount_input": {
+          "cases": {
+            "agreement_with_lower_threshold": [
+              "election_work",
+              "government_level",
+              "section_218_position"
+            ]
+          }
         }
       },
       "scope": "Service as an election official or election worker (418(c)(8)) in the employ of a State, a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)). \"State\" here means one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands. 410(h) makes the District of Columbia, Puerto Rico, the Virgin Islands, Guam and American Samoa States for the subchapter; the family leaves the District of Columbia, Guam and American Samoa, whose service current 410(a)(7)(C)-(E) treat separately, to the open row state_local_territories_history_open. Grounds by case: the agreement cases (agreement_with_lower_threshold and agreement_with_statutory_threshold) take 418(b)(1), under which \"State\" for a section 418 agreement does not include the District of Columbia, Guam or American Samoa; outside_agreement applies the general 410(a)(7) exclusion, whose \"State\" is 410(h)'s, less the carve under 410(a)(7)(C)-(E) above. Other service falls to other families.",
@@ -3180,7 +3199,8 @@
         "public_retirement_system_participation": "Before 410(a)(7)(F) (service after 1991-07-01) membership does not change the 410(a)(7) exclusion; it matters only to how a 218 coverage group forms (418(d) referendum, divided systems), which section_218_position states. Mandatory coverage begins only with the 1991-07-02 row (parameters.mandatory_nonmember_coverage false).",
         "reporting_unit": "The employer unit over which the threshold aggregates remuneration (aggregation_scope employer_employee_quarter/year); not a case condition.",
         "section_218_group": "section_218_group names the coverage group (418(b)(5), 418(d)(4)); whether the group, and this position in it, is under an effective agreement is the judgement section_218_position states, so no case reads the group name."
-      }
+      },
+      "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers (POMS SL 30001.357 C: \"the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies it per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12)."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3618,6 +3638,22 @@
               "section_218_position"
             ]
           }
+        },
+        "agreement_amount_input": {
+          "cases": {
+            "agreement_with_lower_threshold_nonmember": [
+              "election_work",
+              "government_level",
+              "public_retirement_system_participation",
+              "section_218_position"
+            ],
+            "agreement_with_lower_threshold_member": [
+              "election_work",
+              "government_level",
+              "public_retirement_system_participation",
+              "section_218_position"
+            ]
+          }
         }
       },
       "scope": "Service as an election official or election worker (418(c)(8); 410(a)(7)(F)(iv)) in the employ of a State, a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)). \"State\" here means one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands. 410(h) makes the District of Columbia, Puerto Rico, the Virgin Islands, Guam and American Samoa States for the subchapter; the family leaves the District of Columbia, Guam and American Samoa, whose service current 410(a)(7)(C)-(E) treat separately, to the open row state_local_territories_history_open. Grounds by case: the agreement cases (agreement_with_lower_threshold_member and agreement_with_statutory_threshold) take 418(b)(1), under which \"State\" for a section 418 agreement does not include the District of Columbia, Guam or American Samoa; agreement_with_lower_threshold_nonmember takes 418(b)(1) for the agreement and 410(a)(7)(F), which itself reaches \"a State (other than the District of Columbia, Guam, or American Samoa)\", for mandatory coverage; outside_agreement_nonmember applies 410(a)(7)(F), which itself reaches \"a State (other than the District of Columbia, Guam, or American Samoa)\"; outside_agreement_member applies the general 410(a)(7) exclusion, whose \"State\" is 410(h)'s, less the carve under 410(a)(7)(C)-(E) above. Other service falls to other families.",
@@ -3626,7 +3662,8 @@
         "month_or_exposure": "The aggregation period of the threshold (calendar quarter before 1978, calendar year after: the threshold's aggregation_scope); not a case condition.",
         "reporting_unit": "The employer unit over which the threshold aggregates remuneration (aggregation_scope employer_employee_quarter/year); not a case condition.",
         "section_218_group": "section_218_group names the coverage group (418(b)(5), 418(d)(4)); whether the group, and this position in it, is under an effective agreement is the judgement section_218_position states, so no case reads the group name."
-      }
+      },
+      "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers (POMS SL 30001.357 C: \"the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies it per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12)."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -4083,6 +4120,22 @@
         },
         "boundary_clause": {
           "not_a_coverage_condition": "The quoted effective-date clause dates the amendment that starts this row; the family's date axis applies the date, and the row's cases carry the amended rule."
+        },
+        "agreement_amount_input": {
+          "cases": {
+            "agreement_with_lower_threshold_nonmember": [
+              "election_work",
+              "government_level",
+              "public_retirement_system_participation",
+              "section_218_position"
+            ],
+            "agreement_with_lower_threshold_member": [
+              "election_work",
+              "government_level",
+              "public_retirement_system_participation",
+              "section_218_position"
+            ]
+          }
         }
       },
       "scope": "Service as an election official or election worker (418(c)(8); 410(a)(7)(F)(iv)) in the employ of a State, a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)). \"State\" here means one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands. 410(h) makes the District of Columbia, Puerto Rico, the Virgin Islands, Guam and American Samoa States for the subchapter; the family leaves the District of Columbia, Guam and American Samoa, whose service current 410(a)(7)(C)-(E) treat separately, to the open row state_local_territories_history_open. Grounds by case: the agreement cases (agreement_with_lower_threshold_member and agreement_with_statutory_threshold) take 418(b)(1), under which \"State\" for a section 418 agreement does not include the District of Columbia, Guam or American Samoa; agreement_with_lower_threshold_nonmember takes 418(b)(1) for the agreement and 410(a)(7)(F), which itself reaches \"a State (other than the District of Columbia, Guam, or American Samoa)\", for mandatory coverage; outside_agreement_nonmember applies 410(a)(7)(F), which itself reaches \"a State (other than the District of Columbia, Guam, or American Samoa)\"; outside_agreement_member applies the general 410(a)(7) exclusion, whose \"State\" is 410(h)'s, less the carve under 410(a)(7)(C)-(E) above. Other service falls to other families.",
@@ -4091,7 +4144,8 @@
         "month_or_exposure": "The aggregation period of the threshold (calendar quarter before 1978, calendar year after: the threshold's aggregation_scope); not a case condition.",
         "reporting_unit": "The employer unit over which the threshold aggregates remuneration (aggregation_scope employer_employee_quarter/year); not a case condition.",
         "section_218_group": "section_218_group names the coverage group (418(b)(5), 418(d)(4)); whether the group, and this position in it, is under an effective agreement is the judgement section_218_position states, so no case reads the group name."
-      }
+      },
+      "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers (POMS SL 30001.357 C: \"the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies it per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12)."
     },
     "worked_examples": [],
     "rare_exclusion": {
