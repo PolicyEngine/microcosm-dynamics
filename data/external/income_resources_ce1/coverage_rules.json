@@ -9681,14 +9681,14 @@
         {
           "case_id": "legislative_not_retirement_covered_1983",
           "consequence": "covered",
-          "description": "410(a)(5)(G)(i), first enacted as Pub. L. 98-21 section 101(a)(1) clause (v) (97 Stat. 68, subchapter III only) and extended to other Federal systems by Pub. L. 98-369 section 2601(a)(2) for service after 1983. 'Subject to' a system means current deductions or contributions (or equivalent payments on leave without pay) or receipt of its annuity. (G) reaches only \"service in the legislative branch of the Federal Government\".",
+          "description": "410(a)(5)(G)(i), first enacted as Pub. L. 98-21 section 101(a)(1) clause (v) (97 Stat. 68, subchapter III only) and extended to other Federal systems by Pub. L. 98-369 section 2601(a)(2) for service after 1983. 'Subject to' a system means current deductions or contributions (or equivalent payments on leave without pay) or receipt of its annuity. (G) reaches only \"service in the legislative branch of the Federal Government\". The case carries (G)'s closing definition of \"subject to\" (\"only if (a) such individual's pay is subject to deductions ... or (b) such individual is receiving an annuity\"), so an enrolled staffer on leave without pay who makes no 8332(k)(1) payments is not subject (review r6 M-10).",
           "overrides": [
             "grandfathered_continuous_service",
             "federal_annuitant"
           ],
           "precedence": 9,
           "when": {
-            "federal_retirement_system": "not subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services) (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))",
+            "federal_retirement_system": "not subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services) (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c)); under 410(a)(5)(G)'s closing words an individual is subject to such a system at a time only if his pay is then subject to its deductions (or, on leave without pay where 5 U.S.C. 8332(k)(1) applies, he makes equivalent payments) or he receives a Civil Service Retirement and Disability Fund or other Federal employee annuity",
             "federal_service": "service in the legislative branch of the Federal Government other than as a Member, Delegate or Resident Commissioner"
           }
         },
@@ -9709,14 +9709,14 @@
         {
           "case_id": "legislative_ceased_coverage_after_1983",
           "consequence": "covered",
-          "description": "410(a)(5)(G)(iii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983; continuity under (B) is disregarded for this test. Section 2601(d)(3) delays this coverage for an individual who meets 2601(d)(1)(A)-(B) and does not again become subject in time; until then the grandfather cases decide. (G) reaches only \"service in the legislative branch of the Federal Government\".",
+          "description": "410(a)(5)(G)(iii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983; continuity under (B) is disregarded for this test. Section 2601(d)(3) delays this coverage for an individual who meets 2601(d)(1)(A)-(B) and does not again become subject in time; until then the grandfather cases decide. (G) reaches only \"service in the legislative branch of the Federal Government\". The case carries (G)'s closing definition of \"subject to\" (\"only if (a) such individual's pay is subject to deductions ... or (b) such individual is receiving an annuity\"), so an enrolled staffer on leave without pay who makes no 8332(k)(1) payments is not subject (review r6 M-10).",
           "overrides": [
             "grandfathered_continuous_service",
             "federal_annuitant"
           ],
           "precedence": 11,
           "when": {
-            "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c)); where the individual meets Pub. L. 98-369 section 2601(d)(1)(A) and (B) and did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), the service is performed in or after the first month beginning after that 30-day period (section 2601(d)(3))",
+            "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c)); under 410(a)(5)(G)'s closing words an individual is subject to such a system at a time only if his pay is then subject to its deductions (or, on leave without pay where 5 U.S.C. 8332(k)(1) applies, he makes equivalent payments) or he receives a Civil Service Retirement and Disability Fund or other Federal employee annuity; where the individual meets Pub. L. 98-369 section 2601(d)(1)(A) and (B) and did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), the service is performed in or after the first month beginning after that 30-day period (section 2601(d)(3))",
             "federal_service": "service in the legislative branch of the Federal Government other than as a Member, Delegate or Resident Commissioner"
           }
         },
@@ -10304,14 +10304,14 @@
         {
           "case_id": "legislative_not_retirement_covered_1983",
           "consequence": "covered",
-          "description": "410(a)(5)(G)(i), first enacted as Pub. L. 98-21 section 101(a)(1) clause (v) (97 Stat. 68, subchapter III only) and extended to other Federal systems by Pub. L. 98-369 section 2601(a)(2) for service after 1983. 'Subject to' a system means current deductions or contributions (or equivalent payments on leave without pay) or receipt of its annuity. (G) reaches only \"service in the legislative branch of the Federal Government\".",
+          "description": "410(a)(5)(G)(i), first enacted as Pub. L. 98-21 section 101(a)(1) clause (v) (97 Stat. 68, subchapter III only) and extended to other Federal systems by Pub. L. 98-369 section 2601(a)(2) for service after 1983. 'Subject to' a system means current deductions or contributions (or equivalent payments on leave without pay) or receipt of its annuity. (G) reaches only \"service in the legislative branch of the Federal Government\". The case carries (G)'s closing definition of \"subject to\" (\"only if (a) such individual's pay is subject to deductions ... or (b) such individual is receiving an annuity\"), so an enrolled staffer on leave without pay who makes no 8332(k)(1) payments is not subject (review r6 M-10).",
           "overrides": [
             "grandfathered_continuous_service",
             "federal_annuitant"
           ],
           "precedence": 13,
           "when": {
-            "federal_retirement_system": "not subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services) (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c))",
+            "federal_retirement_system": "not subject on 1983-12-31 to 5 U.S.C. chapter 83 subchapter III or another Federal employee retirement system (other than for uniformed services) (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c)); under 410(a)(5)(G)'s closing words an individual is subject to such a system at a time only if his pay is then subject to its deductions (or, on leave without pay where 5 U.S.C. 8332(k)(1) applies, he makes equivalent payments) or he receives a Civil Service Retirement and Disability Fund or other Federal employee annuity",
             "federal_service": "service in the legislative branch of the Federal Government other than as a Member, Delegate or Resident Commissioner"
           }
         },
@@ -10332,14 +10332,14 @@
         {
           "case_id": "legislative_ceased_coverage_after_1983",
           "consequence": "covered",
-          "description": "410(a)(5)(G)(iii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983; continuity under (B) is disregarded for this test. (G) reaches only \"service in the legislative branch of the Federal Government\".",
+          "description": "410(a)(5)(G)(iii), added by Pub. L. 98-369 section 2601(a)(2) for service after 1983; continuity under (B) is disregarded for this test. (G) reaches only \"service in the legislative branch of the Federal Government\". The case carries (G)'s closing definition of \"subject to\" (\"only if (a) such individual's pay is subject to deductions ... or (b) such individual is receiving an annuity\"), so an enrolled staffer on leave without pay who makes no 8332(k)(1) payments is not subject (review r6 M-10).",
           "overrides": [
             "grandfathered_continuous_service",
             "federal_annuitant"
           ],
           "precedence": 15,
           "when": {
-            "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c)); where the individual meets Pub. L. 98-369 section 2601(d)(1)(A) and (B) and did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), the service is performed in or after the first month beginning after that 30-day period (section 2601(d)(3))",
+            "federal_retirement_system": "performed after the individual otherwise ceased, for any period after 1983-12-31 and while performing legislative-branch service, to be subject to 5 U.S.C. chapter 83 subchapter III without an application for coverage pending (an individual contributing a reduced amount by reason of the Federal Employees' Retirement Contribution Temporary Adjustment Act of 1983 is not subject to it: Pub. L. 98-369 section 2601(c)); under 410(a)(5)(G)'s closing words an individual is subject to such a system at a time only if his pay is then subject to its deductions (or, on leave without pay where 5 U.S.C. 8332(k)(1) applies, he makes equivalent payments) or he receives a Civil Service Retirement and Disability Fund or other Federal employee annuity; where the individual meets Pub. L. 98-369 section 2601(d)(1)(A) and (B) and did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), the service is performed in or after the first month beginning after that 30-day period (section 2601(d)(3))",
             "federal_service": "service in the legislative branch of the Federal Government other than as a Member, Delegate or Resident Commissioner"
           }
         },
