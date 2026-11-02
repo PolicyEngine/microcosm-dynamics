@@ -415,7 +415,9 @@ def test_direct_post_init_revalidates_sealed_result_before_field_hooks(layer):
 
 def test_valid_guard_identity_and_month_membership_comparisons_stay_usable():
     guard = g.SavingsClauseGuard(
-        g.YearMonth(2026, 1), earlier_months_unknown=False
+        g.YearMonth(2026, 1),
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
     )
     assert guard == guard
     assert not (guard != guard)
@@ -879,7 +881,9 @@ def test_public_attribute_dictionary_keys_reject_before_lookup_hooks(
     own = g.OwnBenefit(g.OwnBenefitKind.OLD_AGE, 100)
     result = COMPUTE["g"]()
     guard = g.SavingsClauseGuard(
-        g.YearMonth(2026, 1), earlier_months_unknown=False
+        g.YearMonth(2026, 1),
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
     )
     params = ssa_params()
     if kind == "statutory-input":

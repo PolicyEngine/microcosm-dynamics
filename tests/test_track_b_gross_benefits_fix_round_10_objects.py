@@ -69,6 +69,9 @@ def _declarations():
         "StatutoryRates": g.statutory_rates(PARAMS),
         "OwnBenefit": own,
         "Beneficiary": g.Beneficiary("child", g.Role.CHILD),
+        "BenefitDeduction": g.BenefitDeduction(
+            g.DeductionReason.OWN_EARNINGS_TEST
+        ),
         "WorkerRecord": g.WorkerRecord(g.FamilyKind.RETIREMENT, 2023, F(0)),
         "RecordState": state,
         "HouseholdRecord": g.HouseholdRecord("worker", state),
@@ -112,6 +115,7 @@ def test_constructor_corruption_is_an_input_error(case, corrupt):
     name, field = case
     if corrupt is True and field in {
         "entitled",
+        "permanent",
         "subject_to_family_maximum",
         "family_maximum_binding",
         "redistribution_applied",
