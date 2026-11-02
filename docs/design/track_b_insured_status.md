@@ -2629,8 +2629,10 @@ and `date_search_drops_binding` survived, and
 `test_a_prior_reaches_a_year_the_start_cannot` and
 `test_a_listed_prior_holds_every_ending_to_the_date` now kill them. Two stress
 tests gained `@example` pins while that pass ran, so its results rest on mixed
-test bytes. A rerun at the final bytes writes `round_19_mutations` in a later
-commit.
+test bytes. A cloud session reran all 40 at the final bytes, `168bb3a8`,
+through every insured status module (`round_19_mutations` in
+`docs/design/track_b_insured_status_mutations.json`). Thirty-six failed a
+named test. Four passed every test, and round 20 kills them.
 
 Against `129d44bd`, 44 of the 162 tests then in the five changed modules fail.
 Three tests arrived later and two stress tests gained `@example` pins, and four
@@ -2663,6 +2665,125 @@ These tests execute the invariants this round adds:
 - a flagged prior keeps its route and stays short of 404.130(b)
   (`test_a_special_prior_needs_a_quarter_of_its_route`,
   `test_a_special_prior_stays_short_of_the_ordinary_rule`).
+
+## Round 20 a start's later years stay open
+
+Verification class: statutory conformance on invented declarations only.
+This correction admits no population, behavioral, payment, or forecast claim.
+A run of round 2's property test drew an invented input that `168bb3a8`
+refuses, and the rerun of round 19's mutations left four alive. This round
+fixes the first and kills the four.
+
+### Later years can't move a start
+
+An invented person born 1970-02-02 has four QCs in each of 1990 to 1999 and 2,
+3, 2, 2 and 2 QCs in 2016 to 2020, a listed prior from 2000-04-02 through
+2003-09-30, and an established period from an onset of 2004-01-15. For a
+December 2020 query, `168bb3a8` refused the record with "More than 4096
+first-start annual placements". Round 17's `_fillings_keeping_start` asked
+`_start_sensitive_years` for the years through the latest possible start
+(`_current_period_start_horizon`), here the query month, so it counted the
+5,184 placements of 2016 to 2020. The 2004 start rests on 1990 to 1999.
+
+A period begins at the onset or in the first later quarter that insures its
+holder (404.321(a)), and each insured test at a quarter counts QCs through
+that quarter only. Whether a
+filling keeps a start therefore turns only on quarters through it, and no
+later year can move it. `_fillings_keeping_start` now passes the reported
+start in place of that horizon, so it enumerates only years through the
+start, with the years a binding prior needs. Later years stay flexible, and
+each status places them favorably (RS 00301.230), as the
+logged reading `us:oasdi-insured-one-filling-first-start` says. The record
+computes: with the period through the query, its 40 QCs of 1990 to 1999 meet
+the eight elapsed years 1992 to 1999
+(`test_partial_years_after_the_start_stay_open`).
+`test_a_filling_keeps_its_start_whatever_later_years_hold` draws records near
+the 20-of-40 edge and checks that two fixed fillings that agree through a
+start's year give that start.
+
+### Four survivors
+
+The rerun ran all 40 mutations through every insured status module, with no
+restricted open. Four passed every test, and each now fails a test of this
+round:
+
+- `binding_reaches_open_period` asks `_prior_start_binds` about a listed prior
+  under UNKNOWN establishment too. There `_settle_every_history` proves a
+  result every placement attains with no period in force, so a prior that
+  placement splits can't move it. The record of
+  `test_unknown_establishment_leaves_a_split_prior_to_the_proof`, with an
+  UNKNOWN 1997, computes a lower date of 2008-03-31 and fully and currently
+  insured status. The mutant refuses it by name
+  (`test_an_unknown_year_leaves_a_proven_result_to_the_proof`).
+- `disability_reads_the_completion` has DISABILITY's search read the person
+  with the current period added, so the period's establishment skips the
+  period's own first quarter. Take round 19's 1961-born record with its 1998
+  to 1999 prior listed and an established period from 2004-01-01 through
+  2004-12-31. The prior holds the 1998 QC in 1998Q1, and the 40 counted
+  quarters through 2004Q1 hold 26 QCs. The mutant also skips 2004Q1, which
+  holds no QC, reaches back one more quarter and counts 27
+  (`test_an_establishment_counts_no_quarter_of_its_own_period`).
+- `every_reads_listed_periods` has `_prior_start_binds` test every placement
+  with the earlier priors in force. `_every_placement_passes` finds the worst
+  filling exactly only with no period in force, as its docstring says. A
+  period keeps its first and last quarters when they are QCs (404.130(f),
+  404.146(d)), so an early QC can land on a credited endpoint and count where
+  a later one falls inside the period. An invented person born 1961-02-02 has
+  four QCs in each of 1987 and 1992 to 1994 and one in 1999, a prior from
+  1999-01-01 through 2000-09-30, and a later prior from 2002-04-01 through
+  2003-09-30. Past blindness asks the later prior for fully insured status
+  (404.130(e)). Counting the earlier period leaves 17 elapsed years, and
+  disregarding it leaves 19. The 1999 QC counts only in 1999Q1, so only that
+  placement reaches 17, and placement splits the later prior. The mutant's
+  worst filling puts the QC in 1999Q1 and finds every placement passing.
+  With an UNKNOWN 1997 the rule refuses the record by name, and the mutant
+  computes it (`test_a_later_prior_on_an_earlier_endpoint_binds`,
+  `test_an_unknown_year_refuses_that_later_prior`).
+  `test_a_later_prior_placement_splits_binds` draws pairs of priors. It checks
+  `_prior_passes` on each fixed filling against the oracle, and it checks that
+  `_prior_start_binds` answers true wherever those fillings split and false
+  where none holds the prior.
+- `flagged_refuses_every_placement` drops the clause that releases a flagged
+  prior every placement carries. That prior's holder "were only insured under
+  paragraph (c)" (404.130(d)(1)). When every placement passes its route and
+  none reaches 20 of 40, the prior holds on every placement and binds nothing.
+  Round 19's 1960-born record has a flagged prior from 1990-04-01 through
+  1991-12-31, two QCs in 1985, four in each of 1986 to 1989 and one in 1990.
+  With an UNKNOWN 1993 the rule computes fully insured status, and the mutant
+  refuses the record by name
+  (`test_an_unknown_year_leaves_a_special_prior_every_placement_carries`).
+  `test_a_special_prior_every_placement_carries_binds_nothing` checks the
+  predicate against the oracle on drawn records.
+
+Restoring the horizon (`fix_reverted`) makes
+`test_partial_years_after_the_start_stay_open` refuse again. Each of the four
+survivors and `fix_reverted` fails at least one of this round's nine tests,
+and the unmodified source passes all nine. Each ran in its own process on
+invented data, with both data roots set to a nonexistent path. A rerun of
+round 19's 40 mutations and `fix_reverted` at the final bytes, through every
+insured status module, writes `round_20_mutations` in a later commit.
+
+These tests execute the invariants this round adds:
+
+- placement of the years after a start never moves it: two fixed fillings
+  that agree through a start's year give that start
+  (`test_a_filling_keeps_its_start_whatever_later_years_hold`), and a record
+  whose later years hold more than 4,096 placements computes
+  (`test_partial_years_after_the_start_stay_open`);
+- under UNKNOWN establishment, a result every placement attains with no period
+  in force stands, however placement splits a listed prior
+  (`test_an_unknown_year_leaves_a_proven_result_to_the_proof`);
+- DISABILITY's count for a period's establishment skips no quarter of that
+  period (`test_an_establishment_counts_no_quarter_of_its_own_period`);
+- `_prior_passes` on a fixed filling agrees with the oracle for a later prior
+  counted with an earlier one, and `_prior_start_binds` answers true wherever
+  placement splits the prior and false where no placement holds it
+  (`test_a_later_prior_placement_splits_binds`,
+  `test_a_later_prior_on_an_earlier_endpoint_binds`);
+- a flagged prior that every placement carries on its route, short of 20 of
+  40, binds nothing
+  (`test_a_special_prior_every_placement_carries_binds_nothing`,
+  `test_an_unknown_year_leaves_a_special_prior_every_placement_carries`).
 
 ## Not in scope
 
