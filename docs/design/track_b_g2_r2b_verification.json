@@ -13321,5 +13321,59 @@
       ]
     }
   },
-  "round_9_current_evidence_note": "Fresh reviewed-head failing-first, named module gates, cross-head diagnostic and copied-tree mutation evidence sits under round_9. Earlier heads, counts and commands remain historical."
+  "round_9_current_evidence_note": "Fresh reviewed-head failing-first, named module gates, cross-head diagnostic and copied-tree mutation evidence sits under round_9. Earlier heads, counts and commands remain historical.",
+  "round_10": {
+    "reviewed_head": "03530e8bd99db9608ecfb60ae4f17508fde1b3be",
+    "verification_class": "statutory_conformance",
+    "admitted_scope": "Invented declarations and captured published examples only; no population, behavioral or forecast claim.",
+    "mutation_run": {
+      "where": "cloud session (Fleet ops held local mutation runs)",
+      "comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+      "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+    },
+    "named_test_gate": {
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/src:$PWD HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/hyp-gate $PY -m pytest -n 4 -q -p no:cacheprovider tests/test_track_b_*.py",
+      "result": "1 failed, 14284 passed, 20 skipped in 865.53s (0:14:25)",
+      "failing_node": "tests/test_track_b_b0_1_review_root.py::test_every_engine_match_of_a_spelled_denied_name_is_flagged[bun]",
+      "failing_node_note": "The cloud container had bun 1.4.4, so the B0.1 review-root differential ran its bun case, which skips where bun is absent, as in CI. This PR changes no B0.1 file, and the node fails the same way at #562's head. It is outside this PR."
+    },
+    "final_source_sha256": {
+      "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+      "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+    },
+    "final_test_sha256": {
+      "tests/test_track_b_ret_ledger_fix_round_10.py": "33c93d502d639b3b6dbac97bf144a7195a9f2f970c39bcdeb61cc5dd87c1ae04",
+      "tests/test_track_b_ret_ledger_fix_round_9.py": "03b8152dd80e24f0336840a29522ca4d5213cb797b3d74590ffb4054c1e12923"
+    },
+    "mutations": {
+      "count": 19,
+      "ids": [
+        "round10-comparison_clears_other_care",
+        "round10-comparison_clears_widow_care",
+        "round10-comparison_clears_disabled_widow_care",
+        "round10-cache_never_stores",
+        "round10-cache_recomputes_each_hit",
+        "round10-scope_opens_per_call",
+        "round10-scope_never_resets",
+        "round10-family_entry_unscoped",
+        "round10-deduction_entry_unscoped",
+        "round10-rate_key_drops_state",
+        "round10-event_key_drops_state",
+        "round10-event_key_drops_events",
+        "round10-event_key_drops_households",
+        "round10-bound_original_only",
+        "round10-bound_child_only",
+        "round10-bound_lowest_child",
+        "round10-bound_at_equality",
+        "round10-bound_any_beneficiary",
+        "round10-bound_skips_the_child_check"
+      ],
+      "equivalent": [
+        "rate_key_drops_month",
+        "rate_key_drops_params",
+        "event_key_shares_the_ordinary_tag"
+      ]
+    }
+  },
+  "round_10_current_evidence_note": "Round 10's copied-tree mutation evidence sits under round_10 and in the mutation ledger. Earlier heads, counts and commands remain historical."
 }

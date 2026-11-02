@@ -2,12 +2,12 @@
   "schema_version": 1,
   "verification_class": "statutory_conformance",
   "admitted_scope": "Mutation sensitivity of statutory rules on invented and captured worked cases only; no population, behavioral or forecast claim.",
-  "confirmed_mutation_count": 233,
+  "confirmed_mutation_count": 252,
   "counts_by_layer": {
     "g_deductions": 18,
-    "g_preflight": 149,
+    "g_preflight": 162,
     "g_savings": 12,
-    "r2": 53,
+    "r2": 59,
     "shared_provenance": 1
   },
   "environment_contract": {
@@ -13278,6 +13278,675 @@
         }
       },
       "layer": "g_preflight"
+    },
+    {
+      "id": "round10-comparison_clears_other_care",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "            if member.beneficiary_id == caregiver.beneficiary_id\n            else (\n                _replace_declared(member, child_in_care=False)\n                if member.role in _WIDOW_ROLES\n                else member\n            )\n        )\n        for member in beneficiaries\n",
+          "before": "            if member.beneficiary_id == caregiver.beneficiary_id\n            else member\n        )\n        for member in beneficiaries\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard0/comparison_clears_other_care/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard0/comparison_clears_other_care/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard0/hyp-comparison_clears_other_care /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_another_deducted_caregiver_keeps_its_minimum"
+      ],
+      "failed_test_count": 21,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-comparison_clears_widow_care",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "            if member.beneficiary_id == caregiver.beneficiary_id\n            else (\n                _replace_declared(member, child_in_care=False)\n                if member.role is Role.WIDOW\n                else member\n            )\n        )\n        for member in beneficiaries\n",
+          "before": "            if member.beneficiary_id == caregiver.beneficiary_id\n            else member\n        )\n        for member in beneficiaries\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard1/comparison_clears_widow_care/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard1/comparison_clears_widow_care/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard1/hyp-comparison_clears_widow_care /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_another_deducted_caregiver_keeps_its_minimum"
+      ],
+      "failed_test_count": 13,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-comparison_clears_disabled_widow_care",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "            if member.beneficiary_id == caregiver.beneficiary_id\n            else (\n                _replace_declared(member, child_in_care=False)\n                if member.role is Role.DISABLED_WIDOW\n                else member\n            )\n        )\n        for member in beneficiaries\n",
+          "before": "            if member.beneficiary_id == caregiver.beneficiary_id\n            else member\n        )\n        for member in beneficiaries\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard2/comparison_clears_disabled_widow_care/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard2/comparison_clears_disabled_widow_care/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard2/hyp-comparison_clears_disabled_widow_care /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_a_deducted_disabled_widow_keeps_the_minimum[1800-2891.50-expected0]"
+      ],
+      "failed_test_count": 3,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-cache_never_stores",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "    return compute()\n",
+          "before": "    if key not in cache:\n        cache[key] = compute()\n    return cache[key]\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard3/cache_never_stores/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard3/cache_never_stores/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard3/hyp-cache_never_stores /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_each_comparison_family_runs_once[events0-2]"
+      ],
+      "failed_test_count": 6,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-cache_recomputes_each_hit",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "    cache[key] = compute()\n    return cache[key]\n",
+          "before": "    if key not in cache:\n        cache[key] = compute()\n    return cache[key]\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard0/cache_recomputes_each_hit/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard0/cache_recomputes_each_hit/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard0/hyp-cache_recomputes_each_hit /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_each_comparison_family_runs_once[events0-2]"
+      ],
+      "failed_test_count": 6,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-scope_opens_per_call",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "        if False:\n            return function(*args)\n",
+          "before": "        if _CARE_COMPARISONS.get() is not None:\n            return function(*args)\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard1/scope_opens_per_call/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard1/scope_opens_per_call/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard1/hyp-scope_opens_per_call /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_each_comparison_family_runs_once[events0-2]"
+      ],
+      "failed_test_count": 6,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-scope_never_resets",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "        finally:\n            pass\n",
+          "before": "        finally:\n            _CARE_COMPARISONS.reset(token)\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard2/scope_never_resets/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard2/scope_never_resets/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard2/hyp-scope_never_resets /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_each_comparison_family_runs_once[events1-2]"
+      ],
+      "failed_test_count": 2,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-family_entry_unscoped",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "def _family_benefits(\n",
+          "before": "@_care_scope\ndef _family_benefits(\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard3/family_entry_unscoped/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard3/family_entry_unscoped/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard3/hyp-family_entry_unscoped /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_another_deducted_caregiver_keeps_its_minimum"
+      ],
+      "failed_test_count": 17,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-deduction_entry_unscoped",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "def _after_deductions(\n",
+          "before": "@_care_scope\ndef _after_deductions(\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard0/deduction_entry_unscoped/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard0/deduction_entry_unscoped/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard0/hyp-deduction_entry_unscoped /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_another_deducted_caregiver_keeps_its_minimum"
+      ],
+      "failed_test_count": 48,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-rate_key_drops_state",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "        (\"ordinary\", comparison, payment_month, id(params)),\n        lambda: _family_benefits(state, comparison, payment_month, params),\n",
+          "before": "        (\"ordinary\", state, comparison, payment_month, id(params)),\n        lambda: _family_benefits(state, comparison, payment_month, params),\n"
+        },
+        {
+          "after": "            (\"ordinary\", comparison, payment_month, id(params)),\n            lambda comparison=comparison: _family_benefits(\n",
+          "before": "            (\"ordinary\", state, comparison, payment_month, id(params)),\n            lambda comparison=comparison: _family_benefits(\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard1/rate_key_drops_state/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard1/rate_key_drops_state/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard1/hyp-rate_key_drops_state /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_one_scope_keeps_records_households_and_events_apart"
+      ],
+      "failed_test_count": 1,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-event_key_drops_state",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "                \"events\",\n                comparison,\n",
+          "before": "                \"events\",\n                state,\n                comparison,\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard0/event_key_drops_state/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard0/event_key_drops_state/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard0/hyp-event_key_drops_state /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_one_scope_keeps_records_households_and_events_apart"
+      ],
+      "failed_test_count": 1,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-event_key_drops_events",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "",
+          "before": "                tuple(sorted(full.items())),\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard1/event_key_drops_events/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard1/event_key_drops_events/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard1/hyp-event_key_drops_events /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_one_scope_keeps_records_households_and_events_apart"
+      ],
+      "failed_test_count": 1,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-event_key_drops_households",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/gross_benefits.py",
+      "change": [
+        {
+          "after": "",
+          "before": "                tuple(sorted(households.items())),\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard2/event_key_drops_households/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard2/event_key_drops_households/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard2/hyp-event_key_drops_households /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_one_scope_keeps_records_households_and_events_apart"
+      ],
+      "failed_test_count": 1,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "g_preflight"
+    },
+    {
+      "id": "round10-bound_original_only",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "after": "        < b.original_rates[month - 1]\n",
+          "before": "        < min(b.original_rates[month - 1], max(children))\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard0/bound_original_only/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard0/bound_original_only/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard0/hyp-bound_original_only /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_a_rate_past_any_minimum_needs_no_family_facts"
+      ],
+      "failed_test_count": 3,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round10-bound_child_only",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "after": "        < max(children)\n",
+          "before": "        < min(b.original_rates[month - 1], max(children))\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard1/bound_child_only/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard1/bound_child_only/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard1/hyp-bound_child_only /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_a_widows_own_original_rate_still_bounds_the_request"
+      ],
+      "failed_test_count": 1,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round10-bound_lowest_child",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "after": "        < min(b.original_rates[month - 1], min(children))\n",
+          "before": "        < min(b.original_rates[month - 1], max(children))\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard2/bound_lowest_child/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard2/bound_lowest_child/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard2/hyp-bound_lowest_child /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_the_higher_of_two_declared_child_rates_bounds_the_request"
+      ],
+      "failed_test_count": 1,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round10-bound_at_equality",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "after": "        <= min(b.original_rates[month - 1], max(children))\n",
+          "before": "        < min(b.original_rates[month - 1], max(children))\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard3/bound_at_equality/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard3/bound_at_equality/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard3/hyp-bound_at_equality /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_a_childs_original_rate_bounds_the_request[BenefitType.WIDOW-gross0-True]"
+      ],
+      "failed_test_count": 3,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round10-bound_any_beneficiary",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "after": "    children = [b.original_rates[month - 1] for b in entitled]\n",
+          "before": "    children = [\n        b.original_rates[month - 1]\n        for b in entitled\n        if b.benefit_types[month - 1] in (BenefitType.CHILD, BenefitType.CDB)\n    ]\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard0/bound_any_beneficiary/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard0/bound_any_beneficiary/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard0/hyp-bound_any_beneficiary /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_10.py::test_a_rate_past_any_minimum_needs_no_family_facts"
+      ],
+      "failed_test_count": 5,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "r2"
+    },
+    {
+      "id": "round10-bound_skips_the_child_check",
+      "round": 10,
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "change": [
+        {
+          "after": "    return any(\n",
+          "before": "    return bool(children) and any(\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round10 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round10 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=$PWD/scratch/review/round10-mutations-shard1/bound_skips_the_child_check/src:$PWD TRACKB_ROUND10_TREE=$PWD/scratch/review/round10-mutations-shard1/bound_skips_the_child_check/src HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/round10-mutations-shard1/hyp-bound_skips_the_child_check /tmp/tbvenv/bin/python scratch/review/run_round10_named.py -p no:xdist -p no:cacheprovider -q --tb=line -rf tests/test_track_b_ret_ledger_fix_round_10.py tests/test_track_b_ret_ledger_fix_round_9.py",
+      "outer_command": [
+        "python",
+        "scratch/review/round10_mutate.py"
+      ],
+      "mutated_exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_fix_round_9.py::test_no_minimum_can_move_on_these_records[no child]"
+      ],
+      "failed_test_count": 2,
+      "evidence": {
+        "cloud_comment": "https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595",
+        "results_sha256": "d3ab07eb2e589613e8be609135869076b699ea019f7122f656623daadc817a83"
+      },
+      "mutation_method": "One-line semantic mutation in a copied source tree under scratch/review; production sources untouched.",
+      "restoration": {
+        "reverted": true,
+        "production_sources_unchanged": true,
+        "production_source_sha256": {
+          "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+          "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
+        }
+      },
+      "layer": "r2"
     }
   ],
   "restoration_verification_snapshot": {
@@ -13351,5 +14020,50 @@
   "round_9_restoration_snapshot": {
     "src/populace_dynamics/track_b/gross_benefits.py": "bda57ecc5b3ac35d9db4c1554964c5472cdb469b831106841404032ac6c54402",
     "src/populace_dynamics/track_b/ret_ledger.py": "5a54d9adb8e0ebd09070566447f1372249e03a14aee6533d0802fde58d6b3ea1"
+  },
+  "round_10_head": "03530e8bd99db9608ecfb60ae4f17508fde1b3be",
+  "round_10_note": "A cloud session ran round 10's 22 listed mutations at the final source and test bytes on 03530e8b (https://github.com/PolicyEngine/microcosm-dynamics/pull/563#issuecomment-6584667595), each in a copied source tree with its own Hypothesis database, through tests/test_track_b_ret_ledger_fix_round_10.py and tests/test_track_b_ret_ledger_fix_round_9.py. 19 failed a named test, and the runner's audit counted no restricted open, subprocess.Popen or os.system call. rate_key_drops_month, rate_key_drops_params and event_key_shares_the_ordinary_tag passed every test and stay out of this count as equivalent; round_10_equivalent_survivors gives each argument. round_10_mutation_driver_source and round_10_runner_source hold the exact scripts. Earlier records remain historical.",
+  "round_10_equivalent_survivors": {
+    "rate_key_drops_month": {
+      "change": [
+        {
+          "after": "        (\"ordinary\", state, comparison, id(params)),\n        lambda: _family_benefits(state, comparison, payment_month, params),\n",
+          "before": "        (\"ordinary\", state, comparison, payment_month, id(params)),\n        lambda: _family_benefits(state, comparison, payment_month, params),\n"
+        },
+        {
+          "after": "            (\"ordinary\", state, comparison, id(params)),\n            lambda comparison=comparison: _family_benefits(\n",
+          "before": "            (\"ordinary\", state, comparison, payment_month, id(params)),\n            lambda comparison=comparison: _family_benefits(\n"
+        }
+      ],
+      "argument": "Only _family_benefits and _after_deductions open a comparison cache, and only when none is open. RET calls G once per month and the household entry once per record, each outside any cache, and every nested comparison passes the opening call's payment_month through unchanged. So every key in one cache carries the same month, and dropping it merges no two families."
+    },
+    "rate_key_drops_params": {
+      "change": [
+        {
+          "after": "        (\"ordinary\", state, comparison, payment_month),\n        lambda: _family_benefits(state, comparison, payment_month, params),\n",
+          "before": "        (\"ordinary\", state, comparison, payment_month, id(params)),\n        lambda: _family_benefits(state, comparison, payment_month, params),\n"
+        },
+        {
+          "after": "            (\"ordinary\", state, comparison, payment_month),\n            lambda comparison=comparison: _family_benefits(\n",
+          "before": "            (\"ordinary\", state, comparison, payment_month, id(params)),\n            lambda comparison=comparison: _family_benefits(\n"
+        }
+      ],
+      "argument": "Every nested comparison passes the opening call's params object through unchanged, and that call keeps the object alive, so every key in one cache carries the same id(params). Dropping it merges no two families."
+    },
+    "event_key_shares_the_ordinary_tag": {
+      "change": [
+        {
+          "after": "                \"ordinary\",\n",
+          "before": "                \"events\",\n"
+        }
+      ],
+      "argument": "An events key has seven fields (tag, state, comparison, month, id(params), events, households) and an ordinary key five, and tuples of different lengths never compare equal. Giving both the same tag merges no two keys."
+    }
+  },
+  "round_10_mutation_driver_source": "\"\"\"Round 10 mutations, each in a copied source tree under scratch/review.\"\"\"\nimport hashlib, json, os, re, shlex, shutil, subprocess, sys\nfrom pathlib import Path\n\nG = \"src/populace_dynamics/track_b/gross_benefits.py\"\nR = \"src/populace_dynamics/track_b/ret_ledger.py\"\nPY = sys.executable\nMODULES = [\n    \"tests/test_track_b_ret_ledger_fix_round_10.py\",\n    \"tests/test_track_b_ret_ledger_fix_round_9.py\",\n]\nKEEP_OTHERS = \"            if member.beneficiary_id == caregiver.beneficiary_id\\n            else member\\n        )\\n        for member in beneficiaries\\n\"\nCLEAR_OTHERS = (\n    \"            if member.beneficiary_id == caregiver.beneficiary_id\\n\"\n    \"            else (\\n\"\n    \"                _replace_declared(member, child_in_care=False)\\n\"\n    \"                if member.role in _WIDOW_ROLES\\n\"\n    \"                else member\\n\"\n    \"            )\\n\"\n    \"        )\\n        for member in beneficiaries\\n\"\n)\nSTORE = \"    if key not in cache:\\n        cache[key] = compute()\\n    return cache[key]\\n\"\nSCOPE_OPEN = \"        if _CARE_COMPARISONS.get() is not None:\\n            return function(*args)\\n\"\nSCOPE_RESET = \"        finally:\\n            _CARE_COMPARISONS.reset(token)\\n\"\nRATE_KEY = \"        (\\\"ordinary\\\", state, comparison, payment_month, id(params)),\\n        lambda: _family_benefits(state, comparison, payment_month, params),\\n\"\nMIN_KEY = \"            (\\\"ordinary\\\", state, comparison, payment_month, id(params)),\\n            lambda comparison=comparison: _family_benefits(\\n\"\nEVENT_STATE = \"                \\\"events\\\",\\n                state,\\n                comparison,\\n\"\nEVENT_EVENTS = \"                tuple(sorted(full.items())),\\n\"\nEVENT_HOUSEHOLDS = \"                tuple(sorted(households.items())),\\n\"\nEVENT_TAG = \"                \\\"events\\\",\\n\"\nAFTER_SCOPE = \"@_care_scope\\ndef _after_deductions(\\n\"\nFAMILY_SCOPE = \"@_care_scope\\ndef _family_benefits(\\n\"\nBOUND = \"        < min(b.original_rates[month - 1], max(children))\\n\"\nCHILDREN = \"    children = [\\n        b.original_rates[month - 1]\\n        for b in entitled\\n        if b.benefit_types[month - 1] in (BenefitType.CHILD, BenefitType.CDB)\\n    ]\\n\"\nNEEDS_CHILD = \"    return bool(children) and any(\\n\"\n\nM = [\n (\"comparison_clears_other_care\", G, [(KEEP_OTHERS, CLEAR_OTHERS)]),\n (\"comparison_clears_widow_care\", G, [(KEEP_OTHERS, CLEAR_OTHERS.replace(\"if member.role in _WIDOW_ROLES\", \"if member.role is Role.WIDOW\"))]),\n (\"comparison_clears_disabled_widow_care\", G, [(KEEP_OTHERS, CLEAR_OTHERS.replace(\"if member.role in _WIDOW_ROLES\", \"if member.role is Role.DISABLED_WIDOW\"))]),\n (\"cache_never_stores\", G, [(STORE, \"    return compute()\\n\")]),\n (\"cache_recomputes_each_hit\", G, [(STORE, \"    cache[key] = compute()\\n    return cache[key]\\n\")]),\n (\"scope_opens_per_call\", G, [(SCOPE_OPEN, \"        if False:\\n            return function(*args)\\n\")]),\n (\"scope_never_resets\", G, [(SCOPE_RESET, \"        finally:\\n            pass\\n\")]),\n (\"family_entry_unscoped\", G, [(FAMILY_SCOPE, \"def _family_benefits(\\n\")]),\n (\"deduction_entry_unscoped\", G, [(AFTER_SCOPE, \"def _after_deductions(\\n\")]),\n (\"rate_key_drops_state\", G, [(RATE_KEY, RATE_KEY.replace(\"(\\\"ordinary\\\", state, \", \"(\\\"ordinary\\\", \")), (MIN_KEY, MIN_KEY.replace(\"(\\\"ordinary\\\", state, \", \"(\\\"ordinary\\\", \"))]),\n (\"rate_key_drops_month\", G, [(RATE_KEY, RATE_KEY.replace(\"comparison, payment_month, id\", \"comparison, id\")), (MIN_KEY, MIN_KEY.replace(\"comparison, payment_month, id\", \"comparison, id\"))]),\n (\"rate_key_drops_params\", G, [(RATE_KEY, RATE_KEY.replace(\", id(params))\", \")\")), (MIN_KEY, MIN_KEY.replace(\", id(params))\", \")\"))]),\n (\"event_key_drops_state\", G, [(EVENT_STATE, \"                \\\"events\\\",\\n                comparison,\\n\")]),\n (\"event_key_drops_events\", G, [(EVENT_EVENTS, \"\")]),\n (\"event_key_drops_households\", G, [(EVENT_HOUSEHOLDS, \"\")]),\n (\"event_key_shares_the_ordinary_tag\", G, [(EVENT_TAG, \"                \\\"ordinary\\\",\\n\")]),\n (\"bound_original_only\", R, [(BOUND, \"        < b.original_rates[month - 1]\\n\")]),\n (\"bound_child_only\", R, [(BOUND, \"        < max(children)\\n\")]),\n (\"bound_lowest_child\", R, [(BOUND, BOUND.replace(\"max(children)\", \"min(children)\"))]),\n (\"bound_at_equality\", R, [(BOUND, BOUND.replace(\"        < \", \"        <= \"))]),\n (\"bound_any_beneficiary\", R, [(CHILDREN, \"    children = [b.original_rates[month - 1] for b in entitled]\\n\")]),\n (\"bound_skips_the_child_check\", R, [(NEEDS_CHILD, \"    return any(\\n\")]),\n]\nshard, shards = map(int, os.environ.get(\"TRACKB_SHARD\", \"0/1\").split(\"/\"))\nonly = {name for index, (name, _, _) in enumerate(M) if index % shards == shard}\nbase = Path(f\"scratch/review/round10-mutations-shard{shard}\")\nbase.mkdir(exist_ok=True)\nreport = Path(f\"scratch/review/round10-mutations-shard{shard}.json\")\nrecords = json.loads(report.read_text()) if report.exists() else {}\nenv = dict(os.environ)\nenv.update(\n    POPULACE_DYNAMICS_PSID_DIR=\"/nonexistent/trackb-round10\",\n    POPULACE_DYNAMICS_EPUF_DIR=\"/nonexistent/trackb-round10\",\n    OMP_NUM_THREADS=\"1\", OMP_WAIT_POLICY=\"PASSIVE\", POLARS_MAX_THREADS=\"1\",\n    PYTHONDONTWRITEBYTECODE=\"1\",\n)\ncwd = os.getcwd()\nfor name, path, changes in M:\n    if only and name not in only:\n        continue\n    tree = base / name\n    if tree.exists():\n        shutil.rmtree(tree)\n    shutil.copytree(\"src\", tree / \"src\", ignore=shutil.ignore_patterns(\"__pycache__\"))\n    target = tree / path\n    source = target.read_text()\n    for before, after in changes:\n        assert source.count(before) == 1, (name, before, source.count(before))\n        source = source.replace(before, after)\n    target.write_text(source)\n    log = base / f\"{name}.log\"\n    hyp = base / f\"hyp-{name}\"\n    shutil.rmtree(hyp, ignore_errors=True)\n    run_env = dict(env, PYTHONPATH=f\"{cwd}/{tree}/src:{cwd}\", TRACKB_ROUND10_TREE=f\"{cwd}/{tree}/src\", HYPOTHESIS_STORAGE_DIRECTORY=str(hyp))\n    shown = {key: run_env[key] for key in ('POPULACE_DYNAMICS_PSID_DIR', 'POPULACE_DYNAMICS_EPUF_DIR', 'OMP_NUM_THREADS', 'OMP_WAIT_POLICY', 'POLARS_MAX_THREADS', 'PYTHONDONTWRITEBYTECODE', 'PYTHONPATH', 'TRACKB_ROUND10_TREE', 'HYPOTHESIS_STORAGE_DIRECTORY')}\n    args = [PY, \"scratch/review/run_round10_named.py\", \"-p\", \"no:xdist\", \"-p\", \"no:cacheprovider\", \"-q\", \"--tb=line\", \"-rf\", *MODULES]\n    with open(log, \"w\") as out:\n        code = subprocess.run(args, env=run_env, stdout=out, stderr=subprocess.STDOUT).returncode\n    text = log.read_text()\n    failed = re.findall(r\"^FAILED (\\S+)\", text, flags=re.M)\n    audit = re.findall(r\"^OPEN_AUDIT (.*)$\", text, flags=re.M)\n    assert \"MUTATED_TREE\" in text, name\n    records[name] = {\n        \"name\": name, \"file\": path,\n        \"source_sha256\": hashlib.sha256(Path(path).read_bytes()).hexdigest(),\n        \"changes\": [{\"before\": b, \"after\": a} for b, a in changes],\n        \"modules\": MODULES, \"exit_code\": code,\n        \"command\": shlex.join([\"env\", *(f\"{k}={v}\" for k, v in shown.items()), *args]),\n        \"failing_test_count\": len(failed),\n        \"first_failing_test\": failed[0] if failed else None,\n        \"open_audit\": json.loads(audit[-1]) if audit else None,\n    }\n    shutil.rmtree(tree)\n    report.write_text(json.dumps(records, indent=1))\n    print(name, \"exit\", code, \"failed\", len(failed), (failed[0].split(\"::\")[-1][:60] if failed else \"SURVIVED\"), flush=True)\n",
+  "round_10_runner_source": "\"\"\"Run named invented-data conformance tests with open-event auditing.\"\"\"\n\nimport json\nimport os\nfrom pathlib import Path\nimport sys\n\nCOUNTS = {\"restricted_opens\": 0, \"subprocess.Popen\": 0, \"os.system\": 0}\nBARRED = {\n    \"gates.yaml\", \"adjusted_poverty.py\", \"rows.py\",\n    \"ssa_trust_fund_interest_rates_2026.json\",\n    \"urban2010_cola_comparison.md\", \"urban2010_fra68_comparison.md\",\n    \"boomers2004_uniform_cut_comparison.md\", \"minimum_benefits_comparison.md\",\n    \"m6_projection_engine.md\", \"mint8_table_user_guide.source.html\",\n    \"test_anchor_provenance_erratum.py\",\n    \"s0_1_power_results.json\", \"s0_1_source_audit.md\", \"s0_1_power.py\",\n    \"test_s0_1_invariants.py\", \"test_s0_1_power.py\",\n    \"test_s0_1_thresholds.py\",\n}\n\n\ndef audit(event, arguments):\n    if event == \"open\" and isinstance(arguments[0], (str, bytes)):\n        path = os.fsdecode(arguments[0])\n        name = Path(path).name\n        if (\n            name in BARRED\n            or name.startswith((\"adjusted_poverty.\", \"rows.\"))\n            or \"/PolicyEngine/psid-data/\" in path\n            or \"/microcosm-launch-evidence/\" in path\n            or \"/dynasim-refs/\" in path\n            or \"/claude-501/\" in path\n            or \"/tests/s0_1/\" in path\n        ):\n            COUNTS[\"restricted_opens\"] += 1\n            raise RuntimeError(path)\n    elif event in (\"subprocess.Popen\", \"os.system\"):\n        COUNTS[event] += 1\n\n\ndef main():\n    for name in (\"POPULACE_DYNAMICS_PSID_DIR\", \"POPULACE_DYNAMICS_EPUF_DIR\"):\n        assert os.environ[name] == \"/nonexistent/trackb-round10\"\n    assert sys.argv[1:]\n    sys.addaudithook(audit)\n    import populace_dynamics\n\n    expected = os.environ.get(\"TRACKB_ROUND10_TREE\")\n    if expected:\n        assert str(Path(populace_dynamics.__file__)).startswith(expected)\n        print(\"MUTATED_TREE\", expected, flush=True)\n    import pytest\n\n    try:\n        return pytest.main(sys.argv[1:])\n    finally:\n        print(\"OPEN_AUDIT\", json.dumps(COUNTS, sort_keys=True), flush=True)\n\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\n",
+  "round_10_restoration_snapshot": {
+    "src/populace_dynamics/track_b/gross_benefits.py": "ad65407af7c69507095e03244c5d463a355d20b674d3ece1f0d8176f6987a5a9",
+    "src/populace_dynamics/track_b/ret_ledger.py": "edd9a4823d38a3157ba0bbf055e18ef9ba40fa787ccba0acd37b4ad3cbbca4bd"
   }
 }

@@ -2817,6 +2817,14 @@ survivor child's OB on that PIA is $750, and the records now say so.
 | RET's provisional ledger pays the same minimum | `test_ret_pays_the_minimum_on_the_provisional_ledger` |
 | Without a context, RET asks for family facts only below the lower of a widow(er)'s original rate and an entitled child's, and a month it settles without them pays what G pays with them | `test_a_rate_past_any_minimum_needs_no_family_facts`; `test_a_childs_original_rate_bounds_the_request`; `test_the_higher_of_two_declared_child_rates_bounds_the_request`; `test_a_widows_own_original_rate_still_bounds_the_request`; Hypothesis `test_a_month_ret_settles_without_family_facts_matches_g` |
 
-25 of the module's 37 tests fail against `bc460e32`, and round 9's 62
-all pass there. `scratch/review/round10_mutate.py` lists 22 mutations; a
-Fleet ops hold on local mutation runs puts their results in a later commit.
+25 of the module's 37 tests fail against `bc460e32`, and round 9's 62 all pass
+there. A cloud session ran this round's 22 mutations at the final bytes on
+`03530e8b`, and 19 failed a named test with no restricted open (the `round10-`
+records in `docs/design/track_b_g2_r2b_mutations.json`, which also holds the
+driver and runner sources). `rate_key_drops_month` and `rate_key_drops_params`
+change no result. Each top-level call opens its own comparison cache (RET calls
+G once per month, the household entry once per record), and each nested
+comparison passes that call's month and parameters through unchanged, so every
+key in one cache carries the same month and parameters.
+`event_key_shares_the_ordinary_tag` changes none either: an events key has
+seven fields and an ordinary key five, so the tag never decides a match.
