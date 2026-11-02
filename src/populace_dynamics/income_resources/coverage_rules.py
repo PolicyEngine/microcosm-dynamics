@@ -86,6 +86,13 @@ Invariants (property tests in ``tests/income_resources``):
 * ``awaiting_ce2`` never establishes identification.
 * A negligible candidate requires a cited prevalence bound and population;
   a missing bound preserves strict unresolved treatment and search history.
+* ``parameters.threshold_id_by_case`` maps a case whose date differs from
+  the row's (a payment date on a service-date row) to the threshold it
+  applies and the income years a consumer looks that threshold up for,
+  ``{"threshold_id": ..., "income_years": [first, last]}``. The loader
+  refuses an entry that names no case of the row, an unknown threshold, or
+  a year in that range for which the threshold is neither published nor
+  computable by its indexing.
 * A threshold declared monotone cannot decline across its published years.
   Only the optional-method limits carry this flag: their quarter-of-coverage
   inputs follow the statutory prior-year floor in 42 U.S.C. 413(d)(2).
@@ -588,6 +595,59 @@ def _validated_cases(
         _freeze(case)
         for case in sorted(by_id.values(), key=lambda c: c["precedence"])
     )
+
+
+def _check_case_thresholds(
+    rule: CoverageRule, thresholds: Mapping[str, Mapping[str, Any]]
+) -> None:
+    """Each ``threshold_id_by_case`` entry names a case of the row and a
+    threshold available for every income year the entry gives."""
+    entries = rule.parameters.get("threshold_id_by_case")
+    if entries is None:
+        return
+    _require(
+        isinstance(entries, Mapping) and bool(entries),
+        f"{rule.rule_id}: threshold_id_by_case must be a nonempty object",
+    )
+    case_ids = {case["case_id"] for case in rule.cases}
+    for case_id, entry in entries.items():
+        _require(
+            case_id in case_ids,
+            f"{rule.rule_id}: threshold_id_by_case names no case {case_id}",
+        )
+        _require(
+            isinstance(entry, Mapping)
+            and set(entry) == {"threshold_id", "income_years"},
+            f"{rule.rule_id}: threshold_id_by_case entry needs threshold_id "
+            "and income_years",
+        )
+        threshold = thresholds.get(entry["threshold_id"])
+        _require(
+            threshold is not None,
+            f"{rule.rule_id}: threshold_id_by_case names unknown threshold "
+            f"{entry['threshold_id']!r}",
+        )
+        years = entry["income_years"]
+        _require(
+            isinstance(years, (list, tuple))
+            and len(years) == 2
+            and years[0] <= years[1],
+            f"{rule.rule_id}: threshold_id_by_case income_years must be "
+            "[first, last]",
+        )
+        first = _data_year(years[0], "threshold_id_by_case income year")
+        last = _data_year(years[1], "threshold_id_by_case income year")
+        index = threshold.get("indexing") or {}
+        for year in range(first, last + 1):
+            _require(
+                str(year) in threshold["published_values"]
+                or (
+                    bool(index)
+                    and index["first_year"] <= year <= index["last_year"]
+                ),
+                f"{rule.rule_id}: threshold_id_by_case threshold "
+                f"{entry['threshold_id']} is not available for {year}",
+            )
 
 
 def _check_deferral_graph(rules: Iterable[CoverageRule]) -> None:
@@ -1248,6 +1308,9 @@ class CoverageRegistry:
                         "named base index year required",
                     )
         _require(len(ids) == len(set(ids)), "duplicate threshold ID")
+        by_threshold = {t["threshold_id"]: t for t in thresholds}
+        for rule in rules:
+            _check_case_thresholds(rule, by_threshold)
         definitions = raw.get("table_definitions", [])
         _require(isinstance(definitions, list), "table definitions list")
         definition_ids = []

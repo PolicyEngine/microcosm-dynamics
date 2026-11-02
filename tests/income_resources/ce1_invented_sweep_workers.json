@@ -8952,16 +8952,16 @@
    "decides": "residual"
   },
   {
-   "rule_id": "casual_service_1978",
-   "worker": "INVENTED: Ros, who rakes a neighbour's yard in late December 1977 and is paid $60 cash on 1978-01-05, her only pay from him. Pub. L. 95-216 section 351(d) applies the $100 annual test \"with respect to remuneration paid and services rendered after December 31, 1977\", so this pay keeps the $50 calendar-quarter test and is wages: case services_rendered_before_1978, threshold casual_cash_quarterly.",
+   "rule_id": "casual_service_1968",
+   "worker": "INVENTED (review r6 M-6): $60 cash paid on 1978-01-05 for yard work for a neighbour in December 1977. The family's service axis sends the service to casual_service_1968; section 351(d) reaches remuneration paid after 1977, so the $100 calendar-year test applies (threshold casual_cash_annual for 1978).",
    "facts": {
     "casual_service": "service not in the course of the employer's trade or business (yard work for a neighbour)",
     "cash_remuneration": "cash remuneration",
     "amount": "$60 cash paid 1978-01-05 for services rendered in December 1977",
-    "services_performed_date": "before 1978-01-01"
+    "remuneration_paid_date": "remuneration paid on or after 1978-01-01"
    },
    "expected": "covered_above_threshold",
-   "decides": "services_rendered_before_1978"
+   "decides": "remuneration_paid_after_1977"
   },
   {
    "rule_id": "domestic_service_1968",
@@ -9721,7 +9721,7 @@
    "facts": {
     "casual_service": "service not in the course of the employer's trade or business (yard work for a neighbour)",
     "cash_remuneration": "cash remuneration",
-    "services_performed_date": "on or after 1978-01-01"
+    "remuneration_paid_date": "remuneration paid on or after 1978-01-01"
    },
    "expected": "covered_above_threshold",
    "decides": "residual"
@@ -9732,7 +9732,7 @@
    "facts": {
     "casual_service": "service in the course of the employer's trade or business, or any service for a corporation",
     "cash_remuneration": "cash remuneration",
-    "services_performed_date": "before 1978-01-01"
+    "remuneration_paid_date": "remuneration paid before 1978-01-01"
    },
    "expected": "covered",
    "decides": "business_or_corporate_service"
@@ -9743,7 +9743,7 @@
    "facts": {
     "casual_service": "service not in the course of the employer's trade or business, performed on a farm operated for profit",
     "cash_remuneration": "cash remuneration",
-    "services_performed_date": "before 1978-01-01"
+    "remuneration_paid_date": "remuneration paid before 1978-01-01"
    },
    "expected": "deferred",
    "decides": "farm_operated_for_profit"
@@ -9755,7 +9755,7 @@
     "domestic_service": "domestic service in a private home of the employer",
     "casual_service": "service not in the course of the employer's trade or business",
     "cash_remuneration": "cash remuneration",
-    "services_performed_date": "before 1978-01-01"
+    "remuneration_paid_date": "remuneration paid before 1978-01-01"
    },
    "expected": "deferred",
    "decides": "domestic_service_in_private_home"
@@ -9766,7 +9766,7 @@
    "facts": {
     "casual_service": "service not in the course of the employer's trade or business (campaign work for a candidate)",
     "cash_remuneration": "remuneration paid in any medium other than cash",
-    "services_performed_date": "before 1978-01-01"
+    "remuneration_paid_date": "remuneration paid before 1978-01-01"
    },
    "expected": "noncovered",
    "decides": "noncash_remuneration"
@@ -15435,6 +15435,30 @@
    "facts": {
     "church_employee_service": "remuneration for service by a minister in the exercise of ministry for an electing church",
     "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "casual_service_1978",
+   "worker": "INVENTED (review r6 M-6): $60 cash paid in advance on 1977-12-30 for yard work in January 1978. The service falls in this row, but the pay was not paid after 1977, so the $50 calendar-quarter test keeps applying (threshold casual_cash_quarterly for 1977).",
+   "facts": {
+    "casual_service": "service not in the course of the employer's trade or business (yard work for a neighbour)",
+    "cash_remuneration": "cash remuneration",
+    "amount": "$60 cash paid 1977-12-30 for services rendered in January 1978",
+    "remuneration_paid_date": "remuneration paid before 1978-01-01"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "remuneration_paid_before_1978"
+  },
+  {
+   "rule_id": "casual_service_1968",
+   "worker": "INVENTED (review r6 M-6, just misses on the payment date): $60 cash paid on 1977-12-20 for yard work in November 1977: the quarterly test of this row applies (the residual).",
+   "facts": {
+    "casual_service": "service not in the course of the employer's trade or business (yard work for a neighbour)",
+    "cash_remuneration": "cash remuneration",
+    "amount": "$60 cash paid 1977-12-20 for services rendered in November 1977",
+    "remuneration_paid_date": "remuneration paid before 1978-01-01"
    },
    "expected": "covered_above_threshold",
    "decides": "residual"

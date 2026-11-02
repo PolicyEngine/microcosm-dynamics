@@ -2161,8 +2161,9 @@ def test_condition_parameters_on_case_rows_name_their_cases():
     # The review r5 fix ties the four federal rows' scope and the
     # church cases se_units_1968_1983 now carries; its sweep ties three
     # more (communist 1968, casual 1978 and domestic 1994), and the
-    # condition-word ties three more.
-    assert len(tied) == 100
+    # condition-word ties three more; the review r6 fix ties casual 1968's
+    # payment-date threshold.
+    assert len(tied) == 101
     assert all(row["open_reason"] is None for row in tied)
     # H-C: the 2018 tribal row's scope parameter names the case that reads
     # federal recognition.
@@ -4940,7 +4941,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 346
+    assert sum(len(row["cases"]) for row in rows) == 347
 
 
 PUBLIC_OFFICERS = {
@@ -6066,9 +6067,45 @@ def test_1977_election_pay_follows_its_payment_date(
     assert decided.get("case_id") == decides
     assert decided["consequence"] == "covered_above_threshold"
     by_case = rule.parameters.get("threshold_id_by_case", {})
-    assert by_case.get(decides, rule.parameters["threshold_id"]) == (
-        threshold_id
+    entry = by_case.get(decides)
+    named = (
+        rule.parameters["threshold_id"]
+        if entry is None
+        else (entry["threshold_id"])
     )
+    assert named == threshold_id
+    assert registry.threshold(threshold_id, 1978 if entry else 1977)
+
+
+def test_case_thresholds_are_available_for_their_years(registry):
+    """Review r6 M-6: each threshold_id_by_case entry names a case of its
+    row and a threshold the registry gives for every year the entry
+    lists (the loader refuses any other). Casual 1978's case read the
+    service date, which the family's service axis never sends to that row,
+    and named a threshold unpublished for 1978; both casual rows now read
+    the payment date."""
+    entries = {
+        (rule.rule_id, case_id): entry
+        for rule in registry.rules
+        for case_id, entry in rule.parameters.get(
+            "threshold_id_by_case", {}
+        ).items()
+    }
+    assert sorted(entries) == [
+        ("casual_service_1968", "remuneration_paid_after_1977"),
+        ("casual_service_1978", "remuneration_paid_before_1978"),
+        (
+            "election_work_1968",
+            "agreement_with_statutory_threshold_paid_after_1977",
+        ),
+    ]
+    for (rule_id, case_id), entry in entries.items():
+        rule = next(r for r in registry.rules if r.rule_id == rule_id)
+        (case,) = [c for c in rule.cases if c["case_id"] == case_id]
+        assert "remuneration_paid_date" in case["when"]
+        first, last = entry["income_years"]
+        for year in range(first, last + 1):
+            assert registry.threshold(entry["threshold_id"], year) > 0
 
 
 FEDERAL_OTHER_EMPLOYERS = (

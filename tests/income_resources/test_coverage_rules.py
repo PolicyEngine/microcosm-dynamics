@@ -1949,3 +1949,65 @@ def test_recorded_threshold_description_is_nonempty(tmp_path, description):
         return
     registry = invented_registry(tmp_path, thresholds=[threshold])
     assert registry.threshold("INVENTED_threshold", 2024) == 100
+
+
+# Review r6 M-6: an INVENTED case whose date differs from its row's names
+# the threshold it applies and the years a consumer looks that threshold
+# up for; the loader checks both.
+CASE_THRESHOLD_ENTRIES = {
+    "valid": {
+        "threshold_id": "INVENTED_threshold",
+        "income_years": [2023, 2024],
+    },
+    "unknown_case": {
+        "threshold_id": "INVENTED_threshold",
+        "income_years": [2023, 2024],
+    },
+    "unknown_threshold": {
+        "threshold_id": "INVENTED_missing",
+        "income_years": [2023, 2024],
+    },
+    "unpublished_year": {
+        "threshold_id": "INVENTED_threshold",
+        "income_years": [2023, 2025],
+    },
+    "reversed_years": {
+        "threshold_id": "INVENTED_threshold",
+        "income_years": [2024, 2023],
+    },
+    "bare_id": "INVENTED_threshold",
+    "year_outside_support": {
+        "threshold_id": "INVENTED_threshold",
+        "income_years": [1967, 2024],
+    },
+}
+
+
+@given(st.sampled_from(sorted(CASE_THRESHOLD_ENTRIES)))
+@settings(
+    deadline=None, suppress_health_check=[HealthCheck.function_scoped_fixture]
+)
+def test_case_threshold_names_a_case_and_a_threshold_for_its_years(
+    tmp_path, kind
+):
+    row = invented_row()
+    row["cases"] = [invented_case("invented_paid_case", 1)]
+    case_id = (
+        "invented_other_case"
+        if kind == "unknown_case"
+        else "invented_paid_case"
+    )
+    row["parameters"]["threshold_id_by_case"] = {
+        case_id: copy.deepcopy(CASE_THRESHOLD_ENTRIES[kind])
+    }
+    threshold = invented_threshold(values={"2023": 100, "2024": 100})
+    if kind == "valid":
+        registry = invented_registry(tmp_path, [row], [threshold])
+        (rule,) = registry.rules
+        entry = rule.parameters["threshold_id_by_case"]["invented_paid_case"]
+        first, last = entry["income_years"]
+        for year in range(first, last + 1):
+            assert registry.threshold(entry["threshold_id"], year) == 100
+        return
+    with pytest.raises(RegistryValidationError, match="threshold_id_by_case"):
+        invented_registry(tmp_path, [row], [threshold])

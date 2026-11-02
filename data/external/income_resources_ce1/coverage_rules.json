@@ -1723,6 +1723,15 @@
           "when": {
             "cash_remuneration": "remuneration paid in any medium other than cash"
           }
+        },
+        {
+          "case_id": "remuneration_paid_after_1977",
+          "consequence": "covered_above_threshold",
+          "description": "Pub. L. 95-216 section 351(d) applies the 1977 amendments \"with respect to remuneration paid and services rendered after December 31, 1977\". The cash test is a test of remuneration paid, so the date paid decides which test applies, as election_work_1968 reads the same clause: pay on or after 1978-01-01 for nonbusiness work rendered before 1978 takes the $100 calendar-year test, threshold casual_cash_annual for the year paid, as threshold_id_by_case names, not this row's quarterly amount. It ranks below the farm, domestic, business and noncash cases, which the 1977 amendment did not change (review r6 M-6).",
+          "precedence": 5,
+          "when": {
+            "remuneration_paid_date": "remuneration paid on or after 1978-01-01"
+          }
         }
       ],
       "citations": [
@@ -1736,6 +1745,13 @@
           "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
           "capture": "lii_42_409.html",
           "location": "409(a)(6)(A),(C); 1977 amendment note",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
+          "capture": "lii_42_409.html",
+          "location": "Effective Date of 1977 Amendment note (Pub. L. 95-216 section 351(d))",
+          "quote": "shall apply with respect to remuneration paid and services rendered after December 31, 1977",
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
         },
         {
@@ -1760,16 +1776,34 @@
       "open_alternatives": [],
       "open_reason": null,
       "parameters": {
+        "condition_cases": {
+          "threshold_id_by_case": {
+            "cases": {
+              "remuneration_paid_after_1977": [
+                "remuneration_paid_date"
+              ]
+            }
+          }
+        },
         "farm_for_profit": "agricultural_service",
         "later_edition_reliance": {
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
         },
         "threshold_id": "casual_cash_quarterly",
+        "threshold_id_by_case": {
+          "remuneration_paid_after_1977": {
+            "income_years": [
+              1978,
+              2026
+            ],
+            "threshold_id": "casual_cash_annual"
+          }
+        },
         "unread_trigger_facts": {
-          "amount": "The cash amount the $50 calendar-quarter test compares (threshold casual_cash_quarterly).",
-          "month_or_exposure": "The calendar quarter casual_cash_quarterly aggregates over.",
-          "reporting_unit": "The employer-employee unit of casual_cash_quarterly (employer_employee_quarter); no exclusion depends on it."
+          "amount": "The cash amount the $50 calendar-quarter test compares (threshold casual_cash_quarterly), or, for remuneration paid on or after 1978-01-01, the $100 calendar-year test of casual_cash_annual that threshold_id_by_case names for case remuneration_paid_after_1977.",
+          "month_or_exposure": "The calendar quarter casual_cash_quarterly aggregates over, or the calendar year casual_cash_annual aggregates over for remuneration paid on or after 1978-01-01.",
+          "reporting_unit": "The employer-employee unit of casual_cash_quarterly (employer_employee_quarter) or, for remuneration paid on or after 1978-01-01, of casual_cash_annual (employer_employee_year); no exclusion depends on it."
         }
       },
       "rare_exclusion": {
@@ -1861,6 +1895,7 @@
         "casual_service",
         "domestic_service",
         "month_or_exposure",
+        "remuneration_paid_date",
         "reporting_unit"
       ],
       "worked_examples": []
@@ -1910,12 +1945,12 @@
           }
         },
         {
-          "case_id": "services_rendered_before_1978",
+          "case_id": "remuneration_paid_before_1978",
           "consequence": "covered_above_threshold",
-          "description": "Pub. L. 95-216 section 351(d) applies the 1977 amendments \"with respect to remuneration paid and services rendered after December 31, 1977\", so pay in 1978 or later for nonbusiness work rendered before 1978 keeps the $50 calendar-quarter test: threshold casual_cash_quarterly, as threshold_id_by_case names, not this row's annual amount. It ranks below the domestic, farm, business and noncash cases, which decide such service as casual_service_1968 does.",
+          "description": "Pub. L. 95-216 section 351(d) applies the 1977 amendments \"with respect to remuneration paid and services rendered after December 31, 1977\". The cash test is a test of remuneration paid, so the date paid decides which test applies, as election_work_1968 reads the same clause: pay before 1978 for nonbusiness work rendered on or after 1978-01-01 keeps the $50 calendar-quarter test, threshold casual_cash_quarterly for the year paid, as threshold_id_by_case names. It ranks below the domestic, farm, business and noncash cases, which decide such service as casual_service_1968 does (review r6 M-6: the service-date case could never be reached, because the family's service axis sends earlier service to casual_service_1968).",
           "precedence": 5,
           "when": {
-            "services_performed_date": "before 1978-01-01"
+            "remuneration_paid_date": "remuneration paid before 1978-01-01"
           }
         }
       ],
@@ -1975,7 +2010,7 @@
         }
       ],
       "consequence": "covered_above_threshold",
-      "description": "Nonbusiness nondomestic service cash remuneration must reach $100 in a calendar year from one employer. Noncash pay is excluded. Domestic service and nonbusiness work on a farm operated for profit use their respective rules. Pay for services rendered before 1978 keeps the $50 calendar-quarter test (Pub. L. 95-216 section 351(d)).",
+      "description": "Nonbusiness nondomestic service cash remuneration must reach $100 in a calendar year from one employer. Noncash pay is excluded. Domestic service and nonbusiness work on a farm operated for profit use their respective rules. Pay before 1978 keeps the $50 calendar-quarter test (Pub. L. 95-216 section 351(d) reaches remuneration paid after 1977).",
       "effective_end": "2026-12-31",
       "effective_start": "1978-01-01",
       "family": "casual_service",
@@ -1986,8 +2021,8 @@
         "condition_cases": {
           "threshold_id_by_case": {
             "cases": {
-              "services_rendered_before_1978": [
-                "services_performed_date"
+              "remuneration_paid_before_1978": [
+                "remuneration_paid_date"
               ]
             }
           }
@@ -1999,12 +2034,18 @@
         },
         "threshold_id": "casual_cash_annual",
         "threshold_id_by_case": {
-          "services_rendered_before_1978": "casual_cash_quarterly"
+          "remuneration_paid_before_1978": {
+            "income_years": [
+              1968,
+              1977
+            ],
+            "threshold_id": "casual_cash_quarterly"
+          }
         },
         "unread_trigger_facts": {
-          "amount": "The cash amount the $100 calendar-year test compares (threshold casual_cash_annual), or, for services rendered before 1978, the $50 calendar-quarter test of casual_cash_quarterly that threshold_id_by_case names for case services_rendered_before_1978.",
-          "month_or_exposure": "The calendar year casual_cash_annual aggregates over, or the calendar quarter casual_cash_quarterly aggregates over for services rendered before 1978.",
-          "reporting_unit": "The employer-employee unit of casual_cash_annual (employer_employee_year) or, for services rendered before 1978, of casual_cash_quarterly (employer_employee_quarter)."
+          "amount": "The cash amount the $100 calendar-year test compares (threshold casual_cash_annual), or, for remuneration paid before 1978, the $50 calendar-quarter test of casual_cash_quarterly that threshold_id_by_case names for case remuneration_paid_before_1978.",
+          "month_or_exposure": "The calendar year casual_cash_annual aggregates over, or the calendar quarter casual_cash_quarterly aggregates over for remuneration paid before 1978.",
+          "reporting_unit": "The employer-employee unit of casual_cash_annual (employer_employee_year) or, for remuneration paid before 1978, of casual_cash_quarterly (employer_employee_quarter)."
         }
       },
       "rare_exclusion": {
@@ -2096,8 +2137,8 @@
         "casual_service",
         "domestic_service",
         "month_or_exposure",
-        "reporting_unit",
-        "services_performed_date"
+        "remuneration_paid_date",
+        "reporting_unit"
       ],
       "worked_examples": []
     },
@@ -6612,7 +6653,13 @@
         "service_date_transition": null,
         "threshold_id": "election_remuneration_quarterly",
         "threshold_id_by_case": {
-          "agreement_with_statutory_threshold_paid_after_1977": "election_remuneration_annual"
+          "agreement_with_statutory_threshold_paid_after_1977": {
+            "income_years": [
+              1978,
+              2026
+            ],
+            "threshold_id": "election_remuneration_annual"
+          }
         },
         "unread_trigger_facts": {
           "amount": "The remuneration the row's threshold compares (418(c)(8): 'remuneration paid in a calendar quarter/year'); covered_above_threshold reads it, no case does.",
