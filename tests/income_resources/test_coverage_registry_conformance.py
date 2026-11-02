@@ -1463,8 +1463,9 @@ def test_open_readings_are_named_once_and_described_in_prose():
     # the sect member's 1984-85 church income and the 1973-1987 pensions
     # and church annuity contributions (84), and a 401(a) trust's small
     # remuneration in the 1978 and 1984 nonprofit rows (88), and the
-    # clergy rows' agreement exemption before 1983-04-20 (92).
-    assert described == 92
+    # clergy rows' agreement exemption before 1983-04-20 (92), and a minor
+    # newspaper direct seller after 1982 (94).
+    assert described == 94
 
 
 READING_TEXT = {
@@ -2005,7 +2006,7 @@ def test_every_trigger_fact_is_read_by_a_case_or_named_with_its_reason():
             len(row["parameters"].get("unread_trigger_facts", {}))
             for row in rows
         )
-        == 371
+        == 369
     )
 
 
@@ -5321,7 +5322,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 359
+    assert sum(len(row["cases"]) for row in rows) == 360
     deferred = [
         w for w in INVENTED_SWEEP_WORKERS if w["expected"] == "deferred"
     ]

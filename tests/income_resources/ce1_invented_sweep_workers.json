@@ -16932,6 +16932,55 @@
    },
    "expected": "covered",
    "decides": "non_ministerial_service"
+  },
+  {
+   "rule_id": "newspaper_service_1968",
+   "worker": "INVENTED (review r6 M-11): 1990: a 16-year-old who sells newspapers door to door under a written direct-seller contract, paid only on sales: whether 3508's clauses (i)-(ii) reached a newspaper vendor before 1996 is open, so the case refuses.",
+   "facts": {
+    "age": "under 18",
+    "direct_seller_contract": "a direct seller under 3508(b)(2)(A)(i) or (ii): engaged in the trade or business of selling (or soliciting the sale of) consumer products, newspapers or magazines included, otherwise than in a permanent retail establishment, with substantially all pay related to sales and a written contract providing the individual will not be treated as an employee for Federal tax purposes",
+    "services_performed_date": "after 1982-12-31",
+    "employee_self_or_mixed": "employee"
+   },
+   "expected": "refuses",
+   "decides": "minor_direct_seller_after_1982_open"
+  },
+  {
+   "rule_id": "newspaper_service_1968",
+   "worker": "INVENTED (review r6 M-11, just misses on the date): 1980: the same arrangement before 410(q) existed: the minor's employee exclusion applies.",
+   "facts": {
+    "age": "under 18",
+    "direct_seller_contract": "a direct seller under 3508(b)(2)(A)(i) or (ii): engaged in the trade or business of selling (or soliciting the sale of) consumer products, newspapers or magazines included, otherwise than in a permanent retail establishment, with substantially all pay related to sales and a written contract providing the individual will not be treated as an employee for Federal tax purposes",
+    "services_performed_date": "before 1983-01-01",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back"
+   },
+   "expected": "noncovered",
+   "decides": "fixed_price_vendor_minor"
+  },
+  {
+   "rule_id": "newspaper_service_1968",
+   "worker": "INVENTED (review r6 M-11, just misses on the contract): 1990: a 16-year-old employee vendor with no written direct-seller contract: the minor's employee exclusion applies.",
+   "facts": {
+    "age": "under 18",
+    "direct_seller_contract": "no written contract providing that the vendor will not be treated as an employee",
+    "services_performed_date": "after 1982-12-31",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back"
+   },
+   "expected": "noncovered",
+   "decides": "fixed_price_vendor_minor"
+  },
+  {
+   "rule_id": "newspaper_service_1968",
+   "worker": "INVENTED (review r6 M-11, just misses on age): 1990: a 19-year-old door-to-door newspaper seller under a direct-seller contract: no minor exclusion reaches him.",
+   "facts": {
+    "age": "19 years old",
+    "direct_seller_contract": "a direct seller under 3508(b)(2)(A)(i) or (ii): engaged in the trade or business of selling (or soliciting the sale of) consumer products, newspapers or magazines included, otherwise than in a permanent retail establishment, with substantially all pay related to sales and a written contract providing the individual will not be treated as an employee for Federal tax purposes",
+    "services_performed_date": "after 1982-12-31"
+   },
+   "expected": "covered",
+   "decides": "residual"
   }
  ]
 }
