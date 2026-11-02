@@ -2,9 +2,10 @@
 
 Verification class: statutory conformance and documentation integrity on
 captured sources only. No population, behavioral or forecast claim.
-Every ``# Source conflict`` marker in the Track B modules names a reading
-documented in a design note, every reading of this pass has a marker, and
-no design note keeps an open "Needs Max's judgment" heading.
+The ``# Source conflict`` markers in the G, R2, R3 and grace modules are
+exactly this pass's readings plus those other rounds register here, each
+marker names a whole id that a Track B design note documents, and no
+design note keeps an open "Needs Max's judgment" heading.
 """
 
 import re
@@ -50,7 +51,16 @@ READINGS = {
         "us:oasdi-arf-spouse-reentitlement-credits",
     },
 }
-MARKER = re.compile(r"# Source conflict (us:oasdi-[a-z0-9-]+)")
+#: Readings that other rounds log in the G, R2, R3 and grace modules
+#: (microcosm-dynamics#563). A new marker there needs its id here or above.
+OTHER_ROUNDS = {
+    "us:oasdi-finality-protected-rates-before-coverage",
+    "us:oasdi-sole-full-deduction-zero-dual-composition",
+}
+#: Insured-status modules keep their own register of readings.
+OWN_REGISTERS = {"insured_status.py", "_insured_status_qc.py"}
+ID = r"us:oasdi-[a-z0-9]+(?:-[a-z0-9]+)*"
+MARKER = re.compile(rf"# Source conflict ({ID})")
 
 
 def _module_markers():
@@ -58,13 +68,18 @@ def _module_markers():
     for path in sorted(MODULES.glob("*.py")):
         for match in MARKER.finditer(path.read_text()):
             found.setdefault(match.group(1), set()).add(path.name)
-    return found
+    return {
+        name: files
+        for name, files in found.items()
+        if not files <= OWN_REGISTERS
+    }
 
 
-def test_each_reading_of_this_pass_has_a_marker_in_its_module():
+def test_markers_and_logged_readings_match_in_both_directions():
     markers = _module_markers()
-    for name in set().union(*READINGS.values()):
-        assert name in markers, name
+    logged = set().union(*READINGS.values()) | OTHER_ROUNDS
+    assert set(markers) == logged
+    for name in logged:
         assert markers[name] <= {
             "gross_benefits.py",
             "ret_ledger.py",
@@ -74,13 +89,12 @@ def test_each_reading_of_this_pass_has_a_marker_in_its_module():
 
 
 def test_every_marker_names_a_reading_documented_in_a_design_note():
-    # Later rounds log their own readings; each must still be documented.
-    notes = " ".join(
-        path.read_text()
-        for path in (ROOT / "docs" / "design").glob("track_b_*.md")
-    )
+    # Whole ids, so a truncated or misspelled marker cannot match a prefix.
+    documented = set()
+    for path in (ROOT / "docs" / "design").glob("track_b_*.md"):
+        documented.update(re.findall(ID, path.read_text()))
     for name in _module_markers():
-        assert name in notes, name
+        assert name in documented, name
 
 
 @pytest.mark.parametrize("note", sorted(NOTES))

@@ -3271,14 +3271,17 @@ row and weight in the denominators.
 | Temporary partial deduction | `us:oasdi-ret-temporary-partial-deduction` | Follow the RS 02501.160 example in G | Specific over general; P3 |
 | NH reservations with age reductions | `us:oasdi-nh-charge-age-reduction-interaction` | Refused | Deferred coverage, not a conflict |
 
-The statutory texts newly relied on (42 U.S.C. 402(d)(1)(D), (d)(5),
-(e)(1), (h)(1)(D), (h)(2), (k)(3)(A), (k)(4) and (s)) were added to
-`lii_usc_402_415_excerpts.txt` from a re-fetch whose LII body matched the
-pinned 402 SHA-256 byte for byte. Every `# Source conflict` marker in the
-Track B modules names an id logged in the rulings, and every logged id
-has a marker: `tests/test_track_b_readings_20261023.py` checks both
-directions and that this note and the R2 and R3 notes carry no open
-"Needs Max's judgment" heading. The invented conformance lattice is
+This pass added the statutory texts it newly relies on (42 U.S.C.
+402(d)(1)(D), (d)(5), (e)(1), (h)(1)(D), (h)(2), (k)(3)(A), (k)(4) and
+(s)) to `lii_usc_402_415_excerpts.txt`, from a re-fetch whose LII body
+matched the pinned 402 SHA-256 byte for byte.
+`tests/test_track_b_readings_20261023.py` pins the bookkeeping. The
+`# Source conflict` markers in the G, R2, R3 and grace modules must be
+exactly this pass's ids plus the ids other rounds register in that test,
+and every marker must name a whole id that a Track B design note
+documents. This note and the R2 and R3 notes must carry no open "Needs
+Max's judgment" heading, and each statutory passage the test quotes must
+appear verbatim in the capture. The invented conformance lattice is
 unchanged; only the `parent_benefit` witness moved to two parents in the
 band.
 
