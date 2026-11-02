@@ -2763,6 +2763,10 @@ invented data, with both data roots set to a nonexistent path. A rerun of
 round 19's 40 mutations and `fix_reverted` at the final bytes, through every
 insured status module, writes `round_20_mutations` in a later commit.
 
+Against `168bb3a8`, 6 of the 32 tests in the three changed modules fail:
+round 2's pinned record, `test_partial_years_after_the_start_stay_open`, and
+the four register tests, since that head has no register.
+
 These tests execute the invariants this round adds:
 
 - placement of the years after a start never moves it: two fixed fillings
