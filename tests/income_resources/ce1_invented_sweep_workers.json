@@ -1,5 +1,513 @@
 {
- "note": "INVENTED fact patterns for the CE1 coverage registry's exclusion sweeps (review r4 item 9, review r5 item 7). No row is a real person or record. Each worker states, for each fact, the condition texts that are true of the worker: a case holds only when, for every fact in its when, one stated text equals the condition exactly (a boolean equals only the same boolean). expected is the outcome the sources give, decides the case (or residual) that gives it; for a refusing worker, decides is the open case.",
+ "note": "INVENTED fact patterns for the CE1 coverage registry's exclusion sweeps (review r4 item 9, review r5 item 7). No row is a real person or record. Each worker states, for each fact, the condition texts that are true of the worker: a case holds only when, for every fact in its when, one stated text equals the condition exactly (a boolean equals only the same boolean). expected is the outcome the sources give, decides the case (or residual) that gives it; for a refusing worker, decides is the open case. just_miss_required lists the case conditions (rule, case, fact) for which some worker states every other condition of the case exactly, states a text of its own for that fact, and is decided below the case (review r6 M-1); for the review's drop-free conditions in just_miss_own_text the worker's text for that fact is its own, no case's; just_miss_stated_limits gives the reason none can for the review's drop-free conditions that remain.",
+ "just_miss_required": [
+  [
+   "clergy_1973_1981",
+   "cnmi_noncitizen_resident_ministry",
+   "clergy_or_religious_exemption"
+  ],
+  [
+   "clergy_1973_1981",
+   "cnmi_noncitizen_resident_ministry",
+   "ministerial_service"
+  ],
+  [
+   "clergy_1973_1981",
+   "pub_l_103_296_section_306_certificate",
+   "clergy_or_religious_exemption"
+  ],
+  [
+   "clergy_1973_1981",
+   "pub_l_103_296_section_306_certificate",
+   "foreign_social_insurance_contributions"
+  ],
+  [
+   "clergy_1973_1981",
+   "pub_l_103_296_section_306_certificate",
+   "ministerial_service"
+  ],
+  [
+   "clergy_1973_1981",
+   "pub_l_103_296_section_306_certificate",
+   "place_of_work"
+  ],
+  [
+   "clergy_1982_2026",
+   "cnmi_noncitizen_resident_ministry",
+   "clergy_or_religious_exemption"
+  ],
+  [
+   "clergy_1982_2026",
+   "pub_l_103_296_section_306_certificate",
+   "clergy_or_religious_exemption"
+  ],
+  [
+   "clergy_1982_2026",
+   "pub_l_103_296_section_306_certificate",
+   "foreign_social_insurance_contributions"
+  ],
+  [
+   "clergy_1982_2026",
+   "pub_l_103_296_section_306_certificate",
+   "ministerial_service"
+  ],
+  [
+   "clergy_1982_2026",
+   "pub_l_103_296_section_306_certificate",
+   "place_of_work"
+  ],
+  [
+   "college_club_domestic_service_1968",
+   "enrolled_student_in_local_club",
+   "employer_school_nexus"
+  ],
+  [
+   "communist_organization_service_1968",
+   "registered_organization_employer",
+   "services_performed_date"
+  ],
+  [
+   "communist_organization_service_1968",
+   "registered_organization_quarter_before_1978",
+   "communist_organization_registration"
+  ],
+  [
+   "communist_organization_service_1968",
+   "registered_organization_quarter_before_1978",
+   "services_performed_date"
+  ],
+  [
+   "domestic_service_1994",
+   "domestic_farm_service_before_1995",
+   "amount"
+  ],
+  [
+   "election_work_1991_0702",
+   "agreement_with_lower_threshold_member",
+   "election_work"
+  ],
+  [
+   "election_work_1991_0702",
+   "agreement_with_lower_threshold_member",
+   "government_level"
+  ],
+  [
+   "election_work_1991_0702",
+   "agreement_with_lower_threshold_member",
+   "section_218_position"
+  ],
+  [
+   "election_work_1991_0702",
+   "agreement_with_lower_threshold_nonmember",
+   "election_work"
+  ],
+  [
+   "election_work_1991_0702",
+   "agreement_with_lower_threshold_nonmember",
+   "government_level"
+  ],
+  [
+   "election_work_1991_0702",
+   "agreement_with_lower_threshold_nonmember",
+   "public_retirement_system_participation"
+  ],
+  [
+   "election_work_1991_0702",
+   "agreement_with_lower_threshold_nonmember",
+   "section_218_position"
+  ],
+  [
+   "election_work_1991_0702",
+   "outside_agreement_member",
+   "election_work"
+  ],
+  [
+   "election_work_1991_0702",
+   "outside_agreement_member",
+   "government_level"
+  ],
+  [
+   "election_work_1991_0702",
+   "outside_agreement_nonmember",
+   "election_work"
+  ],
+  [
+   "election_work_1991_0702",
+   "outside_agreement_nonmember",
+   "government_level"
+  ],
+  [
+   "election_work_1991_0702",
+   "outside_agreement_nonmember",
+   "public_retirement_system_participation"
+  ],
+  [
+   "election_work_1995",
+   "agreement_with_lower_threshold_member",
+   "election_work"
+  ],
+  [
+   "election_work_1995",
+   "agreement_with_lower_threshold_member",
+   "government_level"
+  ],
+  [
+   "election_work_1995",
+   "agreement_with_lower_threshold_member",
+   "section_218_position"
+  ],
+  [
+   "election_work_1995",
+   "agreement_with_lower_threshold_nonmember",
+   "election_work"
+  ],
+  [
+   "election_work_1995",
+   "agreement_with_lower_threshold_nonmember",
+   "government_level"
+  ],
+  [
+   "election_work_1995",
+   "agreement_with_lower_threshold_nonmember",
+   "public_retirement_system_participation"
+  ],
+  [
+   "election_work_1995",
+   "agreement_with_lower_threshold_nonmember",
+   "section_218_position"
+  ],
+  [
+   "election_work_1995",
+   "outside_agreement_member",
+   "election_work"
+  ],
+  [
+   "election_work_1995",
+   "outside_agreement_member",
+   "government_level"
+  ],
+  [
+   "election_work_1995",
+   "outside_agreement_nonmember",
+   "election_work"
+  ],
+  [
+   "election_work_1995",
+   "outside_agreement_nonmember",
+   "government_level"
+  ],
+  [
+   "election_work_1995",
+   "outside_agreement_nonmember",
+   "public_retirement_system_participation"
+  ],
+  [
+   "federal_1987_2026",
+   "after_official_during_2601d3_delay",
+   "federal_service"
+  ],
+  [
+   "federal_1987_2026",
+   "after_official_during_2601d3_delay",
+   "government_level"
+  ],
+  [
+   "newspaper_service_1968",
+   "fixed_price_vendor_adult",
+   "employee_self_or_mixed"
+  ],
+  [
+   "newspaper_service_1968",
+   "fixed_price_vendor_minor",
+   "age"
+  ],
+  [
+   "newspaper_service_1968",
+   "fixed_price_vendor_minor",
+   "employee_self_or_mixed"
+  ],
+  [
+   "newspaper_service_1968",
+   "under_18_delivery",
+   "age"
+  ],
+  [
+   "newspaper_service_1996",
+   "fixed_price_vendor_adult",
+   "employee_self_or_mixed"
+  ],
+  [
+   "newspaper_service_1996",
+   "fixed_price_vendor_minor",
+   "age"
+  ],
+  [
+   "newspaper_service_1996",
+   "fixed_price_vendor_minor",
+   "employee_self_or_mixed"
+  ],
+  [
+   "newspaper_service_1996",
+   "under_18_delivery",
+   "age"
+  ],
+  [
+   "newspaper_service_1996",
+   "under_18_delivery",
+   "employee_self_or_mixed"
+  ],
+  [
+   "nonprofit_1968_1977",
+   "deemed_waiver_k5_request",
+   "nonprofit_organization"
+  ],
+  [
+   "nonprofit_1968_1977",
+   "section_105b_departed_employee_request",
+   "nonprofit_organization"
+  ],
+  [
+   "nonprofit_1978_1983",
+   "section_105b_departed_employee_request",
+   "nonprofit_coverage_waiver"
+  ],
+  [
+   "nonprofit_1978_1983",
+   "section_105b_departed_employee_request",
+   "nonprofit_organization"
+  ],
+  [
+   "religious_order_1968_1983",
+   "election_member_abroad_not_covered",
+   "citizenship"
+  ],
+  [
+   "religious_order_1968_1983",
+   "election_member_abroad_not_covered",
+   "place_of_work"
+  ],
+  [
+   "religious_order_1968_1983",
+   "election_status_not_established",
+   "religious_order_service"
+  ],
+  [
+   "religious_order_1984_2026",
+   "election_member_abroad_not_covered",
+   "nonresident_alien_status"
+  ],
+  [
+   "religious_order_1984_2026",
+   "election_member_abroad_not_covered",
+   "place_of_work"
+  ],
+  [
+   "religious_order_1984_2026",
+   "election_status_not_established",
+   "religious_order_service"
+  ],
+  [
+   "se_clergy_gross_concept_1973_1987",
+   "pub_l_103_296_section_306_certificate",
+   "clergy_or_religious_exemption"
+  ],
+  [
+   "se_clergy_gross_concept_1973_1987",
+   "pub_l_103_296_section_306_certificate",
+   "foreign_social_insurance_contributions"
+  ],
+  [
+   "se_clergy_gross_concept_1973_1987",
+   "pub_l_103_296_section_306_certificate",
+   "ministerial_service"
+  ],
+  [
+   "se_clergy_gross_concept_1973_1987",
+   "pub_l_103_296_section_306_certificate",
+   "place_of_work"
+  ],
+  [
+   "se_treaty_fishing_1968_2026",
+   "section_7873_exempt_income",
+   "tribal_membership"
+  ],
+  [
+   "se_units_1968_1983",
+   "church_100_to_399_without_ordinary_loss",
+   "amount"
+  ],
+  [
+   "se_units_1968_1983",
+   "church_at_least_100_with_ordinary_loss",
+   "amount"
+  ],
+  [
+   "se_units_1968_1983",
+   "church_combined_below_100",
+   "amount"
+  ],
+  [
+   "se_units_1984_1985",
+   "church_100_to_399_without_ordinary_loss",
+   "amount"
+  ],
+  [
+   "se_units_1984_1985",
+   "church_100_to_399_without_ordinary_loss",
+   "church_employee_service"
+  ],
+  [
+   "se_units_1984_1985",
+   "church_at_least_100_with_ordinary_loss",
+   "amount"
+  ],
+  [
+   "se_units_1984_1985",
+   "church_combined_below_100",
+   "amount"
+  ],
+  [
+   "state_local_1991_2026",
+   "mandatory_nonmember_coverage",
+   "government_level"
+  ],
+  [
+   "state_local_1991_2026",
+   "mandatory_nonmember_coverage",
+   "public_retirement_system_participation"
+  ],
+  [
+   "state_local_1991_2026",
+   "mandatory_nonmember_coverage",
+   "section_218_position"
+  ],
+  [
+   "state_local_1991_2026",
+   "qualified_system_member_without_agreement",
+   "government_level"
+  ],
+  [
+   "student_nurse_service_1968",
+   "student_nurse_beyond_training_open",
+   "enrollment"
+  ]
+ ],
+ "just_miss_stated_limits": {
+  "agricultural_service_1988|cash_equivalent_transfer_before_1995_08_07|noncash_transfer_cash_equivalence": "The two SSR 95-3P facts state one test (no dominion and control, and a transfer that is economically cash), so a worker who fails one alone states a contradiction.",
+  "agricultural_service_1988|cash_equivalent_transfer_before_1995_08_07|noncash_transfer_dominion_control": "The two SSR 95-3P facts state one test (no dominion and control, and a transfer that is economically cash), so a worker who fails one alone states a contradiction.",
+  "agricultural_service_1988|cash_equivalent_transfer_from_1995_08_07|noncash_transfer_cash_equivalence": "The two SSR 95-3P facts state one test (no dominion and control, and a transfer that is economically cash), so a worker who fails one alone states a contradiction.",
+  "agricultural_service_1988|cash_equivalent_transfer_from_1995_08_07|noncash_transfer_dominion_control": "The two SSR 95-3P facts state one test (no dominion and control, and a transfer that is economically cash), so a worker who fails one alone states a contradiction.",
+  "agricultural_service_1988|cash_equivalent_transfer_from_1995_08_07|services_performed_date": "Rank-implied: every worker who fails this condition and meets the case's others is decided by a higher-ranked case, so no worker can just miss the case on it. Service before 1995-08-07 with these facts reaches cash_equivalent_transfer_before_1995_08_07.",
+  "religious_order_1968_1983|election_status_not_established|clergy_or_religious_exemption": "Rank-implied: every worker who fails this condition and meets the case's others is decided by a higher-ranked case, so no worker can just miss the case on it. A vowed member whose order's election status is established reaches vow_duties_without_election, retroactive_quarter_member_condition_failed, vowed_member_outside_3121r2_definition or vow_duties_with_3121r_election.",
+  "religious_order_1984_2026|election_status_not_established|clergy_or_religious_exemption": "Rank-implied: every worker who fails this condition and meets the case's others is decided by a higher-ranked case, so no worker can just miss the case on it. A vowed member whose order's election status is established reaches vow_duties_without_election, retroactive_quarter_member_condition_failed, vowed_member_outside_3121r2_definition or vow_duties_with_3121r_election."
+ },
+ "just_miss_own_text": [
+  [
+   "clergy_1973_1981",
+   "cnmi_noncitizen_resident_ministry",
+   "ministerial_service"
+  ],
+  [
+   "clergy_1973_1981",
+   "pub_l_103_296_section_306_certificate",
+   "ministerial_service"
+  ],
+  [
+   "college_club_domestic_service_1968",
+   "enrolled_student_in_local_club",
+   "employer_school_nexus"
+  ],
+  [
+   "newspaper_service_1968",
+   "fixed_price_vendor_adult",
+   "employee_self_or_mixed"
+  ],
+  [
+   "newspaper_service_1968",
+   "fixed_price_vendor_minor",
+   "age"
+  ],
+  [
+   "newspaper_service_1968",
+   "fixed_price_vendor_minor",
+   "employee_self_or_mixed"
+  ],
+  [
+   "newspaper_service_1968",
+   "under_18_delivery",
+   "age"
+  ],
+  [
+   "newspaper_service_1996",
+   "fixed_price_vendor_adult",
+   "employee_self_or_mixed"
+  ],
+  [
+   "newspaper_service_1996",
+   "fixed_price_vendor_minor",
+   "age"
+  ],
+  [
+   "newspaper_service_1996",
+   "fixed_price_vendor_minor",
+   "employee_self_or_mixed"
+  ],
+  [
+   "newspaper_service_1996",
+   "under_18_delivery",
+   "age"
+  ],
+  [
+   "newspaper_service_1996",
+   "under_18_delivery",
+   "employee_self_or_mixed"
+  ],
+  [
+   "nonprofit_1968_1977",
+   "deemed_waiver_k5_request",
+   "nonprofit_organization"
+  ],
+  [
+   "nonprofit_1968_1977",
+   "section_105b_departed_employee_request",
+   "nonprofit_organization"
+  ],
+  [
+   "nonprofit_1978_1983",
+   "section_105b_departed_employee_request",
+   "nonprofit_coverage_waiver"
+  ],
+  [
+   "nonprofit_1978_1983",
+   "section_105b_departed_employee_request",
+   "nonprofit_organization"
+  ],
+  [
+   "religious_order_1968_1983",
+   "election_status_not_established",
+   "religious_order_service"
+  ],
+  [
+   "religious_order_1984_2026",
+   "election_status_not_established",
+   "religious_order_service"
+  ],
+  [
+   "se_treaty_fishing_1968_2026",
+   "section_7873_exempt_income",
+   "tribal_membership"
+  ],
+  [
+   "state_local_1991_2026",
+   "mandatory_nonmember_coverage",
+   "section_218_position"
+  ],
+  [
+   "student_nurse_service_1968",
+   "student_nurse_beyond_training_open",
+   "enrollment"
+  ]
+ ],
  "workers": [
   {
    "rule_id": "federal_1968_1972",
@@ -382,7 +890,10 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa"
    },
    "expected": "deferred",
-   "decides": "mandatory_rule_election_worker"
+   "decides": "mandatory_rule_election_worker",
+   "defers_to": [
+    "election_work"
+   ]
   },
   {
    "rule_id": "election_work_1991_0702",
@@ -605,7 +1116,10 @@
     "cash_remuneration": "cash wages"
    },
    "expected": "deferred",
-   "decides": "domestic_service_in_private_home"
+   "decides": "domestic_service_in_private_home",
+   "defers_to": [
+    "domestic_service"
+   ]
   },
   {
    "rule_id": "casual_service_1978",
@@ -616,7 +1130,10 @@
     "cash_remuneration": "cash wages"
    },
    "expected": "deferred",
-   "decides": "domestic_service_in_private_home"
+   "decides": "domestic_service_in_private_home",
+   "defers_to": [
+    "domestic_service"
+   ]
   },
   {
    "rule_id": "casual_service_1978",
@@ -627,7 +1144,10 @@
     "cash_remuneration": "cash wages"
    },
    "expected": "deferred",
-   "decides": "farm_operated_for_profit"
+   "decides": "farm_operated_for_profit",
+   "defers_to": [
+    "agricultural_service"
+   ]
   },
   {
    "rule_id": "casual_service_1978",
@@ -638,7 +1158,10 @@
     "cash_remuneration": "cash wages"
    },
    "expected": "deferred",
-   "decides": "domestic_service_in_private_home"
+   "decides": "domestic_service_in_private_home",
+   "defers_to": [
+    "domestic_service"
+   ]
   },
   {
    "rule_id": "casual_service_1978",
@@ -948,10 +1471,13 @@
    "facts": {
     "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect; a vow of poverty as a member of the order"
    },
    "expected": "deferred",
-   "decides": "vow_of_poverty_order_duties"
+   "decides": "vow_of_poverty_order_duties",
+   "defers_to": [
+    "religious_order_vow_of_poverty"
+   ]
   },
   {
    "rule_id": "clergy_1968_1972",
@@ -1043,7 +1569,10 @@
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
    },
    "expected": "deferred",
-   "decides": "vow_of_poverty_order_duties"
+   "decides": "vow_of_poverty_order_duties",
+   "defers_to": [
+    "religious_order_vow_of_poverty"
+   ]
   },
   {
    "rule_id": "clergy_1973_1981",
@@ -1102,10 +1631,13 @@
    "facts": {
     "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
-    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow"
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect; a vow of poverty as a member of the order"
    },
    "expected": "deferred",
-   "decides": "vow_of_poverty_order_duties"
+   "decides": "vow_of_poverty_order_duties",
+   "defers_to": [
+    "religious_order_vow_of_poverty"
+   ]
   },
   {
    "rule_id": "clergy_1982_2026",
@@ -1251,7 +1783,11 @@
     "place_of_work": "in a foreign country, or in Puerto Rico, the Virgin Islands, Guam, American Samoa or another possession of the United States"
    },
    "expected": "deferred",
-   "decides": "foreign_minister_without_qualification"
+   "decides": "foreign_minister_without_qualification",
+   "defers_to": [
+    "self_employment_foreign_911_income",
+    "self_employment_possessions_931_income"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
@@ -1261,7 +1797,11 @@
     "place_of_work": "in a foreign country, or in Puerto Rico, the Virgin Islands, Guam, American Samoa or another possession of the United States"
    },
    "expected": "deferred",
-   "decides": "foreign_minister_without_qualification"
+   "decides": "foreign_minister_without_qualification",
+   "defers_to": [
+    "self_employment_foreign_911_income",
+    "self_employment_possessions_931_income"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
@@ -1271,7 +1811,11 @@
     "place_of_work": "in a foreign country, or in Puerto Rico, the Virgin Islands, Guam, American Samoa or another possession of the United States"
    },
    "expected": "deferred",
-   "decides": "foreign_minister_without_qualification"
+   "decides": "foreign_minister_without_qualification",
+   "defers_to": [
+    "self_employment_foreign_911_income",
+    "self_employment_possessions_931_income"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
@@ -1281,7 +1825,11 @@
     "place_of_work": "in a foreign country, or in Puerto Rico, the Virgin Islands, Guam, American Samoa or another possession of the United States"
    },
    "expected": "deferred",
-   "decides": "foreign_minister_without_qualification"
+   "decides": "foreign_minister_without_qualification",
+   "defers_to": [
+    "self_employment_foreign_911_income",
+    "self_employment_possessions_931_income"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
@@ -1320,7 +1868,10 @@
     "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
    },
    "expected": "deferred",
-   "decides": "exempt_minister"
+   "decides": "exempt_minister",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1987_2026",
@@ -1347,7 +1898,10 @@
     "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
    },
    "expected": "deferred",
-   "decides": "foreign_agreement_sole_coverage"
+   "decides": "foreign_agreement_sole_coverage",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1987_2026",
@@ -1384,7 +1938,10 @@
     "clergy_or_religious_exemption": "approved section 1402(e) exemption effective for the ministry"
    },
    "expected": "deferred",
-   "decides": "exempt_minister"
+   "decides": "exempt_minister",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "se_base_definition_1968_2026",
@@ -1556,7 +2113,10 @@
     "trade_or_business": "options dealer (as section 1256(g)(8) defines the term) or commodities dealer (a person actively engaged in trading section 1256 contracts and registered with a domestic board of trade which is designated as a contract market by the Commodities Futures Trading Commission), in a taxable year beginning after 1984-07-18"
    },
    "expected": "deferred",
-   "decides": "options_dealer_from_1984"
+   "decides": "options_dealer_from_1984",
+   "defers_to": [
+    "self_employment_options_dealers"
+   ]
   },
   {
    "rule_id": "se_capital_gain_nol_1968_2026",
@@ -1569,7 +2129,10 @@
     "trade_or_business": "options dealer (as section 1256(g)(8) defines the term) or commodities dealer (a person actively engaged in trading section 1256 contracts and registered with a domestic board of trade which is designated as a contract market by the Commodities Futures Trading Commission), in a taxable year beginning after 1984-07-18"
    },
    "expected": "deferred",
-   "decides": "options_dealer_from_1984"
+   "decides": "options_dealer_from_1984",
+   "defers_to": [
+    "self_employment_options_dealers"
+   ]
   },
   {
    "rule_id": "se_capital_gain_nol_1968_2026",
@@ -1601,7 +2164,10 @@
     "ministerial_service": "service performed by a duly ordained, commissioned, or licensed minister of a church in the exercise of his ministry, or by a member of a religious order in the exercise of duties required by such order while no election of coverage under section 3121(r) is in effect for the order or for the autonomous subdivision to which the member belongs"
    },
    "expected": "deferred",
-   "decides": "ministry_or_order_duties_outside_employment"
+   "decides": "ministry_or_order_duties_outside_employment",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "nonprofit_1984_2026",
@@ -1648,7 +2214,10 @@
     "federal_retirement_system": "employee required by law to be subject to the Civil Service Retirement System for this service"
    },
    "expected": "deferred",
-   "decides": "csrs_required_nonprofit_employee"
+   "decides": "csrs_required_nonprofit_employee",
+   "defers_to": [
+    "federal_retirement_service"
+   ]
   },
   {
    "rule_id": "agricultural_service_1988",
@@ -4799,7 +5368,10 @@
     "election_work": "election official or election worker"
    },
    "expected": "deferred",
-   "decides": "mandatory_rule_election_worker"
+   "decides": "mandatory_rule_election_worker",
+   "defers_to": [
+    "election_work"
+   ]
   },
   {
    "rule_id": "state_local_1991_2026",
@@ -4811,7 +5383,10 @@
     "election_work": "election official or election worker"
    },
    "expected": "deferred",
-   "decides": "mandatory_rule_election_worker"
+   "decides": "mandatory_rule_election_worker",
+   "defers_to": [
+    "election_work"
+   ]
   },
   {
    "rule_id": "state_local_1991_2026",
@@ -4834,7 +5409,10 @@
     "public_office_fee_basis": "position compensated solely on a fee basis, treated under 411(c)(2)(E) as a trade or business"
    },
    "expected": "deferred",
-   "decides": "mandatory_rule_fee_basis_position"
+   "decides": "mandatory_rule_fee_basis_position",
+   "defers_to": [
+    "self_employment_public_office"
+   ]
   },
   {
    "rule_id": "state_local_1991_2026",
@@ -6239,7 +6817,10 @@
     "federal_retirement_system": "employee required by law to be subject to the Civil Service Retirement System for this service"
    },
    "expected": "deferred",
-   "decides": "csrs_required_nonprofit_employee"
+   "decides": "csrs_required_nonprofit_employee",
+   "defers_to": [
+    "federal_retirement_service"
+   ]
   },
   {
    "rule_id": "nonprofit_1984_2026",
@@ -6269,7 +6850,10 @@
     "ministerial_service": "service performed by a duly ordained, commissioned, or licensed minister of a church in the exercise of his ministry, or by a member of a religious order in the exercise of duties required by such order while no election of coverage under section 3121(r) is in effect for the order or for the autonomous subdivision to which the member belongs"
    },
    "expected": "deferred",
-   "decides": "ministry_or_order_duties_outside_employment"
+   "decides": "ministry_or_order_duties_outside_employment",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "nonprofit_1984_2026",
@@ -6290,7 +6874,10 @@
     "church_employee_service": "service performed in the employ of a church or qualified church-controlled organization that has in effect an election under section 3121(w), outside any unrelated trade or business (within the meaning of section 513(a))"
    },
    "expected": "deferred",
-   "decides": "ministry_or_order_duties_outside_employment"
+   "decides": "ministry_or_order_duties_outside_employment",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "nonprofit_1984_2026",
@@ -6372,7 +6959,10 @@
     "taxable_year_start": "1983-07-01"
    },
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "nonprofit_service"
+   ]
   },
   {
    "rule_id": "electing_church_1968_1983",
@@ -6383,7 +6973,10 @@
     "taxable_year_start": "1983-07-01"
    },
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "nonprofit_service"
+   ]
   },
   {
    "rule_id": "electing_church_1968_1983",
@@ -6405,7 +6998,10 @@
     "taxable_year_start": "1983-10-01"
    },
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "nonprofit_service"
+   ]
   },
   {
    "rule_id": "electing_church_1968_1983",
@@ -6416,7 +7012,10 @@
     "taxable_year_start": "1980-01-01"
    },
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "nonprofit_service"
+   ]
   },
   {
    "rule_id": "electing_church_1968_1983",
@@ -6427,7 +7026,10 @@
     "taxable_year_start": "1983-07-01"
    },
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "nonprofit_service"
+   ]
   },
   {
    "rule_id": "electing_church_1984_1985",
@@ -7243,7 +7845,10 @@
     "clergy_or_religious_exemption": "no 3121(r) election in effect for the period"
    },
    "expected": "deferred",
-   "decides": "vow_of_poverty_order_duties"
+   "decides": "vow_of_poverty_order_duties",
+   "defers_to": [
+    "religious_order_vow_of_poverty"
+   ]
   },
   {
    "rule_id": "clergy_1968_1972",
@@ -7409,7 +8014,10 @@
     "clergy_or_religious_exemption": "no 3121(r) election in effect for the period"
    },
    "expected": "deferred",
-   "decides": "vow_of_poverty_order_duties"
+   "decides": "vow_of_poverty_order_duties",
+   "defers_to": [
+    "religious_order_vow_of_poverty"
+   ]
   },
   {
    "rule_id": "clergy_1973_1981",
@@ -7582,7 +8190,10 @@
     "clergy_or_religious_exemption": "no 3121(r) election in effect for the period"
    },
    "expected": "deferred",
-   "decides": "vow_of_poverty_order_duties"
+   "decides": "vow_of_poverty_order_duties",
+   "defers_to": [
+    "religious_order_vow_of_poverty"
+   ]
   },
   {
    "rule_id": "clergy_1982_2026",
@@ -7912,7 +8523,10 @@
     "ministerial_service": "qualifying ministry"
    },
    "expected": "deferred",
-   "decides": "exempt_minister"
+   "decides": "exempt_minister",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
@@ -7951,7 +8565,10 @@
     "ministerial_service": "qualifying ministry"
    },
    "expected": "deferred",
-   "decides": "exempt_minister"
+   "decides": "exempt_minister",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1973_1987",
@@ -7990,7 +8607,10 @@
     "ministerial_service": "qualifying ministry"
    },
    "expected": "deferred",
-   "decides": "exempt_minister"
+   "decides": "exempt_minister",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1987_2026",
@@ -8031,7 +8651,11 @@
     "congregation_predominantly_us_citizens": false
    },
    "expected": "deferred",
-   "decides": "foreign_minister_without_qualification"
+   "decides": "foreign_minister_without_qualification",
+   "defers_to": [
+    "self_employment_foreign_911_income",
+    "self_employment_possessions_931_income"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
@@ -8041,7 +8665,11 @@
     "citizenship": "not a United States citizen, or a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country who has a congregation composed predominantly of United States citizens"
    },
    "expected": "deferred",
-   "decides": "foreign_minister_without_qualification"
+   "decides": "foreign_minister_without_qualification",
+   "defers_to": [
+    "self_employment_foreign_911_income",
+    "self_employment_possessions_931_income"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
@@ -8051,7 +8679,11 @@
     "citizenship": "not a United States citizen, or a citizen who is neither an American employer's employee under 410(e) nor a minister in a foreign country who has a congregation composed predominantly of United States citizens"
    },
    "expected": "deferred",
-   "decides": "foreign_minister_without_qualification"
+   "decides": "foreign_minister_without_qualification",
+   "defers_to": [
+    "self_employment_foreign_911_income",
+    "self_employment_possessions_931_income"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1968_1972",
@@ -8102,7 +8734,10 @@
     "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
    },
    "expected": "deferred",
-   "decides": "foreign_agreement_sole_coverage"
+   "decides": "foreign_agreement_sole_coverage",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1987_2026",
@@ -8427,7 +9062,10 @@
     "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
    },
    "expected": "deferred",
-   "decides": "pub_l_103_296_section_306_certificate"
+   "decides": "pub_l_103_296_section_306_certificate",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1973_1987",
@@ -8713,7 +9351,11 @@
     "agricultural_share_arrangement": "the worker receives a fixed 200 bushels of the crop regardless of the amount produced"
    },
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "agricultural_service",
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "agricultural_share_service_1968",
@@ -8722,7 +9364,11 @@
     "agricultural_share_arrangement": "the worker is paid a specific hourly rate"
    },
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "agricultural_service",
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "agricultural_share_service_1968",
@@ -8731,7 +9377,11 @@
     "agricultural_share_arrangement": "the worker produces commodities under a crop-split arrangement with a contractor who is neither owner nor tenant of the land"
    },
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "agricultural_service",
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "casual_service_1968",
@@ -8741,7 +9391,10 @@
     "cash_remuneration": "cash remuneration"
    },
    "expected": "deferred",
-   "decides": "farm_operated_for_profit"
+   "decides": "farm_operated_for_profit",
+   "defers_to": [
+    "agricultural_service"
+   ]
   },
   {
    "rule_id": "casual_service_1968",
@@ -8762,7 +9415,10 @@
     "cash_remuneration": "cash remuneration"
    },
    "expected": "deferred",
-   "decides": "domestic_service_in_private_home"
+   "decides": "domestic_service_in_private_home",
+   "defers_to": [
+    "domestic_service"
+   ]
   },
   {
    "rule_id": "casual_service_1968",
@@ -8834,7 +9490,10 @@
     "cash_remuneration": "cash remuneration"
    },
    "expected": "deferred",
-   "decides": "farm_operated_for_profit"
+   "decides": "farm_operated_for_profit",
+   "defers_to": [
+    "agricultural_service"
+   ]
   },
   {
    "rule_id": "casual_service_1968",
@@ -8855,7 +9514,10 @@
     "cash_remuneration": "cash remuneration"
    },
    "expected": "deferred",
-   "decides": "domestic_service_in_private_home"
+   "decides": "domestic_service_in_private_home",
+   "defers_to": [
+    "domestic_service"
+   ]
   },
   {
    "rule_id": "casual_service_1978",
@@ -8866,7 +9528,10 @@
     "cash_remuneration": "cash remuneration"
    },
    "expected": "deferred",
-   "decides": "domestic_service_in_private_home"
+   "decides": "domestic_service_in_private_home",
+   "defers_to": [
+    "domestic_service"
+   ]
   },
   {
    "rule_id": "casual_service_1978",
@@ -8876,7 +9541,10 @@
     "cash_remuneration": "cash remuneration"
    },
    "expected": "deferred",
-   "decides": "farm_operated_for_profit"
+   "decides": "farm_operated_for_profit",
+   "defers_to": [
+    "agricultural_service"
+   ]
   },
   {
    "rule_id": "casual_service_1978",
@@ -8909,7 +9577,10 @@
     "cash_remuneration": "cash remuneration"
    },
    "expected": "deferred",
-   "decides": "farm_operated_for_profit"
+   "decides": "farm_operated_for_profit",
+   "defers_to": [
+    "agricultural_service"
+   ]
   },
   {
    "rule_id": "casual_service_1978",
@@ -8971,7 +9642,10 @@
     "cash_remuneration": "cash remuneration"
    },
    "expected": "deferred",
-   "decides": "domestic_farm_service_before_1995"
+   "decides": "domestic_farm_service_before_1995",
+   "defers_to": [
+    "agricultural_service"
+   ]
   },
   {
    "rule_id": "domestic_service_1968",
@@ -9022,7 +9696,10 @@
     "cash_remuneration": "cash remuneration"
    },
    "expected": "deferred",
-   "decides": "domestic_farm_service_before_1995"
+   "decides": "domestic_farm_service_before_1995",
+   "defers_to": [
+    "agricultural_service"
+   ]
   },
   {
    "rule_id": "domestic_service_1994",
@@ -9746,7 +10423,10 @@
     "remuneration_paid_date": "remuneration paid before 1978-01-01"
    },
    "expected": "deferred",
-   "decides": "farm_operated_for_profit"
+   "decides": "farm_operated_for_profit",
+   "defers_to": [
+    "agricultural_service"
+   ]
   },
   {
    "rule_id": "casual_service_1978",
@@ -9758,7 +10438,10 @@
     "remuneration_paid_date": "remuneration paid before 1978-01-01"
    },
    "expected": "deferred",
-   "decides": "domestic_service_in_private_home"
+   "decides": "domestic_service_in_private_home",
+   "defers_to": [
+    "domestic_service"
+   ]
   },
   {
    "rule_id": "casual_service_1978",
@@ -9866,7 +10549,10 @@
     "historical_fica_treatment": "payor did not treat the remuneration, when paid, as subject to FICA tax"
    },
    "expected": "deferred",
-   "decides": "child_under_18_for_parent"
+   "decides": "child_under_18_for_parent",
+   "defers_to": [
+    "family_service"
+   ]
   },
   {
    "rule_id": "fishing_crew_share_service_1989",
@@ -9880,7 +10566,10 @@
     "historical_fica_treatment": "payor did not treat the remuneration, when paid, as subject to FICA tax"
    },
    "expected": "deferred",
-   "decides": "child_under_18_for_parent"
+   "decides": "child_under_18_for_parent",
+   "defers_to": [
+    "family_service"
+   ]
   },
   {
    "rule_id": "fishing_crew_share_service_1989",
@@ -9950,7 +10639,8 @@
    "rule_id": "fishing_crew_share_service_1989",
    "worker": "INVENTED: REVIEW r5 LOW 7: adult deckhand paid 1993 a catch share and, as a bonus, a used outboard motor (non-cash additional compensation), no cash beyond the share; payor did not treat as FICA. 410(a)(20)(A) bars 'any additional compensation': not excluded, wage employment, covered. 3121(b)(20)(A) and 20 CFR 404.1031(a)(1) bar only cash: excluded from FICA employment and SE under 1402(c)(2)(F). Covered either way; only wage-vs-SE characterization differs.",
    "facts": {
-    "historical_fica_treatment": "payor did not treat the remuneration, when paid, as subject to FICA tax"
+    "historical_fica_treatment": "payor did not treat the remuneration, when paid, as subject to FICA tax",
+    "fishing_catch_share_arrangement": "a share of the catch plus non-cash additional compensation (a used outboard motor), with no cash beyond the share"
    },
    "expected": "covered",
    "decides": "residual"
@@ -10001,7 +10691,10 @@
     "fishing_catch_share_arrangement": "a share of the boat's catch or its proceeds (or the boats' catch in a fishing operation involving more than one boat) that depends on the amount caught, where the operating crew of the boat (or each boat from which the individual receives a share) is normally made up of fewer than 10 individuals (a crew whose average size on trips made during the preceding 4 calendar quarters was fewer than 10 is treated as normally fewer than 10), with no additional compensation other than cash of at most $100 per trip that is contingent on a minimum catch and paid solely for additional duties (such as mate, engineer, or cook) for which additional cash is traditional in the industry"
    },
    "expected": "deferred",
-   "decides": "child_under_18_for_parent"
+   "decides": "child_under_18_for_parent",
+   "defers_to": [
+    "family_service"
+   ]
   },
   {
    "rule_id": "fishing_crew_share_service_1995",
@@ -10063,7 +10756,9 @@
   {
    "rule_id": "fishing_crew_share_service_1995",
    "worker": "INVENTED: REVIEW r5 LOW 7: adult deckhand paid 2019 a catch share plus free lodging ashore between trips (non-cash additional compensation), no cash beyond the share. 410(a)(20)(A) 'any additional compensation' fails: wage employment (covered). 3121(b)(20)(A) 'any cash remuneration' and 20 CFR 404.1031(a)(1) 'any cash pay' are met: FICA-excluded, SE under 1402(c)(2)(F) (covered).",
-   "facts": {},
+   "facts": {
+    "fishing_catch_share_arrangement": "a share of the catch plus non-cash additional compensation (free lodging ashore between trips), with no cash beyond the share"
+   },
    "expected": "covered",
    "decides": "residual"
   },
@@ -11116,28 +11811,40 @@
    "worker": "INVENTED: JUST MISSES (investment): home embroiderer in 1972 who works to a company's specifications on its blanks but runs her own shop of industrial embroidery machines, a substantial investment in facilities. 410(j)(3) closing clause: not an employee under (3). Self-employed; deferred.",
    "facts": {},
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "statutory_homeworker_service_1968",
    "worker": "INVENTED: JUST MISSES (continuing relationship): home worker in 1972 who sews one batch of costumes, on materials the theater furnishes, as a single transaction not part of a continuing relationship. 410(j)(3) closing clause. Deferred.",
    "facts": {},
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "statutory_homeworker_service_1968",
    "worker": "INVENTED: JUST MISSES (personal services): home packer in 1972 whose contract lets her hire helpers to do the work, so it does not contemplate that substantially all the services are performed personally. Deferred.",
    "facts": {},
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "statutory_homeworker_service_1968",
    "worker": "INVENTED: JUST MISSES (410(j)(3)(C) materials): home seamstress in 1972 who buys her own fabric and sells finished dresses made to a boutique's specifications; the goods are not furnished by the boutique and returned, so she is not in the (C) group. Deferred (see NOTE N-HW-1).",
    "facts": {},
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "statutory_homeworker_service_1978",
@@ -11162,28 +11869,40 @@
    "worker": "INVENTED: JUST MISSES (investment): home embroiderer in 1995 who works to a company's specifications on its blanks but runs her own shop of industrial embroidery machines, a substantial investment in facilities. 410(j)(3) closing clause: not an employee under (3). Self-employed; deferred.",
    "facts": {},
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "statutory_homeworker_service_1978",
    "worker": "INVENTED: JUST MISSES (continuing relationship): home worker in 1995 who sews one batch of costumes, on materials the theater furnishes, as a single transaction not part of a continuing relationship. 410(j)(3) closing clause. Deferred.",
    "facts": {},
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "statutory_homeworker_service_1978",
    "worker": "INVENTED: JUST MISSES (personal services): home packer in 1995 whose contract lets her hire helpers to do the work, so it does not contemplate that substantially all the services are performed personally. Deferred.",
    "facts": {},
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "statutory_homeworker_service_1978",
    "worker": "INVENTED: JUST MISSES (410(j)(3)(C) materials): home seamstress in 1995 who buys her own fabric and sells finished dresses made to a boutique's specifications; the goods are not furnished by the boutique and returned, so she is not in the (C) group. Deferred (see NOTE N-HW-1).",
    "facts": {},
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "student_nurse_service_1968",
@@ -11724,7 +12443,10 @@
     ]
    },
    "expected": "deferred",
-   "decides": "options_dealer_from_1984"
+   "decides": "options_dealer_from_1984",
+   "defers_to": [
+    "self_employment_options_dealers"
+   ]
   },
   {
    "rule_id": "se_capital_gain_nol_1968_2026",
@@ -12085,7 +12807,10 @@
     "rental_income": "income of an owner or tenant of land under an arrangement for another person to produce agricultural or horticultural commodities on it"
    },
    "expected": "deferred",
-   "decides": "crp_payment_under_farm_arrangement"
+   "decides": "crp_payment_under_farm_arrangement",
+   "defers_to": [
+    "self_employment_farm_rental_participation"
+   ]
   },
   {
    "rule_id": "se_conservation_reserve_2008_2026",
@@ -12169,7 +12894,10 @@
     "employee_self_or_mixed": "not performed as an employee"
    },
    "expected": "deferred",
-   "decides": "not_employee_service"
+   "decides": "not_employee_service",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "se_ordinary_employee_1968_2026",
@@ -12180,7 +12908,10 @@
     "newspaper_service_arrangement": "410(a)(14)(B) fixed-price sale to ultimate consumers"
    },
    "expected": "deferred",
-   "decides": "adult_fixed_price_vendor"
+   "decides": "adult_fixed_price_vendor",
+   "defers_to": [
+    "newspaper_service"
+   ]
   },
   {
    "rule_id": "se_ordinary_employee_1968_2026",
@@ -12201,7 +12932,10 @@
     "agricultural_share_arrangement": "410(a)(16) arrangement"
    },
    "expected": "deferred",
-   "decides": "sharefarmer"
+   "decides": "sharefarmer",
+   "defers_to": [
+    "agricultural_share_service"
+   ]
   },
   {
    "rule_id": "se_ordinary_employee_1968_2026",
@@ -12223,7 +12957,10 @@
     "foreign_government_service": "410(a)(11) or (12) service"
    },
    "expected": "deferred",
-   "decides": "us_citizen_foreign_government"
+   "decides": "us_citizen_foreign_government",
+   "defers_to": [
+    "foreign_government_service"
+   ]
   },
   {
    "rule_id": "se_ordinary_employee_1968_2026",
@@ -12259,7 +12996,10 @@
     "international_organization_service": "410(a)(15) service"
    },
    "expected": "deferred",
-   "decides": "us_citizen_international_organization"
+   "decides": "us_citizen_international_organization",
+   "defers_to": [
+    "international_organization_service"
+   ]
   },
   {
    "rule_id": "se_ordinary_employee_1968_2026",
@@ -12281,7 +13021,10 @@
     "ministerial_service": "411(c)(4) service: ministry, or duties required by a religious order"
    },
    "expected": "deferred",
-   "decides": "ministry_or_order_duties"
+   "decides": "ministry_or_order_duties",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "se_ordinary_employee_1968_2026",
@@ -12303,7 +13046,10 @@
     "public_office_fee_basis": "position compensated solely on a fee basis and not covered by a section 418 agreement"
    },
    "expected": "deferred",
-   "decides": "fee_basis_state_local_position"
+   "decides": "fee_basis_state_local_position",
+   "defers_to": [
+    "self_employment_public_office"
+   ]
   },
   {
    "rule_id": "se_ordinary_employee_1968_2026",
@@ -12335,7 +13081,10 @@
     "fishing_catch_share_arrangement": "410(a)(20) catch-share service on a small boat"
    },
    "expected": "deferred",
-   "decides": "small_boat_fishing"
+   "decides": "small_boat_fishing",
+   "defers_to": [
+    "fishing_crew_share_service"
+   ]
   },
   {
    "rule_id": "se_ordinary_employee_1968_2026",
@@ -12355,7 +13104,10 @@
     "church_employee_service": "410(a)(8)(B) service for an electing church or qualified church-controlled organization, from 1984"
    },
    "expected": "deferred",
-   "decides": "electing_church_employee"
+   "decides": "electing_church_employee",
+   "defers_to": [
+    "electing_church_employee_service"
+   ]
   },
   {
    "rule_id": "se_ordinary_employee_1968_2026",
@@ -12758,7 +13510,10 @@
     "amount": "termination payment received 2010-08-01"
    },
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "se_insurance_termination_1998_2026",
@@ -12768,7 +13523,10 @@
     "amount": "termination payment received in 2015"
    },
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "se_insurance_termination_1998_2026",
@@ -12778,7 +13536,10 @@
     "amount": "termination payment from Bayside General Agency received 2018-05-01"
    },
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "se_insurance_termination_1998_2026",
@@ -12788,7 +13549,10 @@
     "amount": "termination payment received 2020-07-01"
    },
    "expected": "deferred",
-   "decides": "residual"
+   "decides": "residual",
+   "defers_to": [
+    "self_employment_base_definition"
+   ]
   },
   {
    "rule_id": "se_insurance_termination_1998_2026",
@@ -14151,7 +14915,10 @@
     ]
    },
    "expected": "deferred",
-   "decides": "farm_rental_arrangement"
+   "decides": "farm_rental_arrangement",
+   "defers_to": [
+    "self_employment_farm_rental_participation"
+   ]
   },
   {
    "rule_id": "se_rental_income_1968_1996",
@@ -14298,7 +15065,10 @@
     ]
    },
    "expected": "deferred",
-   "decides": "farm_rental_arrangement"
+   "decides": "farm_rental_arrangement",
+   "defers_to": [
+    "self_employment_farm_rental_participation"
+   ]
   },
   {
    "rule_id": "se_rental_income_1996_2026",
@@ -15461,6 +16231,445 @@
     "remuneration_paid_date": "remuneration paid before 1978-01-01"
    },
    "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r6 M-1, just misses cnmi_noncitizen_resident_ministry on ministerial_service): 1980: an ordained Korean-citizen pastor, a nonresident alien resident in the CNMI with no exemption shown, who also teaches at a public school; that work is not ministry, so the CNMI question does not arise for it.",
+   "facts": {
+    "clergy_or_religious_exemption": "not shown to have an effective 1402(e) exemption",
+    "ministerial_service": [
+     "not ministry, order duties or Christian Science practice",
+     "teaching mathematics at a public school on Saipan"
+    ],
+    "nonresident_alien_status": "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands"
+   },
+   "expected": "covered",
+   "decides": "non_ministerial_service"
+  },
+  {
+   "rule_id": "college_club_domestic_service_1968",
+   "worker": "INVENTED (review r6 M-1, just misses enrolled_student_in_local_club on employer_school_nexus): 1970: an enrolled student cooks for a town social club near the campus; its membership is not mostly students, so 410(a)(10)'s college-club exclusion does not reach the service.",
+   "facts": {
+    "domestic_service": "domestic service in a local college club or a local chapter of a college fraternity or sorority",
+    "employer_school_nexus": "a town social club near the campus whose members are mostly local residents, not students or persons directly connected with the college",
+    "enrollment": "enrolled and regularly attending classes at a school, college or university"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "newspaper_service_1968",
+   "worker": "INVENTED (review r6 M-1, just misses under_18_delivery on age): a 19-year-old employee who delivers newspapers to subscribers: the under-18 exclusion does not reach him, and no other case of this row excludes delivery.",
+   "facts": {
+    "age": "19 years old",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "delivery or distribution of newspapers or shopping news, not to a point for further delivery or distribution"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "newspaper_service_1968",
+   "worker": "INVENTED (review r6 M-1, just misses fixed_price_vendor_minor on age): a 19-year-old employee who sells newspapers at a fixed price, keeping the margin; the minor-vendor exclusion does not reach him (the record states his age, not the adult-vendor text).",
+   "facts": {
+    "age": "19 years old",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "newspaper_service_1968",
+   "worker": "INVENTED (review r6 M-1, just misses fixed_price_vendor_minor on employee_self_or_mixed): a 16-year-old who buys newspapers outright and resells them at a fixed price on his own account: not an employee, so the employee exclusion does not reach him.",
+   "facts": {
+    "age": "under 18",
+    "employee_self_or_mixed": "self-employed: buys the papers outright and resells them on his own account",
+    "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "newspaper_service_1968",
+   "worker": "INVENTED (review r6 M-1, just misses fixed_price_vendor_adult on employee_self_or_mixed): an adult who buys newspapers outright and resells them at a fixed price on his own account: not an employee, so neither vendor case reaches him.",
+   "facts": {
+    "age": "18 or older",
+    "employee_self_or_mixed": "self-employed: buys the papers outright and resells them on his own account",
+    "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "newspaper_service_1996",
+   "worker": "INVENTED (review r6 M-1, just misses under_18_delivery on age): a 19-year-old employee who delivers newspapers to subscribers: the under-18 exclusion does not reach him, and no other case of this row excludes delivery.",
+   "facts": {
+    "age": "19 years old",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "delivery or distribution of newspapers or shopping news, not to a point for further delivery or distribution"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "newspaper_service_1996",
+   "worker": "INVENTED (review r6 M-1, just misses fixed_price_vendor_minor on age): a 19-year-old employee who sells newspapers at a fixed price, keeping the margin; the minor-vendor exclusion does not reach him (the record states his age, not the adult-vendor text).",
+   "facts": {
+    "age": "19 years old",
+    "employee_self_or_mixed": "employee",
+    "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "newspaper_service_1996",
+   "worker": "INVENTED (review r6 M-1, just misses fixed_price_vendor_minor on employee_self_or_mixed): a 16-year-old who buys newspapers outright and resells them at a fixed price on his own account: not an employee, so the employee exclusion does not reach him.",
+   "facts": {
+    "age": "under 18",
+    "employee_self_or_mixed": "self-employed: buys the papers outright and resells them on his own account",
+    "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "newspaper_service_1996",
+   "worker": "INVENTED (review r6 M-1, just misses fixed_price_vendor_adult on employee_self_or_mixed): an adult who buys newspapers outright and resells them at a fixed price on his own account: not an employee, so neither vendor case reaches him.",
+   "facts": {
+    "age": "18 or older",
+    "employee_self_or_mixed": "self-employed: buys the papers outright and resells them on his own account",
+    "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "newspaper_service_1996",
+   "worker": "INVENTED (review r6 M-1, just misses under_18_delivery on employee_self_or_mixed): 2000: a 16-year-old who buys papers outright and delivers them to his own customers, with no direct-seller contract: not an employee of the publisher.",
+   "facts": {
+    "age": "under 18",
+    "employee_self_or_mixed": "self-employed: delivers papers he has bought outright to his own customers",
+    "newspaper_service_arrangement": "delivery or distribution of newspapers or shopping news, not to a point for further delivery or distribution"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "nonprofit_1968_1977",
+   "worker": "INVENTED (review r6 M-1, just misses deemed_waiver_k5_request on nonprofit_organization): 1974: an employee of a 501(c)(4) civic league whose facts otherwise meet a 3121(k)(5) request: former 410(a)(8)(B) never excluded a civic league's service, so the small-remuneration test of 410(a)(10) decides.",
+   "facts": {
+    "historical_fica_treatment": "the employee filed a request under Pub. L. 94-563 section 3 on or before April 15, 1980, with full repayment of the employee taxes so refunded or credited (or an installment arrangement under 3121(k)(8))",
+    "nonprofit_coverage_waiver": "certificate deemed filed under 3121(k)(5), where the service falls before the period for which that certificate is effective; the taxes paid on its remuneration were refunded or credited before September 9, 1976, otherwise than through a refund or credit that a valid certificate in effect would have allowed; and the service would be employment if the organization had actually filed a valid certificate effective as 3121(k)(5)(B) provides, with the employee's signature on the accompanying list",
+    "nonprofit_organization": [
+     "employer is a 501(c)(4) civic league exempt under 501(a), not an organization described in 501(c)(3)",
+     "employer is an organization exempt from income tax under 501(a), other than one described in 401(a) or in 501(c)(3)"
+    ]
+   },
+   "expected": "covered_above_threshold",
+   "decides": "exempt_organization_small_remuneration"
+  },
+  {
+   "rule_id": "nonprofit_1968_1977",
+   "worker": "INVENTED (review r6 M-1, just misses section_105b_departed_employee_request on nonprofit_organization): 1970: a departed employee of a 501(c)(4) civic league with the section 105(b) request facts: former 410(a)(8)(B) never excluded a civic league's service, so the small-remuneration test decides.",
+   "facts": {
+    "historical_fica_treatment": "the employee (or a fiduciary acting for the employee or the estate, or a survivor) requested under Pub. L. 86-778 section 105(b), as amended by Pub. L. 89-97 section 316(c), that the remuneration be deemed remuneration for employment, on or after the date the organization filed its certificate; the organization paid the taxes on that remuneration on or before the due date of the tax return for the calendar quarter before the quarter in which it filed the certificate; and no credit or refund of those taxes (other than one that would be allowed if the service were employment) was obtained, or the amount was repaid before January 1, 1968 or, if later, the first day of the third year after the year in which the certificate was filed",
+    "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
+    "nonprofit_employee_concurrence": "not employed by the organization on the date the certificate was filed, for service whose remuneration was paid before the first day of the calendar quarter in which the certificate was filed",
+    "nonprofit_organization": [
+     "employer is a 501(c)(4) civic league exempt under 501(a), not an organization described in 501(c)(3)",
+     "employer is an organization exempt from income tax under 501(a), other than one described in 401(a) or in 501(c)(3)"
+    ]
+   },
+   "expected": "covered_above_threshold",
+   "decides": "exempt_organization_small_remuneration"
+  },
+  {
+   "rule_id": "nonprofit_1978_1983",
+   "worker": "INVENTED (review r6 M-1, just misses section_105b_departed_employee_request on nonprofit_organization): 1979: the same request by a departed employee of a 501(c)(4) civic league: the small-remuneration test decides.",
+   "facts": {
+    "historical_fica_treatment": "the employee (or a fiduciary acting for the employee or the estate, or a survivor) requested under Pub. L. 86-778 section 105(b), as amended by Pub. L. 89-97 section 316(c), that the remuneration be deemed remuneration for employment, on or after the date the organization filed its certificate; the organization paid the taxes on that remuneration on or before the due date of the tax return for the calendar quarter before the quarter in which it filed the certificate; and no credit or refund of those taxes (other than one that would be allowed if the service were employment) was obtained, or the amount was repaid before January 1, 1968 or, if later, the first day of the third year after the year in which the certificate was filed",
+    "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
+    "nonprofit_employee_concurrence": "not employed by the organization on the date the certificate was filed, for service whose remuneration was paid before the first day of the calendar quarter in which the certificate was filed",
+    "nonprofit_organization": [
+     "employer is a 501(c)(4) civic league exempt under 501(a), not an organization described in 501(c)(3)",
+     "employer is an organization exempt from income tax under 501(a) (other than one described in 401(a)) or under 521, and not one described in 501(c)(3)"
+    ]
+   },
+   "expected": "covered_above_threshold",
+   "decides": "exempt_organization_small_remuneration"
+  },
+  {
+   "rule_id": "nonprofit_1978_1983",
+   "worker": "INVENTED (review r6 M-1, just misses section_105b_departed_employee_request on nonprofit_coverage_waiver): 1980: a departed employee of a charity whose certificate had been terminated before his service, with the section 105(b) request facts: no certificate is in effect for the service, so 410(a)(8)(B) excludes it.",
+   "facts": {
+    "historical_fica_treatment": "the employee (or a fiduciary acting for the employee or the estate, or a survivor) requested under Pub. L. 86-778 section 105(b), as amended by Pub. L. 89-97 section 316(c), that the remuneration be deemed remuneration for employment, on or after the date the organization filed its certificate; the organization paid the taxes on that remuneration on or before the due date of the tax return for the calendar quarter before the quarter in which it filed the certificate; and no credit or refund of those taxes (other than one that would be allowed if the service were employment) was obtained, or the amount was repaid before January 1, 1968 or, if later, the first day of the third year after the year in which the certificate was filed",
+    "nonprofit_coverage_waiver": [
+     "no actual or deemed certificate in effect for this service: none filed or deemed filed; the service falls before the certificate's effective date (for a deemed certificate, before the first day of the first quarter for which the taxes were paid); a termination took effect before the service; or the only certificate covers another 3121(k)(1)(E) group",
+     "the charity's only certificate was terminated before the service"
+    ],
+    "nonprofit_employee_concurrence": "not employed by the organization on the date the certificate was filed, for service whose remuneration was paid before the first day of the calendar quarter in which the certificate was filed",
+    "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
+   },
+   "expected": "noncovered",
+   "decides": "no_effective_waiver"
+  },
+  {
+   "rule_id": "religious_order_1968_1983",
+   "worker": "INVENTED (review r6 M-1, just misses election_status_not_established on religious_order_service): a member of an order who has taken no vow of poverty, doing the order's duties; the record does not show whether the order elected. Without a vow 411(c)'s closing sentence lifts 411(c)(4), so the election does not matter.",
+   "facts": {
+    "clergy_or_religious_exemption": "not established whether a 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covers the period",
+    "religious_order_service": [
+     "duties required by the order, performed by a member who has not taken a vow of poverty",
+     "a member who has taken no vow of poverty"
+    ]
+   },
+   "expected": "covered",
+   "decides": "order_duties_without_vow"
+  },
+  {
+   "rule_id": "religious_order_1984_2026",
+   "worker": "INVENTED (review r6 M-1, just misses election_status_not_established on religious_order_service): a member of an order who has taken no vow of poverty, doing the order's duties; the record does not show whether the order elected. Without a vow 411(c)'s closing sentence lifts 411(c)(4), so the election does not matter.",
+   "facts": {
+    "clergy_or_religious_exemption": "not established whether a 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covers the period",
+    "religious_order_service": [
+     "duties required by the order, performed by a member who has not taken a vow of poverty",
+     "a member who has taken no vow of poverty"
+    ]
+   },
+   "expected": "covered",
+   "decides": "order_duties_without_vow"
+  },
+  {
+   "rule_id": "state_local_1991_2026",
+   "worker": "INVENTED (review r6 M-1, just misses mandatory_nonmember_coverage on section_218_position): 2012: a county clerk who belongs to no qualified system through this employment, where the record does not show whether a section 218 agreement covers her position. Covered either way: by the agreement if one covers the position, by 410(a)(7)(F)'s mandatory rule if none does, so no case states her facts and the residual's covered decides.",
+   "facts": {
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "section_218_position": "not established whether a section 218 agreement covers the position for OASDI"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "se_treaty_fishing_1968_2026",
+   "worker": "INVENTED (review r6 M-1, just misses section_7873_exempt_income on tribal_membership): 2010: a non-Indian partner in a tribe member's treaty-fishing operation: 7873(a) exempts income derived by a member, or by a qualified Indian entity, so his share is net earnings.",
+   "facts": {
+    "tribal_fishing_member_activity": "substantially all harvesting performed by tribe members",
+    "tribal_fishing_qualified_entity": "when received through an entity, the entity meets 7873(b)(3)",
+    "tribal_fishing_rights_income": "income from a fishing rights-related activity, exempt under 7873(a)",
+    "tribal_membership": "not a member of the tribe: a non-Indian partner in a member's fishing operation"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "student_nurse_service_1968",
+   "worker": "INVENTED (review r6 M-1, just misses student_nurse_beyond_training_open on enrollment): 1972: a graduate nurse, no longer enrolled, working full time for the hospital that ran her training school: no student-nurse case reaches her.",
+   "facts": {
+    "employer_school_nexus": "nurses' training school chartered or approved under State law",
+    "enrollment": "graduated in May; no longer enrolled in a nurses' training school",
+    "occupation": "student nurse in the employ of a hospital or a nurses' training school whose service is not part-time, not incidental to the student's training, or not for nominal remuneration"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "religious_order_1968_1983",
+   "worker": "INVENTED (review r6 M-1, just misses election_member_abroad_not_covered on place_of_work): 1979: an active vowed sister who is not a United States citizen, doing her order's duties in Ohio under its election: the abroad exclusion reaches only service outside the United States.",
+   "facts": {
+    "religious_order_service": [
+     "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+     "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
+    ],
+    "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed",
+    "place_of_work": "in Ohio, in the United States",
+    "citizenship": "not a United States citizen"
+   },
+   "expected": "covered",
+   "decides": "vow_duties_with_3121r_election"
+  },
+  {
+   "rule_id": "religious_order_1984_2026",
+   "worker": "INVENTED (review r6 M-1, just misses election_member_abroad_not_covered on place_of_work): 2012: an active vowed sister who is not a United States citizen, doing her order's duties in Ohio under its election: the abroad exclusion reaches only service outside the United States.",
+   "facts": {
+    "religious_order_service": [
+     "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+     "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
+    ],
+    "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed",
+    "place_of_work": "in Ohio, in the United States",
+    "nonresident_alien_status": "neither a United States citizen nor a resident alien"
+   },
+   "expected": "covered",
+   "decides": "vow_duties_with_3121r_election"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED (review r6 M-1, just misses agreement_with_lower_threshold_nonmember on election_work): the same facts for the county's road maintenance clerk, who does no election work: the election family's cases do not reach him and its residual sends him to the other families.",
+   "facts": {
+    "election_work": "not election work: the county's road maintenance clerk",
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED (review r6 M-1, just misses agreement_with_lower_threshold_nonmember on government_level): the same facts for an employee of a private hospital: this family reaches only its level of government, so the residual sends the service to the other families.",
+   "facts": {
+    "election_work": "election official or election worker",
+    "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
+    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED (review r6 M-1, just misses agreement_with_lower_threshold_member on election_work): the same facts for the county's road maintenance clerk, who does no election work: the election family's cases do not reach him and its residual sends him to the other families.",
+   "facts": {
+    "election_work": "not election work: the county's road maintenance clerk",
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED (review r6 M-1, just misses agreement_with_lower_threshold_member on government_level): the same facts for an employee of a private hospital: this family reaches only its level of government, so the residual sends the service to the other families.",
+   "facts": {
+    "election_work": "election official or election worker",
+    "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
+    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED (review r6 M-1, just misses outside_agreement_member on election_work): the same facts for the county's road maintenance clerk, who does no election work: the election family's cases do not reach him and its residual sends him to the other families.",
+   "facts": {
+    "election_work": "not election work: the county's road maintenance clerk",
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED (review r6 M-1, just misses outside_agreement_member on government_level): the same facts for an employee of a private hospital: this family reaches only its level of government, so the residual sends the service to the other families.",
+   "facts": {
+    "election_work": "election official or election worker",
+    "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
+    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED (review r6 M-1, just misses agreement_with_lower_threshold_nonmember on election_work): the same facts for the county's road maintenance clerk, who does no election work: the election family's cases do not reach him and its residual sends him to the other families.",
+   "facts": {
+    "election_work": "not election work: the county's road maintenance clerk",
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED (review r6 M-1, just misses agreement_with_lower_threshold_nonmember on government_level): the same facts for an employee of a private hospital: this family reaches only its level of government, so the residual sends the service to the other families.",
+   "facts": {
+    "election_work": "election official or election worker",
+    "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
+    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED (review r6 M-1, just misses agreement_with_lower_threshold_member on election_work): the same facts for the county's road maintenance clerk, who does no election work: the election family's cases do not reach him and its residual sends him to the other families.",
+   "facts": {
+    "election_work": "not election work: the county's road maintenance clerk",
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED (review r6 M-1, just misses agreement_with_lower_threshold_member on government_level): the same facts for an employee of a private hospital: this family reaches only its level of government, so the residual sends the service to the other families.",
+   "facts": {
+    "election_work": "election official or election worker",
+    "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
+    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED (review r6 M-1, just misses outside_agreement_member on election_work): the same facts for the county's road maintenance clerk, who does no election work: the election family's cases do not reach him and its residual sends him to the other families.",
+   "facts": {
+    "election_work": "not election work: the county's road maintenance clerk",
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED (review r6 M-1, just misses outside_agreement_member on government_level): the same facts for an employee of a private hospital: this family reaches only its level of government, so the residual sends the service to the other families.",
+   "facts": {
+    "election_work": "election official or election worker",
+    "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
+    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED (review r6 M-1, just misses after_official_during_2601d3_delay on government_level): the same facts for an employee of a private hospital: this family reaches only its level of government, so the residual sends the service to the other families.",
+   "facts": {
+    "federal_retirement_system": "meets Pub. L. 98-369 section 2601(d)(1)(A) and (B), did not again become subject to subchapter III (or effectively apply for it) before July 18, 1984 or within the 30-day period of section 2601(d)(1) or (2), and the service is performed before the first month beginning after that 30-day period (section 2601(d)(3))",
+    "federal_service": "legislative-branch service, other than as a Member, Delegate or Resident Commissioner, that would be excluded under 410(a)(5)-(6) as in effect in January 1983, either as service performed continuously since December 31, 1983 (410(a)(5)(B)(i)(I)-(V)) or as service by an individual receiving an annuity from the Civil Service Retirement and Disability Fund or benefits under another Federal employee retirement system (410(a)(5)(B)(ii)), performed on or after a date on which the individual performed service described in 410(a)(5)(G) that was performed on or after 1988-11-10",
+    "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "state_local_1991_2026",
+   "worker": "INVENTED (review r6 M-1, just misses qualified_system_member_without_agreement on government_level): the same facts for an employee of a private hospital: this family reaches only its level of government, so the residual sends the service to the other families.",
+   "facts": {
+    "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
+    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
+   },
+   "expected": "covered",
    "decides": "residual"
   }
  ]

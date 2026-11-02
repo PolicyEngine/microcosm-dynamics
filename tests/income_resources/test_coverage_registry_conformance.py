@@ -37,9 +37,16 @@ Fact-pattern invariants (review r5):
   the row's own `when`. Each fixture names the consequence the sources
   give and the case (or residual) that decides it.
 * Every case of every row decides at least one INVENTED sweep worker,
-  and every row's residual (or open row) another, so a case reworded,
-  narrowed or broadened, re-ranked or given another consequence fails a
-  worker.
+  and every row's residual (or open row) another, so a case reworded or
+  narrowed, re-ranked or given another consequence fails the worker it
+  decides; a deferred worker also pins its ``defers_to``.
+* A broadened case fails a worker only where some worker just misses it
+  on the dropped condition (``just_miss_workers``): every condition in
+  the fixture's ``just_miss_required`` has one, and the conditions none
+  has are a stated limit of at most ``UNSEEN_CONDITION_LIMIT`` (review
+  r6 M-1).
+* A pinned sample of unread-fact reasons keeps its content and a pinned
+  sample of ties names its cases.
 * A State or local exclusion reaches only the State or local level, and
   a federal one only service for the United States: a worker with every
   other fact at another level reaches the residual.
@@ -50,7 +57,7 @@ Fact-pattern invariants (review r5):
 
 Hypothesis properties test the pdftotext parser and the retention, OCR,
 IRS-quote, fused-token, open-reading and operative-reading checkers, the
-level properties and the unread-fact and worded-condition checkers.
+unread-fact, worded-condition and just-miss checkers.
 """
 
 import gzip
@@ -1972,6 +1979,200 @@ def test_every_trigger_fact_is_read_by_a_case_or_named_with_its_reason():
     )
 
 
+# Review r6 M-1: a pinned sample of unread-fact reasons (seed 20261102,
+# 24 of 374) and the phrases each must keep. A reason emptied of its
+# content no longer names the provision or case that accounts for the
+# fact.
+UNREAD_REASON_ANCHORS = {
+    ("communist_organization_service_1968", "historical_fica_treatment"): (
+        "410(a)(17)",
+    ),
+    ("domestic_service_1995", "domestic_service"): (
+        "domestic_farm_service",
+        "410(a)(21)",
+    ),
+    ("election_work_1978", "section_218_group"): ("418(b)(5)", "418(d)(4)"),
+    (
+        "fishing_crew_share_service_1968",
+        "fishing_additional_cash_conditions",
+    ): ("the row is open with no",),
+    ("fishing_crew_share_service_1989", "services_performed_date"): (
+        "The row is on the payment-date",
+    ),
+    ("fishing_crew_share_service_1995", "employee_self_or_mixed"): (
+        "410(a)(20)",
+    ),
+    ("fishing_crew_share_service_1995", "reporting_unit"): (
+        "Reporting is not a coverage condition.",
+    ),
+    ("se_community_income_2004_2026", "joint_business_distributive_shares"): (
+        "business_operator_spouse",
+    ),
+    ("se_director_timing_1988_1990", "employee_self_or_mixed"): (
+        "se_ordinary_employee_1968_2026",
+        "411(c)(2)",
+    ),
+    ("se_director_timing_1988_1990", "industry"): ("403(f)(5)(E)",),
+    ("se_director_timing_1991_2026", "amount"): (
+        "The director fees the row times;",
+    ),
+    ("se_foreign_income_1968_1972_open", "foreign_earned_income_exclusion"): (
+        "The row is open (no cases);",
+    ),
+    ("se_foreign_income_1982_1983", "foreign_earned_income_exclusion"): (
+        "The row is open (no cases);",
+    ),
+    ("se_health_insurance_2011_2026", "taxable_year"): ("taxable_year_start",),
+    ("se_joint_venture_1968_2006", "assignment"): (
+        "The partnership and community-income families assign",
+    ),
+    ("se_joint_venture_2007_2026", "taxable_year_start"): ("lookup_date",),
+    ("se_optional_1973_2007", "amount"): ("condition_cases",),
+    ("se_optional_1973_2007", "taxable_year_start"): (
+        "lookup_date",
+        "effective_basis",
+    ),
+    ("se_optional_2008_2026", "agricultural_service"): (
+        "selects farm versus nonfarm optional computation;",
+    ),
+    ("se_partner_death_1968_2026", "partner_death_date"): (
+        "share_after_death_month",
+        "partnership_status",
+    ),
+    ("se_passive_income_1968_1976", "trade_or_business"): (
+        "se_base_definition_1968_2026",
+        "411(a)(2)",
+    ),
+    ("se_possessions_931_1987_2026", "residence_period"): (
+        "country_of_residence",
+        "411(a)(8)",
+    ),
+    ("se_rental_income_1968_1996", "trade_or_business"): (
+        "411(a)(1)",
+        "real_estate_dealer_status",
+    ),
+    ("statutory_homeworker_service_1978", "reporting_unit"): (
+        "employer_employee_year",
+    ),
+}
+
+
+def test_unread_fact_reasons_keep_their_content():
+    rows = {
+        r["rule_id"]: r
+        for r in json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    }
+    for (rule_id, fact), anchors in UNREAD_REASON_ANCHORS.items():
+        reason = rows[rule_id]["parameters"]["unread_trigger_facts"][fact]
+        for anchor in anchors:
+            assert anchor in reason, (rule_id, fact, anchor)
+
+
+# Review r6 M-1: a pinned sample of condition_cases ties (seed 20261102,
+# 15 of 162, plus clergy_1982_2026.cantor), each to its cases and facts.
+PINNED_TIES = {
+    ("agricultural_service_1988", "seasonal_exception_facts"): {
+        "seasonal_hand_harvest_under_150": ["agricultural_service", "amount"]
+    },
+    ("clergy_1982_2026", "cantor"): {
+        "ministry_without_exemption_or_vow": ["ministerial_service"],
+        "non_ministerial_service": ["ministerial_service"],
+    },
+    ("election_work_1968", "agreement_has_no_exclusion"): {
+        "agreement_without_election_exclusion": ["section_218_position"]
+    },
+    ("election_work_1978", "scope"): {
+        "agreement_with_lower_threshold": [
+            "election_work",
+            "government_level",
+        ],
+        "agreement_with_statutory_threshold": [
+            "election_work",
+            "government_level",
+        ],
+        "outside_agreement": ["election_work", "government_level"],
+    },
+    ("election_work_1995", "scope"): {
+        "agreement_with_lower_threshold_member": [
+            "election_work",
+            "government_level",
+        ],
+        "agreement_with_lower_threshold_nonmember": [
+            "election_work",
+            "government_level",
+        ],
+        "agreement_with_statutory_threshold": [
+            "election_work",
+            "government_level",
+        ],
+        "outside_agreement_member": ["election_work", "government_level"],
+        "outside_agreement_nonmember": ["election_work", "government_level"],
+    },
+    ("family_service_1968", "spouse_trade_business_excluded"): {
+        "spouse_employee": ["family_service"]
+    },
+    (
+        "fishing_crew_share_service_1989",
+        "wage_employment_excluded_when_arrangement_qualifies",
+    ): {
+        "catch_share_1996_clarification": [
+            "fishing_catch_share_arrangement",
+            "historical_fica_treatment",
+        ],
+        "catch_share_payor_treated_as_fica": [
+            "fishing_catch_share_arrangement",
+            "historical_fica_treatment",
+        ],
+    },
+    ("religious_order_1968_1983", "election_covers"): {
+        "vow_duties_with_3121r_election": [
+            "clergy_or_religious_exemption",
+            "religious_order_service",
+        ],
+        "vow_duties_without_election": ["clergy_or_religious_exemption"],
+        "vowed_member_outside_3121r2_definition": ["religious_order_service"],
+    },
+    ("se_foreign_income_1973_1981", "income_tax_exclusion_disregarded"): {
+        "us_resident_entire_taxable_year": ["residence_period"]
+    },
+    ("se_joint_venture_2007_2026", "required_conditions"): {
+        "qualified_joint_venture": [
+            "joint_return",
+            "material_participation",
+            "partnership_status",
+            "qualified_joint_venture_election",
+            "trade_or_business",
+        ]
+    },
+    ("se_passive_income_1968_1976", "stock_dividends_excluded"): {
+        "specified_dividends": ["dividend_or_interest_income"]
+    },
+    ("se_rental_income_1996_2026", "real_estate_dealer_exception"): {
+        "real_estate_dealer_rentals": ["real_estate_dealer_status"]
+    },
+    (
+        "se_rental_income_1996_2026",
+        "rental_income_and_attributable_deductions_excluded",
+    ): {"real_estate_rentals": ["rental_income"]},
+    ("se_treaty_fishing_1968_2026", "qualified_entity_conditions"): {
+        "section_7873_exempt_income": ["tribal_fishing_qualified_entity"]
+    },
+    ("state_local_1968_1983", "scope"): {
+        "no_section_218_agreement": ["government_level"]
+    },
+}
+
+
+def test_pinned_ties_name_their_cases():
+    rows = {
+        r["rule_id"]: r
+        for r in json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    }
+    for (rule_id, key), cases in PINNED_TIES.items():
+        tie = rows[rule_id]["parameters"]["condition_cases"][key]["cases"]
+        assert {c: sorted(f) for c, f in tie.items()} == cases, (rule_id, key)
+
+
 @settings(deadline=None)
 @given(
     st.sampled_from(["amount", "government_level", "taxable_year_start"]),
@@ -2764,6 +2965,9 @@ REQUIRED_CONDITIONS = [
         "individual of service described in subparagraph (C), (D), (E), "
         "(F), (G), or (H) of section 210(a)(5) of the Social Security Act",
     ),
+]
+REQUIRED_CONDITION_ROWS_ALL = json.loads(REGISTRY_ARTIFACT.read_text())[
+    "rules"
 ]
 REQUIRED_CONDITION_ROWS = {
     row["rule_id"]: row
@@ -3949,6 +4153,18 @@ NONPROFIT_WAIVER_WORKERS = {
         {year: ("noncovered", "no_effective_waiver") for year in (1975, 1980)},
     ),
 }
+# Review r6 M-1: the exempt-organization text each pre-1984 row states.
+CIVIC_LEAGUE = {
+    "nonprofit_1968_1977": (
+        "employer is an organization exempt from income tax under 501(a), "
+        "other than one described in 401(a) or in 501(c)(3)"
+    ),
+    "nonprofit_1978_1983": (
+        "employer is an organization exempt from income tax under 501(a) "
+        "(other than one described in 401(a)) or under 521, and not one "
+        "described in 501(c)(3)"
+    ),
+}
 NONPROFIT_WORKER_YEARS = sorted(
     (worker, year)
     for worker, (*_, outcomes) in NONPROFIT_WAIVER_WORKERS.items()
@@ -4003,9 +4219,18 @@ def test_nonprofit_waiver_covers_only_listed_or_later_employees(
         assert rule.resolve(met).get("case_id", "residual") == decides
     else:
         assert decides in met
-    # A civic league's worker falls to the residual, whatever its waiver.
-    other_employer = {**facts, "nonprofit_organization": "501(c)(4) league"}
-    assert resolved_consequence(rule, other_employer) == "covered"
+    # Review r6 M-1: a civic league's worker, whatever its waiver, meets
+    # the small-remuneration case (former 410(a)(10)), not the residual.
+    other_employer = {
+        **facts,
+        "nonprofit_organization": (
+            "employer is a 501(c)(4) civic league exempt under 501(a), not "
+            "an organization described in 501(c)(3)",
+            CIVIC_LEAGUE[rule.rule_id],
+        ),
+    }
+    decided = rule.resolve(cases_met(rule, other_employer))
+    assert decided.get("case_id") == "exempt_organization_small_remuneration"
     cases = {case["case_id"]: case for case in rule.cases}
     deemed = cases["deemed_waiver_all_employees"]["when"]
     assert "nonprofit_employee_concurrence" not in deemed
@@ -4887,9 +5112,26 @@ def test_failing_a_covered_condition_reaches_an_exclusion(registry, key):
     assert case_id not in met
 
 
-INVENTED_SWEEP_WORKERS = json.loads(
+INVENTED_SWEEP_FIXTURE = json.loads(
     (Path(__file__).parent / "ce1_invented_sweep_workers.json").read_text()
-)["workers"]
+)
+INVENTED_SWEEP_WORKERS = INVENTED_SWEEP_FIXTURE["workers"]
+JUST_MISS_REQUIRED = [
+    tuple(key) for key in INVENTED_SWEEP_FIXTURE["just_miss_required"]
+]
+JUST_MISS_OWN_TEXT = {
+    tuple(key) for key in INVENTED_SWEEP_FIXTURE["just_miss_own_text"]
+}
+JUST_MISS_STATED_LIMITS = {
+    tuple(key.split("|")): reason
+    for key, reason in INVENTED_SWEEP_FIXTURE[
+        "just_miss_stated_limits"
+    ].items()
+}
+# Review r6 M-1: conditions of multi-condition cases that no worker just
+# misses. Each such condition can be dropped without failing a test, so
+# the number is the PR's stated limit; it may fall, never rise.
+UNSEEN_CONDITION_LIMIT = 178
 
 
 @pytest.mark.parametrize(
@@ -4920,6 +5162,9 @@ def test_swept_rows_resolve_invented_workers_from_their_facts(
     else:
         decided = rule.resolve(met)
         assert decided.get("case_id", "residual") == worker["decides"]
+        # Review r6 M-1: a deferral's target is pinned too.
+        if worker["expected"] == "deferred":
+            assert list(decided["defers_to"]) == worker["defers_to"]
 
 
 def test_every_case_and_residual_decides_a_swept_worker():
@@ -4942,6 +5187,139 @@ def test_every_case_and_residual_decides_a_swept_worker():
     assert missing == {}
     assert len(rows) == 119
     assert sum(len(row["cases"]) for row in rows) == 347
+    deferred = [
+        w for w in INVENTED_SWEEP_WORKERS if w["expected"] == "deferred"
+    ]
+    assert all(w["defers_to"] for w in deferred)
+
+
+def stated(facts, fact):
+    """The texts a worker states for one fact, as a tuple."""
+    value = facts.get(fact, ())
+    return (value,) if isinstance(value, (str, bool)) else tuple(value)
+
+
+def just_miss_workers(row, case, fact, own_text=False):
+    """INVENTED workers who just miss ``case`` on ``fact`` (review r6 M-1).
+
+    Each states every other condition of the case exactly, does not state
+    the case's text for ``fact``, and is decided below the case (by a
+    lower-ranked case or the residual). Dropping ``fact`` from the case
+    would make the case decide that worker, so the sweep test would fail.
+    With ``own_text``, the worker also states for ``fact`` a text of its
+    own, which no case of the row reads.
+    """
+    rank = {c["case_id"]: c["precedence"] for c in row["cases"]}
+    case_texts = {c["when"][fact] for c in row["cases"] if fact in c["when"]}
+    others = {f: t for f, t in case["when"].items() if f != fact}
+    found = []
+    for worker in INVENTED_SWEEP_WORKERS:
+        if worker["rule_id"] != row["rule_id"]:
+            continue
+        facts = worker["facts"]
+        if not all(
+            any(_text_holds(p, t) for p in stated(facts, f))
+            for f, t in others.items()
+        ):
+            continue
+        own = stated(facts, fact)
+        if any(_text_holds(p, case["when"][fact]) for p in own):
+            continue
+        if own_text and not any(p not in case_texts for p in own):
+            continue
+        if rank.get(worker["decides"], len(rank) + 1) > case["precedence"]:
+            found.append(worker)
+    return found
+
+
+def _text_holds(phrase, condition):
+    if isinstance(phrase, bool) or isinstance(condition, bool):
+        return phrase is condition
+    return phrase == condition
+
+
+def unseen_conditions(rows):
+    """Conditions of multi-condition cases no worker just misses."""
+    return {
+        (row["rule_id"], case["case_id"], fact)
+        for row in rows
+        for case in row["cases"]
+        if len(case["when"]) > 1
+        for fact in case["when"]
+        if not just_miss_workers(row, case, fact)
+    }
+
+
+@pytest.mark.parametrize(
+    "key", JUST_MISS_REQUIRED, ids=["-".join(k) for k in JUST_MISS_REQUIRED]
+)
+def test_listed_conditions_have_a_just_miss_worker(key):
+    """Review r6 M-1: the exact-text oracle sees a dropped condition only
+    through a worker who just misses the case on it. Every condition the
+    review found drop-free has one with a deciding text of its own, and
+    every condition of a case this round adds or changes has one."""
+    rule_id, case_id, fact = key
+    rows = {r["rule_id"]: r for r in REQUIRED_CONDITION_ROWS_ALL}
+    (case,) = [c for c in rows[rule_id]["cases"] if c["case_id"] == case_id]
+    own_text = key in JUST_MISS_OWN_TEXT
+    assert just_miss_workers(rows[rule_id], case, fact, own_text)
+
+
+def test_unseen_conditions_are_a_stated_limit():
+    """Review r6 M-1: the conditions no worker just misses are the PR's
+    stated limit, at most UNSEEN_CONDITION_LIMIT; each of the review's
+    drop-free conditions that remains among them carries its reason, and
+    no required condition is among them."""
+    unseen = unseen_conditions(REQUIRED_CONDITION_ROWS_ALL)
+    assert len(unseen) <= UNSEEN_CONDITION_LIMIT
+    assert set(JUST_MISS_STATED_LIMITS) <= unseen
+    assert not unseen & set(JUST_MISS_REQUIRED)
+    assert JUST_MISS_OWN_TEXT <= set(JUST_MISS_REQUIRED)
+    assert all(reason.strip() for reason in JUST_MISS_STATED_LIMITS.values())
+
+
+@settings(deadline=None)
+@given(st.sampled_from(["other", "case_text", "absent", "stated"]))
+def test_just_miss_checker_needs_an_own_text_below_the_case(kind):
+    """The just-miss checker is an oracle, so its own cases are tested on
+    an INVENTED row."""
+    row = {
+        "rule_id": "INVENTED_just_miss_row",
+        "cases": [
+            {
+                "case_id": "invented_limited",
+                "precedence": 1,
+                "when": {"age": "under 18", "occupation": "INVENTED work"},
+            },
+            {
+                "case_id": "invented_other",
+                "precedence": 2,
+                "when": {"age": "INVENTED other age"},
+            },
+        ],
+    }
+    texts = {
+        "other": "19 years old",
+        "case_text": "INVENTED other age",
+        "absent": None,
+        "stated": "under 18",
+    }
+    facts = {"occupation": "INVENTED work"}
+    if texts[kind] is not None:
+        facts["age"] = texts[kind]
+    worker = {
+        "rule_id": "INVENTED_just_miss_row",
+        "facts": facts,
+        "decides": "invented_other" if kind == "case_text" else "residual",
+    }
+    INVENTED_SWEEP_WORKERS.append(worker)
+    try:
+        found = just_miss_workers(row, row["cases"][0], "age", True)
+        loose = just_miss_workers(row, row["cases"][0], "age")
+    finally:
+        INVENTED_SWEEP_WORKERS.remove(worker)
+    assert bool(found) == (kind == "other")
+    assert bool(loose) == (kind != "stated")
 
 
 PUBLIC_OFFICERS = {
@@ -5188,6 +5566,12 @@ STATUTORY_AGREEMENT_AMOUNT = (
     "paid less than the statutory amount"
 )
 NOT_A_MEMBER = ELECTION_NONMEMBER
+CAFETERIA_AGREEMENT = (
+    "covered by effective agreement/modification for OASDI (old-age, "
+    "survivors and disability insurance); a modification under 418(v), "
+    "redesignated 418(n), that extends only Medicare hospital insurance "
+    "does not count"
+)
 QUALIFIED_MEMBER = ELECTION_MEMBER
 # Review r5 M-2: each key's outcome for a State or local employee, as the
 # sources give it, stated here rather than read from the case: 410(a)(7)(F)
@@ -5389,53 +5773,14 @@ LEVEL_LIMITED_CASES = sorted(
     for case in row["cases"]
     if case["consequence"] in LEVEL_LIMITED_CONSEQUENCES
 )
-OTHER_EMPLOYERS = (
-    PRIVATE_EMPLOYEE,
-    DISTRICT_EMPLOYEE,
-    # The level text names these after "other than" (review r5 M-2).
-    "employee of the District of Columbia",
-    "employee of a State, a political subdivision or a wholly owned "
-    "instrumentality, including the District of Columbia government",
-    "employee of the Government of Guam",
-    "employee of the Government of American Samoa",
-    "employee of a Federal agency",
-    "employee of a foreign government",
-    "member of an Indian tribal council",
-)
 
 
-@settings(deadline=None, max_examples=500)
-@given(
-    st.sampled_from(sorted(STATE_LOCAL_CASE_FACTS)),
-    st.sampled_from(OTHER_EMPLOYERS),
-)
-def test_only_the_state_or_local_level_meets_these_cases(
-    registry, key, employer
-):
-    """Round 5 property: a worker with a case's other facts, as the
-    fixture states them, meets it at the State or local level. With any
-    other employer the worker meets no case that excludes, sets a
-    threshold or defers, and reaches the row's residual. The facts come
-    from STATE_LOCAL_CASE_FACTS, not from the case (review r5 M-2)."""
+def test_state_local_case_facts_list_every_level_limited_case():
+    """Round 5: STATE_LOCAL_CASE_FACTS states the facts of every case the
+    two families decide by an exclusion, a threshold or a deferral. (Review
+    r6 M-1: the round-5 property over other employers could not fail under
+    exact matching, so the employer matrix above is the level test.)"""
     assert sorted(STATE_LOCAL_CASE_FACTS) == LEVEL_LIMITED_CASES
-    rule_id, case_id = key
-    rule = next(r for r in registry.rules if r.rule_id == rule_id)
-    _, own = STATE_LOCAL_CASE_FACTS[key]
-    assert case_id in cases_met(
-        rule, {**own, "government_level": STATE_EMPLOYEE}
-    )
-    met = cases_met(rule, {**own, "government_level": employer})
-    assert (
-        not {
-            c["case_id"]
-            for c in rule.cases
-            if c["consequence"] in LEVEL_LIMITED_CONSEQUENCES
-        }
-        & met
-    )
-    decided = rule.resolve(met)
-    assert "case_id" not in decided
-    assert decided["consequence"] == "covered"
     assert len(LEVEL_LIMITED_CASES) == 23
 
 
@@ -5815,6 +6160,33 @@ def test_federal_exclusions_name_the_level_their_law_reaches(registry):
     assert len(limited) == 36
 
 
+FEDERAL_SERVICE_TEXT = re.compile(
+    r"United States|Federal|uniformed service|Executive Schedule|Congress"
+)
+
+
+def test_federal_covered_cases_name_federal_service(registry):
+    """Review r6 M-1: the level guard also reaches the federal rows'
+    covered cases. Each names the federal level, or a when text that is
+    itself service for the United States (a uniformed service, the
+    President, an Executive Schedule position, the Congress or the
+    legislative branch of the Federal Government)."""
+    covered = []
+    for rule_id in FEDERAL_ROWS:
+        rule = next(r for r in registry.rules if r.rule_id == rule_id)
+        for case in rule.cases:
+            if case["consequence"] in {"noncovered", "open"}:
+                continue
+            covered.append((rule_id, case["case_id"]))
+            if case["when"].get("government_level") == FEDERAL_LEVEL:
+                continue
+            assert any(
+                isinstance(text, str) and FEDERAL_SERVICE_TEXT.search(text)
+                for text in case["when"].values()
+            ), (rule_id, case["case_id"])
+    assert covered
+
+
 FEDERAL_LEVEL_EMPLOYERS = {
     "federal": FEDERAL_LEVEL,
     "state_or_local": STATE_EMPLOYEE,
@@ -6106,46 +6478,6 @@ def test_case_thresholds_are_available_for_their_years(registry):
         first, last = entry["income_years"]
         for year in range(first, last + 1):
             assert registry.threshold(entry["threshold_id"], year) > 0
-
-
-FEDERAL_OTHER_EMPLOYERS = (
-    STATE_EMPLOYEE,
-    PRIVATE_EMPLOYEE,
-    DISTRICT_EMPLOYEE,
-    "employee of the Government of Guam",
-    "member of an Indian tribal council",
-    "employee of a foreign government",
-    "employee of a public international organization",
-    "employee of a railroad carrier",
-)
-
-
-@settings(deadline=None)
-@given(
-    st.sampled_from(sorted(FEDERAL_CASE_FACTS)),
-    st.sampled_from(FEDERAL_OTHER_EMPLOYERS),
-)
-def test_only_the_federal_level_meets_these_cases(registry, key, employer):
-    """Review r5 H-6 property: a worker with a federal case's other facts
-    meets it in the employ of the United States and, with any other
-    employer, meets no federal case that excludes or stays open and
-    reaches the residual."""
-    rule_id, case_id = key
-    rule = next(r for r in registry.rules if r.rule_id == rule_id)
-    _, facts = FEDERAL_CASE_FACTS[key]
-    assert case_id in cases_met(
-        rule, {**facts, "government_level": FEDERAL_LEVEL}
-    )
-    met = cases_met(rule, {**facts, "government_level": employer})
-    limited = {
-        c["case_id"]
-        for c in rule.cases
-        if c["consequence"] in {"noncovered", "open"}
-    }
-    assert not limited & met
-    decided = rule.resolve(met)
-    assert "case_id" not in decided
-    assert decided["consequence"] == "covered"
 
 
 PUBLIC_OFFICE_ELECTION = (
@@ -6697,24 +7029,19 @@ def published_outcome(registry, rule, example):
         assert date(year, 1, 1) >= date.fromisoformat(
             params["mandatory_start"]
         )
-        membership = (
-            "member of an IRS-qualified system"
-            if member
-            else "not a member of an IRS-qualified system"
-        )
-        # Both cases hold for an agreement-covered member; rank decides.
-        matched = {
-            c["case_id"]
-            for c in rule.cases
-            if c["when"].get("public_retirement_system_participation")
-            == membership
-            or (
-                agreement
-                and c["when"]
-                .get("section_218_position", "")
-                .startswith("covered by effective")
-            )
+        # Review r6 M-1: the worker states the texts the cases read, so
+        # the example decides through a case, not the residual.
+        worker = {
+            "government_level": STATE_EMPLOYEE,
+            "public_retirement_system_participation": (
+                QUALIFIED_MEMBER if member else NOT_A_MEMBER
+            ),
+            "section_218_position": (
+                CAFETERIA_AGREEMENT if agreement else MANDATORY_NOT_COVERED
+            ),
         }
+        matched = cases_met(rule, worker)
+        assert matched
         decided = rule.resolve(matched)["consequence"]
         result = {"social_security_coverage": decided}
     elif kind == "minister_gross_concept":
