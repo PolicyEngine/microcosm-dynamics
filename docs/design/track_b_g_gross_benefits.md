@@ -3275,20 +3275,63 @@ This pass added the statutory texts it newly relies on (42 U.S.C.
 402(d)(1)(D), (d)(5), (e)(1), (h)(1)(D), (h)(2), (k)(3)(A), (k)(4) and
 (s)) to `lii_usc_402_415_excerpts.txt`, from a re-fetch whose LII body
 matched the pinned 402 SHA-256 byte for byte.
-`tests/test_track_b_readings_20261023.py` pins the bookkeeping for every
-Python and YAML file in the Track B package, subpackages included, except
-the insured-status modules (`insured_status.py` and
-`_insured_status_qc.py`), whose readings the source-conflict rulings log
-but no Track B note yet documents in full. In the other files, every
-mention of a source conflict, in any spelling, must be a one-line
-`# Source conflict <id>` marker whose id ends at a colon, whitespace, a
-line break or the end of the file. The marker ids must be exactly this
-pass's ids plus the ids other rounds register in that test, each in the
-G, R2, R3 or grace module, and each id must appear whole in a Track B
-design note. This note and the R2 and R3 notes must name each of their
-readings as whole ids and carry no open "Needs Max's judgment" heading,
-and each statutory passage the test quotes must appear verbatim in the
-capture. The invented conformance lattice is unchanged; only the
+`tests/test_track_b_readings_20261023.py` pins the bookkeeping:
+
+- **Files it reads.** Every file in the Track B package, subpackages
+  included, whose suffix in any case is `.py`, `.pyi`, `.yaml` or `.yml`,
+  except the two insured-status modules that #562 adds at the top of the
+  package (`insured_status.py` and `_insured_status_qc.py`). Those keep
+  their own register of readings, with a test of its own, and this test
+  does not read them.
+- **Markers.** Code logs a reading only as the text
+  `# Source conflict <id>`, with exactly that spelling, case and spacing,
+  where the id ends at a colon, whitespace or the end of the file. With
+  those markers removed, a file the test reads may not contain, in any
+  case:
+  - "source" or "sources", with no letter just before it, then
+    "conflict", with nothing but whitespace, `#`, `-` or `_` between;
+  - "us", with no letter or digit just before it, then "oasdi", with at
+    most three colons, whitespace characters, hyphens or underscores
+    between;
+  - "oasdi", with no letter or digit just before it, then at least two
+    words of letters and digits, each after a hyphen.
+
+  So a wrapped, reworded, recased or misspelled marker fails while any of
+  these survive in it. Wordings with none of them, such as "conflicting
+  sources" with no id, pass.
+- **Ids.** The marker ids must be exactly this pass's ids plus the ids
+  other rounds register in that test, each in the G, R2, R3 or grace
+  module. Each must appear in a Track B design note as a whole token,
+  with no letter, digit, underscore or hyphen on either side, and this
+  note and the R2 and R3 notes must name each of their own readings that
+  way.
+- **Headings.** None of those three notes may have a heading line whose
+  text starts with "Needs Max's judgment". In every line, code blocks
+  included, the test first removes leading whitespace, `>` characters
+  and list markers with a space or tab and more text after them. It then
+  reads these as heading lines:
+  - the text after the `#` run of a line that starts with one to six `#`
+    and then a space, a tab or the end of the line;
+  - a line that starts with `**` or `__`;
+  - the text after each `<h1>` to `<h6>` opening tag, up to its closing
+    tag or the end of the note;
+  - for each line of only `=` or only `-` characters, the text from each
+    line of the non-blank run directly above it down to that line.
+
+  It decodes HTML entities; removes HTML tags, `*`, `_`, backticks,
+  backslashes, square brackets, soft hyphens and the zero-width
+  characters U+200B to U+200D, U+2060 and U+FEFF; and skips any
+  characters before the first letter A to Z. It then matches in any case,
+  with any whitespace between the words, a straight apostrophe or U+2018,
+  U+2019 or U+02BC, and "judgment" or "judgement". These rules can flag
+  lines that CommonMark would not read as headings, such as lines in code
+  blocks.
+- **Quotes.** Each statutory passage the test quotes must appear in the
+  capture verbatim up to whitespace. The capture helper also reads
+  zero-width and non-breaking spaces as spaces and curly apostrophes as
+  straight ones.
+
+The invented conformance lattice stays the same; only the
 `parent_benefit` witness moved to two parents in the band.
 
 ## Round-3 input premises and excluded beneficiaries

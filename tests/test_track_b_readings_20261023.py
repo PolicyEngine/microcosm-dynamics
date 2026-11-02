@@ -2,15 +2,20 @@
 
 Verification class: statutory conformance and documentation integrity on
 captured sources only. No population, behavioral or forecast claim.
-Outside the exempt insured-status modules, every mention of a source
-conflict, in any spelling, in a Python or YAML file of the Track B package
-is a ``# Source conflict <id>`` marker. The marker ids are exactly this
-pass's readings plus those other rounds register here, each in the G, R2,
-R3 or grace module, and each id appears whole in a Track B design note.
-Each note names its readings as whole ids and keeps no open "Needs Max's
-judgment" heading.
+Markers: the scan reads every file in the Track B package, subpackages
+included, whose suffix in any case is in ``SOURCES``, except the
+``OWN_REGISTERS`` at the top of the package. With its markers removed, a
+scanned file must hold nothing ``STRAYS`` matches. The ``MARKER`` ids are
+exactly ``READINGS`` plus ``OTHER_ROUNDS``, each in the G, R2, R3 or grace
+module, and each is ``DOCUMENTED`` in a Track B design note. Notes: G, R2
+and R3 name their ``READINGS`` the same way, and none has a heading line,
+as ``_headings`` reads them, that ``JUDGMENT`` matches once ``_plain``
+cleans it. Quotes: each new statutory excerpt appears in its capture as
+``source_text`` normalizes it, with each run of whitespace read as one
+space.
 """
 
+import html
 import re
 from pathlib import Path
 
@@ -60,42 +65,123 @@ OTHER_ROUNDS = {
     "us:oasdi-finality-protected-rates-before-coverage",
     "us:oasdi-sole-full-deduction-zero-dual-composition",
 }
-#: Exempt: the insured-status modules (#562). The source-conflict rulings
-#: log their readings, but no Track B note documents all of them yet.
+#: Exempt, by path inside the package: the insured-status modules that
+#: #562 adds. They keep their own register of readings, with a test of its
+#: own, and this scan does not read them.
 OWN_REGISTERS = {"insured_status.py", "_insured_status_qc.py"}
+#: Scanned suffixes, compared in lower case.
+SOURCES = {".py", ".pyi", ".yaml", ".yml"}
 ID = r"us:oasdi-[a-z0-9]+(?:-[a-z0-9]+)*"
-#: A marker's id ends at a colon, whitespace or the end of the file.
+#: The one marker form, with exactly this spelling, case and spacing. Its
+#: id ends at a colon, whitespace or the end of the file.
 MARKER = re.compile(rf"# Source conflict ({ID})(?=:|\s|$)")
-#: A whole id in a note: no id character or hyphen follows it.
-DOCUMENTED = re.compile(rf"{ID}(?![A-Za-z0-9_-])")
-#: Any spelling: "source conflict", "Source-conflict", "Sources conflict".
-MENTION = re.compile(r"sources?[\W_]*conflict", re.IGNORECASE)
-#: Files that can carry a marker, subpackages included.
-SOURCES = {".py", ".yaml", ".yml"}
+#: What a scanned file may hold only inside a marker, in any case.
+STRAYS = (
+    # "source" or "sources", with no letter just before it, then
+    # "conflict", with nothing but whitespace, "#", "-" or "_" between.
+    re.compile(r"(?<![a-z])sources?[\s#_-]*conflict", re.IGNORECASE),
+    # "us", with no letter or digit just before it, then "oasdi", with at
+    # most three colons, whitespace characters, hyphens or underscores
+    # between.
+    re.compile(r"(?<![a-z0-9])us[\s:_-]{0,3}oasdi", re.IGNORECASE),
+    # "oasdi", with no letter or digit just before it, then at least two
+    # words of letters and digits, each after a hyphen: an id without
+    # its "us:".
+    re.compile(r"(?<![a-z0-9])oasdi(?:-[a-z0-9]+){2}", re.IGNORECASE),
+)
+#: A whole id in a note: no letter, digit, underscore or hyphen on either
+#: side.
+DOCUMENTED = re.compile(rf"(?<![A-Za-z0-9_-]){ID}(?![A-Za-z0-9_-])")
+
+#: Leading whitespace, ">" characters, and list markers with a space or
+#: tab and more text after them.
+CONTAINERS = re.compile(
+    r"(?:[ \t]*(?:>|(?:[-+*]|\d{1,9}[.)])(?=[ \t]+\S)))*[ \t]*"
+)
+#: One to six "#" and then a space, a tab or the end of the line.
+ATX = re.compile(r"#{1,6}(?:[ \t](.*))?")
+#: A line of only "=" or only "-" characters, with spaces or tabs after.
+UNDERLINE = re.compile(r"(?:=+|-+)[ \t]*")
+#: The text after each h1 to h6 opening tag, up to its closing tag or the
+#: end of the note. The lookahead lets an unclosed tag's text overlap the
+#: next heading's.
+HTML_HEADING = re.compile(
+    r"<h([1-6])\b[^>]*>(?=(.*?)(?:</h\1\s*>|\Z))",
+    re.IGNORECASE | re.DOTALL,
+)
+#: What a heading loses before the comparison: HTML tags, "*", "_",
+#: backticks, backslashes, square brackets, soft hyphens and the
+#: zero-width characters U+200B to U+200D, U+2060 and U+FEFF.
+MARKUP = re.compile(r"<[^>]+>|[*_`\\\[\]\u00ad\u200b-\u200d\u2060\ufeff]")
+#: "Needs Max's judgment" after any characters other than the letters A
+#: to Z, in any case, with any whitespace between the words, a straight
+#: apostrophe or U+2018, U+2019 or U+02BC, and "judgment" or "judgement".
+JUDGMENT = re.compile(
+    r"[^A-Za-z]*needs\s+max['\u2018\u2019\u02bc]s\s+judge?ment",
+    re.IGNORECASE,
+)
 
 
 def _module_markers():
-    """Marker ids by file, leaving out ids only exempt modules carry.
+    """Marker ids by file, across the files the scan reads.
 
-    Outside the exempt modules every mention of a source conflict must
-    parse as a marker, so a wrapped, mistyped or reworded one fails.
+    With its markers removed, a scanned file must hold nothing ``STRAYS``
+    matches, so a wrapped, reworded, recased or misspelled marker fails
+    while its id, its id's words or its "source conflict" survive.
     """
     found = {}
     for path in sorted(MODULES.rglob("*")):
-        if path.suffix not in SOURCES or not path.is_file():
-            continue
         name = path.relative_to(MODULES).as_posix()
-        text = path.read_text()
-        ids = MARKER.findall(text)
-        if name not in OWN_REGISTERS:
-            assert len(MENTION.findall(text)) == len(ids), name
-        for found_id in ids:
+        if (
+            name in OWN_REGISTERS
+            or path.suffix.lower() not in SOURCES
+            or not path.is_file()
+        ):
+            continue
+        text = path.read_text(encoding="utf-8")
+        rest = MARKER.sub("", text)
+        strays = [m.group() for p in STRAYS for m in p.finditer(rest)]
+        assert not strays, (name, strays)
+        for found_id in MARKER.findall(text):
             found.setdefault(found_id, set()).add(name)
-    return {
-        name: files
-        for name, files in found.items()
-        if not files <= OWN_REGISTERS
-    }
+    return found
+
+
+def _headings(text):
+    """Heading lines in a note, code blocks included.
+
+    With ``CONTAINERS`` removed from each line, these are heading lines:
+    the text after the "#" run of a line ``ATX`` matches; a line that
+    starts with "**" or "__"; each ``HTML_HEADING``; and, for each line
+    ``UNDERLINE`` matches, the text from each line of the non-blank run
+    directly above it down to that line.
+    """
+    lines = [
+        line[CONTAINERS.match(line).end() :] for line in text.splitlines()
+    ]
+    found = [m.group(2) for m in HTML_HEADING.finditer("\n".join(lines))]
+    run = []
+    for line in lines:
+        if not line:
+            run = []
+            continue
+        if UNDERLINE.fullmatch(line):
+            found += [" ".join(run[i:]) for i in range(len(run))]
+        elif atx := ATX.fullmatch(line):
+            found.append(atx.group(1) or "")
+        elif line.startswith(("**", "__")):
+            found.append(line)
+        run.append(line)
+    return found
+
+
+def _plain(heading):
+    """A heading's text with HTML entities decoded and ``MARKUP`` gone."""
+    return MARKUP.sub("", html.unescape(heading))
+
+
+def _open_judgment_headings(text):
+    return [h for h in _headings(text) if JUDGMENT.match(_plain(h))]
 
 
 def test_markers_and_logged_readings_match_in_both_directions():
@@ -115,15 +201,15 @@ def test_every_marker_names_a_reading_documented_in_a_design_note():
     # Whole ids, so a truncated or misspelled marker cannot match a prefix.
     documented = set()
     for path in (ROOT / "docs" / "design").glob("track_b_*.md"):
-        documented.update(DOCUMENTED.findall(path.read_text()))
+        documented.update(DOCUMENTED.findall(path.read_text(encoding="utf-8")))
     for name in _module_markers():
         assert name in documented, name
 
 
 @pytest.mark.parametrize("note", sorted(NOTES))
 def test_each_note_names_its_readings_and_has_no_open_judgment_heading(note):
-    text = NOTES[note].read_text()
-    assert not re.search(r"^#+ Needs Max's judgment", text, re.MULTILINE)
+    text = NOTES[note].read_text(encoding="utf-8")
+    assert not _open_judgment_headings(text), note
     named = set(DOCUMENTED.findall(text))
     for name in READINGS[note]:
         assert name in named, (note, name)
