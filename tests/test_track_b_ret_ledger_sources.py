@@ -177,6 +177,8 @@ RULE_QUOTES = {
     "poms_rs_02501_155": [
         "treat the beneficiary as not being on the benefit rolls in applying the maximum provisions",
         "Reduce the maximum applicable to the other beneficiaries by the amount of the partial benefit due the beneficiary.",
+        "charge each auxiliary's or survivor's excess earnings against their own benefit.",
+        "The partial benefits of other auxiliaries cannot be readjusted except to the extent to which we charge the auxiliary's excess earnings against the benefits to which the auxiliary otherwise was eligible.",
     ],
     "poms_rs_02501_160": [
         "Withhold any increased amounts due beneficiaries outside the household of the working beneficiary until after the close of the year"
@@ -194,7 +196,9 @@ RULE_QUOTES = {
         "we will consider only the benefit actually payable when reducing the benefits of dually entitled auxiliaries or survivors"
     ],
     "poms_gn_02603_050": [
-        "Deductions based on the annual earnings test become permanent deductions based on a closed year work report"
+        "Deductions based on the annual earnings test become permanent deductions based on a closed year work report",
+        "regardless of other deductions that may apply for any other beneficiary on record disregard the dually entitled beneficiary",
+        "The worker's rate will always be $0.00 because there are no partial deductions for temporary work deductions.",
     ],
     "poms_gn_02603_055": [
         "Apply WC or PDB offset to determine the amount of offset that applies to each beneficiary."
@@ -282,6 +286,19 @@ RULE_QUOTES = {
 
 
 WORKED_EXAMPLE_QUOTES = {
+    "poms_rs_02501_160": [
+        "$159.90",
+        "$213.10",
+        "$396",
+        "$99",
+        "$555",
+        "$60",
+        "$132",
+        "$119",
+        "$33",
+        "$20",
+        "$ 39",
+    ],
     "poms_rs_02501_080": [
         "Beneficiary is age 64 in TY 1999",
         "$12,121",
