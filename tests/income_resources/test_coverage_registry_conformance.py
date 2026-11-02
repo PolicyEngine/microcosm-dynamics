@@ -1462,8 +1462,9 @@ def test_open_readings_are_named_once_and_described_in_prose():
     # agreement exemption and the non-individual farm arrangement (78), and
     # the sect member's 1984-85 church income and the 1973-1987 pensions
     # and church annuity contributions (84), and a 401(a) trust's small
-    # remuneration in the 1978 and 1984 nonprofit rows (88).
-    assert described == 88
+    # remuneration in the 1978 and 1984 nonprofit rows (88), and the
+    # clergy rows' agreement exemption before 1983-04-20 (92).
+    assert described == 92
 
 
 READING_TEXT = {
@@ -5320,7 +5321,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 357
+    assert sum(len(row["cases"]) for row in rows) == 359
     deferred = [
         w for w in INVENTED_SWEEP_WORKERS if w["expected"] == "deferred"
     ]

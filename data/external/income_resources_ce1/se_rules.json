@@ -7503,7 +7503,7 @@
         "case_id": "foreign_agreement_sole_coverage",
         "precedence": 2,
         "when": {
-          "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
+          "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20"
         },
         "consequence": "deferred",
         "defers_to": [

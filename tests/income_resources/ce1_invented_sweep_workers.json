@@ -1645,7 +1645,7 @@
    "facts": {
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": [
-     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country",
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20",
      "no 1402(e) exemption in effect and no applicable poverty vow"
     ]
    },
@@ -1658,7 +1658,7 @@
    "facts": {
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": [
-     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country",
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20",
      "no 1402(e) exemption in effect and no applicable poverty vow"
     ]
    },
@@ -1895,7 +1895,7 @@
    "rule_id": "se_clergy_gross_concept_1987_2026",
    "worker": "INVENTED: US-citizen minister in Germany whom the agreement makes subject only to German social security law, 2025",
    "facts": {
-    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
+    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20"
    },
    "expected": "deferred",
    "decides": "foreign_agreement_sole_coverage",
@@ -8336,7 +8336,7 @@
    "facts": {
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": [
-     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country",
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20",
      "no 1402(e) exemption in effect and no applicable poverty vow"
     ]
    },
@@ -8731,7 +8731,7 @@
    "rule_id": "se_clergy_gross_concept_1987_2026",
    "worker": "INVENTED: 2015: United States citizen pastor abroad whom a United States social security agreement makes subject only to the host country's laws: deferred to the clergy family.",
    "facts": {
-    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
+    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20"
    },
    "expected": "deferred",
    "decides": "foreign_agreement_sole_coverage",
@@ -8993,7 +8993,7 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20"
     ]
    },
    "expected": "noncovered",
@@ -16880,6 +16880,58 @@
    },
    "expected": "refuses",
    "decides": "section_401a_trust_small_remuneration"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 M-9): 1982: a United States citizen pastor of a congregation in Italy whom a United States agreement in effect for the year makes subject only to that country's social security laws: no capture dates the agreement exemption before 1983-04-20, so the case refuses.",
+   "facts": {
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": [
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning before 1983-04-20",
+     "no 1402(e) exemption in effect and no applicable poverty vow"
+    ]
+   },
+   "expected": "refuses",
+   "decides": "foreign_agreement_sole_coverage_before_1983"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r6 M-9): 1980: a United States citizen pastor of a congregation in West Germany whom a United States agreement in effect for the year makes subject only to that country's social security laws: no capture dates the agreement exemption before 1983-04-20, so the case refuses.",
+   "facts": {
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": [
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning before 1983-04-20",
+     "no 1402(e) exemption in effect and no applicable poverty vow"
+    ]
+   },
+   "expected": "refuses",
+   "decides": "foreign_agreement_sole_coverage_before_1983"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 M-9, just misses foreign_agreement_sole_coverage_before_1983 on ministerial_service): 1982: the pastor's spouse, under the same agreement in Italy, who teaches at a secular school there: not ministry, so this family excludes nothing.",
+   "facts": {
+    "ministerial_service": [
+     "not ministry, order duties or Christian Science practice",
+     "teaching at a secular school"
+    ],
+    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning before 1983-04-20"
+   },
+   "expected": "covered",
+   "decides": "non_ministerial_service"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r6 M-9, just misses foreign_agreement_sole_coverage_before_1983 on ministerial_service): 1980: the pastor's spouse, under the same agreement in West Germany, who teaches at a secular school there: not ministry, so this family excludes nothing.",
+   "facts": {
+    "ministerial_service": [
+     "not ministry, order duties or Christian Science practice",
+     "teaching at a secular school"
+    ],
+    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning before 1983-04-20"
+   },
+   "expected": "covered",
+   "decides": "non_ministerial_service"
   }
  ]
 }

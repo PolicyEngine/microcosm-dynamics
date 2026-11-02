@@ -2809,6 +2809,27 @@
           }
         },
         {
+          "case_id": "foreign_agreement_sole_coverage_before_1983",
+          "consequence": "open",
+          "description": "No capture holds 26 U.S.C. 1401(c) or 42 U.S.C. 433 or dates when an agreement first exempted self-employment income, so for taxable years beginning before 1983-04-20 the case refuses, as se_nonresident_alien_1968_1983's agreement case does: the two families agree on one date (review r6 M-9). Ranked above the ministry cases, which the agreement would displace.",
+          "open_alternatives": [
+            {
+              "description": "An agreement in effect for the year exempts the ministry earnings: noncovered.",
+              "name": "agreement_exemption_in_force"
+            },
+            {
+              "description": "No agreement exempted self-employment income before 1983-04-20: the ministry cases decide (usually covered).",
+              "name": "no_exemption_before_1983"
+            }
+          ],
+          "open_reason": "AGREEMENT_EXEMPTION_BEFORE_1983_UNDATED: no CE1 capture holds 26 U.S.C. 1401(c) or 42 U.S.C. 433, or dates when a social security agreement first exempted a minister's self-employment income from SECA, so for taxable years beginning before 1983-04-20 whether an agreement made the minister subject only to another country's laws is not settled.",
+          "precedence": 3,
+          "when": {
+            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning before 1983-04-20",
+            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
+          }
+        },
+        {
           "case_id": "cnmi_noncitizen_resident_ministry",
           "consequence": "open",
           "description": "411(b)'s final sentence names four places; Publication 517 (2025) adds the CNMI. The case ranks above nonresident_alien_ministry, which every such minister also meets. An exempt minister is noncovered on both readings (nonresident_alien_ministry, or effective_1402e_exemption), so the case reads that no effective 1402(e) exemption is shown (review r6 M-2). Public Law 94-241, which POMS RS 01901.320 cites for the Commonwealth, is an Act of the 94th Congress, so no worker meets the text before that Congress; clergy_1968_1972 carries no CNMI case.",
@@ -2827,7 +2848,7 @@
             "nonresident_alien_ministry",
             "ministry_without_exemption_or_vow"
           ],
-          "precedence": 3,
+          "precedence": 4,
           "when": {
             "clergy_or_religious_exemption": "not shown to have an effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
@@ -2838,7 +2859,7 @@
           "case_id": "nonresident_alien_ministry",
           "consequence": "noncovered",
           "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
-          "precedence": 4,
+          "precedence": 5,
           "when": {
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
             "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)"
@@ -2851,7 +2872,7 @@
           "overrides": [
             "ministry_without_exemption_or_vow"
           ],
-          "precedence": 5,
+          "precedence": 6,
           "when": {
             "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)",
             "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada",
@@ -2863,7 +2884,7 @@
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 6,
+          "precedence": 7,
           "when": {
             "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -2873,7 +2894,7 @@
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
           "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
-          "precedence": 7,
+          "precedence": 8,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -2883,7 +2904,7 @@
           "case_id": "non_ministerial_service",
           "consequence": "covered",
           "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
-          "precedence": 8,
+          "precedence": 9,
           "when": {
             "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
@@ -2892,7 +2913,7 @@
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 9,
+          "precedence": 10,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -3188,6 +3209,10 @@
                 "clergy_or_religious_exemption",
                 "ministerial_service",
                 "nonresident_alien_status"
+              ],
+              "foreign_agreement_sole_coverage_before_1983": [
+                "clergy_or_religious_exemption",
+                "ministerial_service"
               ],
               "nonresident_alien_ministry": [
                 "ministerial_service",
@@ -3544,14 +3569,35 @@
         {
           "case_id": "foreign_agreement_sole_coverage",
           "consequence": "noncovered",
-          "description": "Publication 517 (2025) lists this among the exceptions to SE tax on ministerial earnings: \"You are subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country.\" Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c) \"FOR AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\", replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a minister subject only to the partner country's laws meets both wordings. The condition can hold only while such an agreement is in effect. The captures hold neither 42 U.S.C. 433 nor 26 U.S.C. 1401(c), so they do not show when the exemption began.",
+          "description": "Publication 517 (2025) lists this among the exceptions to SE tax on ministerial earnings: \"You are subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country.\" Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c) \"FOR AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\", replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a minister subject only to the partner country's laws meets both wordings. The condition can hold only while such an agreement is in effect. The captures hold neither 42 U.S.C. 433 nor 26 U.S.C. 1401(c), so they do not show when the exemption began. From taxable years beginning on or after 1983-04-20, the date both this family and self_employment_nonresident_alien use; earlier years reach foreign_agreement_sole_coverage_before_1983 (review r6 M-9).",
           "overrides": [
             "cnmi_noncitizen_resident_ministry",
             "ministry_without_exemption_or_vow"
           ],
           "precedence": 3,
           "when": {
-            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country",
+            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20",
+            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
+          }
+        },
+        {
+          "case_id": "foreign_agreement_sole_coverage_before_1983",
+          "consequence": "open",
+          "description": "No capture holds 26 U.S.C. 1401(c) or 42 U.S.C. 433 or dates when an agreement first exempted self-employment income, so for taxable years beginning before 1983-04-20 the case refuses, as se_nonresident_alien_1968_1983's agreement case does: the two families agree on one date (review r6 M-9). Ranked above the ministry cases, which the agreement would displace.",
+          "open_alternatives": [
+            {
+              "description": "An agreement in effect for the year exempts the ministry earnings: noncovered.",
+              "name": "agreement_exemption_in_force"
+            },
+            {
+              "description": "No agreement exempted self-employment income before 1983-04-20: the ministry cases decide (usually covered).",
+              "name": "no_exemption_before_1983"
+            }
+          ],
+          "open_reason": "AGREEMENT_EXEMPTION_BEFORE_1983_UNDATED: no CE1 capture holds 26 U.S.C. 1401(c) or 42 U.S.C. 433, or dates when a social security agreement first exempted a minister's self-employment income from SECA, so for taxable years beginning before 1983-04-20 whether an agreement made the minister subject only to another country's laws is not settled.",
+          "precedence": 4,
+          "when": {
+            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning before 1983-04-20",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
           }
         },
@@ -3574,7 +3620,7 @@
             "nonresident_alien_ministry",
             "ministry_without_exemption_or_vow"
           ],
-          "precedence": 4,
+          "precedence": 5,
           "when": {
             "clergy_or_religious_exemption": "not shown to have an effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
@@ -3585,7 +3631,7 @@
           "case_id": "nonresident_alien_ministry",
           "consequence": "noncovered",
           "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual, except, for taxable years beginning on or after April 20, 1983, as a section 433 agreement provides. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
-          "precedence": 5,
+          "precedence": 6,
           "when": {
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
             "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one), and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings"
@@ -3598,7 +3644,7 @@
           "overrides": [
             "ministry_without_exemption_or_vow"
           ],
-          "precedence": 6,
+          "precedence": 7,
           "when": {
             "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)",
             "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada",
@@ -3610,7 +3656,7 @@
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 7,
+          "precedence": 8,
           "when": {
             "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -3620,7 +3666,7 @@
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
           "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it. A Christian Science reader counts as a minister (Publication 517: \"For tax purposes, Christian Science readers are considered the same as ordained, commissioned, or licensed ministers.\").",
-          "precedence": 8,
+          "precedence": 9,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -3630,7 +3676,7 @@
           "case_id": "non_ministerial_service",
           "consequence": "covered",
           "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
-          "precedence": 9,
+          "precedence": 10,
           "when": {
             "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
@@ -3639,7 +3685,7 @@
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 10,
+          "precedence": 11,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -4138,6 +4184,10 @@
               "foreign_agreement_sole_coverage": [
                 "ministerial_service",
                 "clergy_or_religious_exemption"
+              ],
+              "foreign_agreement_sole_coverage_before_1983": [
+                "clergy_or_religious_exemption",
+                "ministerial_service"
               ],
               "nonresident_alien_ministry": [
                 "ministerial_service",
@@ -19936,7 +19986,7 @@
           "description": "Publication 517 (2025) excepts from SE tax a minister who is \"subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country\", and the row's Mexico example turns on it: \"The United States doesn't have a social security agreement with Mexico, so you are subject to U.S. SE tax\". The clergy and religious family decides the service (clergy_1982_2026, case foreign_agreement_sole_coverage).",
           "precedence": 2,
           "when": {
-            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
+            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20"
           }
         },
         {
