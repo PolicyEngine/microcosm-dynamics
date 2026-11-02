@@ -236,7 +236,7 @@ def test_a_deducted_caregiver_keeps_the_ordinary_minimum():
     assert result.age_adjusted_rate == ordinary.age_adjusted_rate
 
 
-def test_each_caregiver_compares_alone():
+def test_each_caregiver_compares_with_only_its_entitlement_replaced():
     state = _state(1000, 1800)
     members = (
         _caregiver(g.Role.WIDOW),
@@ -254,31 +254,17 @@ def test_each_caregiver_compares_alone():
     events = {"c2": _full()}
     result = _after(state, members, events, households)
 
-    def alone(key, first):
-        other = "s" if key == "w" else "w"
+    # Round 10: 402(q)(5)(D) replaces only the one entitlement, so the other
+    # caregiver keeps its care facts in the comparison.
+    def replaced(key, first):
         comparison = tuple(
-            (
-                first
-                if m.beneficiary_id == key
-                else (
-                    g.Beneficiary(
-                        other,
-                        m.role,
-                        reduction_months=60,
-                        reduction_period_months=60,
-                        child_in_care=False,
-                    )
-                    if m.beneficiary_id == other
-                    else m
-                )
-            )
-            for m in members
+            first if m.beneficiary_id == key else m for m in members
         )
         return _after(state, comparison, events, households)
 
-    widow = alone("w", _mother()).by_id()["w"].auxiliary_payable
+    widow = replaced("w", _mother()).by_id()["w"].auxiliary_payable
     divorced = (
-        alone("s", g.Beneficiary("s", g.Role.MOTHER_FATHER))
+        replaced("s", g.Beneficiary("s", g.Role.MOTHER_FATHER))
         .by_id()["s"]
         .auxiliary_payable
     )
@@ -801,8 +787,10 @@ def _deceased(*people):
     )
 
 
-CHILD = ("c1", T.CHILD, 500, 500, 0, {1})
-WORKING_CHILD = ("c2", T.CHILD, 500, 500, 100, {1})
+# A survivor child's OB is 3/4 of the PIA (402(d)(2)), so 750 beside a
+# widow(er)'s 1,000. The maximum leaves each child 500.
+CHILD = ("c1", T.CHILD, 500, 750, 0, {1})
+WORKING_CHILD = ("c2", T.CHILD, 500, 750, 100, {1})
 
 
 @pytest.mark.parametrize("kind", [T.WIDOW, T.DWB])

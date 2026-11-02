@@ -2639,8 +2639,9 @@ room and the widow(er) did not:
 `_care_minimums_after_deductions` now builds the comparison family and runs
 that month's events and households through the same readjustment. A temporary
 deduction in another household frees nothing, so that widow(er) stays at $500
-in the third row. Each caregiver compares alone, so a deduction on one can
-raise the other's minimum. A deductee keeps G's ordinary minimum, because GN
+in the third row. Each caregiver's comparison replaces only its own
+entitlement (round 10 corrected a reading that cleared the other's care), so a
+deduction on one can raise the other's minimum. A deductee keeps G's ordinary minimum, because GN
 02603.050B.3 redistributes only to people "not subject to a deduction", in
 either family.
 
@@ -2703,12 +2704,12 @@ stays refused, and finality and positive delayed credits keep their rows.
 | The minimum equals the better of the reduced rate and what a mother or father receives this month, under this month's events and households | `test_a_full_deduction_raises_the_care_minimum`; `test_a_temporary_deduction_reaches_only_its_own_household`; Hypothesis `test_the_minimum_equals_the_better_of_the_two_public_families` |
 | The minimum moves only the caregiver's own money, and leaves the maximum accounting alone | `test_the_minimum_moves_only_the_caregivers_own_money` |
 | The rule reaches a caregiver outside the maximum and a disabled widow(er) | `test_a_divorced_caregiver_outside_the_maximum_keeps_the_minimum`; `test_a_disabled_widow_reaches_the_same_minimum` |
-| Each caregiver compares alone, and a deductee keeps the ordinary minimum | `test_each_caregiver_compares_alone`; `test_a_deduction_on_one_caregiver_raises_the_others_minimum`; `test_a_deducted_caregiver_keeps_the_ordinary_minimum` |
+| Each caregiver compares with only its own entitlement replaced (round 10 corrected "compares alone"), and a deductee keeps the ordinary minimum | `test_each_caregiver_compares_with_only_its_entitlement_replaced`; `test_a_deduction_on_one_caregiver_raises_the_others_minimum`; `test_a_deducted_caregiver_keeps_the_ordinary_minimum` |
 | Only a current, entitled, undeducted widow(er) reaches a comparison | `test_a_deducted_caregiver_reaches_no_comparison`; `test_an_unentitled_caregiver_reaches_no_comparison`; `test_a_living_workers_divorced_spouse_has_no_care_minimum` |
 | A dual caregiver takes the offset after the minimum, and the offset stops at zero | `test_a_dual_caregiver_takes_the_offset_after_the_minimum`; `test_a_dual_caregiver_outside_the_maximum_takes_the_same_offset` |
 | A partial deduction computes only where every amount between the two bounds agrees, and otherwise refuses with its row and weight | Hypothesis `test_any_partial_amount_stays_between_the_two_bounds`; Hypothesis `test_a_partial_deduction_computes_or_refuses_within_bounds`; `test_a_partial_deduction_refuses_where_it_can_move_the_rate`; `test_ret_refuses_a_partial_month_the_minimum_turns_on` |
 | RET pays the minimum with or without a binding maximum | `test_ret_pays_the_minimum_on_a_binding_month`; `test_ret_pays_the_minimum_on_a_month_with_no_binding_maximum` |
-| RET asks for family facts exactly where a minimum can move | `test_a_reduced_survivor_beside_a_child_needs_the_family_facts`; `test_no_minimum_can_move_on_these_records`; `test_an_unreduced_survivor_needs_no_family_facts`; `test_a_living_workers_record_has_no_care_minimum` |
+| RET asks for family facts wherever a minimum can move. Without a context it can't tell every such month apart, so it also asks on some months where G leaves the rate alone (round 10 narrowed that request) | `test_a_reduced_survivor_beside_a_child_needs_the_family_facts`; `test_no_minimum_can_move_on_these_records`; `test_an_unreduced_survivor_needs_no_family_facts`; `test_a_living_workers_record_has_no_care_minimum` |
 | With no caregiver, an unbound RET month equals G | Hypothesis `test_with_no_caregiver_an_unbound_month_matches_g` |
 | With no delayed credits, no RIB exceeds its PIA in any month, 1981 and 1982 included | `test_a_rib_above_its_pia_is_an_input_error_before_1983`; `test_money_history_keeps_the_same_cap_before_1983` |
 | Before 1983, delayed credits, finality and a rate at or below the PIA keep their refusal | `test_delayed_credits_keep_the_refusal_before_1983`; `test_finality_keeps_its_refusal_before_1983`; `test_a_rate_at_or_below_the_pia_keeps_the_refusal_before_1983` |
@@ -2721,3 +2722,101 @@ them. A second pass caught two of those new cases testing nothing: they set
 `fra_month=0`, past full retirement age, so no deduction applied. The older
 survivor-alone test had the same flaw. Each of them now asserts the deduction.
 The eleventh survivor stays out of the ledger as equivalent, as above.
+
+## PR 563 round 10: a caregiver keeps its care facts in another's comparison
+
+GPT-6.1 Sol reviewed `bc460e32` and asked for changes, with one medium and one
+low finding. Both reproduced. The medium underpaid a supported surviving
+spouse through G and through RET's provisional ledger. The low kept a refusal
+where no minimum could reach the rate.
+
+### What changed
+
+**Another caregiver keeps its care facts.** Act 202(q)(5)(D) compares a
+widow's or widower's benefit with what the person would have had "had he or
+she been entitled for such month to mother's or father's insurance benefits".
+That text replaces one entitlement. Round 9's comparison also cleared every
+other widow(er)'s care flag, so a second caregiver lost its own minimum inside
+the first one's comparison. When that second caregiver took a deduction, G
+counted its whole age reduction against the maximum, though its minimum
+leaves less of its share unpaid, and the first caregiver's comparison came out
+low. Sol's cases put a surviving divorced spouse and a widow in care of one
+child, with a temporary own-work deduction on the widow in the same household:
+
+| PIA | Maximum | Cohort and reduction | Rate at `bc460e32` | Rate now |
+| --- | --- | --- | --- | --- |
+| $2.70 | $4.20 | 1960, 80 of 80 | $1.90 | $2.00 |
+| $1,000 | $1,600 | 1966, 84 of 84 | $715 | $746.60 |
+| $1,688 | $2,586.90 | 1966, 84 of 84 | $1,206.90 | $1,207.20 |
+| $1,800 | $2,891.50 | 1966, 84 of 84 | $1,287 | $1,349.30 |
+
+In the last row the widow's share in the former spouse's comparison is
+$1,156.60 and the widow's minimum pays $963.80, so the deduction leaves
+$192.80 counted against the maximum (GN 02603.050C). The mother then takes
+$1,350 × ($2,891.50 − $192.80) / $2,700 = $1,349.30. The $1,688 row uses that
+PIA's 2026 formula maximum, and its whole-dollar payment moves from $1,206 to
+$1,207.
+
+`_mother_father_comparison` now changes only the caregiver it compares. Every
+other member keeps its declared facts, care included, so each nested
+comparison applies the same rule in a family where one more caregiver has
+become a mother or father. Each nesting converts one more caregiver, so the
+recursion ends. The fix reaches a disabled widow(er) deductee, a dual
+deductee on a temporary or permanent event, and RET's provisional ledger:
+Sol's provisional case now pays $746.60 where `bc460e32` paid $715, and the
+final $750 stays.
+
+**One call computes each comparison family once.** Nested comparisons reach
+the same family in different orders. A family depends only on which
+caregivers it has converted, so `_care_scope` opens one cache for each call to
+`_family_benefits` or `_after_deductions`, and `_care_comparison` keys each
+family by its record, members, month and parameters, plus its events and
+households for the deduction comparison. A call with k caregivers runs at most
+2^k families. Without the cache, six caregivers ran 1,957 family
+computations; with it they run 64. G sets no bound on how many
+caregivers a family holds, so the cost still grows with that number.
+
+**RET asks for family facts only where a minimum can reach the rate.**
+Without a context, round 9 asked for facts wherever a widow(er)'s rate sat
+below its original rate beside an entitled child. A survivor child's OB and a
+mother's are both 3/4 of the PIA (402(d)(2), 402(g)(2)). A readjusted rate
+stops at its OB, and the new property finds no comparison above a mother's
+OB. So no minimum reaches a rate at or above a child's original rate, and
+`_care_minimum_can_move` now asks only below the lower of the two. Sol's
+record, a widow at $905 of $1,000 beside a working child at $750, now computes
+without the facts. It pays what G pays with them: $905 to the widow and the
+child's $750 withheld, final and provisional.
+
+**Round 9's tests.** `test_each_caregiver_compares_alone` built each
+comparison with the other caregiver's care cleared. It now keeps that care, as
+`test_each_caregiver_compares_with_only_its_entitlement_replaced`, and its
+amounts stand: in that family neither caregiver's minimum changes the other's
+comparison. Two RET records gave a child a $500 OB beside a widow's $1,000. A
+survivor child's OB on that PIA is $750, and the records now say so.
+
+### What stayed
+
+- **A deductee keeps G's ordinary minimum** (GN 02603.050B.3), in the actual
+  family and now in each comparison too.
+- **The ordinary family.** A seeded sweep of 4,000 invented two-caregiver
+  families moved 11, all on a month with a deduction. The 2,016 without a
+  deduction kept every outcome, refusals and input errors included.
+- **The partial-deduction refusal** and its two bounds.
+- **Sol's `needs_max` items need no new call.** Sol read 402(q)(5)(D) as
+  replacing only the one entitlement, and no source clears another
+  caregiver's care.
+
+### New executed invariants
+
+| Invariant | Executing tests in `test_track_b_ret_ledger_fix_round_10.py` |
+| --- | --- |
+| Each caregiver's rate equals the better of its own reduced rate and what it would receive as a mother or father where only its entitlement changes, under the month's events and households | `test_another_deducted_caregiver_keeps_its_minimum`; `test_a_deducted_disabled_widow_keeps_the_minimum`; `test_a_formula_maximum_moves_a_whole_dollar`; `test_a_dual_deductee_keeps_its_minimum_either_way`; `test_each_event_reaches_the_comparison_as_it_reaches_the_family`; `test_three_caregivers_each_compare_with_one_entitlement_replaced`; Hypothesis `test_each_caregiver_takes_the_better_of_its_rate_and_its_comparison` |
+| The family and household entries agree | `test_the_family_and_household_entries_agree` |
+| No comparison passes a mother's OB | Hypothesis `test_each_caregiver_takes_the_better_of_its_rate_and_its_comparison` |
+| One call computes each comparison family once, at most 2^k for k caregivers; the cache ends with its call and keeps records, households and events apart | `test_each_comparison_family_runs_once`; `test_the_comparison_cache_ends_with_its_call`; `test_one_scope_keeps_records_households_and_events_apart` |
+| RET's provisional ledger pays the same minimum | `test_ret_pays_the_minimum_on_the_provisional_ledger` |
+| Without a context, RET asks for family facts only below the lower of a widow(er)'s original rate and an entitled child's, and a month it settles without them pays what G pays with them | `test_a_rate_past_any_minimum_needs_no_family_facts`; `test_a_childs_original_rate_bounds_the_request`; `test_the_higher_of_two_declared_child_rates_bounds_the_request`; `test_a_widows_own_original_rate_still_bounds_the_request`; Hypothesis `test_a_month_ret_settles_without_family_facts_matches_g` |
+
+25 of the module's 37 tests fail against `bc460e32`, and round 9's 62
+all pass there. `scratch/review/round10_mutate.py` lists 22 mutations; a
+Fleet ops hold on local mutation runs puts their results in a later commit.

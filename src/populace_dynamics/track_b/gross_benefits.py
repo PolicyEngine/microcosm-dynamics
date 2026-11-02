@@ -258,6 +258,7 @@ from __future__ import annotations
 import math
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
+from contextvars import ContextVar
 from dataclasses import dataclass, field, fields
 from datetime import date
 from decimal import Decimal
@@ -3907,33 +3908,41 @@ def _mother_father_care_rate(
     for a surviving divorced caregiver (RS 00615.682). Only the actual
     202(e)/(f) surviving divorced spouse stays outside (403(a)(3)(C)).
     The comparison has no age reduction or RIB-LIM; its own-benefit offset
-    is applied by the actual widow computation. Other care flags are
-    cleared so this comparison cannot recursively compare widow floors.
+    is applied by the actual widow computation. 402(q)(5)(D) substitutes
+    only this caregiver's entitlement, so another caregiver keeps its care
+    facts and its own minimum in the comparison.
     """
     comparison = _mother_father_comparison(beneficiaries, caregiver)
-    result = _family_benefits(state, comparison, payment_month, params)
+    result = _care_comparison(
+        ("ordinary", state, comparison, payment_month, id(params)),
+        lambda: _family_benefits(state, comparison, payment_month, params),
+    )
     return result.by_id()[caregiver.beneficiary_id].age_adjusted_rate
 
 
 def _mother_father_comparison(beneficiaries, caregiver):
-    comparison = []
-    for member in beneficiaries:
-        if member.beneficiary_id == caregiver.beneficiary_id:
-            comparison.append(
-                _replace_declared(
-                    member,
-                    role=Role.MOTHER_FATHER,
-                    reduction_months=0,
-                    reduction_period_months=None,
-                    original_benefit_basis=None,
-                    child_in_care=None,
-                )
+    return tuple(
+        (
+            _replace_declared(
+                member,
+                role=Role.MOTHER_FATHER,
+                reduction_months=0,
+                reduction_period_months=None,
+                original_benefit_basis=None,
+                child_in_care=None,
             )
-        elif member.role in _WIDOW_ROLES:
-            comparison.append(_replace_declared(member, child_in_care=False))
-        else:
-            comparison.append(member)
-    return comparison
+            if member.beneficiary_id == caregiver.beneficiary_id
+            else member
+        )
+        for member in beneficiaries
+    )
+
+
+def _care_comparison(key, compute):
+    cache = _CARE_COMPARISONS.get()
+    if key not in cache:
+        cache[key] = compute()
+    return cache[key]
 
 
 def _refuse_widow_drc_savings_clause(
@@ -4114,6 +4123,28 @@ def _declared_worker_entitled(state: RecordState) -> bool:
     )
 
 
+# Each nested comparison turns one more caregiver into a mother or father, so
+# the recursion ends. A family is fixed by which caregivers it has turned, so
+# one call computes each of its at most 2**k comparison families once.
+_CARE_COMPARISONS = ContextVar("_CARE_COMPARISONS", default=None)
+
+
+def _care_scope(function):
+    """Share one call's comparison families with each nested comparison."""
+
+    def scoped(*args):
+        if _CARE_COMPARISONS.get() is not None:
+            return function(*args)
+        token = _CARE_COMPARISONS.set({})
+        try:
+            return function(*args)
+        finally:
+            _CARE_COMPARISONS.reset(token)
+
+    return scoped
+
+
+@_care_scope
 def _family_benefits(
     state: RecordState,
     beneficiaries: Sequence[Beneficiary],
@@ -4617,6 +4648,7 @@ def family_benefits_after_deductions(
     )
 
 
+@_care_scope
 def _after_deductions(
     state,
     beneficiaries,
@@ -4718,7 +4750,8 @@ def _care_minimums_after_deductions(
     RS 00615.340 compares what a mother or father would receive, so the
     comparison family takes this month's events and households. A deductee
     keeps its rate in either family (GN 02603.050B.3), so its own minimum
-    stays G's ordinary one.
+    stays G's ordinary one. Another caregiver keeps its care facts in the
+    comparison, so a deducted one keeps that ordinary minimum there too.
 
     An event's ``payable`` belongs to the actual family's rate, and no source
     carries a partial amount to a comparison rate. Treating every event as
@@ -4743,22 +4776,41 @@ def _care_minimums_after_deductions(
             "deferred allocation coverage",
         )
     minimums = {}
+    full = {
+        bid: _replace_declared(event, payable=Fraction(0))
+        for bid, event in events.items()
+    }
     for caregiver in caregivers:
         cid = caregiver.beneficiary_id
         comparison = _mother_father_comparison(beneficiaries, caregiver)
-        ordinary = _family_benefits(state, comparison, payment_month, params)
-        highest = _readjusted_for_events(
-            state,
-            comparison,
-            payment_month,
-            params,
-            ordinary,
-            {
-                bid: _replace_declared(event, payable=Fraction(0))
-                for bid, event in events.items()
-            },
-            households,
-            {},
+        ordinary = _care_comparison(
+            ("ordinary", state, comparison, payment_month, id(params)),
+            lambda comparison=comparison: _family_benefits(
+                state, comparison, payment_month, params
+            ),
+        )
+        highest = _care_comparison(
+            (
+                "events",
+                state,
+                comparison,
+                payment_month,
+                id(params),
+                tuple(sorted(full.items())),
+                tuple(sorted(households.items())),
+            ),
+            lambda comparison=comparison, ordinary=ordinary: (
+                _readjusted_for_events(
+                    state,
+                    comparison,
+                    payment_month,
+                    params,
+                    ordinary,
+                    full,
+                    households,
+                    {},
+                )
+            ),
         )
         ceiling = highest.by_id()[cid].age_adjusted_rate
         settled = all(event.payable == 0 for event in events.values())

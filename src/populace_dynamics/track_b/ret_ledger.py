@@ -1148,9 +1148,12 @@ def _divorced_excluded(b: RETBeneficiary, month: int) -> bool:
 def _care_minimum_can_move(record, month, deductees):
     """Whether another person's deduction can raise a 402(q)(5)(D) minimum.
 
-    G settles it where a context names the caregiver. Without one, any
-    reduced surviving-spouse rate beside an entitled child stays open, and the
-    caller's refusal names the missing facts.
+    G settles it where a context names the caregiver. Without one, a reduced
+    surviving-spouse rate below an entitled child's original rate stays open,
+    and the caller's refusal names the missing facts. A survivor child's OB
+    and a mother's are both 3/4 of the PIA (402(d)(2), 402(g)(2)), and no
+    readjustment pays past an OB, so no minimum reaches a rate at or above
+    a child's.
     """
     if record.kind is not RecordKind.DECEASED:
         return False
@@ -1158,13 +1161,16 @@ def _care_minimum_can_move(record, month, deductees):
     if context is not None:
         return bool(g._current_caregivers(context.beneficiaries))
     entitled = [b for b in record.beneficiaries if month in b.entitled_months]
-    return any(
-        b.benefit_types[month - 1] in (BenefitType.CHILD, BenefitType.CDB)
+    children = [
+        b.original_rates[month - 1]
         for b in entitled
-    ) and any(
+        if b.benefit_types[month - 1] in (BenefitType.CHILD, BenefitType.CDB)
+    ]
+    return bool(children) and any(
         b.beneficiary_id not in deductees
         and b.benefit_types[month - 1] in (BenefitType.WIDOW, BenefitType.DWB)
-        and b.gross_rates[month - 1] < b.original_rates[month - 1]
+        and b.gross_rates[month - 1]
+        < min(b.original_rates[month - 1], max(children))
         for b in entitled
     )
 

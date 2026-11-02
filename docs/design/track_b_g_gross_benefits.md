@@ -343,7 +343,9 @@ For one worker's record and one benefit month:
      redistribution; the actual widow's own-benefit offset follows. After a
      deduction the comparison takes the month's events and households
      (402(q)(5)(D); RS 00615.340), and a partial deduction refuses where it
-     can change the rate.
+     can change the rate. The comparison replaces only that caregiver's
+     entitlement, so another caregiver keeps its care facts and its own
+     minimum there.
 6. **Dual entitlement** (402(k)(3)(A)). The auxiliary benefit is reduced, but
    not below zero, by the own benefit after 402(q).
    - An aged spouse entitled to the own benefit in or before the spouse
@@ -1477,7 +1479,8 @@ stays outside the maximum and does not lower anyone else's share.
 The comparison replaces the caregiver with a mother/father entitlement,
 whose OB is 75 percent of the death PIA (202(g)(2)), applies the family
 maximum and settled Parisi rules as that entitlement would be paid, and
-keeps any own-benefit offset. The widow gets whichever amount is larger.
+keeps any own-benefit offset. Every other member keeps its declared facts,
+another caregiver's care included. The widow gets whichever amount is larger.
 With PIA $1,000 and maximum $1,750, a 1935 widow reduced for 60 months and
 one child receives $750 with the child in care, rather than $715 without;
 the child receives $750 in either case and the caring total is $1,500.
