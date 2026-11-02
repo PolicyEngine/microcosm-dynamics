@@ -53,6 +53,17 @@ FORBIDDEN_COLUMNS = (
 )
 
 
+@pytest.fixture(autouse=True)
+def _flush_the_real_streams():
+    """Flush Python's original stdout and stderr before each test captures
+    anything. A plugin can leave text in them unflushed, as pytest-split
+    leaves its header when stdout is a pipe, and the script's own flush in
+    ``_flush_streams`` would then push that text into the test's ``capfd``."""
+    for stream in (sys.__stdout__, sys.__stderr__):
+        if stream is not None:
+            stream.flush()
+
+
 def _row(
     person,
     wave=2011,
