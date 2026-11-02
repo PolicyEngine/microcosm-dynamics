@@ -11,10 +11,10 @@ four partial years, no prior, a clear prior or an overlapping prior, and
 blindness in a quarter of cases all vary by seed. A second generator adds a
 DIB entitlement month, which ends a CURRENTLY window before the onset. A third
 draws ages 22-30 at onset, where 404.130(c) applies. A fourth declares a
-special-insured prior after age 31, where 404.130(d) applies. Declared priors
-are not re-adjudicated. No flags, raw earnings or death are claimed, and
-UNKNOWN facts appear only in ``check_unknown_ending`` and
-``check_every_history``.
+special-insured prior after age 31, where 404.130(d) applies. A declared prior
+limits the fillings only through its own start (``prior_holds``). No flags, raw
+earnings or death are claimed, and UNKNOWN facts appear only in
+``check_unknown_ending`` and ``check_every_history``.
 
 Every annual placement and both all-prior treatments are enumerated. A lawful
 filling has its own first insured start (404.321(a)), and that start supplies
@@ -24,6 +24,8 @@ returned status must equal the favorable Boolean over lawful fillings
 the reported start. Each exact count, assignment and date last insured must
 also be the best a filling with that start attains. A rejection needs no
 lawful filling. A named refusal retains the declaration and passes.
+``check_no_period`` asks the same of a record with no current period, where a
+listed prior alone limits the fillings.
 """
 
 import calendar
@@ -164,12 +166,13 @@ def placements(annual):
         yield frozenset(credit for piece in pieces for credit in piece)
 
 
-def lawful_fillings(case, reading=LAST_40):
+def lawful_fillings(case, reading=LAST_40, *, keep=None, dated=True):
     """Exhaust every filling before comparing to a public result.
 
     Each lawful filling gives its first start, three statuses, the best
     (insured, margin, count) for FULLY and CURRENTLY, its date last insured
-    quarter and its credits.
+    quarter and its credits. ``keep`` limits the placements, and ``dated``
+    skips the date for a query that doesn't ask for one.
     """
     birth, onset, ending, month = (
         case["birth"],
@@ -185,12 +188,17 @@ def lawful_fillings(case, reading=LAST_40):
     ] or [month]
     found = []
     for credits in placements(annual):
+        if keep is not None and not keep(credits):
+            continue
         for use_prior in (True, False) if prior else (False,):
             used = prior if use_prior else ()
             first = next(
                 (
                     candidate
-                    for candidate in range(quarter(onset), quarter(ending) + 1)
+                    for candidate in range(
+                        quarter(onset),
+                        quarter(case.get("through", ending)) + 1,
+                    )
                     if disability(
                         birth,
                         credits,
@@ -230,24 +238,25 @@ def lawful_fillings(case, reading=LAST_40):
                     currently_best = max(
                         currently_best, (held >= 6, held - 6, held)
                     )
-                latest = max(
-                    filter(
-                        None,
-                        (
-                            latest,
-                            last_insured(
-                                birth,
-                                credits,
-                                at,
-                                periods,
-                                blind,
-                                special,
-                                reading,
+                if dated:
+                    latest = max(
+                        filter(
+                            None,
+                            (
+                                latest,
+                                last_insured(
+                                    birth,
+                                    credits,
+                                    at,
+                                    periods,
+                                    blind,
+                                    special,
+                                    reading,
+                                ),
                             ),
                         ),
-                    ),
-                    default=None,
-                )
+                        default=None,
+                    )
             found.append(
                 (
                     first,
@@ -278,18 +287,30 @@ def public(case, **options):
     observed = rule.EarningsProvenance.OBSERVED
     unknown_end = case.get("unknown_end", False)
     unknown_prior = case.get("unknown_prior", False)
+    open_period = case.get("open_period", False)
+    no_period = case.get("no_period", False)
+    unknown_end = unknown_end or open_period or no_period
+    through = case.get("through")
     person = rule.Person(
         case["birth"],
         sex=rule.Sex.FEMALE,
         statutory_blindness=case["blind"],
         disability_onset=case["onset"],
-        current_disability_period_established=True,
-        current_disability_period_provenance=observed,
+        current_disability_period_established=(
+            False if no_period else None if open_period else True
+        ),
+        current_disability_period_provenance=(
+            rule.EarningsProvenance.UNKNOWN if open_period else observed
+        ),
         current_disability_period_end=(
             None if unknown_end else case["ending"]
         ),
         current_disability_period_end_provenance=(
             rule.EarningsProvenance.UNKNOWN if unknown_end else observed
+        ),
+        current_disability_period_continues_through=through,
+        current_disability_period_continues_through_provenance=(
+            rule.EarningsProvenance.UNKNOWN if through is None else observed
         ),
         prior_disability_periods=tuple(
             rule.DisabilityPeriod(
@@ -484,6 +505,54 @@ def check_diagnostics(case, result, fillings):
     ), (case, upper, own)
 
 
+def prior_can_begin(case, credits, periods):
+    """404.130(a), (e): even a blind prior begins fully insured.
+
+    Each prior counts the periods before it or disregards them (404.130(f)).
+    """
+    return all(
+        any(
+            disability(case["birth"], credits, quarter(begins), used, True)
+            for used in (periods[:index], ())
+        )
+        for index, (begins, _) in enumerate(periods)
+    )
+
+
+def prior_holds(case, credits, index):
+    """One declared prior's own start on one filling.
+
+    Past blindness leaves no trace in a record, so an unflagged prior needs
+    only full insurance. A flagged prior's holder "were only insured under
+    paragraph (c)" (404.130(d)(1)).
+    """
+    at = quarter(case["prior"][index][0])
+    if not case.get("special"):
+        return any(
+            disability(case["birth"], credits, at, used, True)
+            for used in (case["prior"][:index], ())
+        )
+    return (
+        disability(case["birth"], credits, at, (), False)
+        and recent(usable(credits, at, ()), at, (), 40) < 20
+    )
+
+
+def fillings_keeping_priors(case, fillings):
+    """The fillings the declared priors allow.
+
+    A prior no filling supports rests on something the record doesn't show,
+    and says nothing about placement.
+    """
+    for index in range(len(case["prior"])):
+        fillings = [
+            filling
+            for filling in fillings
+            if prior_holds(case, filling[7], index)
+        ] or fillings
+    return fillings
+
+
 def check(case):
     worlds = tuple(
         lawful_fillings(case, reading)
@@ -496,6 +565,7 @@ def check(case):
     except InvalidFamilyInput as error:
         assert not any(worlds), (case, error)
         return "invalid"
+    worlds = tuple(fillings_keeping_priors(case, found) for found in worlds)
     actual = tuple(
         getattr(result, name).insured
         for name in ("fully", "currently", "disability")
@@ -512,6 +582,94 @@ def check(case):
                 filling[0] == start and filling[index] for filling in fillings
             ), (case, actual, start, fillings)
         check_diagnostics(case, result, fillings)
+    return "computed"
+
+
+def no_period_fillings(case, reading=LAST_40):
+    """Each filling of a record with no current period.
+
+    The positions match ``lawful_fillings``, and no filling has a start.
+    """
+    birth, month, blind = case["birth"], case["month"], case["blind"]
+    special = case.get("special", False)
+    at = quarter(month)
+    found = []
+    for credits in placements(case["annual"]):
+        fully_best = currently_best = (False, -99, -1)
+        latest, insured = None, False
+        for periods in (case["prior"], ()):
+            use = usable(credits, at, periods)
+            needed = requirement(birth, month.year, periods)
+            held = recent(use, at, periods, 13)
+            fully_best = max(
+                fully_best, (len(use) >= needed, len(use) - needed, len(use))
+            )
+            currently_best = max(currently_best, (held >= 6, held - 6, held))
+            latest = max(
+                filter(
+                    None,
+                    (
+                        latest,
+                        last_insured(
+                            birth,
+                            credits,
+                            at,
+                            periods,
+                            blind,
+                            special,
+                            reading,
+                        ),
+                    ),
+                ),
+                default=None,
+            )
+            insured = insured or any(
+                disability(
+                    birth, credits, candidate, periods, blind, special, reading
+                )
+                for candidate in range(quarter(case["onset"]), at + 1)
+            )
+        found.append(
+            (
+                None,
+                fully_best[0],
+                currently_best[0],
+                insured,
+                fully_best,
+                currently_best,
+                latest,
+                credits,
+            )
+        )
+    return found
+
+
+def check_no_period(case):
+    """Each result must be the best the declared priors allow."""
+    case = {key: value for key, value in case.items() if key != "through"}
+    try:
+        result = public({**case, "no_period": True})
+    except rule.InsuredConfigurationUnsupported:
+        return "refused"
+    for reading in READINGS if case.get("special") else READINGS[:1]:
+        fillings = fillings_keeping_priors(
+            case, no_period_fillings(case, reading)
+        )
+        for name, index in (("fully", 1), ("currently", 2), ("disability", 3)):
+            assert getattr(result, name).insured == any(
+                filling[index] for filling in fillings
+            ), (case, name, reading, result)
+        for name, position in (("fully", 4), ("currently", 5)):
+            decision = getattr(result, name)
+            count = decision.qc_count_upper
+            assert (decision.insured, count - decision.required, count) == max(
+                filling[position] for filling in fillings
+            ), (case, name, reading, result)
+        upper = result.dli.upper
+        assert (None if upper is None else quarter(upper)) == max(
+            (filling[6] for filling in fillings if filling[6] is not None),
+            default=None,
+        ), (case, reading, upper)
     return "computed"
 
 
@@ -536,21 +694,23 @@ def check_unknown_ending(case, unknown_prior=False):
         return "refused"
     except InvalidFamilyInput:
         return "invalid"
-    if result.current_disability_period_start is None:
-        return "no start"
-    start = quarter(result.current_disability_period_start)
+    reported = result.current_disability_period_start
+    start = None if reported is None else quarter(reported)
     endings = [
         quarter_end(candidate)
-        for candidate in range(start, quarter(case["month"]) + 1)
+        for candidate in range(
+            quarter(case["onset"]) if start is None else start,
+            quarter(case["month"]) + 1,
+        )
     ]
     best = []
     for ending in (*endings, date(case["birth"].year + 70, 12, 31)):
         own = [
             filling[6]
             for filling in lawful_fillings({**case, "ending": ending})
-            if filling[0] == start
+            if start is None or filling[0] == start
         ]
-        assert own or unknown_prior, (case, ending, result)
+        assert own or unknown_prior or start is None, (case, ending, result)
         if own:
             best.append(max(-1 if found is None else found for found in own))
     if not best:
@@ -628,66 +788,152 @@ FREEZE_STATUS = {
     },
 }
 
+# A prior from 1998Q1 needs 15 QCs and finds 14 before 1998, so it holds the 1998
+# QC in that quarter. The 40 quarters through 2008Q1 then hold 19.
+PRIOR_DATE = {
+    "birth": date(1961, 2, 2),
+    "onset": date(2000, 1, 1),
+    "ending": date(2000, 12, 31),
+    "month": date(2008, 1, 1),
+    "blind": False,
+    "prior": (),
+    "annual": {
+        1991: 2,
+        1992: 4,
+        1993: 4,
+        1994: 4,
+        1998: 1,
+        1999: 4,
+        2000: 4,
+        2001: 4,
+        2002: 4,
+        2003: 3,
+    },
+}
+# A prior from 1990Q1 needs six QCs and finds five before 1990, so it holds the
+# 1990 QC in that quarter. The 2000Q1 start then holds the 2000 QC there, and the
+# 13 quarters through 2003Q2 hold five.
+PRIOR_STATUS = {
+    "birth": date(1965, 2, 2),
+    "onset": date(2000, 1, 1),
+    "ending": date(2002, 12, 31),
+    "through": date(2000, 1, 1),
+    "month": date(2003, 4, 1),
+    "blind": False,
+    "prior": (),
+    "annual": {
+        1986: 4,
+        1987: 1,
+        1990: 1,
+        1995: 3,
+        1996: 4,
+        1997: 4,
+        1998: 4,
+        1999: 4,
+        2000: 1,
+        2001: 4,
+        2002: 1,
+    },
+}
+# Only the 2000 QC in 2000Q1 reaches 20 of 40 through 2003Q2, and the 13
+# quarters through 2003Q2 hold six only with that QC later.
+OPEN_STATUS = {
+    "birth": date(1965, 2, 2),
+    "onset": date(2000, 1, 1),
+    "ending": date(2003, 3, 31),
+    "month": date(2003, 4, 1),
+    "blind": False,
+    "prior": (),
+    "annual": {
+        1990: 4,
+        1991: 4,
+        1992: 4,
+        1993: 4,
+        1994: 4,
+        2000: 1,
+        2001: 4,
+        2002: 1,
+    },
+}
+
 
 def added_priors(case):
-    """Undeclared priors that end before the onset, each past five months."""
+    """Undeclared priors that end before the onset.
+
+    The first three each run past five months, and the rest begin in a year of
+    annual credit, whose QC the prior's own start can hold early.
+    """
     year = case["onset"].year
+    partial = sorted(
+        credited
+        for credited, count in case["annual"].items()
+        if count < 4 and credited < year
+    )
     return tuple(
         ((date(year - back, month, 1), date(year - 1, 12, 31)),)
         for back, month in ((1, 4), (2, 1), (4, 1))
+    ) + tuple(
+        ((date(credited, month, 1), date(year - 1, 12, 31)),)
+        for credited in partial
+        for month in (1, 7)
     )
 
 
-def prior_can_begin(case, credits, periods):
-    """404.130(a), (e): even a blind prior begins fully insured."""
-    return all(
-        disability(case["birth"], credits, quarter(begins), (), True)
-        for begins, _ in periods
-    )
-
-
-def history_fillings(case, added, start, ending):
-    """Fillings with the reported start on a history holding ``added``."""
+def history_fillings(case, added, start, ending, *, dated=True):
+    """Fillings with a reported start on a history holding ``added``."""
     return [
         filling
         for filling in lawful_fillings(
-            {**case, "prior": added, "ending": ending}
+            {**case, "prior": added, "ending": ending},
+            keep=lambda credits: prior_can_begin(case, credits, added),
+            dated=dated,
         )
-        if filling[0] == start and prior_can_begin(case, filling[7], added)
+        if start is None or filling[0] == start
     ]
 
 
-def check_every_history(case, unknown_end=False, test=rule.InsuredTest.ALL):
-    """No lawful prior history may undercut a computed result.
+def check_every_history(
+    case, unknown_end=False, test=rule.InsuredTest.ALL, open_period=False
+):
+    """No lawful completion may undercut a computed result.
 
-    UNKNOWN priors stand for each history below, so a filling with the
-    reported start has to hold each true status and reach the lower date on
-    it, whichever period ending the record has.
+    UNKNOWN priors stand for each history below, and UNKNOWN establishment for
+    a period on the record. Each completion's own starts limit its fillings,
+    and one of those fillings has to hold each true status and reach the lower
+    date, whichever period ending the record has. A start left open reads
+    every start.
     """
     try:
         result = public(
-            {**case, "unknown_end": unknown_end, "unknown_prior": True},
+            {
+                **case,
+                "unknown_end": unknown_end,
+                "unknown_prior": not open_period,
+                "open_period": open_period,
+            },
             test=test,
         )
     except rule.InsuredConfigurationUnsupported:
         return "refused"
     except InvalidFamilyInput:
         return "invalid"
-    if result.current_disability_period_start is None:
-        return "no start"
-    start = quarter(result.current_disability_period_start)
+    reported = result.current_disability_period_start
+    start = None if reported is None else quarter(reported)
     endings = (case["ending"],)
-    if unknown_end:
+    if unknown_end or open_period:
+        first = quarter(case["onset"]) if start is None else start
         endings = (
-            quarter_end(start),
+            quarter_end(first),
             quarter_end(quarter(case["month"])),
             date(case["birth"].year + 70, 12, 31),
         )
     fully, currently = result.fully, result.currently
     lower = None if result.dli is None else result.dli.lower
-    for added in added_priors(case):
+    for added in ((),) if open_period else ((), *added_priors(case)):
         for ending in endings:
-            held = history_fillings(case, added, start, ending)
+            held = history_fillings(
+                case, added, start, ending, dated=lower is not None
+            )
             if not held:
                 continue
             found = (case, added, ending, result)
@@ -707,14 +953,28 @@ def check_every_history(case, unknown_end=False, test=rule.InsuredTest.ALL):
     return "computed"
 
 
-def start_edge_declaration(seed):
-    """A record whose start needs the next QC, with its tail redrawn.
+# 18 of 37 elapsed quarters pass the route at 1990Q2, and 20 of 40 pass the
+# ordinary rule.
+SPECIAL_PRIOR = {
+    "birth": date(1960, 2, 2),
+    "onset": date(1994, 1, 15),
+    "ending": date(1994, 12, 31),
+    "month": date(1995, 1, 1),
+    "blind": False,
+    "special": True,
+    "prior": ((date(1990, 4, 1), date(1991, 12, 31)),),
+    "annual": {1985: 2, 1986: 4, 1987: 4, 1988: 4, 1989: 4, 1990: 2},
+}
 
-    Each draw keeps the QCs that put the start at the edge, and moves the
+
+def edge_declaration(seed, cases):
+    """A record at an edge, with its tail redrawn.
+
+    Each draw keeps the QCs that put the record at the edge, and moves the
     last QCs, the ending and the query around the record's own boundary.
     """
     draw = random.Random(seed)
-    case = draw.choice((FREEZE_DATE, FREEZE_STATUS))
+    case = draw.choice(cases)
     annual = dict(case["annual"])
     last = max(annual)
     annual[last] = draw.randint(max(annual[last] - 1, 0), 4)
@@ -725,11 +985,54 @@ def start_edge_declaration(seed):
         1,
     )
     ending = date(case["ending"].year + draw.randint(-1, 0), 12, 31)
+    if "through" in case:
+        ending = max(ending, case["through"])
     return {
         **case,
         "ending": ending,
         "month": month,
         "annual": {y: n for y, n in annual.items() if n and y <= month.year},
+    }
+
+
+def start_edge_declaration(seed):
+    """A record whose start needs the next QC."""
+    return edge_declaration(seed, (FREEZE_DATE, FREEZE_STATUS))
+
+
+def prior_edge_declaration(seed):
+    """A record whose result an earlier prior's start can undercut."""
+    return edge_declaration(seed, (PRIOR_DATE, PRIOR_STATUS))
+
+
+def listed_prior_declaration(seed):
+    """The same records with the prior declared."""
+    case = prior_edge_declaration(seed)
+    begins = date(1998 if case["birth"].year == 1961 else 1990, 1, 1)
+    return {**case, "prior": ((begins, date(1999, 12, 31)),)}
+
+
+def two_prior_declaration(seed):
+    """The same records with an earlier prior a later one can rest on."""
+    case = listed_prior_declaration(seed)
+    begins = case["prior"][0][0]
+    year = begins.year - random.Random(seed).randint(2, 5)
+    earlier = (date(year, 1, 1), date(year, 12, 31))
+    return {**case, "prior": (earlier, *case["prior"])}
+
+
+def special_prior_declaration(seed):
+    """A flagged prior whose route and ordinary rule both turn on 1990."""
+    draw = random.Random(seed)
+    annual = {
+        **SPECIAL_PRIOR["annual"],
+        1985: draw.randint(0, 4),
+        1990: draw.randint(0, 4),
+        1992: draw.randint(0, 4),
+    }
+    return {
+        **SPECIAL_PRIOR,
+        "annual": {year: n for year, n in annual.items() if n},
     }
 
 
@@ -845,10 +1148,10 @@ def test_status_stress_an_added_prior_undercuts_the_freeze(unknown_end):
     assert (date_case, status_case) == ("refused", "refused")
 
 
-def test_status_stress_a_date_with_no_period_in_force_holds_every_history():
+def test_status_stress_a_date_on_one_filling_refuses():
     annual = {**FREEZE_DATE["annual"], 2005: 4}
     case = {**FREEZE_DATE, "annual": annual}
-    assert check_every_history(case, test=DISABILITY) == "computed"
+    assert check_every_history(case, test=DISABILITY) == "refused"
 
 
 def test_status_stress_a_status_with_no_period_in_force_holds_every_history():
@@ -891,6 +1194,91 @@ def test_status_stress_every_history_at_the_start_edge(
     seed, unknown_end, test
 ):
     check_every_history(start_edge_declaration(seed), unknown_end, test)
+
+
+@pytest.mark.parametrize("unknown_end", (False, True))
+def test_status_stress_an_added_prior_holds_a_placement(unknown_end):
+    date_case = check_every_history(PRIOR_DATE, unknown_end, DISABILITY)
+    status_case = check_every_history(PRIOR_STATUS, unknown_end, CURRENTLY)
+    assert (date_case, status_case) == ("refused", "refused")
+
+
+def test_status_stress_a_listed_prior_holds_a_placement():
+    for begins, case in ((1998, PRIOR_DATE), (1990, PRIOR_STATUS)):
+        prior = ((date(begins, 1, 1), date(1999, 12, 31)),)
+        assert check({**case, "prior": prior}) == "refused"
+
+
+def test_status_stress_a_later_prior_rests_on_an_earlier_one():
+    earlier = (date(1995, 1, 1), date(1995, 12, 31))
+    later = (date(1998, 1, 1), date(1999, 12, 31))
+    annual = {y: n for y, n in PRIOR_DATE["annual"].items() if y != 1998}
+    case = {**PRIOR_DATE, "annual": annual, "prior": (earlier, later)}
+    assert check(case) == check_no_period(case) == "computed"
+
+
+def test_status_stress_an_open_period_holds_a_placement():
+    case = check_every_history(OPEN_STATUS, test=CURRENTLY, open_period=True)
+    assert case == "refused"
+
+
+def test_status_stress_a_result_on_every_placement_computes():
+    annual = {**PRIOR_DATE["annual"], 1998: 4}
+    case = {**PRIOR_DATE, "annual": annual}
+    assert check_every_history(case, test=DISABILITY) == "computed"
+
+
+# A sweep of seeds 0 to 79 at 129d44bd found these two, where the generator
+# reaches the reviewed head's defect. Its derandomized draws there missed it.
+@settings(max_examples=30, deadline=None, derandomize=True)
+@example(seed=1, unknown_end=False, test=DISABILITY)
+@example(seed=5, unknown_end=True, test=CURRENTLY)
+@given(
+    seed=st.integers(0, 2**32 - 1),
+    unknown_end=st.booleans(),
+    test=st.sampled_from((rule.InsuredTest.ALL, DISABILITY, CURRENTLY)),
+)
+def test_status_stress_every_history_at_a_prior_edge(seed, unknown_end, test):
+    check_every_history(prior_edge_declaration(seed), unknown_end, test)
+
+
+@settings(max_examples=30, deadline=None, derandomize=True)
+@given(seed=st.integers(0, 2**32 - 1))
+def test_status_stress_a_declared_prior_at_its_edge(seed):
+    check(listed_prior_declaration(seed))
+
+
+@settings(max_examples=30, deadline=None, derandomize=True)
+@given(seed=st.integers(0, 2**32 - 1))
+def test_status_stress_two_declared_priors(seed):
+    check(two_prior_declaration(seed))
+
+
+@settings(max_examples=30, deadline=None, derandomize=True)
+@given(seed=st.integers(0, 2**32 - 1))
+def test_status_stress_a_prior_with_no_current_period(seed):
+    check_no_period(listed_prior_declaration(seed))
+    check_no_period(two_prior_declaration(seed))
+
+
+@settings(max_examples=30, deadline=None, derandomize=True)
+@given(seed=st.integers(0, 2**32 - 1))
+def test_status_stress_a_flagged_prior_at_its_edge(seed):
+    check_no_period(special_prior_declaration(seed))
+
+
+# The same sweep found these two for UNKNOWN establishment.
+@settings(max_examples=30, deadline=None, derandomize=True)
+@example(seed=20, test=CURRENTLY)
+@example(seed=33, test=rule.InsuredTest.ALL)
+@given(
+    seed=st.integers(0, 2**32 - 1),
+    test=st.sampled_from((rule.InsuredTest.ALL, DISABILITY, CURRENTLY)),
+)
+def test_status_stress_every_open_period(seed, test):
+    unbound = {k: v for k, v in PRIOR_STATUS.items() if k != "through"}
+    case = edge_declaration(seed, (OPEN_STATUS, unbound))
+    check_every_history(case, test=test, open_period=True)
 
 
 @settings(max_examples=20, deadline=None, derandomize=True)

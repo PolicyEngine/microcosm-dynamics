@@ -1236,6 +1236,7 @@ def _witness(
     onset=True,
     ignore_fully_insured=False,
     use_periods_only=None,
+    ordinary_only=False,
 ):
     end = _qid(at)
     best = None
@@ -1315,7 +1316,7 @@ def _witness(
                 subsequent = any(
                     p.special_insured for p in person.prior_disability_periods
                 )
-                if young or subsequent:
+                if (young or subsequent) and not ordinary_only:
                     first = max(
                         1937 * 4, _qid(_attain(person.birth_date, 21)) + 1
                     )
@@ -1685,31 +1686,123 @@ def _complete_current_period(person, quarter):
     return completed, start
 
 
-def _start_fixed(person, credits, start, month, exit_month):
-    """Whether every annual placement insures the favorable first start.
+def _every_placement_passes(
+    person, credits, at, month, exit_month, kind, **options
+):
+    """Whether every annual placement passes a test at one quarter.
 
-    Without prior periods every window is a suffix ending at the tested
+    With no period in force every window is a suffix ending at the tested
     quarter. Placing annual QCs as early as possible before that quarter's
-    year and as late as possible in it is therefore the worst filling. If
-    even that filling is insured, no filling starts later, and the
-    favorable start already precedes none. Prior periods retain credited
-    endpoints, so no single worst filling exists and the caller enumerates.
+    year and as late as possible in it is therefore the worst filling, for
+    every window at once. It is also a filling, so the answer is exact. The
+    caller passes a person with no period listed.
     """
-    if person.prior_disability_periods:
-        return False
     rows, _ = _world(person, credits, _qid(month), exit_month, False)
     worst = dict(credits)
     for year, (fixed, count, allowed) in rows.items():
         if count:
             vacant = sorted(q for q in allowed if q not in fixed)
-            chosen = vacant[-count:] if year == start.year else vacant[:count]
+            chosen = vacant[-count:] if year == at.year else vacant[:count]
             worst[year] = (tuple(sorted((*fixed, *chosen))), 0)
-    return _witness(person, worst, start, exit_month, InsuredTest.DISABILITY)[
-        0
-    ]
+    return _witness(person, worst, at, exit_month, kind, **options)[0]
 
 
-def _start_sensitive_years(person, horizon):
+def _start_fixed(person, credits, start, month, exit_month):
+    """Whether every annual placement insures the favorable first start.
+
+    If even the worst filling is insured, no filling starts later, and the
+    favorable start already precedes none. Prior periods retain credited
+    endpoints, so no single worst filling exists and the caller enumerates.
+    """
+    return not person.prior_disability_periods and _every_placement_passes(
+        person, credits, start, month, exit_month, InsuredTest.DISABILITY
+    )
+
+
+def _prior_passes(person, credits, index, exit_month, **options):
+    """Whether a route insures a listed prior's start, with earlier priors.
+
+    Past blindness leaves no trace in the record and asks only for fully
+    insured status (404.130(e)), so an unflagged prior needs that much.
+    """
+    period = person.prior_disability_periods[index]
+    earlier = replace(
+        person,
+        statutory_blindness=not period.special_insured,
+        prior_disability_periods=person.prior_disability_periods[:index],
+    )
+    return _witness(
+        earlier,
+        credits,
+        period.start,
+        exit_month,
+        InsuredTest.DISABILITY,
+        **options,
+    )[0]
+
+
+def _keeps_priors(person, filling, binding, exit_month):
+    """Whether one filling lets each binding prior begin where it says.
+
+    A flagged prior's holder "were only insured under paragraph (c)"
+    (404.130(d)(1)), so that holder passes a special route and not 404.130(b).
+    """
+    return all(
+        _prior_passes(person, filling, index, exit_month)
+        and not (
+            person.prior_disability_periods[index].special_insured
+            and _prior_passes(
+                person, filling, index, exit_month, ordinary_only=True
+            )
+        )
+        for index in binding
+    )
+
+
+def _prior_start_binds(person, lower, upper, index, month, exit_month):
+    """Whether annual placement decides a listed prior's own start.
+
+    A period begins in a quarter its holder was insured (404.320(b)(2),
+    404.321(a)), so a prior can force an annual QC into one quarter. A prior
+    that holds on every placement leaves them all open. One that holds on
+    none rests on something this record doesn't show, and says nothing about
+    placement. Otherwise it picks among them. Lower credits speak for every
+    completion of an UNKNOWN year, and upper credits bound them all. ``every``
+    drops earlier priors, so a later prior resting on one counts as picking,
+    and the search that follows then keeps the fillings it holds on.
+    """
+    period = person.prior_disability_periods[index]
+    flagged = period.special_insured
+    bare = replace(
+        person,
+        statutory_blindness=not flagged,
+        prior_disability_periods=(),
+    )
+
+    def every(**options):
+        return _every_placement_passes(
+            bare,
+            lower,
+            period.start,
+            month,
+            exit_month,
+            InsuredTest.DISABILITY,
+            **options,
+        )
+
+    def some(**options):
+        return _prior_passes(person, upper, index, exit_month, **options)
+
+    if not flagged:
+        return not every() and some()
+    return (
+        some()
+        and not every(ordinary_only=True)
+        and not (every() and not some(ordinary_only=True))
+    )
+
+
+def _start_sensitive_years(person, start, horizon):
     """Years whose annual placement can change a first insured quarter.
 
     A year wholly inside every tested window, and untouched by a period,
@@ -1720,7 +1813,7 @@ def _start_sensitive_years(person, horizon):
     CURRENTLY window in that year and want it early, so placement stays
     enumerated there.
     """
-    onset = _qid(person.disability_onset)
+    onset = _qid(start)
     last = _qid(horizon)
     excluded = sum(
         _qid(period.end) - _qid(period.start) + 1
@@ -1735,13 +1828,58 @@ def _start_sensitive_years(person, horizon):
     return {quarter // 4 for quarter in quarters}
 
 
+def _prior_sensitive_years(person, binding):
+    """Years whose annual placement can change a binding prior's start."""
+    return {
+        year
+        for index in binding
+        for year in _start_sensitive_years(
+            person,
+            person.prior_disability_periods[index].start,
+            person.prior_disability_periods[index].start,
+        )
+    }
+
+
+def _placements(person, credits, sensitive, month, exit_month, rank):
+    """Each annual placement of the sensitive years, best ``rank`` first."""
+    rows, _ = _world(person, credits, _qid(month), exit_month, False)
+    options = {
+        year: sorted(_assignment_candidates(*row), key=rank)
+        for year, row in rows.items()
+        if year in sensitive and row[1]
+    }
+    for index, choices in enumerate(product(*options.values())):
+        if index == 4096:
+            _refuse(
+                InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+                "More than 4096 first-start annual placements",
+            )
+        filling = dict(credits)
+        filling.update(
+            (year, (choice, 0))
+            for year, choice in zip(options, choices, strict=True)
+        )
+        yield filling
+
+
 def _period_outcomes(
     person, completed, start, credits, month, exit_month, kinds, dated
 ):
-    """Statuses, date last insured and witnesses for each ending."""
+    """Statuses, date last insured and witnesses for each ending.
+
+    Establishment can't rest on its own exclusion, so DISABILITY reads
+    ``person`` (see the decisions in ``insured_status``).
+    """
     for option in _current_period_completions(person, completed, start, month):
         witnesses = tuple(
-            _decision_witness(option, credits, month, exit_month, kind)
+            _decision_witness(
+                person if kind is InsuredTest.DISABILITY else option,
+                credits,
+                month,
+                exit_month,
+                kind,
+            )
             for kind in kinds
         )
         last = (
@@ -1785,49 +1923,25 @@ def _improves(outcome, returned, last_insured):
 
 
 def _fillings_keeping_start(
-    person, credits, start, month, exit_month, favored
+    person, credits, start, month, exit_month, favored, binding
 ):
-    """Each annual placement and treatment that keeps the reported start.
-
-    UNKNOWN priors stand for every prior history, and counting an added prior
-    can take a credited quarter from the record. Only disregarding all periods
-    speaks for every history (404.130(f), RS00301.120), and that drops the
-    current period too, whatever its ending. Each filling then reads the
-    person with no period in force.
-    """
-    every_history = (
-        person.prior_disability_periods_provenance
-        is EarningsProvenance.UNKNOWN
-    )
+    """Each placement and treatment keeping the start and binding priors."""
     horizon = _current_period_start_horizon(person, month)
     witness = set(
         _witness(person, credits, start, exit_month, InsuredTest.DISABILITY)[4]
     )
-    rows, _ = _world(person, credits, _qid(month), exit_month, False)
-    sensitive = _start_sensitive_years(person, horizon)
-    options = {
-        year: sorted(
-            _assignment_candidates(*row),
-            key=lambda choice: (
-                len(set(choice) - witness),
-                len(set(choice) - favored),
-                choice,
-            ),
-        )
-        for year, row in rows.items()
-        if year in sensitive and row[1]
-    }
-    for index, choices in enumerate(product(*options.values())):
-        if index == 4096:
-            _refuse(
-                InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
-                "More than 4096 first-start annual placements",
-            )
-        filling = dict(credits)
-        filling.update(
-            (year, (choice, 0))
-            for year, choice in zip(options, choices, strict=True)
-        )
+    sensitive = _start_sensitive_years(
+        person, person.disability_onset, horizon
+    ) | _prior_sensitive_years(person, binding)
+
+    def rank(choice):
+        return len(set(choice) - witness), len(set(choice) - favored), choice
+
+    for filling in _placements(
+        person, credits, sensitive, month, exit_month, rank
+    ):
+        if not _keeps_priors(person, filling, binding, exit_month):
+            continue
         for treatment in (
             (True, False) if person.prior_disability_periods else (None,)
         ):
@@ -1842,7 +1956,7 @@ def _fillings_keeping_start(
             except InvalidFamilyInput:
                 continue
             if own_start == start:
-                yield filling, person if every_history else completed
+                yield filling, completed
 
 
 def _settle_first_start(
@@ -1858,6 +1972,7 @@ def _settle_first_start(
     last_insured,
     reported,
     favored,
+    binding,
 ):
     """Refuse a result no filling and its own first start can support.
 
@@ -1874,8 +1989,7 @@ def _settle_first_start(
     attains the result. Ties go to ``favored``, the quarters the excluded
     world credits, so the returned filling keeps a year's credits where it
     can. A year that cannot move the start stays flexible, so each status
-    still places it favorably. Under UNKNOWN priors a filling attains a status
-    only with no period in force (see ``_fillings_keeping_start``).
+    still places it favorably.
 
     The same limit binds what a status reports. Its favorable count and
     assignment can rest on a placement that would move the start, so
@@ -1884,7 +1998,9 @@ def _settle_first_start(
     the reported start or the placements run out. It returns the filling
     that attained the result, with the best witnesses the reported start
     allows. It returns ``(None, ())`` when any filling keeps the start, or
-    when ``reported`` is None because unknown facts leave only an envelope.
+    when ``reported`` is None because unknown years leave only an envelope.
+    The search holds ``binding`` priors too, so their years count as start
+    years.
     """
     # Source conflict us:oasdi-insured-one-filling-first-start
     if _start_fixed(person, credits, start, month, exit_month):
@@ -1915,10 +2031,89 @@ def _settle_first_start(
                 "First insured start depends on annual placement "
                 "or prior treatment",
             )
+    return _settle_fillings(
+        person,
+        _fillings_keeping_start(
+            person, credits, start, month, exit_month, favored, binding
+        ),
+        start,
+        month,
+        exit_month,
+        kinds,
+        returned,
+        dated=dated,
+        last_insured=last_insured,
+        reported=reported,
+        detail="First insured start depends on annual placement "
+        "or prior treatment",
+    )
+
+
+def _settle_listed_priors(
+    person,
+    credits,
+    month,
+    exit_month,
+    kinds,
+    returned,
+    *,
+    dated,
+    last_insured,
+    reported,
+    favored,
+    binding,
+):
+    """Refuse a result no placement keeping the listed priors attains.
+
+    The first-start reading applies to a prior's start with no current period
+    to date: one filling of the years that can move that start must attain
+    the result, and other years stay flexible for each status.
+    """
+    # Source conflict us:oasdi-insured-one-filling-first-start
+    return _settle_fillings(
+        person,
+        (
+            (filling, person)
+            for filling in _placements(
+                person,
+                credits,
+                _prior_sensitive_years(person, binding),
+                month,
+                exit_month,
+                lambda choice: (len(set(choice) - favored), choice),
+            )
+            if _keeps_priors(person, filling, binding, exit_month)
+        ),
+        None,
+        month,
+        exit_month,
+        kinds,
+        returned,
+        dated=dated,
+        last_insured=last_insured,
+        reported=reported,
+        detail="Annual placement decides a listed prior's first insured "
+        "quarter",
+    )
+
+
+def _settle_fillings(
+    person,
+    fillings,
+    start,
+    month,
+    exit_month,
+    kinds,
+    returned,
+    *,
+    dated,
+    last_insured,
+    reported,
+    detail,
+):
+    """Find one filling that attains a result, with its best witnesses."""
     joint = kept = None
-    for filling, completed in _fillings_keeping_start(
-        person, credits, start, month, exit_month, favored
-    ):
+    for filling, completed in fillings:
         outcomes = tuple(
             _period_outcomes(
                 person,
@@ -1949,31 +2144,25 @@ def _settle_first_start(
         for entries, insured in zip(kept, returned, strict=True)
         for entry in entries
     ):
-        _refuse(
-            InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
-            "First insured start depends on annual placement "
-            "or prior treatment",
-        )
+        _refuse(InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY, detail)
     return joint, kept
 
 
 def _settle_lower_date(
-    person, credits, start, month, exit_month, lowest, favored
+    person, credits, start, month, exit_month, lowest, favored, binding
 ):
     """Refuse a lower date that some period ending cannot reach.
 
     Each ending's favorable date can rest on a placement that moves the
     reported start (404.321(a), RS00301.230). A lower bound speaks for every
     ending, so each needs a filling that keeps the start and reaches it.
-    UNKNOWN priors leave one outcome for each filling, the record with no
-    period in force, and it speaks for every ending and prior history.
     """
     # Source conflict us:oasdi-insured-one-filling-first-start
     if _start_fixed(person, credits, start, month, exit_month):
         return
     reached = None
     for filling, completed in _fillings_keeping_start(
-        person, credits, start, month, exit_month, favored
+        person, credits, start, month, exit_month, favored, binding
     ):
         found = tuple(
             last or date.min
@@ -1996,6 +2185,59 @@ def _settle_lower_date(
         "A period ending cannot reach the lower date last insured "
         "with the reported first start",
     )
+
+
+def _settle_every_history(person, credits, month, exit_month, decisions, dli):
+    """Refuse a result some annual placement doesn't attain.
+
+    UNKNOWN priors stand for every prior history, and UNKNOWN establishment
+    for a period no one has placed. Each such period must begin in a quarter
+    its holder was insured (404.320(b)(2), 404.321(a)), and that can force an
+    annual QC into one quarter, so no placement chosen here speaks for every
+    completion. Disregarding all periods stays open on any placement
+    (404.130(f), RS00301.120). A result that every placement attains with no
+    period in force therefore holds on every completion, and it needs no
+    search of histories. ``credits`` are the lower credits, which speak for
+    every completion of an UNKNOWN year.
+    """
+    # Source conflict us:oasdi-insured-one-filling-first-start
+    bare = replace(person, prior_disability_periods=())
+    for kind, decision in decisions.items():
+        if (
+            decision is not None
+            and decision.insured
+            and not _every_placement_passes(
+                bare,
+                credits,
+                decision.qualifying_quarter,
+                month,
+                exit_month,
+                kind,
+            )
+        ):
+            _refuse(
+                InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+                f"Annual placement decides {kind.value} "
+                "across the unknown periods",
+            )
+    if (
+        dli is not None
+        and dli.lower is not None
+        and not _every_placement_passes(
+            bare,
+            credits,
+            _qdate(_qid(dli.lower)),
+            month,
+            exit_month,
+            InsuredTest.DISABILITY,
+            onset=False,
+        )
+    ):
+        _refuse(
+            InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+            "Annual placement decides the lower date last insured "
+            "across the unknown periods",
+        )
 
 
 def _current_period_completions(person, completed, start, month):
@@ -2719,14 +2961,15 @@ def insured_status(
         lo_person = hi_person = person
         lo_start = hi_start = None
         if person.current_disability_period_established:
-            onset_witness = _witness(
+            # A history can force any placement, so only a start that every
+            # placement insures speaks for every history.
+            if _start_fixed(
                 person,
                 lower,
                 person.disability_onset,
+                month,
                 coverage_end_month,
-                InsuredTest.DISABILITY,
-            )
-            if onset_witness[0]:
+            ):
                 lo_start = hi_start = person.disability_onset
             else:
                 uncertain_current_start = True
@@ -2954,8 +3197,27 @@ def insured_status(
             # false current status cannot prove a positive DLI lower date.
             lo_date = None
         dli = _computed(DLIRange, lo_date, hi_date, lo_censored or hi_censored)
+    if prior_unknown or current_unknown:
+        _settle_every_history(
+            person, lower, month, coverage_end_month, decisions, dli
+        )
+    # Every placement attains what the proof above passes, so a prior that
+    # picks among them can't move it.
+    binding = tuple(
+        index
+        for index in range(len(person.prior_disability_periods))
+        if not current_unknown
+        and _prior_start_binds(
+            person, lower, upper, index, month, coverage_end_month
+        )
+    )
+    if binding and unknown:
+        _refuse(
+            InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+            "Annual placement decides a listed prior's first insured quarter",
+        )
     placement = None
-    if lo_start is not None:
+    if lo_start is not None or binding:
         favored_rows, _ = _world(
             lo_person,
             upper,
@@ -2971,31 +3233,48 @@ def insured_status(
         )
         kinds = tuple(
             kind
-            for kind in (InsuredTest.FULLY, InsuredTest.CURRENTLY)
+            for kind in (
+                InsuredTest.FULLY,
+                InsuredTest.CURRENTLY,
+                *((InsuredTest.DISABILITY,) if binding else ()),
+            )
             if decisions[kind] is not None
         )
-        placement, settled = _settle_first_start(
-            person,
-            upper,
-            hi_start,
-            month,
-            coverage_end_month,
-            kinds,
-            tuple(decisions[kind].insured for kind in kinds),
-            dated=dli is not None and not prior_unknown,
-            last_insured=(
-                dli.upper if dli is not None and not prior_unknown else None
+        search = {
+            "dated": dli is not None,
+            "last_insured": dli.upper if dli is not None else None,
+            "reported": (
+                None if unknown else tuple(candidates[kind] for kind in kinds)
             ),
-            reported=(
-                None
-                if unknown or prior_unknown
-                else tuple(candidates[kind] for kind in kinds)
-            ),
-            favored=favored,
+            "favored": favored,
+            "binding": binding,
+        }
+        returned = tuple(decisions[kind].insured for kind in kinds)
+        placement, settled = (
+            _settle_first_start(
+                person,
+                upper,
+                hi_start,
+                month,
+                coverage_end_month,
+                kinds,
+                returned,
+                **search,
+            )
+            if lo_start is not None
+            else _settle_listed_priors(
+                person,
+                upper,
+                month,
+                coverage_end_month,
+                kinds,
+                returned,
+                **search,
+            )
         )
         for kind, witnesses in zip(kinds, settled, strict=False):
             decisions[kind] = _status_decision(witnesses, witnesses)
-        if dli is not None and dli.lower is not None:
+        if lo_start is not None and dli is not None and dli.lower is not None:
             _settle_lower_date(
                 person,
                 lower,
@@ -3004,6 +3283,7 @@ def insured_status(
                 coverage_end_month,
                 dli.lower,
                 favored,
+                binding,
             )
     lo_rows, _ = _world(
         lo_person,

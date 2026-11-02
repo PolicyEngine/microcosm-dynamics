@@ -385,6 +385,7 @@ def test_unknown_period_status_and_dli_bounds_contain_concrete_fillings(
         assert error.reason in (
             i.InsuredUnsupportedReason.UNKNOWN_PERIODS,
             i.InsuredUnsupportedReason.UNKNOWN_CURRENT_PERIOD,
+            i.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
         )
         return
     assert bounded.decided_despite_unknowns

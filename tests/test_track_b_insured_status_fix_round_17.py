@@ -613,7 +613,14 @@ def _settle(monkeypatch, fillings, lowest):
         ),
     )
     i._settle_lower_date(
-        _lower_person(), {}, date(2000, 1, 1), None, None, lowest, frozenset()
+        _lower_person(),
+        {},
+        date(2000, 1, 1),
+        None,
+        None,
+        lowest,
+        frozenset(),
+        (),
     )
 
 

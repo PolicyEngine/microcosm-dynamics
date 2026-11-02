@@ -671,7 +671,7 @@ input. An input error propagates and creates no row.
 | Earnings require an increment after 2027 | `qc_amount_year_unsupported` |
 | Query before 1968; blind query before 1973; subsequent-special query before May 1983 | `entitlement_before_1968_unsupported`, `blindness_before_1973_unsupported`, `subsequent_special_before_1983_unsupported` |
 | A subsequent-special period past 40 counted quarters where half the whole period and 20 of the last 40 give different results | `subsequent_special_long_period_unsupported` |
-| More than 4,096 disability-boundary combinations, unresolved ordinary-establishment overlap requiring more than 4,096 credit fillings, a first start that placement or prior treatment can move with no one filling supporting the returned result, or a lower date some ending can't reach on a filling with the reported start, or, under UNKNOWN priors, a status or lower date no such filling attains with no period in force, after fixed overlap and every credit-count proof applicable to the surviving flag classes and foreign-credit declaration | `disability_boundary_assignments_unsupported` |
+| More than 4,096 disability-boundary combinations, unresolved ordinary-establishment overlap requiring more than 4,096 credit fillings, a first start that placement or prior treatment can move with no one filling supporting the returned result, a lower date some ending can't reach on a filling with the reported start, a status or lower date some annual placement doesn't attain with no period in force under UNKNOWN priors or UNKNOWN establishment, or a listed prior that annual placement decides where an UNKNOWN year stands open or no filling that keeps the prior attains the result, after fixed overlap and every credit-count proof applicable to the surviving flag classes and foreign-credit declaration | `disability_boundary_assignments_unsupported` |
 
 The round-3 observable-trigger audit covers every `CoverageCondition`.
 An explicit condition continues to refuse under its own reason when the
@@ -828,12 +828,12 @@ to a statutory sentence that does not state it.
 | --- | --- |
 | U1. UNKNOWN prior history can collapse to empty solely for impossibility validation when no earliest prior period could start insured, on/after birth, before current onset and the FRA end. | C320(b)(2) and C321(a) require an insured beginning without a still-earlier period. A216(i)(2)(A) permits "five full calendar months' duration or" DIB entitlement "for one or more months". The scan therefore admits a one-month period and maximum feasible earnings. Any possible ordinary or specialist starting route stops the proof. It establishes no observed empty-history fact. |
 | U2. UNKNOWN current establishment needs no new-period alternative if there is no medical onset or onset is at/after the statutory latest starting month. | A216(i)(2)(A)-(D) and C321 prohibit a period without disability or a nonempty pre-FRA interval. This removes an impossible new-period alternative only; it does not remove UNKNOWN prior history or an existing period's UNKNOWN administrative end. |
-| U3. With unknown prior/current periods, true ordinary FULLY and CURRENTLY status under favorable all-period disregard decides true. A DISABILITY witness must also survive any current-establishment completion that ends the disability before that witness. With a reported start, one filling with that start must attain the status with no period in force (round 18). | C320(a): "If benefits ... would be denied or reduced because of a period of disability, the period of disability will not be taken into consideration." B404.130(f) also permits counting all prior quarters if favorable. RS .120 requires all periods used or all disregarded; selective exclusions are not assumed. Specialist credit regimes are refused first. |
+| U3. With unknown prior/current periods, true ordinary FULLY and CURRENTLY status under favorable all-period disregard decides true. A DISABILITY witness must also survive any current-establishment completion that ends the disability before that witness. Every annual placement must attain the status at the quarter it reports with no period in force, because a period's own start can rule a filling out (round 19). | C320(a): "If benefits ... would be denied or reduced because of a period of disability, the period of disability will not be taken into consideration." B404.130(f) also permits counting all prior quarters if favorable. RS .120 requires all periods used or all disregarded; selective exclusions are not assumed. Specialist credit regimes are refused first. |
 | U4. With unknown periods, fewer than six maximum QCs feasible by the immutable horizon proves establishment impossible after routes adding undeclared credits are excluded, except for blindness with a fully-route flag; it supplies no foreign-credit impossibility proof. | B404.110(b)(1) and B404.130(a) supply the ordinary six-QC prerequisite. U3's disregard cannot manufacture credits. UNKNOWN prior history disables both I15 and I16; current nonblindness cannot exclude a past blind prior. The separate emptiness proof tests the earliest prior as blind, and proves emptiness only if no earlier quarter can supply fully insured status or the alternate. It can preserve a fully-route refusal with empty recent windows only after the universal six-QC horizon floor clears (I17). Foreign credits, credit-route flags, and raw-earnings flags outside a complete direct envelope also preserve named refusals. The direct-envelope contract and declared pre1956 alternate still obey I9; that alternate flag adds no route beyond B4. Blindness alone supplies no credits and does not replace the ordinary fully insured prerequisite. |
 | U5. UNKNOWN earnings decide a requested Boolean only if all lower/upper ordinary earnings witnesses agree, under the permitted fixed-period/all-period treatments; an uncertain established start refuses only after at least one feasible filling survives. | B404.143 credits one QC for each increment, maximum four; B404.130 and .146 supply assignment/exclusion rules. Adding ordinary QCs cannot invalidate a fixed treatment. A derived start cannot be silently held fixed when the completion changes it. If a lower or upper representative cannot construct the declared period, but another single filling meets its end, continuity, and prior-overlap constraints, the public result is `unknown_earnings_years_decide_status`. If no ordinary filling can qualify by the declared end and all independent routes are impossible, it is an input error and creates no row. A deferred raw-conversion row uses temporary unknown fillings only for possibility, then retains its conversion refusal. Specialist possibilities and administrative-end candidates are considered separately. |
 | U6. UNKNOWN administrative end decides a status only when every end-quarter candidate from start through query/cap, plus permitted continuation, agrees, after applying any continuity lower bound. | A216(i)(2)(D) uses "whichever ... is the earlier"; C321(c)(3) includes "the last month for which you received benefits" after substantial gainful activity. Medical continuity cannot exclude early ends; a dated administrative continuity observation can. FRA/death caps limit the latest candidate and do not turn the unknown into a fact. Both ending and prior-history unknown facts remain disclosed when both are missing; UNKNOWN prior history uses the universal envelopes rather than inventing a derived current period to enumerate. The unchanged completion enumeration can include early endings rejected by I14 if declared concretely. Agreement across that larger set still implies agreement across every valid completion, while disagreement can preserve an extra refusal. An actual supplied end keeps its declared-date semantics; known ending provenance requires an ending date. |
 | U7. UNKNOWN SSPA applicability preserves an ordinary QC-only false status, but never a QC-only true status. | RS .102 B.2 says the worker "must meet one of the following additional requirements" and may fail "even if" the QC requirement is met. Applicability can remove ordinary insurance and cannot supply missing QCs. Known applicability retains adjudication refusal; any separate specialist path is refused first. |
-| U8. With UNKNOWN prior history, a known current period's start is certain onset only if the lower-credit favorable-disregard witness already insures at onset; otherwise the start stays unknown. | A216(i)(2)(C) and C321(a) make insured onset the earliest legal start. C320(a)'s disregard permits that witness, and no route can move this period before medical onset. Other potentially valid histories prevent an impossibility error but do not fabricate a start. |
+| U8. With UNKNOWN prior history, a known current period's start is certain onset only if the lower credits insure the onset on every annual placement with no period in force (round 19); otherwise the start stays unknown. | A216(i)(2)(C) and C321(a) make insured onset the earliest legal start. C320(a)'s disregard permits that witness, and no route can move this period before medical onset. Other potentially valid histories prevent an impossibility error but do not fabricate a start. |
 | U9. A continues-through observation removes only candidate administrative ends before its date; it never supplies an ending endpoint or removes UNKNOWN-end disclosure. | C321(c) enumerates actual ending events. Observation of a period still in force supplies a lower bound on those events, not their occurrence. Same-quarter ends remain possible, while a later-quarter observation makes the query quarter interior. |
 | U10. An automatic alternate-pre1956 possibility can be removed for every filling only when the lower-credit filling has ordinary 20/40 in a quarter disabled in every ending completion, before October 1960. | RS .480 A says "does not have 20/40 for freeze or DIB in any quarter before 10/60". Counts under a fixed all-period use/disregard treatment are monotone in added QCs. The scan retains query, 1960Q3, and month-before-FRA caps for every person (A216(i)(2)(D); C315(a); C321(a)–(b)). For established current periods, its shared date is the declared end minus two calendar months, or continuity date minus two when the end is UNKNOWN, or onset if neither is supplied; it is never before onset. The same two-month exclusion offset applies to FRA/death endings because an earlier recovery remains a possible completion, without inferring that it occurred. UNKNOWN establishment before FRA uses onset. A quarter counts only if its first month is on or before that shared date. RS .480 A's "any quarter" supports a wider scan, while "though under a disability" and "for freeze or DIB" support the shared disabled-quarter scan. A difference preserves the named refusal. Young-worker or blindness witnesses are not substituted for 20/40, upper-only witnesses cannot exclude every filling, and application facts remain unmodeled. |
 
@@ -849,8 +849,8 @@ to a statutory sentence that does not state it.
 | B6. With known earnings and an UNKNOWN ending, returned count bounds include all end-candidate counts admitted by continuity; with entirely known facts they remain exact. | B404.120(b), .130(f), .146(d) distinguish credited endpoints and excluded interiors. All candidate quarters are enumerated, including early endpoints and capped-FRA candidates, subject to any continues-through observation; extrema therefore cover each completion. A continuity date is never inserted as a credited endpoint. No monotonic endpoint-count premise is used. |
 | B7. DLI lies through query without frozen exit, or through the pre-FRA-quarter/death horizon with frozen coverage; `None` is the bottom bound. A future exit cannot remove query censoring. | RS .148 defines DLI as "the last day in the last quarter" in which status is met and limits the search relative to FRA. B404.146(b) caps credits after death; A216(i)(2)(B) caps new periods. Future undeclared work is not assumed zero. Specialist routes are refused before this ordinary DLI calculation. |
 | B8. For a nonblind ordinary worker with no prior period, no DLI can lie more than 39 quarters after the last credited quarter. | B404.130(b)(2) requires "at least 20 QCs in the 40-quarter period ... ending with that quarter". After 39 later quarters no original QC remains. Blindness and prior-period special/exclusion routes disable this search shortcut; flagged or observable specialist routes refuse. |
-| B9. With unknown periods the disregard DLI is a lower bound and the permitted query/FRA/death horizon is the upper bound; unknown SSPA applicability reduces any positive DLI lower bound to `None`. | C320(a) permits favorable disregard; B404.130(f) permits counting all prior-period quarters; RS .102 B.2 imposes an additional requirement. The bound does not infer a particular recovery or history. Exemption can recover the ordinary upper witness but cannot exceed the calendar horizon. Round 18 requires one filling with the reported start to reach the lower bound with no period in force, and refuses by name otherwise. |
-| B10. UNKNOWN-ending DLI bounds include every end candidate. With an unresolved ongoing end, known prior history, and frozen-exit future horizon beyond query, the named DLI-horizon refusal remains. | C321(c)'s alternative endings and RS .148's last qualifying quarter permit different historical DLI witnesses. The candidate extrema bound all declared endings; no recovery beyond the query is inferred. Refusal covers the unobserved future administrative fact. Round 17 requires every ending to reach the lower date on a filling with the reported start, and refuses by name otherwise. Under UNKNOWN priors that filling reads no period in force, so no ending changes it (round 18). |
+| B9. With unknown periods the disregard DLI is a lower bound and the permitted query/FRA/death horizon is the upper bound; unknown SSPA applicability reduces any positive DLI lower bound to `None`. | C320(a) permits favorable disregard; B404.130(f) permits counting all prior-period quarters; RS .102 B.2 imposes an additional requirement. The bound does not infer a particular recovery or history. Exemption can recover the ordinary upper witness but cannot exceed the calendar horizon. Round 19 requires every annual placement to reach the lower bound with no period in force, and refuses by name otherwise. |
+| B10. UNKNOWN-ending DLI bounds include every end candidate. With an unresolved ongoing end, known prior history, and frozen-exit future horizon beyond query, the named DLI-horizon refusal remains. | C321(c)'s alternative endings and RS .148's last qualifying quarter permit different historical DLI witnesses. The candidate extrema bound all declared endings; no recovery beyond the query is inferred. Refusal covers the unobserved future administrative fact. Round 17 requires every ending to reach the lower date on a filling with the reported start, and refuses by name otherwise. Under UNKNOWN priors every placement must reach it with no period in force, so no ending changes it (round 19). |
 | B11. At most 4,096 combinations of disability endpoint assignments are searched exactly, after any applicable impossibility proof. | B404.143(b) and RS .230 permit favorable assignment; B404.130(f) makes credited endpoints decisive. Fixed-overlap, six-QC, and I15's minimum-requirement checks precede `_boundary_variants`, including both alternate-path calls and UNKNOWN-prior-history feasibility. A remaining excess returns `disability_boundary_assignments_unsupported`; computational complexity is neither a statutory impossibility bound nor permission to retain an all-invalid declaration. |
 | B12. Ordinary counted windows have 13 quarters for current insurance and 40 for ordinary disability; young/subsequent special windows require half their elapsed quarters after dropping an odd remainder, with a six-QC minimum. The young-worker window holds at most 39 quarters. A subsequent-special period past 40 quarters computes only where the Act's whole period and 404.130(d)(2)'s 20 of 40 agree (round 17). | B404.120(a) says "13-quarter period"; .130(b) says "20 QCs in the 40-quarter period"; .130(c)-(d) and A216(i)(3)(B) supply the half-quarter, odd-remainder, and 6/12 alternatives. Blindness uses only the fully insured prerequisite. A fully-route flag must still leave a recent-rule witness or possible automatic pre1956 alternate where I16 applies; the pre1956 flag adds no route beyond that alternate. Specialist paths retaining possibility receive their named refusal. |
 | B13. Indexed annual QC amounts are at least the prior year's statutory increment and the rounded indexed 1978 amount, with nearest-$10 rounding and $5 ties upward. | A213(d)(2) chooses "the larger of" the prior increment and indexed amount, rounded to "the next higher multiple of $10" at a $5 tie. This exact parameter calculation has no disability or specialist alternative; input-domain checks require positive NAWI and a statutory prior increment. |
@@ -1967,7 +1967,7 @@ seeds and generates more. Two more generators add a DIB entitlement month,
 drawn mostly from partial years up to the onset, and ages 22 to 30 at onset
 under 404.130(c) and (d). UNKNOWN facts and flags stay outside its claim,
 and round 16 adds the date last insured and the subsequent-special route.
-Declared priors are not re-adjudicated.
+Round 19 holds a declared prior's own start (`prior_holds`).
 
 After the fix, the same 28,000 and 14,000 fresh declarations give no
 disagreement, no false rejection and no computed row without a lawful
@@ -2224,8 +2224,8 @@ frozen OP12 exit overstates its lower date the same way.
 `_settle_lower_date` now searches fillings that keep the reported start, and
 refuses by name unless each ending reaches the lower date. It runs on the
 lower credits, because a lower date comes from those credits, so an UNKNOWN
-year reaches the same check. UNKNOWN priors reach it too, and round 18 holds
-them to a filling with no period in force.
+year reaches the same check. UNKNOWN priors reach it too, and round 19 holds
+them to every placement with no period in force.
 `_fillings_keeping_start` holds the search that `_settle_first_start` already
 ran.
 
@@ -2319,15 +2319,14 @@ the 40 quarters through 2010Q1 and 20 through 2009Q4, so that history's exact
 date is 2009-12-31. A known ending, an UNKNOWN ending, UNKNOWN 2007 credits and
 a frozen OP12 exit all reported a date past it.
 
-`_fillings_keeping_start` now gives each filling the record with no period in
-force under UNKNOWN priors, and `_settle_lower_date` needs one such filling to
-keep the start and reach the date. That filling speaks for every history. The
-start under UNKNOWN priors is the onset, and the onset's witness stands on any
-history that disregards all periods. The same disregard stays open at each
-later quarter, so the date holds, whatever the period's ending. Where no
-filling reaches the date, the row refuses with
-`disability_boundary_assignments_unsupported` and keeps its weight. Lowering
-the date instead would also be safe, and the session kept round 17's refusal.
+`_fillings_keeping_start` gave each filling the record with no period in force
+under UNKNOWN priors, and `_settle_lower_date` needed one such filling to keep
+the start and reach the date. This round claimed that filling spoke for every
+history. Sol's fourteenth review refuted the claim, because a period's own start
+can rule that filling out, and round 19 replaced this check with every
+placement. Where no filling reached the date, the row refused with
+`disability_boundary_assignments_unsupported` and kept its weight. Lowering the
+date instead would also be safe, and the session kept round 17's refusal.
 The lower date itself needed no change: UNKNOWN priors already left it as the
 date with no period in force, as B9 states.
 
@@ -2343,10 +2342,10 @@ quarter under the half-the-quarters test, and then the 13 quarters through
 2003Q2 hold five QCs. For an April 2003 query, `88a0e7bc` reported CURRENTLY
 true, because the freeze reaches QCs before 2000. A prior from 1996-01-01
 through 1999-12-31 takes all but its endpoint QCs, and no filling with the
-2000Q1 start stays currently insured on that history. The shared change covers this
-record: a filling now attains a status with no period in force, or the row
-refuses by name. An OBSERVED empty history keeps the freeze, and both the status
-and the date compute there.
+2000Q1 start stays currently insured on that history. The shared change covered
+this record: a filling attained a status with no period in force, or the row
+refused by name, and round 19 asks that of every placement. An OBSERVED empty
+history keeps the freeze, and both the status and the date compute there.
 
 ### The Mary Brown capture
 
@@ -2393,20 +2392,208 @@ These tests execute the invariants this round adds:
 - under UNKNOWN priors, a computed status or lower date holds on every lawful
   prior history with the reported start
   (`check_every_history` and its stress tests);
-- one filling with the reported start attains it with no period in force, and
-  otherwise the row refuses by name and keeps its weight
+- a result resting on the freeze refuses by name and keeps its weight
   (`test_the_freeze_cannot_carry_a_lower_date`,
   `test_a_frozen_exit_cannot_carry_it_either`,
   `test_a_status_resting_on_the_freeze_refuses`);
-- the ending changes nothing under UNKNOWN priors
-  (`test_every_ending_shares_that_date`);
-- a date or status with no period in force computes
-  (`test_a_date_with_no_period_in_force_computes`,
-  `test_a_status_with_no_period_in_force_computes`);
+- round 19 holds a result to every placement, so a date on one filling refuses
+  on each ending (`test_a_date_on_one_filling_refuses`,
+  `test_every_ending_refuses_that_date`);
+- a status on every placement computes
+  (`test_a_status_on_every_placement_computes`);
 - a known history keeps the freeze (`test_a_known_history_keeps_the_freeze`,
   `test_a_known_history_keeps_the_status`);
 - a fixed start needs no placement search
   (`test_a_fixed_start_needs_no_search_on_unknown_priors`).
+
+## Round 19 a period's own start limits the placements
+
+Verification class: statutory conformance on invented declarations only.
+This correction admits no population, behavioral, payment, or forecast claim.
+Sol's fourteenth review of `129d44bd` raised one medium, and it reproduced. The
+session then found the same defect on listed priors and under UNKNOWN
+establishment. Its first fix for listed priors refused a printed POMS record,
+so that fix changed before this round closed.
+
+### One filling doesn't speak for every history
+
+A period begins in an insured quarter (404.320(b)(2), 404.321(a)), so a prior
+can force an annual QC into one quarter. Disregarding a
+period removes its exclusions, and its start still has to stand on the
+placement. Round 18 asked for one filling with no period in force, and a
+history can rule that filling out.
+
+An invented person born 1961-02-02 has annual QCs 1991:2, four in each of 1992
+to 1994, 1998:1, four in each of 1999 to 2002 and 2003:3, an established period
+from 2000-01-01 through 2000-12-31, and UNKNOWN priors. For a January 2008
+query, `129d44bd` reported a lower date of 2008-03-31. A prior from 1998-01-01
+through 1999-12-31 fits this record: past blindness asks for 15 QCs at 1998Q1,
+14 precede 1998, and so the 1998 QC falls in that quarter. All 24 of the 96
+placements that keep the prior leave 19 QCs in the 40 quarters through 2008Q1
+with no period in force, and 15 with both periods, so that history's exact date
+is 2007-12-31.
+
+An invented person born 1965-02-02 has annual QCs 1986:4, 1987:1, 1990:1,
+1995:3, four in each of 1996 to 1999, 2000:1, 2001:4 and 2002:1, an established
+period from 2000-01-01 through 2002-12-31, and UNKNOWN priors. For an April 2003
+query, `129d44bd` reported CURRENTLY true. A prior from 1990-01-01 through
+1999-12-31 asks for six QCs at 1990Q1 and finds five before 1990, so it holds
+the 1990 QC there. A 2000Q1 start then holds the 2000 QC there too, and each of
+the 64 of 1,024 placements that keep both leaves fewer than six QCs in the 13
+quarters through 2003Q2.
+
+### Every placement carries a result
+
+`_every_placement_passes` answers for all placements at one quarter. With no
+period in force every window ends at the tested quarter, so placing annual QCs
+as early as possible before that quarter's year and as late as possible in it
+costs the most from every window at once. That worst filling is itself a
+filling, so the answer is exact, and
+`test_the_worst_filling_matches_every_placement` holds it to exhaustive
+placements.
+
+Disregarding all periods stays open on any placement (404.130(f), RS 00301.120).
+A result that every placement attains with no period in force therefore holds
+on every completion, and it needs no search of histories. Under UNKNOWN priors
+or UNKNOWN establishment, `_settle_every_history` asks that of each true status
+at the quarter it reports and of the lower date. Anything less refuses with
+`disability_boundary_assignments_unsupported` and keeps its weight. This
+replaces round 18's check.
+
+`_start_fixed` applies the same test to the start under UNKNOWN priors. A start
+some placement moves reports `None` and names `current_disability_period_start`
+in `unknown_facts`. DISABILITY reports its first favorable quarter, so it
+refuses where that quarter fails on some placement, even when a later quarter
+holds on all of them (`test_a_status_stands_at_the_quarter_it_reports`).
+
+This over-refuses a record no lawful history can move. The session accepted
+that cost, because a refusal keeps the row and its weight, and Sol's fix text
+asks for the refusal until a universal proof exists. Every placement is that
+proof, and it asks more than a tighter search of histories would.
+
+### UNKNOWN establishment
+
+UNKNOWN establishment stands for a period no one has placed, so it raises the
+same question with no prior at all. An invented person born 1965-02-02 has
+annual QCs of four in each of 1990 to 1994, 2000:1, 2001:4 and 2002:1, an onset
+of 2000-01-01, and UNKNOWN establishment. `129d44bd` reported CURRENTLY true
+for an April 2003 query. Only the 2000 QC in 2000Q1 reaches 20 of 40 in any
+quarter through 2003Q2, so a period needs that placement. On it, a period
+through 2003-03-31 leaves five QCs in the 13 quarters with no period in force
+and one with it.
+
+`_settle_every_history` covers this case, and it reads no listed period, because
+the period no one has placed joins any listed prior in a count. A listed prior
+alone therefore can't carry such a result
+(`test_unknown_establishment_needs_the_disregard`).
+
+### Listed priors
+
+The two records above computed the same wrong results at `129d44bd` with the
+prior listed OBSERVED. A listed prior differs from an unknown one in one way:
+the record names it, so the search can hold it.
+
+`_prior_start_binds` asks whether placement decides a prior's own start. A prior
+that holds on every placement leaves them all open. One that holds on none rests
+on something this record doesn't show, and says nothing about placement. Past
+blindness leaves no trace in the record and asks only for fully insured status
+(404.130(e)), so an unflagged prior needs that much. A flagged prior's holder
+"were only insured under paragraph (c)" (404.130(d)(1)), so that holder passes
+a special route and not 404.130(b). A prior that every placement carries past
+404.130(b) therefore holds on none.
+
+Otherwise the prior picks among placements, and the logged first-start reading
+applies to its start: one filling of the years that can move that start must
+keep it and attain the result, and other years stay flexible for each status.
+`_keeps_priors` tests one filling. `_settle_listed_priors` searches when no
+current period exists, and `_fillings_keeping_start` holds the same priors when
+one does. The result then comes from the best witnesses those fillings allow,
+and DISABILITY joins that search, reading the person without the period's own
+exclusion. For the 1965-born record with a second 2002 QC, the prior holds the
+1990 QC in 1990Q1, and DISABILITY reports 20 QCs where `129d44bd` reported 21.
+
+The first version of this fix refused whenever placement split a prior. That
+refused the record of POMS example 8
+(`test_subsequent_under31_poms_140_examples_7_and_8`), whose result rests on
+1993 to 1996 and holds on the placement its prior needs. The search computes it
+and reports the 1988 QC in 1988Q1 (`test_a_prior_holds_a_qc_in_its_first_quarter`).
+
+Three limits remain, and each refuses by name. An UNKNOWN year with a prior that
+picks among placements refuses, because lower and upper credits then bound
+different placements. A filling must attain every reported status and the date
+together, so a result resting on two placements refuses even where each status
+alone could stand. The search stops at 4,096 placements. UNKNOWN establishment
+skips the search, because a result that passes every placement can't move on
+a subset of them (`test_unknown_establishment_leaves_a_split_prior_to_the_proof`).
+
+### Oracle reach and bounds
+
+`check_every_history` now adds a January and a July prior in each partial year
+before the onset, reads every start where the start stays open, and holds a
+filling only where each added prior can begin on it. `prior_edge_declaration`
+redraws the two records above near their boundary, and
+`test_status_stress_every_open_period` does the same under UNKNOWN establishment.
+`check` holds a declared prior through `fillings_keeping_priors`, and each prior
+now counts the periods before it or disregards them.
+
+`check_no_period` is new. It exhausts the placements of a record with no current
+period, and requires each status, each exact count and the date last insured to
+equal the best the declared priors allow, on both readings of a flagged prior.
+`listed_prior_declaration`, `two_prior_declaration` and
+`special_prior_declaration` feed it. The oracle imports no production helper,
+and it doesn't check DISABILITY's count, which its arithmetic doesn't report.
+`test_a_prior_limits_what_a_status_reports` pins that count by hand.
+
+The wide search drew 250 invented declarations from fresh seeds, 150 from
+`prior_edge_declaration` and 100 from `declaration`. Each edge seed ran
+`check_every_history` on both ending kinds and three requests and again on an
+open period, then ran `check` on its listed and two-prior records and
+`check_no_period` on those and a flagged record. Each declared seed ran the same
+requests and one listed-prior check, and the search skipped 65 declared seeds
+with more than 96 placements. All 2,450 checks held: 1,034 computed, 1,164
+refused by name and 252 raised `InvalidFamilyInput`.
+
+The first pass of this round's 40 listed mutations
+(`scratch/review/round19_mutate.py`) ran through the insured status modules with
+no restricted open, and 38 failed a named test. `start_search_skips_prior_years`
+and `date_search_drops_binding` survived, and
+`test_a_prior_reaches_a_year_the_start_cannot` and
+`test_a_listed_prior_holds_every_ending_to_the_date` now kill them. Two stress
+tests gained `@example` pins while that pass ran, so its results rest on mixed
+test bytes. A rerun at the final bytes writes `round_19_mutations` in a later
+commit.
+
+Against `129d44bd`, 44 of the 162 tests then in the five changed modules fail.
+Three tests arrived later and two stress tests gained `@example` pins, and four
+of those five fail there. The fifth checks only the arithmetic of an invented
+history.
+
+These tests execute the invariants this round adds:
+
+- under UNKNOWN priors or UNKNOWN establishment, a computed status or lower date
+  holds on every annual placement with no period in force, and otherwise the row
+  refuses by name and keeps its weight (`check_every_history` and its stress
+  tests, `test_a_prior_can_undercut_the_date`,
+  `test_a_prior_can_undercut_the_status`,
+  `test_unknown_establishment_alone_refuses`);
+- the worst filling matches exhaustive placements at every tested quarter
+  (`test_the_worst_filling_matches_every_placement`);
+- a start some placement moves stays open, and a start every placement holds
+  stands (`test_a_start_some_placement_moves_stays_open`,
+  `test_a_fixed_start_is_the_onset`);
+- `_prior_start_binds` answers true only where placement splits the prior or a
+  later prior rests on an earlier one
+  (`test_placement_binds_a_prior_only_when_it_splits_them`);
+- a computed result on a listed prior is the best the prior allows, for each
+  status, count and date (`check`, `check_no_period`, and their stress tests);
+- a listed prior that placement decides never moves a result it can't reach, and
+  a result no kept filling attains refuses by name
+  (`test_a_listed_prior_can_undercut_the_date`,
+  `test_a_listed_prior_can_undercut_the_status`,
+  `test_a_listed_prior_binds_without_a_current_period`);
+- a flagged prior keeps its route and stays short of 404.130(b)
+  (`test_a_special_prior_needs_a_quarter_of_its_route`,
+  `test_a_special_prior_stays_short_of_the_ordinary_rule`).
 
 ## Not in scope
 

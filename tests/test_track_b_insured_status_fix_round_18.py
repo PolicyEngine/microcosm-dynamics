@@ -7,9 +7,10 @@ UNKNOWN priors stand for every prior history. 404.130(f) and RS 00301.120
 count all periods or disregard all of them. Counting an added prior can take a
 credited quarter from the record, and disregarding it drops the current period
 too. Only the disregard speaks for every history, so a reported status or
-lower date needs one filling with the reported start that attains it with no
-period in force (404.321(a); RS 00301.230; source conflict
-us:oasdi-insured-one-filling-first-start).
+lower date needs a filling that attains it with no period in force (404.321(a);
+RS 00301.230; source conflict us:oasdi-insured-one-filling-first-start). Round
+19 replaced one such filling with all of them, because a period's own start
+can rule a filling out.
 """
 
 from dataclasses import replace
@@ -104,28 +105,27 @@ def test_a_frozen_exit_cannot_carry_it_either(person):
     )
 
 
-def test_a_date_with_no_period_in_force_computes():
+def test_a_date_on_one_filling_refuses():
     # A fourth 2005 QC gives the quarters through 2010Q1 their 20 with the
-    # 2000 QC in 2000Q1, so every prior history holds this date.
-    result = _result(
+    # 2000 QC in 2000Q1. A history can move that QC, so the reported quarter
+    # doesn't hold on every placement.
+    _refused_with(
+        ASSIGNMENT,
         _unknown_priors(),
         _history(1960, 2010, {**LOWER_ANNUAL, 2005: 4}),
         date(2010, 1, 1),
         test=DISABILITY,
     )
-    assert result.current_disability_period_start == date(2000, 1, 1)
-    assert result.dli.lower == date(2010, 3, 31)
 
 
-def test_every_ending_shares_that_date():
-    # With no period in force the ending changes nothing.
-    result = _result(
+def test_every_ending_refuses_that_date():
+    _refused_with(
+        ASSIGNMENT,
         _unknown_ending(through=date(2000, 1, 1)),
         _history(1960, 2010, {**LOWER_ANNUAL, 2005: 4}),
         date(2010, 1, 1),
         test=DISABILITY,
     )
-    assert result.dli.lower == date(2010, 3, 31)
 
 
 def test_a_known_history_keeps_the_freeze():
@@ -148,8 +148,7 @@ def test_a_fixed_start_needs_no_search_on_unknown_priors(monkeypatch):
         raise AssertionError("A fixed start needs no placement search")
 
     monkeypatch.setattr(i, "_fillings_keeping_start", no_search)
-    counts = dict.fromkeys(range(1985, 1996), 4)
-    counts.update(dict.fromkeys(range(1996, 2006), 2))
+    counts = dict.fromkeys(range(1985, 2010), 3)
     result = _result(
         _unknown_priors(),
         _history(1960, 2010, counts),
@@ -192,14 +191,17 @@ def test_a_status_resting_on_the_freeze_refuses(test, unknown_end):
     )
 
 
-def test_a_status_with_no_period_in_force_computes():
+def test_a_status_on_every_placement_computes():
+    # A second 2002 QC holds the 13 quarters on every placement, and the 2000
+    # QC still moves the start, so that stays open.
     result = _result(
         _freeze_person(),
         _history(1970, 2003, {**FREEZE_ANNUAL, 2002: 2}),
         date(2003, 4, 1),
         test=CURRENTLY,
     )
-    assert result.current_disability_period_start == date(2000, 1, 1)
+    assert result.current_disability_period_start is None
+    assert "current_disability_period_start" in result.unknown_facts
     assert result.currently.insured
 
 
