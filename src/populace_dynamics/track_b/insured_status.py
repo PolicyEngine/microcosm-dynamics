@@ -1335,8 +1335,7 @@ def _witness(
                         )
                     elif len(elapsed) > 40:
                         window, required = elapsed[-40:], 20
-                        # Source conflict
-                        # us:oasdi-insured-subsequent-special-long-period
+                        # Source conflict us:oasdi-insured-subsequent-special-long-period
                         # Half of over 40 quarters clears the fully count.
                         long_period = long_period or (
                             len(
@@ -1925,13 +1924,17 @@ def _improves(outcome, returned, last_insured):
 def _fillings_keeping_start(
     person, credits, start, month, exit_month, favored, binding
 ):
-    """Each placement and treatment keeping the start and binding priors."""
-    horizon = _current_period_start_horizon(person, month)
+    """Each placement and treatment keeping the start and binding priors.
+
+    Whether a filling keeps the start turns only on quarters through it
+    (404.321(a)), so no later year can move it. Those years stay flexible,
+    and each status places them favorably (RS00301.230).
+    """
     witness = set(
         _witness(person, credits, start, exit_month, InsuredTest.DISABILITY)[4]
     )
     sensitive = _start_sensitive_years(
-        person, person.disability_onset, horizon
+        person, person.disability_onset, start
     ) | _prior_sensitive_years(person, binding)
 
     def rank(choice):
@@ -2531,8 +2534,7 @@ def _unknown_prior_joint_shortfall(person, rows, horizon, fully_route):
             if len(elapsed) < 12:
                 window, required = counted[-12:], 6
             else:
-                # Source conflict
-                # us:oasdi-insured-subsequent-special-long-period
+                # Source conflict us:oasdi-insured-subsequent-special-long-period
                 window, required = elapsed, max(6, len(elapsed) // 2)
             return len(set(window) & assigned) >= required
 

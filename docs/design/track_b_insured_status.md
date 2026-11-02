@@ -1639,6 +1639,75 @@ conditions; an explicitly declared fully insured route remains a supplied
 fact even if its cohort would not satisfy 404.112. These corrections make
 no payment adjudication and establish no dollar change.
 
+## Source-conflict register
+
+Each `# Source conflict <id>` marker in `insured_status.py` and
+`_insured_status_qc.py` names one of these ten readings on the marker's own
+line. `tests/test_track_b_insured_status_readings.py` holds the markers and
+this list to the same ids. Each reading changes classification and row weight
+and computes no payment.
+
+- `us:oasdi-insured-prior-disability-favorable-disregard` (`_witness`). RS
+  00301.140 example 9 prints that Sam isn't insured as of 5/93, and
+  404.130(f) counts a prior period's quarters where that favors the worker.
+  The rule tries counting every prior period and disregarding them all, and
+  keeps the favorable result.
+- `us:oasdi-insured-disability-period-endpoint-quarters` (`_allowed_quarters`
+  in `_insured_status_qc.py`). 404.130(f) keeps a period's first and last
+  quarters when each is a QC, and RS 00301.140 example 6 and RS 00301.147
+  example 3 print counts without them. The rule keeps the endpoint quarters
+  eligible, and neither printed case changes its insured answer.
+- `us:oasdi-insured-pre1951-seven-elapsed-years`
+  (`_pre1951_aggregate_possible`). Act 213(c) deems one QC for each $400 of
+  pre-1951 wages and states no seven-elapsed-year minimum, and RS 00301.315
+  B.1 records the minimum and its later repeal. The bound applies no minimum,
+  and a potentially decisive aggregate refuses by name
+  (`simplified_pre1951_unsupported`).
+- `us:oasdi-insured-simplified-pre1951-disability-scope`
+  (`_aggregate_could_insure`). Act 223(c)(1)(A), 216(i)(3)(A) and 404.132
+  reach the fully insured prerequisite of disability insured status, and RS
+  00301.315 B.1 says the simplified method doesn't apply to disability
+  claims. The rule follows the statute and the regulation, credits no deemed
+  quarter, and refuses by name where the aggregate could decide a disability
+  result.
+- `us:oasdi-insured-pre1956-alternate-any-quarter-scan`
+  (`_pre1956_alternate_possible`). RS 00301.480 A bars the pre-1956 alternate
+  for a worker with 20/40 "in any quarter before 10/60", and its other words
+  reach only quarters the period covers. The scan stops at the latest date
+  every completion's period covers, and a possible route refuses by name
+  (`disability_before_1956_unsupported`).
+- `us:oasdi-insured-historical-end-recovery-month`
+  (`_historical_recovery_month`). 404.321(b) ends a period on the last day of
+  the second month after the month the disability ended, and the interface
+  declares no recovery month. For an end before February 1981 that precedes
+  the FRA and death endings, recovery falls two months earlier, and that month
+  bounds a valid onset and start. FRA, death and paragraph (c) endings infer
+  no recovery.
+- `us:oasdi-insured-unknown-prior-historical-blindness`
+  (`_unknown_prior_joint_shortfall`). Person fields declare current blindness
+  only, and 404.130(e) asks a blind worker for fully insured status alone. The
+  proof that no UNKNOWN prior can insure the current period therefore lets the
+  earliest prior rest on fully insured status, whatever `statutory_blindness`
+  says.
+- `us:oasdi-insured-flag-first-insured-quarter` (`_recent_rule_possible`).
+  404.321(a) starts a period in the first quarter its holder is insured, and a
+  fully-route flag declares fully insured status but not when it began. Only
+  ordinary insurance ends the scan of a filling. A quarter inside a prior
+  period that meets only the recent rule leaves the start open, so a later
+  quarter can still make the flag's establishment possible.
+- `us:oasdi-insured-one-filling-first-start` (`_settle_first_start`,
+  `_settle_listed_priors`, `_settle_lower_date`, `_settle_every_history`). RS
+  00301.230 makes annual placement flexible, and 404.321(a) gives a period one
+  start. Where placement can move a start, a result stands only if one filling
+  of the years that can move it keeps the start and attains the result. Other
+  years stay flexible for each status.
+- `us:oasdi-insured-subsequent-special-long-period` (`_witness`,
+  `_unknown_prior_joint_shortfall`). Act 223(c)(1)(B)(iii) asks for half the
+  quarters after age 21 with no cap, and 404.130(d)(2) caps the test at 20 of
+  40. `_witness` computes on the cap and refuses by name
+  (`subsequent_special_long_period_unsupported`) where the uncapped count
+  would insure, and the possibility proof takes the Act's reading.
+
 ## Round 13 joint classification audit
 
 Sections 404.130(b)–(d) and (f) leave the recent floor intact when prior

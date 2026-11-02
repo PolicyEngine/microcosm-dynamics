@@ -280,6 +280,17 @@ def test_unknown_recent_and_fully_counts_contain_concrete_period_fillings(
 
 
 @PROPERTY
+# Round 20: a listed prior, a 2004 start and partial years 2016-2020. The
+# start-keeping search once enumerated those later years and refused.
+@example(
+    start_year=2005,
+    end_year=2010,
+    recent=[2, 3, 2, 2, 2],
+    kind=i.InsuredTest.FULLY,
+    current_unknown=True,
+    early_current=True,
+    established_current=False,
+)
 @example(
     start_year=2005,
     end_year=2015,
