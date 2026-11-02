@@ -16862,6 +16862,24 @@
    },
    "expected": "covered",
    "decides": "legislative_not_retirement_covered_1983"
+  },
+  {
+   "rule_id": "nonprofit_1978_1983",
+   "worker": "INVENTED (review r6 M-8): 1980: a clerk paid $80 in the year by a pension trust described in 401(a): 409 and 3121(a)(16) disagree on the $100 rule for such a trust, so the case refuses.",
+   "facts": {
+    "nonprofit_organization": "employer is a trust described in 401(a) and exempt from income tax under 501(a)"
+   },
+   "expected": "refuses",
+   "decides": "section_401a_trust_small_remuneration"
+  },
+  {
+   "rule_id": "nonprofit_1984_2026",
+   "worker": "INVENTED (review r6 M-8): 1990: a clerk paid $80 in the year by a pension trust described in 401(a): 409 and 3121(a)(16) disagree on the $100 rule for such a trust, so the case refuses.",
+   "facts": {
+    "nonprofit_organization": "employer is a trust described in 401(a) and exempt from income tax under 501(a)"
+   },
+   "expected": "refuses",
+   "decides": "section_401a_trust_small_remuneration"
   }
  ]
 }

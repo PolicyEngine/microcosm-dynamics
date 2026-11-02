@@ -6121,6 +6121,26 @@
         },
         "consequence": "covered_above_threshold",
         "description": "From 1978, 3121(a)(16) excludes \"remuneration paid by an organization exempt from income tax under section 501(a) (other than an organization described in section 401(a)) or under section 521 in any calendar year to an employee for service rendered in the employ of such organization, if the remuneration paid in such year by the organization to the employee for such service is less than $100\". It reaches exempt organizations beyond 501(c)(3), whose service former 410(a)(8)(B) does not exclude, so that service is covered above the $100 annual test (threshold nonprofit_remuneration_year), as the row's threshold concept states. The title II text, 409(a)(14) (409(p) as Pub. L. 95-216 added it), reads \"Remuneration paid by an organization exempt from income tax under section 501 of the Internal Revenue Code of 1986\" and names neither the 401(a) exception nor 521; the text follows 3121(a)(16)."
+      },
+      {
+        "case_id": "section_401a_trust_small_remuneration",
+        "precedence": 8,
+        "when": {
+          "nonprofit_organization": "employer is a trust described in 401(a) and exempt from income tax under 501(a)"
+        },
+        "consequence": "open",
+        "description": "The Social Security Act's 409 and the Code's 3121(a)(16) state the $100 rule for exempt organizations differently: 3121(a)(16) carves out \"an organization described in section 401(a)\", while the 409 text the 1984 row quotes names any \"organization exempt from income tax under section 501\". Neither text changes at 1984, so both rows open the question instead of choosing (review r6 M-8).",
+        "open_reason": "SECTION_401A_TRUST_SMALL_REMUNERATION_UNSETTLED: the captured 409 text and 3121(a)(16) disagree on whether a 401(a) trust's remuneration below $100 a year is excluded, and no capture reconciles them, so the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "section_409_wages_reading",
+            "description": "409(a)(14) (originally 409(p)) excludes from wages remuneration below $100 a year paid by an organization exempt under section 501, a 401(a) trust included: the $100 annual test applies (covered_above_threshold)."
+          },
+          {
+            "name": "section_3121a16_reading",
+            "description": "3121(a)(16) excludes small remuneration only from organizations exempt under 501(a) \"other than an organization described in section 401(a)\": no $100 test reaches the trust's pay, which is covered."
+          }
+        ]
       }
     ],
     "open_alternatives": [],
@@ -6407,6 +6427,26 @@
         },
         "consequence": "covered",
         "description": "409(a)(14) excludes from wages \"Remuneration paid by an organization exempt from income tax under section 501 of the Internal Revenue Code of 1986\" below $100 a year, and 3121(a)(16) excludes \"remuneration paid by an organization exempt from income tax under section 501(a) (other than an organization described in section 401(a)) or under section 521 in any calendar year to an employee for service rendered in the employ of such organization, if the remuneration paid in such year by the organization to the employee for such service is less than $100\". Neither reaches an employer exempt under none of those sections, such as a for-profit business: this family excludes nothing and its threshold does not apply, as the 1968-1983 residuals say; apply the other families. The two texts differ on a 401(a) organization and a 521 cooperative, so the case leaves both to the residual, as before. Ranked last."
+      },
+      {
+        "case_id": "section_401a_trust_small_remuneration",
+        "precedence": 5,
+        "when": {
+          "nonprofit_organization": "employer is a trust described in 401(a) and exempt from income tax under 501(a)"
+        },
+        "consequence": "open",
+        "description": "The Social Security Act's 409 and the Code's 3121(a)(16) state the $100 rule for exempt organizations differently: 3121(a)(16) carves out \"an organization described in section 401(a)\", while the 409 text the 1984 row quotes names any \"organization exempt from income tax under section 501\". Neither text changes at 1984, so both rows open the question instead of choosing (review r6 M-8).",
+        "open_reason": "SECTION_401A_TRUST_SMALL_REMUNERATION_UNSETTLED: the captured 409 text and 3121(a)(16) disagree on whether a 401(a) trust's remuneration below $100 a year is excluded, and no capture reconciles them, so the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "section_409_wages_reading",
+            "description": "409(a)(14) (originally 409(p)) excludes from wages remuneration below $100 a year paid by an organization exempt under section 501, a 401(a) trust included: the $100 annual test applies (covered_above_threshold)."
+          },
+          {
+            "name": "section_3121a16_reading",
+            "description": "3121(a)(16) excludes small remuneration only from organizations exempt under 501(a) \"other than an organization described in section 401(a)\": no $100 test reaches the trust's pay, which is covered."
+          }
+        ]
       }
     ],
     "open_alternatives": [],
