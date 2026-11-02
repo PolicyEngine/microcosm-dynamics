@@ -38,11 +38,13 @@ def _assert_sequences_equal(expected, actual):
 
 
 def _assert_generators_equal(expected, actual):
-    """Compare generator seeds and first four draws (design §5.4)."""
+    """Compare seeds, ``bit_generator.state`` and four draws (§5.4)."""
     _assert_sequences_equal(
         expected.bit_generator.seed_seq, actual.bit_generator.seed_seq
     )
+    assert actual.bit_generator.state == expected.bit_generator.state
     assert np.array_equal(actual.random(4), expected.random(4))
+    assert actual.bit_generator.state == expected.bit_generator.state
 
 
 @pytest.mark.parametrize(
@@ -191,9 +193,10 @@ def _sequence_identity(sequence):
 
 
 def _generator_identity(generator):
-    """Summarize a generator by its seed and first draws (design §5.4)."""
+    """Summarize a generator by seed, state and first draws (§5.4)."""
     return (
         _sequence_identity(generator.bit_generator.seed_seq),
+        generator.bit_generator.state,
         tuple(generator.random(2).tolist()),
     )
 
@@ -659,3 +662,111 @@ def test_negative_position_wraps_as_the_list_lookup_does():
         "tagged_child_generator",
         (0, MODULE_ORDER[0], 5, _WrappingIndex(-3)),
     )
+
+
+# The injection ruling's condition 3 (24 October 2026): OP1's slots draw
+# their person and tagged streams from the direct class by default, so it
+# must match the registry at every period of the horizons OP1 runs at.
+INJECTION_HORIZONS = (0, 1, 7, 75)
+INJECTION_DRAWS = (0, 1, 9)
+
+
+def _every_method(streams, period, module):
+    """Call each stream method once at one address (design §§2.1, 5.4)."""
+    return (
+        ("seed_sequence", streams.seed_sequence(period, module)),
+        ("generator", streams.generator(period, module)),
+        ("child_generator", streams.child_generator(period, module, 2)),
+        (
+            "person_generator",
+            streams.person_generator(period, module, 12345),
+        ),
+        (
+            "tagged_generator",
+            streams.tagged_generator(period, module, EMIGRATION_STREAM_TAG),
+        ),
+        (
+            "tagged_child_generator",
+            streams.tagged_child_generator(period, module, GATE_M6_TAG, 3),
+        ),
+    )
+
+
+@pytest.mark.parametrize(
+    ("draw_index", "n_periods"),
+    tuple(product(INJECTION_DRAWS, INJECTION_HORIZONS)),
+)
+def test_every_method_matches_registry_at_every_period(draw_index, n_periods):
+    """Exhaustive over periods 0 to the horizon and all eight modules.
+
+    Each method's stream equals the registry's in seed identity,
+    ``bit_generator.state`` before and after four draws, and the draws.
+    """
+    registry = ProjectionRNGRegistry(draw_index, n_periods)
+    direct = DirectRNGStreams(draw_index, n_periods)
+    for period, module in product(range(n_periods + 1), MODULE_ORDER):
+        expected = _every_method(registry, period, module)
+        actual = _every_method(direct, period, module)
+        for (name, want), (other, got) in zip(expected, actual, strict=True):
+            assert name == other
+            if name == "seed_sequence":
+                _assert_sequences_equal(want, got)
+            else:
+                _assert_generators_equal(want, got)
+
+
+@pytest.mark.parametrize(
+    ("draw_index", "n_periods"),
+    tuple(product(INJECTION_DRAWS, INJECTION_HORIZONS)),
+)
+def test_bad_addresses_on_injection_horizons_match_registry(
+    draw_index, n_periods
+):
+    """Every bad address is refused alike: exception type and message.
+
+    Periods just outside the horizon, an unknown module and negative
+    children and tags are crossed with valid values, so each refusal and
+    its precedence over the others is compared, as are the valid streams.
+    """
+    for period, module in product(
+        (-1, 0, n_periods, n_periods + 1),
+        (MODULE_ORDER[0], MODULE_ORDER[-1].value, "unknown"),
+    ):
+        for method, length in _TAIL_LENGTHS.items():
+            for tail in product((-1, 0), repeat=length):
+                _assert_outcomes_match(
+                    draw_index, n_periods, method, (period, module, *tail)
+                )
+
+
+@st.composite
+def _injection_addresses(draw):
+    """Draw an address, valid or not, on one of the injection horizons."""
+    n_periods = draw(st.sampled_from(INJECTION_HORIZONS))
+    method = draw(st.sampled_from(tuple(_TAIL_LENGTHS)))
+    tail = draw(
+        st.lists(
+            st.integers(-1, 2**16),
+            min_size=_TAIL_LENGTHS[method],
+            max_size=_TAIL_LENGTHS[method],
+        )
+    )
+    return (
+        draw(st.integers(0, 2**16)),
+        n_periods,
+        method,
+        (
+            draw(st.integers(-1, n_periods + 1)),
+            draw(st.sampled_from((*MODULE_ORDER, "unknown"))),
+            *tail,
+        ),
+    )
+
+
+@settings(max_examples=60, deadline=None)
+@given(address=_injection_addresses())
+def test_generated_addresses_on_injection_horizons_match_registry(address):
+    """Hypothesis extends both grids over draws, periods, modules and
+    tails: the same stream and state, or the same refusal (§§2.1, 5.4)."""
+    draw_index, n_periods, method, args = address
+    _assert_outcomes_match(draw_index, n_periods, method, args)
