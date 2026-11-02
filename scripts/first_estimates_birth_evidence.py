@@ -443,6 +443,19 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/income_resources/aggregate_pensions.py"),
     Path("src/populace_dynamics/income_resources/aggregate_poms.py"),
     Path("src/populace_dynamics/income_resources/aggregate_tables.py"),
+    # The SSI interface (SSI0) is opt-in; nothing in the historical
+    # projection imports it.
+    Path("src/populace_dynamics/income_resources/ssi/__init__.py"),
+    Path("src/populace_dynamics/income_resources/ssi/_child.py"),
+    Path("src/populace_dynamics/income_resources/ssi/contract.py"),
+    Path("src/populace_dynamics/income_resources/ssi/dataset_worker.py"),
+    Path("src/populace_dynamics/income_resources/ssi/environment_wheels.json"),
+    Path("src/populace_dynamics/income_resources/ssi/input_contract.json"),
+    Path("src/populace_dynamics/income_resources/ssi/inventory.json"),
+    Path("src/populace_dynamics/income_resources/ssi/pin.json"),
+    Path("src/populace_dynamics/income_resources/ssi/pinning.py"),
+    Path("src/populace_dynamics/income_resources/ssi/records.py"),
+    Path("src/populace_dynamics/income_resources/ssi/runner.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
