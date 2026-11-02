@@ -4947,7 +4947,7 @@
           "operative_current_text": "enacted_2014_repeal"
         },
         "unread_trigger_facts": {
-          "employee_self_or_mixed": "The case text's 'the employer is registered' carries former (17)'s 'in the employ of' (worker 89: a contractor's client is not his employer).",
+          "employee_self_or_mixed": "The case text's 'the employer is registered' carries former (17)'s 'in the employ of' (a contractor's client is not his employer).",
           "historical_fica_treatment": "No captured source conditions former 410(a)(17) on how the payor treated the pay."
         }
       },
@@ -12140,7 +12140,7 @@
           "employee_self_or_mixed": "410(a)(20) excludes service under the share arrangement whatever the common-law status.",
           "fishing_additional_cash_conditions": "Carried by the fishing_catch_share_arrangement text ((A)(i)-(iii)).",
           "fishing_crew_size": "Carried by the fishing_catch_share_arrangement text (normally fewer than 10, with the 4-quarter deeming sentence).",
-          "historical_fica_treatment": "The payor-treatment proviso of s.1116(a)(3)(A)(ii) reaches only pay before 1995; clause (i) has none (worker 20).",
+          "historical_fica_treatment": "The payor-treatment proviso of s.1116(a)(3)(A)(ii) reaches only pay before 1995; clause (i) has none.",
           "occupation": "The arrangement, not an occupation code, is the statutory condition.",
           "reporting_unit": "Reporting is not a coverage condition.",
           "services_performed_date": "The row is on the payment-date axis; the window carries the date."
@@ -13895,7 +13895,7 @@
           "wage_employment_excluded": true
         },
         "unread_trigger_facts": {
-          "direct_seller_contract": "3508(b)(2)(A)(iii) applies only to services after 1995 (Pub. L. 104-188 s.1118(b)); this row ends 1995-12-31. See NOTE N-9 on the 1983+ general clauses (i)-(ii).",
+          "direct_seller_contract": "3508(b)(2)(A)(iii) applies only to services after 1995 (Pub. L. 104-188 s.1118(b)); this row ends 1995-12-31. Whether 3508(b)(2)'s general direct-seller clauses, which 410(q) applies from 1983, reach a newspaper vendor this row excludes is not settled by any capture (review r6 M-11; a stated limit).",
           "occupation": "The arrangement texts, not an occupation code, carry 410(a)(14)(A)-(B).",
           "services_performed_date": "No 410(a)(14) or 411(c)(2)(A) date falls inside 1968-1995 (no amendment note for (a)(14) after 1968); the window carries the 1996 boundary."
         }
@@ -15119,7 +15119,7 @@
         },
         "unread_trigger_facts": {
           "amount": "The remuneration that the row's threshold (nonprofit_remuneration_year) compares; no case condition depends on the amount.",
-          "month_or_exposure": "The service period the threshold aggregates over (the calendar year of 409(p)/3121(a)(16)); the cases state their own dates in their text (for example 'before July 1, 1977'), so none reads this fact.",
+          "month_or_exposure": "The service period the threshold aggregates over (the calendar year of 409(p)/3121(a)(16)); no case reads this fact.",
           "reporting_unit": "The aggregation unit of the threshold nonprofit_remuneration_year (same employer, employee and calendar year); no case condition depends on it."
         },
         "waiver_effective_date_options": [
@@ -15422,7 +15422,7 @@
         "threshold_id": "nonprofit_remuneration_year",
         "unread_trigger_facts": {
           "amount": "The remuneration that the row's threshold (nonprofit_remuneration_year) compares; no case condition depends on the amount.",
-          "month_or_exposure": "The service period the threshold aggregates over (the calendar year of 409(a)(14)/3121(a)(16)); the cases state their own dates in their text (for example 'before July 1, 1977'), so none reads this fact.",
+          "month_or_exposure": "The service period the threshold aggregates over (the calendar year of 409(a)(14)/3121(a)(16)); no case reads this fact.",
           "reporting_unit": "The aggregation unit of the threshold nonprofit_remuneration_year (same employer, employee and calendar year); no case condition depends on it."
         }
       },
@@ -18893,7 +18893,7 @@
         "electingchurch_income_exists_from": 1984,
         "general1402g_exemption": "Applies when approved and effective",
         "unread_trigger_facts": {
-          "church_employee_service": "Before Pub. L. 99-514 section 1882(a) added 1402(g)(5) the exemption reached all chapter 2 income, church employee income included, so the fact changes no outcome (NOTE N4 on the uncaptured 1882(a) date).",
+          "church_employee_service": "Before Pub. L. 99-514 section 1882(a) added 1402(g)(5) the exemption reached all chapter 2 income, church employee income included, so the fact changes no outcome (no capture dates section 1882(a)).",
           "taxable_year_start": "The taxable-year axis lookup_date reads (effective_basis taxable_year_start)."
         }
       },
@@ -19493,11 +19493,11 @@
         "retired_clergy_housing_and_church_plan_benefits": "excluded under Public Law 108-203 section 422, applicable to years beginning before, on, or after 1994-12-31",
         "service_exemption_decided_by": "clergy_religious_service family",
         "unread_trigger_facts": {
-          "american_employer": "Folded into the citizenship text of foreign_minister_without_qualification ('a citizen who is neither an American employer's employee under 410(e) nor ...'); NOTE N9.",
+          "american_employer": "Folded into the citizenship text of foreign_minister_without_qualification ('a citizen who is neither an American employer's employee under 410(e) nor ...').",
           "amount": "The amount the computation includes; the row has no threshold.",
           "assignment": "Whether a service is assigned or designated ministry (POMS RS 01901.600 A.2.c) is decided by clergy_religious_service through ministerial_service; this row's computation does not depend on it.",
           "clergy_remuneration": "The salary, parsonage and meals-and-lodging values the covered residual includes (411(a)(7) disregards 107 and 119).",
-          "congregation_predominantly_us_citizens": "Folded into the same citizenship text ('... nor a minister in a foreign country who has a congregation composed predominantly of United States citizens'); NOTE N9.",
+          "congregation_predominantly_us_citizens": "Folded into the same citizenship text ('... nor a minister in a foreign country who has a congregation composed predominantly of United States citizens').",
           "ministerial_service": "clergy_religious_service decides whether the service is ministry; this row computes amounts for service 411(c)(4) describes.",
           "taxable_year_start": "The taxable-year axis lookup_date reads (Pub. L. 92-603 section 140(c))."
         }
@@ -19791,8 +19791,8 @@
         "service_exemption_decided_by": "clergy_religious_service family",
         "unread_trigger_facts": {
           "amount": "The amount the computation includes; no threshold.",
-          "clergy_remuneration": "The salary, parsonage and meals-and-lodging values the covered residual includes; the church tax-sheltered annuity case exists only from 1987-12-22 (NOTE N5).",
-          "retirement_payment": "Left by decision D5: the only captured source for excluding a pension for past ministerial services from a plan that is not a church plan is Publication 517 (2025), later-edition guidance; se_clergy_gross_concept_1987_2026 applies it (case past_ministerial_service_pension) and this row does not, so such a pension takes the covered residual here. No capture states the rule for 1973-1987.",
+          "clergy_remuneration": "The salary, parsonage and meals-and-lodging values the covered residual includes; the church tax-sheltered annuity case exists only from 1987-12-22.",
+          "retirement_payment": "No case reads it: the only captured source for excluding a pension for past ministerial services from a plan that is not a church plan is Publication 517 (2025), later-edition guidance; se_clergy_gross_concept_1987_2026 applies it (case past_ministerial_service_pension) and this row does not, so such a pension takes the covered residual here. No capture states the rule for 1973-1987.",
           "taxable_year_start": "The taxable-year axis lookup_date reads."
         }
       },
@@ -22119,7 +22119,7 @@
         },
         "unread_trigger_facts": {
           "agent_or_employee_participation": "Folded into material_participation's texts, which count 'services an employee or agent performed for that person' (40 FR 29072, 404.1053(c)(5)(i)).",
-          "agricultural_service": "The arrangement for another to produce agricultural or horticultural commodities is carried by the deferring cases' rental_income text (se_rental_income_* farm_rental_arrangement, se_conservation_reserve_2008_2026 crp_payment_under_farm_arrangement) and by the statutory meaning of rental_arrangement_requires_material_participation (participation 'in the production ... of such agricultural or horticultural commodities'); see NOTE N9.",
+          "agricultural_service": "The arrangement for another to produce agricultural or horticultural commodities is carried by the deferring cases' rental_income text (se_rental_income_* farm_rental_arrangement, se_conservation_reserve_2008_2026 crp_payment_under_farm_arrangement) and by the statutory meaning of rental_arrangement_requires_material_participation (participation 'in the production ... of such agricultural or horticultural commodities').",
           "amount": "The amount the row classifies; no rule in the row's sources turns on its size.",
           "taxable_year_start": "The row's date axis (effective_basis taxable_year_start) places the worker in this row; no case condition reads it. (taxable years beginning before 1974). Every such year begins before 1996-04-01, so case dealer_investment_holdings_before_1996 carries no date condition, unlike the 1974 row's."
         }
@@ -22386,7 +22386,7 @@
           "owner/tenant materially participates"
         ],
         "unread_trigger_facts": {
-          "agricultural_service": "The arrangement for another to produce agricultural or horticultural commodities is carried by the deferring cases' rental_income text (se_rental_income_* farm_rental_arrangement, se_conservation_reserve_2008_2026 crp_payment_under_farm_arrangement) and by the statutory meaning of rental_arrangement_requires_material_participation (participation 'in the production ... of such agricultural or horticultural commodities'); see NOTE N9.",
+          "agricultural_service": "The arrangement for another to produce agricultural or horticultural commodities is carried by the deferring cases' rental_income text (se_rental_income_* farm_rental_arrangement, se_conservation_reserve_2008_2026 crp_payment_under_farm_arrangement) and by the statutory meaning of rental_arrangement_requires_material_participation (participation 'in the production ... of such agricultural or horticultural commodities').",
           "amount": "The amount the row classifies; no rule in the row's sources turns on its size."
         }
       },
@@ -22671,7 +22671,7 @@
         "unread_trigger_facts": {
           "citizenship": "Pub. L. 92-603 section 124(a) conditions on residence in the United States during the entire taxable year, not on citizenship.",
           "country_of_residence": "residence_period carries section 124's only condition; the foreign country plays no role.",
-          "foreign_earned_income_exclusion": "The case covers a whole-year United States resident whether or not 911(a)(2) was claimed (with no exclusion there is nothing to disregard); whether such a person could hold a 911(a)(1) exclusion cannot be checked because no capture holds the 1973-1981 text of section 911 (NOTE N11).",
+          "foreign_earned_income_exclusion": "The case covers a whole-year United States resident whether or not 911(a)(2) was claimed (with no exclusion there is nothing to disregard); whether such a person could hold a 911(a)(1) exclusion cannot be checked because no capture holds the 1973-1981 text of section 911.",
           "taxable_year": "The taxable-year unit 411(e) and the base definition's aggregation_scope set; it does not decide whether an amount is net earnings.",
           "taxable_year_start": "The row's date axis (effective_basis taxable_year_start) places the worker in this row; no case condition reads it.",
           "trade_or_business": "Whether the business is the person's own trade or business is the base definition's question (se_base_definition_1968_2026); this row's rule does not depend on it."
@@ -24337,7 +24337,7 @@
         ],
         "scope": "411(b)'s nonresident-alien exclusion and its exceptions, and the exclusion for an individual whom a social security agreement makes subject only to a foreign country's laws (26 U.S.C. 1401(c) as Pub. L. 108-203 section 415 amended it), for all self-employment income; other families decide what the net earnings are.",
         "unread_trigger_facts": {
-          "residence_period": "411(b)'s final sentence ('who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa') states no period of residence, so no case can carry one; part-year residents are left to the country_of_residence text (NOTE in table.md)",
+          "residence_period": "411(b)'s final sentence ('who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa') states no period of residence, so no case can carry one; part-year residents are left to the country_of_residence text",
           "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it; the row ends 1983-04-19 because Pub. L. 98-21 section 322(c) dates the section 433 exception to taxable years beginning on or after 1983-04-20"
         }
       },
@@ -24667,7 +24667,7 @@
         ],
         "scope": "411(b)'s nonresident-alien exclusion and its exceptions, and the exclusion for an individual whom a social security agreement makes subject only to a foreign country's laws (26 U.S.C. 1401(c) as Pub. L. 108-203 section 415 amended it), for all self-employment income; other families decide what the net earnings are.",
         "unread_trigger_facts": {
-          "residence_period": "411(b)'s final sentence states no period of residence, so no case can carry one (NOTE in table.md)",
+          "residence_period": "411(b)'s final sentence states no period of residence, so no case can carry one",
           "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it; the row starts 1983-04-20 (section 322(c))"
         }
       },
@@ -30755,7 +30755,7 @@
         "threshold_id": "cash_tips_monthly",
         "unread_trigger_facts": {
           "amount": "The amount threshold cash_tips_monthly compares ($20 of cash tips in the month; 409(a)(10)(B)).",
-          "employee_self_or_mixed": "409(a)(10)(B) and 409(f) count only tips an employee receives in the course of employment for an employer; the threshold's eligible concept carries that ('Cash tips received in employment for one employer by an employee in the calendar month'), and the noncash case is a wage exclusion that does not depend on it (see findings N-TIP-1 on non-employees).",
+          "employee_self_or_mixed": "409(a)(10)(B) and 409(f) count only tips an employee receives in the course of employment for an employer; the threshold's eligible concept carries that ('Cash tips received in employment for one employer by an employee in the calendar month'), and the noncash case is a wage exclusion that does not depend on it.",
           "month_or_exposure": "The calendar month the threshold aggregates over, read by the threshold lookup.",
           "reporting_unit": "The threshold's employer_employee_month scope ('for one employer'); no case depends on it."
         }

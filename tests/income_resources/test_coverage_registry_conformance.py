@@ -83,6 +83,7 @@ from populace_dynamics.income_resources.coverage_rules import (
     OpenRuleError,
     ThresholdUnavailableError,
     UnknownIdentifierError,
+    _holds_condition_record,
     load_registry,
     source_text,
 )
@@ -1870,22 +1871,12 @@ def parameter_leaves(value, path=()):
         yield path, value
 
 
-def holds_when_record(value):
-    if isinstance(value, dict):
-        return bool({"when", "if"} & set(value)) or any(
-            map(holds_when_record, value.values())
-        )
-    if isinstance(value, (list, tuple)):
-        return any(map(holds_when_record, value))
-    return False
-
-
 def condition_signals(row):
     """Why a closed row's text or parameters name a statutory condition."""
     signals = []
     if row["consequence"] == "noncovered":
         signals.append("noncovered residual")
-    if holds_when_record(row["parameters"]):
+    if _holds_condition_record(row["parameters"]):
         signals.append("parameter record with a when key")
     for path, value in parameter_leaves(row["parameters"]):
         if value in CONSEQUENCE_VALUES:
@@ -1943,6 +1934,24 @@ def test_closed_rows_naming_a_condition_carry_cases():
         "se_community_income_1968_1979",
         "se_community_income_2004_2026",
     }
+
+
+# Review r6 low 2: registry text cites sources and cases, never a builder's
+# scratch notes.
+SCRATCH_NOTE = re.compile(
+    r"\bNOTE N-?\d+|\bN-TIP-\d|table\.md|\bworker \d+\b|"
+    r"\bdecision D\d|\bfindings N-"
+)
+
+
+def test_registry_text_cites_no_scratch_note():
+    rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    hits = [
+        (row["rule_id"], match.group(0))
+        for row in rows
+        for match in SCRATCH_NOTE.finditer(json.dumps(row))
+    ]
+    assert hits == []
 
 
 def unread_trigger_fact_problems(row):
@@ -3307,6 +3316,13 @@ def test_federal_rows_carry_section_2601_c_d3_and_e(registry, rule_id):
     assert "instrumentality of the United States" in cited["quote"]
     assert " ".join(cited["quote"].split()) in source_text(
         CAPTURE_DIRECTORY / cited["capture"]
+    )
+    # Review r6 code quality: 2601(c) leaves an individual contributing a
+    # reduced amount outside subchapter III, in the requalification text.
+    cases = {case["case_id"]: case for case in rule.cases}
+    requalified = cases["defra_2601d_requalification"]["when"]
+    assert "Pub. L. 98-369 section 2601(c)" in (
+        requalified["federal_retirement_system"]
     )
     delay = rule.parameters.get("section_2601d3_delay")
     assert (delay is None) == (rule_id == "federal_1984_1986")

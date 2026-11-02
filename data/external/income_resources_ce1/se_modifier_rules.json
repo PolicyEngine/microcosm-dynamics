@@ -1470,7 +1470,7 @@
         }
       },
       "unread_trigger_facts": {
-        "residence_period": "411(b)'s final sentence ('who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa') states no period of residence, so no case can carry one; part-year residents are left to the country_of_residence text (NOTE in table.md)",
+        "residence_period": "411(b)'s final sentence ('who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa') states no period of residence, so no case can carry one; part-year residents are left to the country_of_residence text",
         "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it; the row ends 1983-04-19 because Pub. L. 98-21 section 322(c) dates the section 433 exception to taxable years beginning on or after 1983-04-20"
       }
     },
@@ -1795,7 +1795,7 @@
         }
       },
       "unread_trigger_facts": {
-        "residence_period": "411(b)'s final sentence states no period of residence, so no case can carry one (NOTE in table.md)",
+        "residence_period": "411(b)'s final sentence states no period of residence, so no case can carry one",
         "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it; the row starts 1983-04-20 (section 322(c))"
       }
     },
@@ -2099,7 +2099,7 @@
       "unread_trigger_facts": {
         "citizenship": "Pub. L. 92-603 section 124(a) conditions on residence in the United States during the entire taxable year, not on citizenship.",
         "country_of_residence": "residence_period carries section 124's only condition; the foreign country plays no role.",
-        "foreign_earned_income_exclusion": "The case covers a whole-year United States resident whether or not 911(a)(2) was claimed (with no exclusion there is nothing to disregard); whether such a person could hold a 911(a)(1) exclusion cannot be checked because no capture holds the 1973-1981 text of section 911 (NOTE N11).",
+        "foreign_earned_income_exclusion": "The case covers a whole-year United States resident whether or not 911(a)(2) was claimed (with no exclusion there is nothing to disregard); whether such a person could hold a 911(a)(1) exclusion cannot be checked because no capture holds the 1973-1981 text of section 911.",
         "taxable_year": "The taxable-year unit 411(e) and the base definition's aggregation_scope set; it does not decide whether an amount is net earnings.",
         "taxable_year_start": "The row's date axis (effective_basis taxable_year_start) places the worker in this row; no case condition reads it.",
         "trade_or_business": "Whether the business is the person's own trade or business is the base definition's question (se_base_definition_1968_2026); this row's rule does not depend on it."

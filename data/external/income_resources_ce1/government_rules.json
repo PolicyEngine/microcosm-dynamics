@@ -6025,7 +6025,7 @@
       "concurrence_list": "The Form SS-15a filed with the certificate lists the concurring employees; the list may be amended by a supplemental list within 24 months after the calendar quarter in which the certificate is filed (RS 01901.540 C.6 NOTE; 1958 (k)(1) note), and a supplemental list makes the certificate effective for an employee on it only from the first day of the calendar quarter in which it is filed. An employee who joins the certificate's 3121(k)(1)(E) group after its filing quarter is covered without signing (1958 (a)(8)(B) note).",
       "unread_trigger_facts": {
         "amount": "The remuneration that the row's threshold (nonprofit_remuneration_year) compares; no case condition depends on the amount.",
-        "month_or_exposure": "The service period the threshold aggregates over (the calendar year of 409(p)/3121(a)(16)); the cases state their own dates in their text (for example 'before July 1, 1977'), so none reads this fact.",
+        "month_or_exposure": "The service period the threshold aggregates over (the calendar year of 409(p)/3121(a)(16)); no case reads this fact.",
         "reporting_unit": "The aggregation unit of the threshold nonprofit_remuneration_year (same employer, employee and calendar year); no case condition depends on it."
       }
     },
@@ -6357,7 +6357,7 @@
       },
       "unread_trigger_facts": {
         "amount": "The remuneration that the row's threshold (nonprofit_remuneration_year) compares; no case condition depends on the amount.",
-        "month_or_exposure": "The service period the threshold aggregates over (the calendar year of 409(a)(14)/3121(a)(16)); the cases state their own dates in their text (for example 'before July 1, 1977'), so none reads this fact.",
+        "month_or_exposure": "The service period the threshold aggregates over (the calendar year of 409(a)(14)/3121(a)(16)); no case reads this fact.",
         "reporting_unit": "The aggregation unit of the threshold nonprofit_remuneration_year (same employer, employee and calendar year); no case condition depends on it."
       }
     },

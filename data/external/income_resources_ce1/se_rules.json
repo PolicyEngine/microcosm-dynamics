@@ -433,7 +433,7 @@
       "effective_basis": "taxable_year_start",
       "effective_basis_description": "Pub. L. 99-514 section 1882(a) added 1402(g)(5); the 26 U.S.C. 1402 notes date only section 1882(b), whose amendments \"shall apply to remuneration paid or derived in taxable years beginning after December 31, 1985\", and no capture gives section 1882(a)'s own effective date.",
       "unread_trigger_facts": {
-        "church_employee_service": "Before Pub. L. 99-514 section 1882(a) added 1402(g)(5) the exemption reached all chapter 2 income, church employee income included, so the fact changes no outcome (NOTE N4 on the uncaptured 1882(a) date).",
+        "church_employee_service": "Before Pub. L. 99-514 section 1882(a) added 1402(g)(5) the exemption reached all chapter 2 income, church employee income included, so the fact changes no outcome (no capture dates section 1882(a)).",
         "taxable_year_start": "The taxable-year axis lookup_date reads (effective_basis taxable_year_start)."
       },
       "condition_cases": {
@@ -1016,11 +1016,11 @@
         ]
       },
       "unread_trigger_facts": {
-        "american_employer": "Folded into the citizenship text of foreign_minister_without_qualification ('a citizen who is neither an American employer's employee under 410(e) nor ...'); NOTE N9.",
+        "american_employer": "Folded into the citizenship text of foreign_minister_without_qualification ('a citizen who is neither an American employer's employee under 410(e) nor ...').",
         "amount": "The amount the computation includes; the row has no threshold.",
         "assignment": "Whether a service is assigned or designated ministry (POMS RS 01901.600 A.2.c) is decided by clergy_religious_service through ministerial_service; this row's computation does not depend on it.",
         "clergy_remuneration": "The salary, parsonage and meals-and-lodging values the covered residual includes (411(a)(7) disregards 107 and 119).",
-        "congregation_predominantly_us_citizens": "Folded into the same citizenship text ('... nor a minister in a foreign country who has a congregation composed predominantly of United States citizens'); NOTE N9.",
+        "congregation_predominantly_us_citizens": "Folded into the same citizenship text ('... nor a minister in a foreign country who has a congregation composed predominantly of United States citizens').",
         "ministerial_service": "clergy_religious_service decides whether the service is ministry; this row computes amounts for service 411(c)(4) describes.",
         "taxable_year_start": "The taxable-year axis lookup_date reads (Pub. L. 92-603 section 140(c))."
       }
@@ -1313,8 +1313,8 @@
       },
       "unread_trigger_facts": {
         "amount": "The amount the computation includes; no threshold.",
-        "clergy_remuneration": "The salary, parsonage and meals-and-lodging values the covered residual includes; the church tax-sheltered annuity case exists only from 1987-12-22 (NOTE N5).",
-        "retirement_payment": "Left by decision D5: the only captured source for excluding a pension for past ministerial services from a plan that is not a church plan is Publication 517 (2025), later-edition guidance; se_clergy_gross_concept_1987_2026 applies it (case past_ministerial_service_pension) and this row does not, so such a pension takes the covered residual here. No capture states the rule for 1973-1987.",
+        "clergy_remuneration": "The salary, parsonage and meals-and-lodging values the covered residual includes; the church tax-sheltered annuity case exists only from 1987-12-22.",
+        "retirement_payment": "No case reads it: the only captured source for excluding a pension for past ministerial services from a plan that is not a church plan is Publication 517 (2025), later-edition guidance; se_clergy_gross_concept_1987_2026 applies it (case past_ministerial_service_pension) and this row does not, so such a pension takes the covered residual here. No capture states the rule for 1973-1987.",
         "taxable_year_start": "The taxable-year axis lookup_date reads."
       }
     },
@@ -3257,7 +3257,7 @@
       "effective_basis_description": "Pub. L. 93-368 section 10(c), quoted in the 42 U.S.C. 411 notes: the amendments \"shall apply with respect to taxable years beginning after December 31, 1973\".",
       "unread_trigger_facts": {
         "agent_or_employee_participation": "Folded into material_participation's texts, which count 'services an employee or agent performed for that person' (40 FR 29072, 404.1053(c)(5)(i)).",
-        "agricultural_service": "The arrangement for another to produce agricultural or horticultural commodities is carried by the deferring cases' rental_income text (se_rental_income_* farm_rental_arrangement, se_conservation_reserve_2008_2026 crp_payment_under_farm_arrangement) and by the statutory meaning of rental_arrangement_requires_material_participation (participation 'in the production ... of such agricultural or horticultural commodities'); see NOTE N9.",
+        "agricultural_service": "The arrangement for another to produce agricultural or horticultural commodities is carried by the deferring cases' rental_income text (se_rental_income_* farm_rental_arrangement, se_conservation_reserve_2008_2026 crp_payment_under_farm_arrangement) and by the statutory meaning of rental_arrangement_requires_material_participation (participation 'in the production ... of such agricultural or horticultural commodities').",
         "amount": "The amount the row classifies; no rule in the row's sources turns on its size.",
         "taxable_year_start": "The row's date axis (effective_basis taxable_year_start) places the worker in this row; no case condition reads it. (taxable years beginning before 1974). Every such year begins before 1996-04-01, so case dealer_investment_holdings_before_1996 carries no date condition, unlike the 1974 row's."
       }
@@ -3523,7 +3523,7 @@
       "effective_basis_description": "Pub. L. 93-368 section 10(c), quoted in the 42 U.S.C. 411 notes: the amendments \"shall apply with respect to taxable years beginning after December 31, 1973\".",
       "real_estate_dealer_exception": "Rentals received in the course of a real-estate-dealer trade or business from real estate held for sale to customers are not excluded; a dealer's investment or speculative holdings are open for taxable years beginning before 1996-04-01 and follow the farm-rental participation conditions after.",
       "unread_trigger_facts": {
-        "agricultural_service": "The arrangement for another to produce agricultural or horticultural commodities is carried by the deferring cases' rental_income text (se_rental_income_* farm_rental_arrangement, se_conservation_reserve_2008_2026 crp_payment_under_farm_arrangement) and by the statutory meaning of rental_arrangement_requires_material_participation (participation 'in the production ... of such agricultural or horticultural commodities'); see NOTE N9.",
+        "agricultural_service": "The arrangement for another to produce agricultural or horticultural commodities is carried by the deferring cases' rental_income text (se_rental_income_* farm_rental_arrangement, se_conservation_reserve_2008_2026 crp_payment_under_farm_arrangement) and by the statutory meaning of rental_arrangement_requires_material_participation (participation 'in the production ... of such agricultural or horticultural commodities').",
         "amount": "The amount the row classifies; no rule in the row's sources turns on its size."
       }
     },

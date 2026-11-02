@@ -1830,7 +1830,7 @@
         }
       },
       "unread_trigger_facts": {
-        "employee_self_or_mixed": "The case text's 'the employer is registered' carries former (17)'s 'in the employ of' (worker 89: a contractor's client is not his employer).",
+        "employee_self_or_mixed": "The case text's 'the employer is registered' carries former (17)'s 'in the employ of' (a contractor's client is not his employer).",
         "historical_fica_treatment": "No captured source conditions former 410(a)(17) on how the payor treated the pay."
       }
     },
@@ -6136,7 +6136,7 @@
         "employee_self_or_mixed": "410(a)(20) excludes service under the share arrangement whatever the common-law status.",
         "fishing_additional_cash_conditions": "Carried by the fishing_catch_share_arrangement text ((A)(i)-(iii)).",
         "fishing_crew_size": "Carried by the fishing_catch_share_arrangement text (normally fewer than 10, with the 4-quarter deeming sentence).",
-        "historical_fica_treatment": "The payor-treatment proviso of s.1116(a)(3)(A)(ii) reaches only pay before 1995; clause (i) has none (worker 20).",
+        "historical_fica_treatment": "The payor-treatment proviso of s.1116(a)(3)(A)(ii) reaches only pay before 1995; clause (i) has none.",
         "occupation": "The arrangement, not an occupation code, is the statutory condition.",
         "reporting_unit": "Reporting is not a coverage condition.",
         "services_performed_date": "The row is on the payment-date axis; the window carries the date."
@@ -7873,7 +7873,7 @@
         }
       },
       "unread_trigger_facts": {
-        "direct_seller_contract": "3508(b)(2)(A)(iii) applies only to services after 1995 (Pub. L. 104-188 s.1118(b)); this row ends 1995-12-31. See NOTE N-9 on the 1983+ general clauses (i)-(ii).",
+        "direct_seller_contract": "3508(b)(2)(A)(iii) applies only to services after 1995 (Pub. L. 104-188 s.1118(b)); this row ends 1995-12-31. Whether 3508(b)(2)'s general direct-seller clauses, which 410(q) applies from 1983, reach a newspaper vendor this row excludes is not settled by any capture (review r6 M-11; a stated limit).",
         "occupation": "The arrangement texts, not an occupation code, carry 410(a)(14)(A)-(B).",
         "services_performed_date": "No 410(a)(14) or 411(c)(2)(A) date falls inside 1968-1995 (no amendment note for (a)(14) after 1968); the window carries the 1996 boundary."
       }
@@ -10444,7 +10444,7 @@
       },
       "unread_trigger_facts": {
         "amount": "The amount threshold cash_tips_monthly compares ($20 of cash tips in the month; 409(a)(10)(B)).",
-        "employee_self_or_mixed": "409(a)(10)(B) and 409(f) count only tips an employee receives in the course of employment for an employer; the threshold's eligible concept carries that ('Cash tips received in employment for one employer by an employee in the calendar month'), and the noncash case is a wage exclusion that does not depend on it (see findings N-TIP-1 on non-employees).",
+        "employee_self_or_mixed": "409(a)(10)(B) and 409(f) count only tips an employee receives in the course of employment for an employer; the threshold's eligible concept carries that ('Cash tips received in employment for one employer by an employee in the calendar month'), and the noncash case is a wage exclusion that does not depend on it.",
         "month_or_exposure": "The calendar month the threshold aggregates over, read by the threshold lookup.",
         "reporting_unit": "The threshold's employer_employee_month scope ('for one employer'); no case depends on it."
       }
