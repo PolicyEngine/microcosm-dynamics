@@ -2759,9 +2759,10 @@ Restoring the horizon (`fix_reverted`) makes
 `test_partial_years_after_the_start_stay_open` refuse again. Each of the four
 survivors and `fix_reverted` fails at least one of this round's nine tests,
 and the unmodified source passes all nine. Each ran in its own process on
-invented data, with both data roots set to a nonexistent path. A rerun of
-round 19's 40 mutations and `fix_reverted` at the final bytes, through every
-insured status module, writes `round_20_mutations` in a later commit.
+invented data, with both data roots set to a nonexistent path. A cloud session
+then reran round 19's 40 mutations and `fix_reverted` at `38a573a8`, through
+every insured status module. All 41 failed a named test, with no restricted
+open (`round_20_mutations`, PR #562 comment 6589941045).
 
 Against `168bb3a8`, 6 of the 32 tests in the three changed modules fail:
 round 2's pinned record, `test_partial_years_after_the_start_stay_open`, and
