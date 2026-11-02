@@ -81,7 +81,11 @@ def test_review_altered_age_rate_cannot_lower_savings_clause_protection():
     assert row.age_adjusted_rate == row.auxiliary_payable == F("0.40")
     with pytest.raises(g.InvalidFamilyInput):
         replace(row, age_adjusted_rate=F(0))
-    guard = g.SavingsClauseGuard(JAN, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        JAN,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     outcomes = [
         guard.evaluate("January", 1, lambda: january),
         guard.evaluate("February", 1, lambda: february),
@@ -129,7 +133,11 @@ def test_every_consumer_rejects_unsealed_or_altered_results(
         for key, value in _values(result).items():
             object.__setattr__(forged, key, value)
         result = forged
-    guard = g.SavingsClauseGuard(JAN, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        JAN,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     before = vars(guard).copy()
     with pytest.raises(g.InvalidFamilyInput):
         if consumer == "evaluate":
@@ -195,7 +203,11 @@ def test_seal_time_rejects_inconsistent_computed_payable(monkeypatch):
 def test_guard_history_is_detached_from_caller_result(extra):
     pia, maximum = F(11 + 2 * extra, 10), F(19 + 4 * extra, 10)
     january = _family(pia=pia, maximum=maximum)
-    guard = g.SavingsClauseGuard(JAN, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        JAN,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     assert guard.admit(january) is january
     object.__setattr__(january.beneficiaries[0], "age_adjusted_rate", F(0))
     outcome = guard.evaluate(
@@ -271,7 +283,11 @@ def test_property_changed_outcome_never_counts_or_advances(extra, weight):
     object.__setattr__(outcome, "weight", weight + extra)
     with pytest.raises(g.InvalidFamilyInput):
         g.count_family_outcomes([outcome])
-    guard = g.SavingsClauseGuard(JAN, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        JAN,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     before = vars(guard).copy()
     object.__setattr__(family.beneficiaries[0], "age_adjusted_rate", F(0))
     with pytest.raises(g.InvalidFamilyInput):

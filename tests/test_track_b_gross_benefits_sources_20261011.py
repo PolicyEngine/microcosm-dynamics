@@ -20,6 +20,35 @@ from tests.track_b_gross_benefit_support import (
 
 RULE_QUOTES = (
     (
+        "poms_gn_02603_020",
+        "Take the reduction for the family maximum after making the "
+        "deductions listed on GN 02603.040 .",
+    ),
+    (
+        "poms_gn_02603_040",
+        "Work deductions for the number holder that apply to the auxiliaries",
+    ),
+    (
+        "poms_gn_02603_090",
+        "Determine household status using the configuration that exists "
+        "when the beneficiary files the annual report.",
+    ),
+    (
+        "poms_rs_02501_130",
+        "Readjust auxiliary benefit rates up to the family maximum when "
+        "an individual is deemed not entitled to benefits for a month",
+    ),
+    (
+        "poms_rs_02501_155",
+        "Reduce the maximum applicable to the other beneficiaries by "
+        "the amount of the partial benefit due the beneficiary.",
+    ),
+    (
+        "poms_rs_02501_160",
+        "E and C1 will receive the extra $33 per month only when the "
+        "deductions become permanent.",
+    ),
+    (
         "poms_gn_02603_045",
         "Only pay this increase to others who are not dually entitled. "
         "If there are no other beneficiaries who are not dually entitled, "
@@ -374,7 +403,7 @@ def test_every_new_capture_has_a_rule_and_pinned_bytes():
             ("2026-10-11T", "2026-10-12T")
         )
     }
-    assert len(sources) == 22
+    assert len(sources) == 28
     assert set(sources) == {source_id for source_id, _ in RULE_QUOTES}
     for source_id, source in sources.items():
         data = (SOURCES / source["file"]).read_bytes()

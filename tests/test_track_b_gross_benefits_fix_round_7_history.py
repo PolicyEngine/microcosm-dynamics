@@ -46,7 +46,11 @@ def _case(cohort=1912, months=1, *, own_pia=F(1000), placement="own"):
 def _outcome(state, member, entry, *, weight=F(7, 3)):
     records = {"record": g.HouseholdRecord("worker", state, (member,))}
     if entry == "household-month-outcome":
-        guard = g.SavingsClauseGuard(NOW, earlier_months_unknown=False)
+        guard = g.SavingsClauseGuard(
+            NOW,
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        )
         try:
             outcome = g.household_month_outcome(
                 records,
