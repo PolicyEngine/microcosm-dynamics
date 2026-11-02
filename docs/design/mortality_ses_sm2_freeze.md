@@ -57,7 +57,7 @@ those sources; nothing here feeds a blind role.
 - **Markers.** **[frozen here]** marks a decision this record makes.
   **[frozen, S0.1 §x]** keeps a decision S0.1 already froze, with its
   pointer. **[open]** marks an item this record leaves unsettled and names
-  what settles it. **[for Max]** marks a call section 12 sends up.
+  what settles it.
 
 ## 2. Item table
 
@@ -107,9 +107,9 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | S2-25 | 698 | Unmarked: "`SOURCE_UNAVAILABLE` / open identification applies to the complete modern three-dimension joint source and missing source-age mappings" | Each trigger and fallback stated | §10 | frozen here |
 
 **Counts.** Of the 25 rows, this record freezes 20 and leaves 5 open, each
-with what settles it (S2-15, S2-17, S2-21, S2-22, S2-24); none goes to Max
-as a row. S2-03 carries a check the fit job performs. Section 12 holds
-the two calls that go to Max; neither comes from a row of this table.
+with what settles it (S2-15, S2-17, S2-21, S2-22, S2-24); none goes to Max.
+S2-03 carries a check the fit job performs. Section 12 holds two rules for
+cases outside this table.
 
 ## 3. Source-year matrix
 
@@ -675,7 +675,7 @@ the target's ages and subpopulation (§4, common scale).
 | **JR-C: full joint calibration with a public earnings proxy (primary)** | Conditional coefficients that reproduce every marginal target on one named population, given the proxy's dependence and log-additivity | `P(k, d, r \| s, a)` | ACS PUMS with the Social Security income quintile and the ordered logit (§6.2) | Supplies the education targets at 65+, the split and `other_non_hispanic`; cannot supply the earnings dependence | The proxy's dependence differs from the AIME quintile's (§6.6); effects interact rather than add; the dependence in the deployment population (PSID cohorts) differs from the ACS's |
 | **JR-D: Cristia-bridged shrinkage** | The 1983–2003 ratio of mutually adjusted to marginal contrasts in SIPP–SSA data at 35–75, carried to modern marginals | None named; it is implicit in Cristia's sample | Cristia's Tables 3–6 | Nothing | The ratio may not carry across two to four decades and a different population; columns 2, 4, 6 also adjust for marital status; rounded z statistics; it reproduces no modern marginal on any named population, so no e65 check applies |
 | **JR-E: NHIS direct joint model** | Education and race hazard ratios adjusted for each other in NHIS's 2009–2019 population; earnings as JR-B | The NHIS sample itself | NHIS–LMF | Supplies everything for education × race at attained ages 25+; cannot supply earnings, single ages above 84 at interview, or deaths after 2019 | Does not reproduce NCHS's targets (different population, years and reporting); survey precision; the earnings overlap as JR-B |
-| **JR-F: PSID reference population (not available)** | As JR-C, with the deployment population's own joint distribution | The PSID cohort's lifetime-earnings × education × race distribution | — | — | PSID use follows the project's data-access record. This record does not use it; §12 sends the underlying principle to Max |
+| **JR-F: PSID reference population (not available)** | As JR-C, with the deployment population's own joint distribution | The PSID cohort's lifetime-earnings × education × race distribution | — | — | PSID use follows the project's data-access record. This record does not use it; §12 states the rule for the primary |
 
 **JR-D's definition [frozen here].** For dimension `X`, sex `s` and
 Cristia age range `b`, `κ_X(s, b)` is the weighted least-squares slope,
@@ -1328,27 +1328,29 @@ publication rule, not a precision guarantee (S0.1 §2.5).
 - The replicate-variance code against a hand formula on synthetic
   replicates.
 
-## 12. For Max
+## 12. Rules for two boundary cases
 
-Only calls that set a principle spanning gates or that would amend a
-ruling. Choices inside SM2 are this record's, and it states them.
+Choices inside SM2 are this record's, and it states them. Two cases
+reach past those choices, and the lane's coordinator ruled on both for
+this record.
 
-1. **If the figure digitization fails its validation, may the table-only
-   path stand in for Q6's primary?** Recommendation: **no
-   pre-authorization.** SM2 stops and reports, the fit publishes P-TABLE as
-   a labeled sensitivity, and the question comes back with the failure's
-   evidence, because using the 2020 tables as the last observed level
-   amends Q6. What waits: nothing now; SM2's admission waits only if the
-   validation fails.
-2. **May a calibration gate take its reference covariate distribution
-   from the population of the held-out gate that tests it (covariates
-   only, never outcomes)?** This spans SM2 and SM3 and any later
-   calibrate-then-test pair. Recommendation: **not for SM2's primary.**
-   SM2 stays on public data, so SM3 tests a model fitted without its own
-   population; a reference population built from SM3's population (JR-F)
-   could run only inside SM3's authorized step, as a registered
-   sensitivity. PSID use follows the project's data-access record. What
-   waits: JR-F only; nothing in the primary path.
+1. **A failed figure digitization stops SM2; the table-only path doesn't
+   stand in for Q6's primary.** If the digitization fails its validation,
+   SM2 stops and reports, the fit publishes P-TABLE as a labeled
+   sensitivity, and the question goes to Max with the failure's evidence,
+   because using the 2020 tables as the last observed level amends Q6.
+   Nothing waits on this now; SM2's admission waits only if the validation
+   fails.
+2. **SM2's primary never takes its reference covariates from the
+   population of the held-out gate that tests it.** This applies the
+   existing held-out separation and sets no new principle. SM2 stays on
+   public data, so SM3 tests a model fitted without its own population; a
+   reference population built from SM3's population (JR-F) could run only
+   inside SM3's authorized step, as a registered sensitivity. PSID use
+   follows the project's data-access record. If a later
+   calibrate-then-test pair wants a different answer, that call spans
+   gates and goes to Max then. Only JR-F depends on this rule; nothing in
+   the primary path does.
 
 This record amends none of Q4, Q5, Q6 or Q11.
 
