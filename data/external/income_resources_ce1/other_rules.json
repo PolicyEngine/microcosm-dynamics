@@ -2050,6 +2050,9 @@
         },
         "specific_exclusion_repealed": {
           "not_a_coverage_condition": "Describes what the covered residual already does: Pub. L. 113-295 section 221(a)(99)(C)(ii) amends section 210(a) \"by striking paragraph (17)\", effective on enactment under section 221(b)(1), so this family excludes no service in a window that starts on that date."
+        },
+        "source_disagreement_resolution": {
+          "not_a_coverage_condition": "Records the 2024 CFR wording as a source discrepancy after the 2014 repeal; the row excludes nothing."
         }
       },
       "unread_trigger_facts": {
@@ -2205,6 +2208,11 @@
         "amount": "The cash amount the $50 calendar-quarter test compares (threshold domestic_cash_quarterly).",
         "month_or_exposure": "The calendar quarter domestic_cash_quarterly aggregates over.",
         "reporting_unit": "The employer-employee-quarter unit (parameter aggregate_key; POMS RS 01402.215 B: \"Do not lump cash payments from different employers\")."
+      },
+      "condition_cases": {
+        "all_cash_covered_when_threshold_met": {
+          "not_a_coverage_condition": "Records that once the row's cash threshold (threshold_id) is met all cash pay counts, which the covered_above_threshold residual applies; noncash pay is a case."
+        }
       }
     },
     "worked_examples": [],
@@ -2524,6 +2532,9 @@
         },
         "employer_paid_employee_fica_included_in_wages": {
           "not_a_coverage_condition": "42 U.S.C. 409(a)(5)(A) takes the employee tax an employer pays without deduction out of wages, and below the annual cash threshold \"neither you nor your employee will owe social security or Medicare tax\" (IRS Pub. 926 (2026)). It sets the wage amount of pay already covered (\"your employee's wages each payday are $100\"), not which case or residual applies."
+        },
+        "all_cash_covered_when_threshold_met": {
+          "not_a_coverage_condition": "Records that once the row's cash threshold (threshold_id) is met all cash pay counts, which the covered_above_threshold residual applies; noncash pay is a case."
         }
       },
       "effective_basis": "payment_date",
@@ -2785,6 +2796,15 @@
           "cases": {
             "agreement_with_statutory_threshold_paid_after_1977": [
               "remuneration_paid_date"
+            ]
+          }
+        },
+        "agreement_threshold": {
+          "cases": {
+            "agreement_with_lower_threshold": [
+              "election_work",
+              "government_level",
+              "section_218_position"
             ]
           }
         }
@@ -3140,6 +3160,15 @@
             "outside_agreement": [
               "election_work",
               "government_level"
+            ]
+          }
+        },
+        "agreement_threshold": {
+          "cases": {
+            "agreement_with_lower_threshold": [
+              "election_work",
+              "government_level",
+              "section_218_position"
             ]
           }
         }
@@ -3571,6 +3600,22 @@
             "outside_agreement_nonmember": [
               "election_work",
               "government_level"
+            ]
+          }
+        },
+        "agreement_threshold": {
+          "cases": {
+            "agreement_with_lower_threshold_nonmember": [
+              "election_work",
+              "government_level",
+              "public_retirement_system_participation",
+              "section_218_position"
+            ],
+            "agreement_with_lower_threshold_member": [
+              "election_work",
+              "government_level",
+              "public_retirement_system_participation",
+              "section_218_position"
             ]
           }
         }
@@ -4019,6 +4064,25 @@
               "government_level"
             ]
           }
+        },
+        "agreement_threshold": {
+          "cases": {
+            "agreement_with_lower_threshold_nonmember": [
+              "election_work",
+              "government_level",
+              "public_retirement_system_participation",
+              "section_218_position"
+            ],
+            "agreement_with_lower_threshold_member": [
+              "election_work",
+              "government_level",
+              "public_retirement_system_participation",
+              "section_218_position"
+            ]
+          }
+        },
+        "boundary_clause": {
+          "not_a_coverage_condition": "The quoted effective-date clause dates the amendment that starts this row; the family's date axis applies the date, and the row's cases carry the amended rule."
         }
       },
       "scope": "Service as an election official or election worker (418(c)(8); 410(a)(7)(F)(iv)) in the employ of a State, a political subdivision or a wholly owned instrumentality (410(a)(7); 418(a)(1)). \"State\" here means one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands. 410(h) makes the District of Columbia, Puerto Rico, the Virgin Islands, Guam and American Samoa States for the subchapter; the family leaves the District of Columbia, Guam and American Samoa, whose service current 410(a)(7)(C)-(E) treat separately, to the open row state_local_territories_history_open. Grounds by case: the agreement cases (agreement_with_lower_threshold_member and agreement_with_statutory_threshold) take 418(b)(1), under which \"State\" for a section 418 agreement does not include the District of Columbia, Guam or American Samoa; agreement_with_lower_threshold_nonmember takes 418(b)(1) for the agreement and 410(a)(7)(F), which itself reaches \"a State (other than the District of Columbia, Guam, or American Samoa)\", for mandatory coverage; outside_agreement_nonmember applies 410(a)(7)(F), which itself reaches \"a State (other than the District of Columbia, Guam, or American Samoa)\"; outside_agreement_member applies the general 410(a)(7) exclusion, whose \"State\" is 410(h)'s, less the carve under 410(a)(7)(C)-(E) above. Other service falls to other families.",
@@ -5543,6 +5607,9 @@
               "fishing_catch_share_arrangement"
             ]
           }
+        },
+        "additional_named_source_options": {
+          "not_a_coverage_condition": "Records the unamended 2024 CFR's cash-only reading of the additional-compensation bar as a source option (review r5 low 7); the row's catch-share cases carry the statutory text and both readings cover the service."
         }
       },
       "effective_basis": "payment_date",
@@ -5991,6 +6058,9 @@
               "fishing_catch_share_arrangement"
             ]
           }
+        },
+        "additional_named_source_options": {
+          "not_a_coverage_condition": "Records the unamended 2024 CFR's cash-only reading of the additional-compensation bar as a source option (review r5 low 7); the row's catch-share cases carry the statutory text and both readings cover the service."
         }
       },
       "effective_basis": "payment_date",
@@ -6581,6 +6651,13 @@
         },
         "other_eligibility_rules_still_apply": {
           "not_a_coverage_condition": "Restates what this family's covered outcomes already mean: the row excludes nothing beyond 410(a)(11)-(12), and the other families still apply (residual: \"Apply the other families\"), including the self-employment rules the us_citizen_in_united_states case hands the service to."
+        },
+        "direct_foreign_government": {
+          "cases": {
+            "direct_foreign_government": [
+              "foreign_government_service"
+            ]
+          }
         }
       },
       "unread_trigger_facts": {
@@ -8030,6 +8107,16 @@
               "direct_seller_contract"
             ]
           }
+        },
+        "direct_seller_treatment": {
+          "cases": {
+            "section_3508_direct_seller": [
+              "direct_seller_contract"
+            ]
+          }
+        },
+        "boundary_clause": {
+          "not_a_coverage_condition": "The quoted effective-date clause dates the amendment that starts this row; the family's date axis applies the date, and the row's cases carry the amended rule."
         }
       },
       "boundary_clause": {
@@ -8553,6 +8640,15 @@
           "cases": {
             "f1_j1_admission_purpose_service": [
               "nonresident_alien_status"
+            ]
+          }
+        },
+        "dependent_classes_not_excepted": {
+          "cases": {
+            "f1_j1_admission_purpose_service": [
+              "nonresident_alien_status",
+              "statutory_student_service",
+              "visa_status"
             ]
           }
         }
@@ -9269,6 +9365,15 @@
         "amount": "The amount the row's threshold compares: cash remuneration from one employer to the statutory home worker in the period (homeworker_cash_quarterly, $50); the common-law case needs no amount (POMS RS 01402.230 B.2).",
         "month_or_exposure": "The period the threshold aggregates over (calendar quarter, 1951-1977), read by the threshold lookup, not by a case.",
         "reporting_unit": "The threshold's employer-employee aggregation scope (employer_employee_quarter); no case depends on it."
+      },
+      "condition_cases": {
+        "statutory_homeworker_covered_pay": {
+          "cases": {
+            "statutory_homeworker": [
+              "occupation"
+            ]
+          }
+        }
       }
     },
     "worked_examples": [],
@@ -9427,6 +9532,15 @@
         "amount": "The amount the row's threshold compares: cash remuneration from one employer to the statutory home worker in the period (homeworker_cash_annual, $100); the common-law case needs no amount (POMS RS 01402.230 B.2).",
         "month_or_exposure": "The period the threshold aggregates over (calendar year, from 1978), read by the threshold lookup, not by a case.",
         "reporting_unit": "The threshold's employer-employee aggregation scope (employer_employee_year); no case depends on it."
+      },
+      "condition_cases": {
+        "statutory_homeworker_covered_pay": {
+          "cases": {
+            "statutory_homeworker": [
+              "occupation"
+            ]
+          }
+        }
       }
     },
     "worked_examples": [],
@@ -10475,6 +10589,9 @@
         },
         "section_418a_agreement_statute_available": {
           "not_a_coverage_condition": "Records history: section 218A (42 U.S.C. 418a) became law on September 20, 2018 (Pub. L. 115-243), after this row ends on 2018-09-19, so no agreement could be in force during the row. A later agreement's reach back into these years is decided by later_418a_retroactive_coverage."
+        },
+        "other_employees_or_other_roles": {
+          "not_a_coverage_condition": "Records that council membership excludes no separate employee service; the ordinary employment families decide that service."
         }
       },
       "unread_trigger_facts": {
@@ -10748,6 +10865,9 @@
         },
         "section_418a_agreement_statute_available": {
           "not_a_coverage_condition": "Records that 418a is law for the whole row: Pub. L. 115-243 was approved September 20, 2018, the row's start. Whether an agreement includes a given service is decided by section_418a_agreement_inclusion, section_418a_retroactive_inclusion and no_section_418a_inclusion."
+        },
+        "other_employees_or_other_roles": {
+          "not_a_coverage_condition": "Records that council membership excludes no separate employee service; the ordinary employment families decide that service."
         }
       },
       "unread_trigger_facts": {

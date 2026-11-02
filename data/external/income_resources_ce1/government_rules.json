@@ -258,6 +258,26 @@
       "unread_trigger_facts": {
         "clergy_remuneration": "The ministry earnings amount; self_employment_clergy_gross_concept computes it (411(a)(7)).",
         "place_of_work": "411(b) turns on nonresident-alien status (read by nonresident_alien_ministry), not place; the 1968-1972 citizen-abroad qualification belongs to se_clergy_gross_concept_1968_1972, which reads place_of_work."
+      },
+      "condition_cases": {
+        "government_chaplain": {
+          "cases": {
+            "government_chaplain_service": [
+              "ministerial_service"
+            ]
+          }
+        },
+        "employment_consequence": {
+          "not_a_coverage_condition": "Records that 410(a)(8)(A) excludes ministry from employment; the employment families read it, and this family decides the ministry's self-employment treatment."
+        },
+        "foreign_ministry": {
+          "cases": {
+            "nonresident_alien_ministry": [
+              "ministerial_service",
+              "nonresident_alien_status"
+            ]
+          }
+        }
       }
     },
     "worked_examples": [],
@@ -559,8 +579,17 @@
         "description": "411(c)'s closing sentence keeps 411(c)(4) in force, with no 1402(e) exemption, for \"service performed by a member of a religious order who has taken a vow of poverty as a member of such order\", so these duties are not self-employment. The 1967 amendments covered only \"members of religious orders who have not taken a vow of poverty\" (POMS NL 00711.065 1331). 410(a)(8)(A) lets an order's 3121(r) election make them covered employment, so religious_order_vow_of_poverty decides the service: the election, its retroactive quarters and members abroad. The case ranks first because that family decides a vowed member's service whatever this family's other facts are."
       },
       {
-        "case_id": "nonresident_alien_ministry",
+        "case_id": "government_chaplain_service",
         "precedence": 2,
+        "when": {
+          "ministerial_service": "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions"
+        },
+        "consequence": "covered",
+        "description": "POMS RS 01901.600 B.3.c: \"Service performed by a duly ordained, commissioned, or licensed minister as a chaplain in the employ of the U.S., (including the Armed Services), wholly owned instrumentality of the U.S., the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions, is not considered in the exercise of the ministry.\" A.3 says the same of service as a chaplain in the Armed Forces, a governmental entity or a government-owned and operated hospital. So no clergy case reaches it, whatever the minister's exemption: this family excludes nothing, and the government-service families decide the service (review r6 M-7). Ranked above every ministry case."
+      },
+      {
+        "case_id": "nonresident_alien_ministry",
+        "precedence": 3,
         "consequence": "noncovered",
         "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
         "when": {
@@ -570,7 +599,7 @@
       },
       {
         "case_id": "ministry_without_exemption_or_vow",
-        "precedence": 3,
+        "precedence": 4,
         "consequence": "covered",
         "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
         "when": {
@@ -580,7 +609,7 @@
       },
       {
         "case_id": "effective_1402e_exemption",
-        "precedence": 4,
+        "precedence": 5,
         "consequence": "noncovered",
         "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
         "when": {
@@ -590,7 +619,7 @@
       },
       {
         "case_id": "non_ministerial_service",
-        "precedence": 5,
+        "precedence": 6,
         "consequence": "covered",
         "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
         "when": {
@@ -599,7 +628,7 @@
       },
       {
         "case_id": "exemption_status_unknown",
-        "precedence": 6,
+        "precedence": 7,
         "consequence": "open",
         "description": "Do not infer exemption status from clergy occupation.",
         "when": {
@@ -910,6 +939,37 @@
       },
       "unread_trigger_facts": {
         "clergy_remuneration": "The ministry earnings amount; self_employment_clergy_gross_concept computes it."
+      },
+      "condition_cases": {
+        "government_chaplain": {
+          "cases": {
+            "government_chaplain_service": [
+              "ministerial_service"
+            ]
+          }
+        },
+        "employment_consequence": {
+          "not_a_coverage_condition": "Records that 410(a)(8)(A) excludes ministry from employment; the employment families read it, and this family decides the ministry's self-employment treatment."
+        },
+        "foreign_ministry": {
+          "cases": {
+            "nonresident_alien_ministry": [
+              "ministerial_service",
+              "nonresident_alien_status"
+            ],
+            "cnmi_noncitizen_resident_ministry": [
+              "clergy_or_religious_exemption",
+              "ministerial_service",
+              "nonresident_alien_status"
+            ],
+            "pub_l_103_296_section_306_certificate": [
+              "clergy_or_religious_exemption",
+              "foreign_social_insurance_contributions",
+              "ministerial_service",
+              "place_of_work"
+            ]
+          }
+        }
       }
     },
     "worked_examples": [],
@@ -1211,8 +1271,17 @@
         "description": "411(c)'s closing sentence keeps 411(c)(4) in force, with no 1402(e) exemption, for \"service performed by a member of a religious order who has taken a vow of poverty as a member of such order\", so these duties are not self-employment. The 1967 amendments covered only \"members of religious orders who have not taken a vow of poverty\" (POMS NL 00711.065 1331). 410(a)(8)(A) lets an order's 3121(r) election make them covered employment, so religious_order_vow_of_poverty decides the service: the election, its retroactive quarters and members abroad. The case ranks first because that family decides a vowed member's service whatever this family's other facts are."
       },
       {
-        "case_id": "cnmi_noncitizen_resident_ministry",
+        "case_id": "government_chaplain_service",
         "precedence": 2,
+        "when": {
+          "ministerial_service": "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions"
+        },
+        "consequence": "covered",
+        "description": "POMS RS 01901.600 B.3.c: \"Service performed by a duly ordained, commissioned, or licensed minister as a chaplain in the employ of the U.S., (including the Armed Services), wholly owned instrumentality of the U.S., the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions, is not considered in the exercise of the ministry.\" A.3 says the same of service as a chaplain in the Armed Forces, a governmental entity or a government-owned and operated hospital. So no clergy case reaches it, whatever the minister's exemption: this family excludes nothing, and the government-service families decide the service (review r6 M-7). Ranked above every ministry case."
+      },
+      {
+        "case_id": "cnmi_noncitizen_resident_ministry",
+        "precedence": 3,
         "when": {
           "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
           "nonresident_alien_status": "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands",
@@ -1238,7 +1307,7 @@
       },
       {
         "case_id": "nonresident_alien_ministry",
-        "precedence": 3,
+        "precedence": 4,
         "consequence": "noncovered",
         "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
         "when": {
@@ -1248,7 +1317,7 @@
       },
       {
         "case_id": "pub_l_103_296_section_306_certificate",
-        "precedence": 4,
+        "precedence": 5,
         "when": {
           "ministerial_service": "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401",
           "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
@@ -1263,7 +1332,7 @@
       },
       {
         "case_id": "ministry_without_exemption_or_vow",
-        "precedence": 5,
+        "precedence": 6,
         "consequence": "covered",
         "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
         "when": {
@@ -1273,7 +1342,7 @@
       },
       {
         "case_id": "effective_1402e_exemption",
-        "precedence": 6,
+        "precedence": 7,
         "consequence": "noncovered",
         "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
         "when": {
@@ -1283,7 +1352,7 @@
       },
       {
         "case_id": "non_ministerial_service",
-        "precedence": 7,
+        "precedence": 8,
         "consequence": "covered",
         "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
         "when": {
@@ -1292,7 +1361,7 @@
       },
       {
         "case_id": "exemption_status_unknown",
-        "precedence": 8,
+        "precedence": 9,
         "consequence": "open",
         "description": "Do not infer exemption status from clergy occupation.",
         "when": {
@@ -1815,6 +1884,27 @@
               "place_of_work"
             ]
           }
+        },
+        "government_chaplain": {
+          "cases": {
+            "government_chaplain_service": [
+              "ministerial_service"
+            ]
+          }
+        },
+        "employment_consequence": {
+          "not_a_coverage_condition": "Records that 410(a)(8)(A) excludes ministry from employment; the employment families read it, and this family decides the ministry's self-employment treatment."
+        },
+        "boundary_clause": {
+          "cases": {
+            "ministry_without_exemption_or_vow": [
+              "clergy_or_religious_exemption",
+              "ministerial_service"
+            ],
+            "non_ministerial_service": [
+              "ministerial_service"
+            ]
+          }
         }
       }
     },
@@ -2137,8 +2227,17 @@
         "description": "411(c)'s closing sentence keeps 411(c)(4) in force, with no 1402(e) exemption, for \"service performed by a member of a religious order who has taken a vow of poverty as a member of such order\", so these duties are not self-employment. Publication 517 (2025): \"You don't need to request a separate exemption.\" 410(a)(8)(A) lets an order's 3121(r) election make them covered employment, so religious_order_vow_of_poverty decides the service: the election, its retroactive quarters and members abroad. The case ranks first because that family decides a vowed member's service whatever this family's other facts are."
       },
       {
-        "case_id": "foreign_agreement_sole_coverage",
+        "case_id": "government_chaplain_service",
         "precedence": 2,
+        "when": {
+          "ministerial_service": "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions"
+        },
+        "consequence": "covered",
+        "description": "POMS RS 01901.600 B.3.c: \"Service performed by a duly ordained, commissioned, or licensed minister as a chaplain in the employ of the U.S., (including the Armed Services), wholly owned instrumentality of the U.S., the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions, is not considered in the exercise of the ministry.\" A.3 says the same of service as a chaplain in the Armed Forces, a governmental entity or a government-owned and operated hospital. So no clergy case reaches it, whatever the minister's exemption: this family excludes nothing, and the government-service families decide the service (review r6 M-7). Ranked above every ministry case."
+      },
+      {
+        "case_id": "foreign_agreement_sole_coverage",
+        "precedence": 3,
         "when": {
           "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
           "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
@@ -2152,7 +2251,7 @@
       },
       {
         "case_id": "cnmi_noncitizen_resident_ministry",
-        "precedence": 3,
+        "precedence": 4,
         "when": {
           "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
           "nonresident_alien_status": "nonresident alien individual for the taxable year who is not a citizen of the United States and is a resident of the Commonwealth of the Northern Mariana Islands, and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings",
@@ -2178,7 +2277,7 @@
       },
       {
         "case_id": "nonresident_alien_ministry",
-        "precedence": 4,
+        "precedence": 5,
         "consequence": "noncovered",
         "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual, except, for taxable years beginning on or after April 20, 1983, as a section 433 agreement provides. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
         "when": {
@@ -2188,7 +2287,7 @@
       },
       {
         "case_id": "pub_l_103_296_section_306_certificate",
-        "precedence": 5,
+        "precedence": 6,
         "when": {
           "ministerial_service": "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401",
           "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
@@ -2203,7 +2302,7 @@
       },
       {
         "case_id": "ministry_without_exemption_or_vow",
-        "precedence": 6,
+        "precedence": 7,
         "consequence": "covered",
         "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
         "when": {
@@ -2213,7 +2312,7 @@
       },
       {
         "case_id": "effective_1402e_exemption",
-        "precedence": 7,
+        "precedence": 8,
         "consequence": "noncovered",
         "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it. A Christian Science reader counts as a minister (Publication 517: \"For tax purposes, Christian Science readers are considered the same as ordained, commissioned, or licensed ministers.\").",
         "when": {
@@ -2223,7 +2322,7 @@
       },
       {
         "case_id": "non_ministerial_service",
-        "precedence": 8,
+        "precedence": 9,
         "consequence": "covered",
         "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
         "when": {
@@ -2232,7 +2331,7 @@
       },
       {
         "case_id": "exemption_status_unknown",
-        "precedence": 9,
+        "precedence": 10,
         "consequence": "open",
         "description": "Do not infer exemption status from clergy occupation.",
         "when": {
@@ -2675,6 +2774,9 @@
         },
         "expense_rule": {
           "not_a_coverage_condition": "A computation rule (no deductions other than 411(a)(11), former 411(a)(13)(A)) for the church_employee_self_employment family; it changes the amount, not whether the service is covered."
+        },
+        "employment_consequence": {
+          "not_a_coverage_condition": "Records that 410(a)(8)(B) excludes the electing church's service from employment; this family decides its self-employment treatment."
         }
       },
       "unread_trigger_facts": {
@@ -2992,6 +3094,9 @@
           "threshold_ids": [
             "church_employee_minimum"
           ]
+        },
+        "employment_consequence": {
+          "not_a_coverage_condition": "Records that 410(a)(8)(B) excludes the electing church's service from employment; this family decides its self-employment treatment."
         }
       },
       "boundary_clause": {
@@ -6220,6 +6325,14 @@
       "condition_cases": {
         "other_exclusions_still_apply": {
           "not_a_coverage_condition": "Says the other 410(a) exclusions still reach nonprofit service after mandatory coverage begins. Their own families decide them (clergy_religious_service, electing_church_employee_service, which church_election_family names, student_service and the rest); this row's residual means only that the nonprofit family does not exclude the service and says \"apply the other families\"."
+        },
+        "federal_employee_nonprofit_special_case": {
+          "cases": {
+            "csrs_required_nonprofit_employee": [
+              "federal_retirement_system",
+              "nonprofit_organization"
+            ]
+          }
         }
       },
       "unread_trigger_facts": {

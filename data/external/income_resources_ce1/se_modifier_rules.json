@@ -2062,6 +2062,9 @@
         },
         "scope": {
           "not_a_coverage_condition": "Restates the residual: Pub. L. 92-603 section 124 disregards 911(a)(2) only \"In the case of an individual who has been a resident of the United States during the entire taxable year\" and says nothing for anyone else, so for a person who fails that condition the residual returns open."
+        },
+        "nonresident_reading": {
+          "not_a_coverage_condition": "An unverified candidate reading, recorded with its status; no case or residual applies it."
         }
       },
       "effective_basis": "taxable_year_start",
@@ -3272,6 +3275,9 @@
       "condition_cases": {
         "named_concepts": {
           "not_a_coverage_condition": "Names two computations. Coverage net earnings follow 411(a)(15), which Pub. L. 111-240 section 2042 did not amend, and the covered residual applies it. Section 2042(a) changed only 162(l)(4), the Title 26 self-employment tax base, which decides no coverage consequence of this family."
+        },
+        "boundary_clause": {
+          "not_a_coverage_condition": "The quoted effective-date clause dates the amendment that starts this row; the family's date axis applies the date, and the row's cases carry the amended rule."
         }
       },
       "unread_trigger_facts": {

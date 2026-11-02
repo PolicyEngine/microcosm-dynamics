@@ -2157,10 +2157,19 @@
           }
         },
         {
+          "case_id": "government_chaplain_service",
+          "consequence": "covered",
+          "description": "POMS RS 01901.600 B.3.c: \"Service performed by a duly ordained, commissioned, or licensed minister as a chaplain in the employ of the U.S., (including the Armed Services), wholly owned instrumentality of the U.S., the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions, is not considered in the exercise of the ministry.\" A.3 says the same of service as a chaplain in the Armed Forces, a governmental entity or a government-owned and operated hospital. So no clergy case reaches it, whatever the minister's exemption: this family excludes nothing, and the government-service families decide the service (review r6 M-7). Ranked above every ministry case.",
+          "precedence": 2,
+          "when": {
+            "ministerial_service": "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions"
+          }
+        },
+        {
           "case_id": "nonresident_alien_ministry",
           "consequence": "noncovered",
           "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
-          "precedence": 2,
+          "precedence": 3,
           "when": {
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
             "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)"
@@ -2170,7 +2179,7 @@
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 3,
+          "precedence": 4,
           "when": {
             "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -2180,7 +2189,7 @@
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
           "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
-          "precedence": 4,
+          "precedence": 5,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -2190,7 +2199,7 @@
           "case_id": "non_ministerial_service",
           "consequence": "covered",
           "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
-          "precedence": 5,
+          "precedence": 6,
           "when": {
             "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
@@ -2199,7 +2208,7 @@
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 6,
+          "precedence": 7,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -2447,6 +2456,26 @@
             ]
           }
         ],
+        "condition_cases": {
+          "employment_consequence": {
+            "not_a_coverage_condition": "Records that 410(a)(8)(A) excludes ministry from employment; the employment families read it, and this family decides the ministry's self-employment treatment."
+          },
+          "foreign_ministry": {
+            "cases": {
+              "nonresident_alien_ministry": [
+                "ministerial_service",
+                "nonresident_alien_status"
+              ]
+            }
+          },
+          "government_chaplain": {
+            "cases": {
+              "government_chaplain_service": [
+                "ministerial_service"
+              ]
+            }
+          }
+        },
         "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
         "foreign_ministry": "Case nonresident_alien_ministry applies 411(b) to a nonresident alien. For a United States citizen abroad, former 411(a)(7) disregarded the 911 and 931 exclusions only for an American employer's employee or a minister to a congregation composed predominantly of United States citizens (POMS NL 00711.065 1331.1); the self_employment_clergy_gross_concept family decides that computation. No CNMI case: the Commonwealth rests on Public Law 94-241, an Act of the 94th Congress, so no noncitizen was its resident in 1968-1972.",
         "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
@@ -2771,6 +2800,15 @@
           }
         },
         {
+          "case_id": "government_chaplain_service",
+          "consequence": "covered",
+          "description": "POMS RS 01901.600 B.3.c: \"Service performed by a duly ordained, commissioned, or licensed minister as a chaplain in the employ of the U.S., (including the Armed Services), wholly owned instrumentality of the U.S., the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions, is not considered in the exercise of the ministry.\" A.3 says the same of service as a chaplain in the Armed Forces, a governmental entity or a government-owned and operated hospital. So no clergy case reaches it, whatever the minister's exemption: this family excludes nothing, and the government-service families decide the service (review r6 M-7). Ranked above every ministry case.",
+          "precedence": 2,
+          "when": {
+            "ministerial_service": "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions"
+          }
+        },
+        {
           "case_id": "cnmi_noncitizen_resident_ministry",
           "consequence": "open",
           "description": "411(b)'s final sentence names four places; Publication 517 (2025) adds the CNMI. The case ranks above nonresident_alien_ministry, which every such minister also meets. An exempt minister is noncovered on both readings (nonresident_alien_ministry, or effective_1402e_exemption), so the case reads that no effective 1402(e) exemption is shown (review r6 M-2). Public Law 94-241, which POMS RS 01901.320 cites for the Commonwealth, is an Act of the 94th Congress, so no worker meets the text before that Congress; clergy_1968_1972 carries no CNMI case.",
@@ -2789,7 +2827,7 @@
             "nonresident_alien_ministry",
             "ministry_without_exemption_or_vow"
           ],
-          "precedence": 2,
+          "precedence": 3,
           "when": {
             "clergy_or_religious_exemption": "not shown to have an effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
@@ -2800,7 +2838,7 @@
           "case_id": "nonresident_alien_ministry",
           "consequence": "noncovered",
           "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
-          "precedence": 3,
+          "precedence": 4,
           "when": {
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
             "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one)"
@@ -2813,7 +2851,7 @@
           "overrides": [
             "ministry_without_exemption_or_vow"
           ],
-          "precedence": 4,
+          "precedence": 5,
           "when": {
             "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)",
             "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada",
@@ -2825,7 +2863,7 @@
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 5,
+          "precedence": 6,
           "when": {
             "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -2835,7 +2873,7 @@
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
           "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it.",
-          "precedence": 6,
+          "precedence": 7,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -2845,7 +2883,7 @@
           "case_id": "non_ministerial_service",
           "consequence": "covered",
           "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
-          "precedence": 7,
+          "precedence": 8,
           "when": {
             "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
@@ -2854,7 +2892,7 @@
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 8,
+          "precedence": 9,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -3140,6 +3178,37 @@
             ]
           }
         ],
+        "condition_cases": {
+          "employment_consequence": {
+            "not_a_coverage_condition": "Records that 410(a)(8)(A) excludes ministry from employment; the employment families read it, and this family decides the ministry's self-employment treatment."
+          },
+          "foreign_ministry": {
+            "cases": {
+              "cnmi_noncitizen_resident_ministry": [
+                "clergy_or_religious_exemption",
+                "ministerial_service",
+                "nonresident_alien_status"
+              ],
+              "nonresident_alien_ministry": [
+                "ministerial_service",
+                "nonresident_alien_status"
+              ],
+              "pub_l_103_296_section_306_certificate": [
+                "clergy_or_religious_exemption",
+                "foreign_social_insurance_contributions",
+                "ministerial_service",
+                "place_of_work"
+              ]
+            }
+          },
+          "government_chaplain": {
+            "cases": {
+              "government_chaplain_service": [
+                "ministerial_service"
+              ]
+            }
+          }
+        },
         "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
         "foreign_ministry": "From taxable years beginning in 1973 a minister serving abroad needs neither an American employer nor a predominantly United States congregation (POMS NL 00711.065 1331.2). Case nonresident_alien_ministry applies 411(b) to a nonresident alien, whose earnings are not self-employment income. Case cnmi_noncitizen_resident_ministry leaves open a noncitizen CNMI resident who is a nonresident alien (Publication 517 against 411(b)'s four places). Case pub_l_103_296_section_306_certificate applies Pub. L. 103-296 section 306 to ministry performed in Canada, for taxable years ending 1979-1984, while no United States-Canada section 233 agreement was in effect, on whose earnings Canadian contributions were required; the certificate exempts only that service.",
         "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
@@ -3464,6 +3533,15 @@
           }
         },
         {
+          "case_id": "government_chaplain_service",
+          "consequence": "covered",
+          "description": "POMS RS 01901.600 B.3.c: \"Service performed by a duly ordained, commissioned, or licensed minister as a chaplain in the employ of the U.S., (including the Armed Services), wholly owned instrumentality of the U.S., the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions, is not considered in the exercise of the ministry.\" A.3 says the same of service as a chaplain in the Armed Forces, a governmental entity or a government-owned and operated hospital. So no clergy case reaches it, whatever the minister's exemption: this family excludes nothing, and the government-service families decide the service (review r6 M-7). Ranked above every ministry case.",
+          "precedence": 2,
+          "when": {
+            "ministerial_service": "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions"
+          }
+        },
+        {
           "case_id": "foreign_agreement_sole_coverage",
           "consequence": "noncovered",
           "description": "Publication 517 (2025) lists this among the exceptions to SE tax on ministerial earnings: \"You are subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country.\" Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c) \"FOR AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\", replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a minister subject only to the partner country's laws meets both wordings. The condition can hold only while such an agreement is in effect. The captures hold neither 42 U.S.C. 433 nor 26 U.S.C. 1401(c), so they do not show when the exemption began.",
@@ -3471,7 +3549,7 @@
             "cnmi_noncitizen_resident_ministry",
             "ministry_without_exemption_or_vow"
           ],
-          "precedence": 2,
+          "precedence": 3,
           "when": {
             "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -3496,7 +3574,7 @@
             "nonresident_alien_ministry",
             "ministry_without_exemption_or_vow"
           ],
-          "precedence": 3,
+          "precedence": 4,
           "when": {
             "clergy_or_religious_exemption": "not shown to have an effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
@@ -3507,7 +3585,7 @@
           "case_id": "nonresident_alien_ministry",
           "consequence": "noncovered",
           "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual, except, for taxable years beginning on or after April 20, 1983, as a section 433 agreement provides. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
-          "precedence": 4,
+          "precedence": 5,
           "when": {
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
             "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one), and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings"
@@ -3520,7 +3598,7 @@
           "overrides": [
             "ministry_without_exemption_or_vow"
           ],
-          "precedence": 5,
+          "precedence": 6,
           "when": {
             "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)",
             "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada",
@@ -3532,7 +3610,7 @@
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 6,
+          "precedence": 7,
           "when": {
             "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -3542,7 +3620,7 @@
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
           "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it. A Christian Science reader counts as a minister (Publication 517: \"For tax purposes, Christian Science readers are considered the same as ordained, commissioned, or licensed ministers.\").",
-          "precedence": 7,
+          "precedence": 8,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -3552,7 +3630,7 @@
           "case_id": "non_ministerial_service",
           "consequence": "covered",
           "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
-          "precedence": 8,
+          "precedence": 9,
           "when": {
             "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
@@ -3561,7 +3639,7 @@
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 9,
+          "precedence": 10,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
@@ -4026,6 +4104,17 @@
           }
         ],
         "condition_cases": {
+          "boundary_clause": {
+            "cases": {
+              "ministry_without_exemption_or_vow": [
+                "clergy_or_religious_exemption",
+                "ministerial_service"
+              ],
+              "non_ministerial_service": [
+                "ministerial_service"
+              ]
+            }
+          },
           "cantor": {
             "cases": {
               "ministry_without_exemption_or_vow": [
@@ -4035,6 +4124,9 @@
                 "ministerial_service"
               ]
             }
+          },
+          "employment_consequence": {
+            "not_a_coverage_condition": "Records that 410(a)(8)(A) excludes ministry from employment; the employment families read it, and this family decides the ministry's self-employment treatment."
           },
           "foreign_ministry": {
             "cases": {
@@ -4056,6 +4148,13 @@
                 "foreign_social_insurance_contributions",
                 "ministerial_service",
                 "place_of_work"
+              ]
+            }
+          },
+          "government_chaplain": {
+            "cases": {
+              "government_chaplain_service": [
+                "ministerial_service"
               ]
             }
           }
@@ -5030,6 +5129,9 @@
           "repeal_savings_requires_pre_enactment_item_and_effect_on_later_tax_liability": {
             "not_a_coverage_condition": "Records the savings clause of Pub. L. 113-295 section 221(b)(2), which keeps the old treatment only of a \"transaction occurring before the date of the enactment\" or of property or an item from before it. This service-date row starts on the 2014-12-19 enactment date, so every service it classifies is post-enactment; earlier service belongs to communist_organization_service_1968."
           },
+          "source_disagreement_resolution": {
+            "not_a_coverage_condition": "Records the 2024 CFR wording as a source discrepancy after the 2014 repeal; the row excludes nothing."
+          },
           "specific_exclusion_repealed": {
             "not_a_coverage_condition": "Describes what the covered residual already does: Pub. L. 113-295 section 221(a)(99)(C)(ii) amends section 210(a) \"by striking paragraph (17)\", effective on enactment under section 221(b)(1), so this family excludes no service in a window that starts on that date."
           }
@@ -5212,6 +5314,11 @@
           "calendar_quarter"
         ],
         "all_cash_covered_when_threshold_met": true,
+        "condition_cases": {
+          "all_cash_covered_when_threshold_met": {
+            "not_a_coverage_condition": "Records that once the row's cash threshold (threshold_id) is met all cash pay counts, which the covered_above_threshold residual applies; noncash pay is a case."
+          }
+        },
         "effective_basis": "payment_date",
         "effective_basis_description": "Pub. L. 103-387, as the 42 U.S.C. 409 notes summarize it, is \"applicable to remuneration paid after Dec. 31, 1993\".",
         "later_edition_reliance": {
@@ -5531,6 +5638,9 @@
           }
         ],
         "condition_cases": {
+          "all_cash_covered_when_threshold_met": {
+            "not_a_coverage_condition": "Records that once the row's cash threshold (threshold_id) is met all cash pay counts, which the covered_above_threshold residual applies; noncash pay is a case."
+          },
           "employer_paid_employee_fica_included_in_wages": {
             "not_a_coverage_condition": "42 U.S.C. 409(a)(5)(A) takes the employee tax an employer pays without deduction out of wages, and below the annual cash threshold \"neither you nor your employee will owe social security or Medicare tax\" (IRS Pub. 926 (2026)). It sets the wage amount of pay already covered (\"your employee's wages each payday are $100\"), not which case or residual applies."
           },
@@ -6066,6 +6176,9 @@
               ]
             }
           },
+          "employment_consequence": {
+            "not_a_coverage_condition": "Records that 410(a)(8)(B) excludes the electing church's service from employment; this family decides its self-employment treatment."
+          },
           "expense_rule": {
             "not_a_coverage_condition": "A computation rule (no deductions other than 411(a)(11), former 411(a)(13)(A)) for the church_employee_self_employment family; it changes the amount, not whether the service is covered."
           },
@@ -6396,6 +6509,9 @@
               ]
             }
           },
+          "employment_consequence": {
+            "not_a_coverage_condition": "Records that 410(a)(8)(B) excludes the electing church's service from employment; this family decides its self-employment treatment."
+          },
           "threshold_concept": {
             "threshold_ids": [
               "church_employee_minimum"
@@ -6616,6 +6732,15 @@
           "agreement_has_no_exclusion": {
             "cases": {
               "agreement_without_election_exclusion": [
+                "section_218_position"
+              ]
+            }
+          },
+          "agreement_threshold": {
+            "cases": {
+              "agreement_with_lower_threshold": [
+                "election_work",
+                "government_level",
                 "section_218_position"
               ]
             }
@@ -6971,6 +7096,15 @@
           "agreement_has_no_exclusion": {
             "cases": {
               "agreement_without_election_exclusion": [
+                "section_218_position"
+              ]
+            }
+          },
+          "agreement_threshold": {
+            "cases": {
+              "agreement_with_lower_threshold": [
+                "election_work",
+                "government_level",
                 "section_218_position"
               ]
             }
@@ -7424,6 +7558,22 @@
               ]
             }
           },
+          "agreement_threshold": {
+            "cases": {
+              "agreement_with_lower_threshold_member": [
+                "election_work",
+                "government_level",
+                "public_retirement_system_participation",
+                "section_218_position"
+              ],
+              "agreement_with_lower_threshold_nonmember": [
+                "election_work",
+                "government_level",
+                "public_retirement_system_participation",
+                "section_218_position"
+              ]
+            }
+          },
           "scope": {
             "cases": {
               "agreement_with_lower_threshold_member": [
@@ -7869,6 +8019,25 @@
                 "section_218_position"
               ]
             }
+          },
+          "agreement_threshold": {
+            "cases": {
+              "agreement_with_lower_threshold_member": [
+                "election_work",
+                "government_level",
+                "public_retirement_system_participation",
+                "section_218_position"
+              ],
+              "agreement_with_lower_threshold_nonmember": [
+                "election_work",
+                "government_level",
+                "public_retirement_system_participation",
+                "section_218_position"
+              ]
+            }
+          },
+          "boundary_clause": {
+            "not_a_coverage_condition": "The quoted effective-date clause dates the amendment that starts this row; the family's date axis applies the date, and the row's cases carry the amended rule."
           },
           "scope": {
             "cases": {
@@ -11329,6 +11498,9 @@
           }
         ],
         "condition_cases": {
+          "additional_named_source_options": {
+            "not_a_coverage_condition": "Records the unamended 2024 CFR's cash-only reading of the additional-compensation bar as a source option (review r5 low 7); the row's catch-share cases carry the statutory text and both readings cover the service."
+          },
           "catch_share_conditions": {
             "cases": {
               "catch_share_1996_clarification": [
@@ -11817,6 +11989,9 @@
                 "fishing_catch_share_arrangement"
               ]
             }
+          },
+          "additional_named_source_options": {
+            "not_a_coverage_condition": "Records the unamended 2024 CFR's cash-only reading of the additional-compensation bar as a source option (review r5 low 7); the row's catch-share cases carry the statutory text and both readings cover the service."
           },
           "amendment_applies_to_remuneration_paid_after": {
             "not_a_coverage_condition": "States the row's window: Pub. L. 104-188 section 1116(a)(3)(A) applies the 1996 amendments \"to remuneration paid-- (i) after December 31, 1994\", and this payment-date row starts on 1995-01-01."
@@ -12482,6 +12657,13 @@
           }
         ],
         "condition_cases": {
+          "direct_foreign_government": {
+            "cases": {
+              "direct_foreign_government": [
+                "foreign_government_service"
+              ]
+            }
+          },
           "instrumentality_conditions": {
             "cases": {
               "qualifying_wholly_owned_instrumentality": [
@@ -13912,7 +14094,17 @@
           }
         ],
         "condition_cases": {
+          "boundary_clause": {
+            "not_a_coverage_condition": "The quoted effective-date clause dates the amendment that starts this row; the family's date axis applies the date, and the row's cases carry the amended rule."
+          },
           "direct_seller_requires_all": {
+            "cases": {
+              "section_3508_direct_seller": [
+                "direct_seller_contract"
+              ]
+            }
+          },
+          "direct_seller_treatment": {
             "cases": {
               "section_3508_direct_seller": [
                 "direct_seller_contract"
@@ -15132,6 +15324,14 @@
           }
         ],
         "condition_cases": {
+          "federal_employee_nonprofit_special_case": {
+            "cases": {
+              "csrs_required_nonprofit_employee": [
+                "federal_retirement_system",
+                "nonprofit_organization"
+              ]
+            }
+          },
           "other_exclusions_still_apply": {
             "not_a_coverage_condition": "Says the other 410(a) exclusions still reach nonprofit service after mandatory coverage begins. Their own families decide them (clergy_religious_service, electing_church_employee_service, which church_election_family names, student_service and the rest); this row's residual means only that the nonprofit family does not exclude the service and says \"apply the other families\"."
           }
@@ -15576,6 +15776,15 @@
           }
         ],
         "condition_cases": {
+          "dependent_classes_not_excepted": {
+            "cases": {
+              "f1_j1_admission_purpose_service": [
+                "nonresident_alien_status",
+                "statutory_student_service",
+                "visa_status"
+              ]
+            }
+          },
           "requires_admission_purpose_service": {
             "cases": {
               "f1_j1_admission_purpose_service": [
@@ -18444,6 +18653,13 @@
           }
         ],
         "condition_cases": {
+          "capital_asset_gains_and_losses": {
+            "cases": {
+              "excluded_property_gain_or_loss": [
+                "property_disposition_type"
+              ]
+            }
+          },
           "excluded_concepts": {
             "cases": {
               "excluded_property_gain_or_loss": [
@@ -19152,6 +19368,13 @@
           },
           "retired_clergy_exception_effective_scope": {
             "not_a_coverage_condition": "Records that Pub. L. 108-203 section 422(b) applies the retired-clergy exclusion \"to years beginning before, on, or after December 31, 1994\", so it limits no year of this row. Case retired_clergy_benefits carries the exclusion itself."
+          },
+          "retired_clergy_housing_and_church_plan_benefits": {
+            "cases": {
+              "retired_clergy_benefits": [
+                "clergy_retirement_benefit"
+              ]
+            }
           }
         },
         "deferral_exceptions": {
@@ -19464,11 +19687,21 @@
           }
         ],
         "condition_cases": {
+          "boundary_clause": {
+            "not_a_coverage_condition": "The quoted effective-date clause dates the amendment that starts this row; the family's date axis applies the date, and the row's cases carry the amended rule."
+          },
           "gross_income_exclusions_disregarded": {
             "not_a_coverage_condition": "Names the 107, 119, 911 and 931 exclusions that 411(a)(7), as Pub. L. 92-603 section 140 amended it, has every nonexempt minister compute net earnings without; the amendment struck the citizen qualification, so no condition remains, and the covered residual applies it."
           },
           "retired_clergy_exception_effective_scope": {
             "not_a_coverage_condition": "Records that Pub. L. 108-203 section 422(b) applies the retired-clergy exclusion \"to years beginning before, on, or after December 31, 1994\", so it limits no year of this row. Case retired_clergy_benefits carries the exclusion itself."
+          },
+          "retired_clergy_housing_and_church_plan_benefits": {
+            "cases": {
+              "retired_clergy_benefits": [
+                "clergy_retirement_benefit"
+              ]
+            }
           }
         },
         "effective_basis": "taxable_year_start",
@@ -19780,6 +20013,13 @@
           },
           "retired_clergy_exception_effective_scope": {
             "not_a_coverage_condition": "Records that Pub. L. 108-203 section 422(b) applies the retired-clergy exclusion \"to years beginning before, on, or after December 31, 1994\", so it limits no year of this row. Case retired_clergy_benefits carries the exclusion itself."
+          },
+          "retired_clergy_housing_and_church_plan_benefits": {
+            "cases": {
+              "retired_clergy_benefits": [
+                "clergy_retirement_benefit"
+              ]
+            }
           }
         },
         "effective_basis": "taxable_year_start",
@@ -21507,6 +21747,9 @@
               ]
             }
           },
+          "general_rule": {
+            "not_a_coverage_condition": "Names 411(c)(2)'s exclusion of an employee's service from self-employment, which the row's residual applies; the cases are its exceptions."
+          },
           "scope_note": {
             "not_a_coverage_condition": "States how the row is drafted, not a condition: the only exception whose start this row dates itself, 411(c)(2)(G) (service performed after December 31, 1983, per the Pub. L. 98-369 section 2603(e) note), carries 'from 1984' in electing_church_employee's text, and the other exceptions defer to families whose dated rows decide the years."
           }
@@ -21766,6 +22009,9 @@
                 "material_participation"
               ]
             }
+          },
+          "default_rental_treatment": {
+            "not_a_coverage_condition": "Names 411(a)(1)'s exclusion of rentals, which applies where no participation case holds; the rental family applies it."
           },
           "real_estate_dealer_exception": {
             "cases": {
@@ -22330,6 +22576,9 @@
                 "residence_period"
               ]
             }
+          },
+          "nonresident_reading": {
+            "not_a_coverage_condition": "An unverified candidate reading, recorded with its status; no case or residual applies it."
           },
           "scope": {
             "not_a_coverage_condition": "Restates the residual: Pub. L. 92-603 section 124 disregards 911(a)(2) only \"In the case of an individual who has been a resident of the United States during the entire taxable year\" and says nothing for anyone else, so for a person who fails that condition the residual returns open."
@@ -22977,6 +23226,9 @@
           }
         ],
         "condition_cases": {
+          "boundary_clause": {
+            "not_a_coverage_condition": "The quoted effective-date clause dates the amendment that starts this row; the family's date axis applies the date, and the row's cases carry the amended rule."
+          },
           "named_concepts": {
             "not_a_coverage_condition": "Names two computations. Coverage net earnings follow 411(a)(15), which Pub. L. 111-240 section 2042 did not amend, and the covered residual applies it. Section 2042(a) changed only 162(l)(4), the Title 26 self-employment tax base, which decides no coverage consequence of this family."
           }
@@ -29376,6 +29628,15 @@
       "open_reason": null,
       "parameters": {
         "common_law_employee": "cash_and_noncash_without_this_threshold",
+        "condition_cases": {
+          "statutory_homeworker_covered_pay": {
+            "cases": {
+              "statutory_homeworker": [
+                "occupation"
+              ]
+            }
+          }
+        },
         "later_edition_reliance": {
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
@@ -29534,6 +29795,15 @@
       "open_reason": null,
       "parameters": {
         "common_law_employee": "cash_and_noncash_without_this_threshold",
+        "condition_cases": {
+          "statutory_homeworker_covered_pay": {
+            "cases": {
+              "statutory_homeworker": [
+                "occupation"
+              ]
+            }
+          }
+        },
         "later_edition_reliance": {
           "scope": "Current Code republication and later POMS/IRS editions supply the quoted text. Pre-1994 history rests on the cited amendment/effective-date notes and dated POMS historical statements; no contemporaneous pre-1994 Code edition is pinned for this row. Later administrative guidance is not independently established for every earlier year.",
           "status": "explicitly_labeled"
@@ -30579,6 +30849,9 @@
           "non_federally_recognized_tribes": {
             "not_a_coverage_condition": "Names what the residual applies: POMS RS 01901.700 F makes all services for a non-federally recognized tribe, council members' included, covered employment, with the nonprofit rules for a tax-exempt tribe. federally_recognized_council_member requires a federally recognized tribe, so these workers fall to the covered residual and the other families."
           },
+          "other_employees_or_other_roles": {
+            "not_a_coverage_condition": "Records that council membership excludes no separate employee service; the ordinary employment families decide that service."
+          },
           "section_418a_agreement_statute_available": {
             "not_a_coverage_condition": "Records history: section 218A (42 U.S.C. 418a) became law on September 20, 2018 (Pub. L. 115-243), after this row ends on 2018-09-19, so no agreement could be in force during the row. A later agreement's reach back into these years is decided by later_418a_retroactive_coverage."
           }
@@ -30853,6 +31126,9 @@
           },
           "non_federally_recognized_tribes": {
             "not_a_coverage_condition": "Names what the residual applies: POMS RS 01901.700 F covers an unrecognized tribe's council members, and no_section_418a_inclusion requires a federally recognized tribe, so they fall to the residual."
+          },
+          "other_employees_or_other_roles": {
+            "not_a_coverage_condition": "Records that council membership excludes no separate employee service; the ordinary employment families decide that service."
           },
           "section_418a_agreement_statute_available": {
             "not_a_coverage_condition": "Records that 418a is law for the whole row: Pub. L. 115-243 was approved September 20, 2018, the row's start. Whether an agreement includes a given service is decided by section_418a_agreement_inclusion, section_418a_retroactive_inclusion and no_section_418a_inclusion."

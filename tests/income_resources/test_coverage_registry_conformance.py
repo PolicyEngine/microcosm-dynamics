@@ -1841,6 +1841,22 @@ CONDITION_WORDS = re.compile(
 )
 
 
+# Review r6 M-7: the worded-condition guard also reads "exclude",
+# "excluded", "required", "only for" and "subject to", and reads
+# snake_case as words, since "_" is a word character.
+WORDED_CONDITION = re.compile(
+    r"\b(only when|only if|only for|unless|except|excepts|excepted|"
+    r"exclude|excluded|excludes|remains excluded|depends on|if|when|"
+    r"whenever|where|provided that|requires?|required|subject to)\b",
+    re.IGNORECASE,
+)
+
+
+def states_condition(text):
+    """Whether a text, snake_case read as words, states a condition."""
+    return bool(WORDED_CONDITION.search(text.replace("_", " ")))
+
+
 def parameter_leaves(value, path=()):
     if isinstance(value, dict):
         for key, child in value.items():
@@ -2286,9 +2302,12 @@ def condition_parameters(parameters):
         for key in parameters
         if key not in PARAMETER_EVIDENCE | SCOPE_KEY_EXEMPT
         and not OPTION_RECORDS.search(key)
-        and any(
-            isinstance(value, str) and CONDITION_WORDS.search(value)
-            for _, value in parameter_leaves({key: parameters[key]})
+        and (
+            states_condition(key)
+            or any(
+                isinstance(value, str) and states_condition(value)
+                for _, value in parameter_leaves({key: parameters[key]})
+            )
         )
     }
     return leaves | scopes | worded
@@ -2363,8 +2382,8 @@ def test_condition_parameters_on_case_rows_name_their_cases():
     # church cases se_units_1968_1983 now carries; its sweep ties three
     # more (communist 1968, casual 1978 and domestic 1994), and the
     # condition-word ties three more; the review r6 fix ties casual 1968's
-    # payment-date threshold.
-    assert len(tied) == 101
+    # payment-date threshold, and its widened word guard five more rows.
+    assert len(tied) == 106
     assert all(row["open_reason"] is None for row in tied)
     # H-C: the 2018 tribal row's scope parameter names the case that reads
     # federal recognition.
@@ -2455,7 +2474,19 @@ def test_condition_case_checker_requires_a_tie(key, tie, with_cases, is_open):
 
 @settings(deadline=None)
 @given(
-    st.sampled_from(["unless", "only if", "where", "requires", "if"]),
+    st.sampled_from(
+        [
+            "unless",
+            "only if",
+            "where",
+            "requires",
+            "if",
+            "excluded",
+            "subject to",
+            "only for",
+            "required_if",
+        ]
+    ),
     st.sampled_from([None, "cases", "reason"]),
 )
 def test_condition_case_checker_flags_a_worded_condition(word, tie):
@@ -2480,6 +2511,87 @@ def test_condition_case_checker_flags_a_worded_condition(word, tie):
             "invented_delay": {"not_a_coverage_condition": "INVENTED"}
         }
     assert bool(condition_case_problems(row, set())) == (tie is None)
+
+
+# Review r6 M-7: an unread-fact reason that states a condition says where
+# it is decided (a case of the row, a family or a threshold) or that
+# nothing depends on the fact.
+NO_DEPENDENCE = re.compile(
+    r"no case|excludes nothing|no exclusion|not a (coverage |separate )?"
+    r"condition|no condition|whatever|whoever|no 410|no paragraph|"
+    r"no reading|no source|no captured source|is open|does not depend|"
+    r"carried by|entry fact",
+    re.IGNORECASE,
+)
+
+
+def unread_reason_problems(row, families, thresholds):
+    names = {c["case_id"] for c in row["cases"]} | families | thresholds
+    return sorted(
+        fact
+        for fact, reason in row["parameters"]
+        .get("unread_trigger_facts", {})
+        .items()
+        if states_condition(reason)
+        and not any(name in reason for name in names)
+        and not NO_DEPENDENCE.search(reason)
+    )
+
+
+def test_unread_reasons_that_state_a_condition_say_where_it_is_decided():
+    raw = json.loads(REGISTRY_ARTIFACT.read_text())
+    families = {r["family"] for r in raw["rules"]}
+    thresholds = {t["threshold_id"] for t in raw["thresholds"]}
+    assert {
+        row["rule_id"]: found
+        for row in raw["rules"]
+        if (found := unread_reason_problems(row, families, thresholds))
+    } == {}
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(
+        [
+            "INVENTED amount the threshold compares",
+            "excluded only if INVENTED",
+            "required_when_INVENTED",
+            "excluded when INVENTED; invented_case decides it",
+            "subject to INVENTED; no case depends on it",
+        ]
+    )
+)
+def test_unread_reason_checker_needs_a_pointer(reason):
+    row = {
+        "cases": [{"case_id": "invented_case"}],
+        "parameters": {"unread_trigger_facts": {"amount": reason}},
+    }
+    flagged = bool(unread_reason_problems(row, set(), set()))
+    assert flagged == (
+        reason in {"excluded only if INVENTED", "required_when_INVENTED"}
+    )
+
+
+def boundary_clause_problems(row):
+    """A pinned boundary clause that states a condition carries an
+    axis_exception or a condition_cases tie (review r6 M-7)."""
+    pin = row["parameters"].get("boundary_clause")
+    if pin is None or not states_condition(pin["citation"].get("quote", "")):
+        return []
+    if str(pin.get("axis_exception", "")).strip():
+        return []
+    if "boundary_clause" in row["parameters"].get("condition_cases", {}):
+        return []
+    return ["boundary_clause"]
+
+
+def test_worded_boundary_clauses_are_tied():
+    rows = json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    assert {
+        row["rule_id"]: found
+        for row in rows
+        if (found := boundary_clause_problems(row))
+    } == {}
 
 
 # Review r3 M1: statutory conditions the review found outside `when`, each
@@ -5186,7 +5298,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 347
+    assert sum(len(row["cases"]) for row in rows) == 350
     deferred = [
         w for w in INVENTED_SWEEP_WORKERS if w["expected"] == "deferred"
     ]

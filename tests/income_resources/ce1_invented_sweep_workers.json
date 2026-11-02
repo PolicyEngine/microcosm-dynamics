@@ -16671,6 +16671,84 @@
    },
    "expected": "covered",
    "decides": "residual"
+  },
+  {
+   "rule_id": "clergy_1968_1972",
+   "worker": "INVENTED (review r6 M-7): 1970: an ordained minister with an approved 1402(e) exemption who works as a civil-service chaplain at a Veterans Administration hospital: POMS RS 01901.600 B.3.c treats the chaplaincy as work in the employ of the United States, not ministry, so the exemption does not reach it and the government-service families decide it.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions"
+    ],
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "covered",
+   "decides": "government_chaplain_service"
+  },
+  {
+   "rule_id": "clergy_1968_1972",
+   "worker": "INVENTED (review r6 M-7, its neighbour): 1970: the same exempt minister serving as staff chaplain of a church-related hospital (POMS RS 01901.600 A.3: ministry), so the exemption applies.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service as staff chaplain of a church-related hospital"
+    ],
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "noncovered",
+   "decides": "effective_1402e_exemption"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r6 M-7): 1978: an ordained minister with an approved 1402(e) exemption who works as a civil-service chaplain at a Veterans Administration hospital: POMS RS 01901.600 B.3.c treats the chaplaincy as work in the employ of the United States, not ministry, so the exemption does not reach it and the government-service families decide it.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions"
+    ],
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "covered",
+   "decides": "government_chaplain_service"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r6 M-7, its neighbour): 1978: the same exempt minister serving as staff chaplain of a church-related hospital (POMS RS 01901.600 A.3: ministry), so the exemption applies.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service as staff chaplain of a church-related hospital"
+    ],
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "noncovered",
+   "decides": "effective_1402e_exemption"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 M-7): 2015: an ordained minister with an approved 1402(e) exemption who works as a civil-service chaplain at a Veterans Administration hospital: POMS RS 01901.600 B.3.c treats the chaplaincy as work in the employ of the United States, not ministry, so the exemption does not reach it and the government-service families decide it.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions"
+    ],
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "covered",
+   "decides": "government_chaplain_service"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r6 M-7, its neighbour): 2015: the same exempt minister serving as staff chaplain of a church-related hospital (POMS RS 01901.600 A.3: ministry), so the exemption applies.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service as staff chaplain of a church-related hospital"
+    ],
+    "clergy_or_religious_exemption": "effective 1402(e) exemption"
+   },
+   "expected": "noncovered",
+   "decides": "effective_1402e_exemption"
   }
  ]
 }

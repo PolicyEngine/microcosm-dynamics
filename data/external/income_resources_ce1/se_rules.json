@@ -281,6 +281,13 @@
               "property_disposition_type"
             ]
           }
+        },
+        "capital_asset_gains_and_losses": {
+          "cases": {
+            "excluded_property_gain_or_loss": [
+              "property_disposition_type"
+            ]
+          }
         }
       },
       "unread_trigger_facts": {
@@ -977,6 +984,13 @@
         },
         "retired_clergy_exception_effective_scope": {
           "not_a_coverage_condition": "Records that Pub. L. 108-203 section 422(b) applies the retired-clergy exclusion \"to years beginning before, on, or after December 31, 1994\", so it limits no year of this row. Case retired_clergy_benefits carries the exclusion itself."
+        },
+        "retired_clergy_housing_and_church_plan_benefits": {
+          "cases": {
+            "retired_clergy_benefits": [
+              "clergy_retirement_benefit"
+            ]
+          }
         }
       },
       "effective_basis": "taxable_year_start",
@@ -1285,6 +1299,16 @@
         },
         "retired_clergy_exception_effective_scope": {
           "not_a_coverage_condition": "Records that Pub. L. 108-203 section 422(b) applies the retired-clergy exclusion \"to years beginning before, on, or after December 31, 1994\", so it limits no year of this row. Case retired_clergy_benefits carries the exclusion itself."
+        },
+        "retired_clergy_housing_and_church_plan_benefits": {
+          "cases": {
+            "retired_clergy_benefits": [
+              "clergy_retirement_benefit"
+            ]
+          }
+        },
+        "boundary_clause": {
+          "not_a_coverage_condition": "The quoted effective-date clause dates the amendment that starts this row; the family's date axis applies the date, and the row's cases carry the amended rule."
         }
       },
       "unread_trigger_facts": {
@@ -2907,6 +2931,9 @@
         },
         "scope_note": {
           "not_a_coverage_condition": "States how the row is drafted, not a condition: the only exception whose start this row dates itself, 411(c)(2)(G) (service performed after December 31, 1983, per the Pub. L. 98-369 section 2603(e) note), carries 'from 1984' in electing_church_employee's text, and the other exceptions defer to families whose dated rows decide the years."
+        },
+        "general_rule": {
+          "not_a_coverage_condition": "Names 411(c)(2)'s exclusion of an employee's service from self-employment, which the row's residual applies; the cases are its exceptions."
         }
       }
     },
@@ -3221,6 +3248,9 @@
               "rental_arrangement_requires_material_participation"
             ]
           }
+        },
+        "default_rental_treatment": {
+          "not_a_coverage_condition": "Names 411(a)(1)'s exclusion of rentals, which applies where no participation case holds; the rental family applies it."
         }
       },
       "effective_basis": "taxable_year_start",
@@ -7326,6 +7356,13 @@
         },
         "retired_clergy_exception_effective_scope": {
           "not_a_coverage_condition": "Records that Pub. L. 108-203 section 422(b) applies the retired-clergy exclusion \"to years beginning before, on, or after December 31, 1994\", so it limits no year of this row. Case retired_clergy_benefits carries the exclusion itself."
+        },
+        "retired_clergy_housing_and_church_plan_benefits": {
+          "cases": {
+            "retired_clergy_benefits": [
+              "clergy_retirement_benefit"
+            ]
+          }
         }
       },
       "unread_trigger_facts": {
