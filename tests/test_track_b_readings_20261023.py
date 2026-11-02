@@ -68,8 +68,8 @@ ID = r"us:oasdi-[a-z0-9]+(?:-[a-z0-9]+)*"
 MARKER = re.compile(rf"# Source conflict ({ID})(?=:|\s|$)")
 #: A whole id in a note: no id character or hyphen follows it.
 DOCUMENTED = re.compile(rf"{ID}(?![A-Za-z0-9_-])")
-#: Any spelling: "source conflict", "Source-conflict", "source_conflict".
-MENTION = re.compile(r"source[\W_]*conflict", re.IGNORECASE)
+#: Any spelling: "source conflict", "Source-conflict", "Sources conflict".
+MENTION = re.compile(r"sources?[\W_]*conflict", re.IGNORECASE)
 #: Files that can carry a marker, subpackages included.
 SOURCES = {".py", ".yaml", ".yml"}
 
