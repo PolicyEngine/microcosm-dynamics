@@ -1,0 +1,1486 @@
+{
+  "assumptions": {
+    "INTERFACE_NATIONAL_GEOGRAPHY": {
+      "rationale": "The public interface requests an SPM measurement geography; SSI0's output scope is federal SSI and does not admit state-supplement claims.",
+      "statement": "Select national geography for the public calculator's auxiliary SPM measurement.",
+      "value": "national"
+    },
+    "POTENTIAL_FULL_TAKEUP": {
+      "rationale": "This defines potential entitlement and does not estimate observed receipt; design \u00a73.3 postpones take-up estimation to SSI4.",
+      "statement": "Every eligible person takes up SSI for the potential-benefit estimand.",
+      "value": true
+    }
+  },
+  "certified_policyengine_us_version": "2.2.1",
+  "contract_version": "ssi0-v1",
+  "interpretation": "A source cell names a route awaiting the listed milestone, not data already read. A refuse cell blocks a case lacking explicit validated input; supplying invented or validated values fills acquisition gaps but does not bypass runner capability guards. Context rows are typed record fields, not engine variables. No missing input falls through to a PE-US default.",
+  "populations": [
+    "PSID",
+    "SIPP",
+    "Microcosm"
+  ],
+  "rows": [
+    {
+      "category": "ABD status",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "age",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "microcosm#1215 body, Reproduce (age >= 18); docs/plans/microcosm-start.md:293-294",
+          "detail": "age, retained for each person in the certified starting release",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "Head ER25017 and spouse ER25019 in 2005; cross-year person ages need wave-specific verification",
+          "reader_milestone": "D1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "blocks": "Missing age: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "alimony_income",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "alimony_income; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head_alimony (ER27974 in 2005); recipient-specific historical coverage needs D1; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "blocks": "Missing alimony_income: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "resource ownership",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "bank_account_assets",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "bank_account_assets: current household-vector carry does not establish person or marital-unit ownership; microcosm#1215; WP1 must rebuild and validate ownership",
+          "condition": "FRAME_LACKS_RESOURCES",
+          "status": "refuse"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71 wealth waves and contents",
+          "detail": "transaction accounts (historical Sx05); family balances need validated person and marital-unit ownership; never copy a household vector to one owner",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a74 Assets Table 4-1; microcosm#1215 body (person leaves TVAL_*, household totals THVAL_*)",
+          "detail": "TVAL_BANK; retain person ownership and spouse dependence; verify against release-specific dictionary",
+          "reader_milestone": "D2, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "resource ownership",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "bond_assets",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "bond_assets: current household-vector carry does not establish person or marital-unit ownership; microcosm#1215; WP1 must rebuild and validate ownership",
+          "condition": "FRAME_LACKS_RESOURCES",
+          "status": "refuse"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71 wealth waves and contents",
+          "detail": "other investments (Sx15); disaggregate bonds before use; family balances need validated person and marital-unit ownership; never copy a household vector to one owner",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a74 Assets Table 4-1; microcosm#1215 body (person leaves TVAL_*, household totals THVAL_*)",
+          "detail": "TVAL_BOND; retain person ownership and spouse dependence; verify against release-specific dictionary",
+          "reader_milestone": "D2, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "child_support_received",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "child_support_received; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head_child_support/wife_child_support/ofum_child_support; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "blocks": "Missing child_support_received: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "ABD status",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "disability_benefits",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing disability_benefits: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing disability_benefits: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing disability_benefits: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "dividend_income",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "qualified_dividend_income + non_qualified_dividend_income; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head_dividends/wife_dividends; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "blocks": "Missing dividend_income: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "employment_income",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "employment_income_before_lsr; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head_labor/wife_labor; retain business and farm components separately; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "blocks": "Missing employment_income: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "financial_assistance",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing financial_assistance: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head_help_relatives/head_help_others and spouse/other-member counterparts; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "blocks": "Missing financial_assistance: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "gi_cash_assistance",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing gi_cash_assistance: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing gi_cash_assistance: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing gi_cash_assistance: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "immigration and qualifying quarters",
+      "entity": "Person",
+      "enum_members": [
+        "CITIZEN",
+        "LEGAL_PERMANENT_RESIDENT",
+        "REFUGEE",
+        "ASYLEE",
+        "DEPORTATION_WITHHELD",
+        "CUBAN_HAITIAN_ENTRANT",
+        "CONDITIONAL_ENTRANT",
+        "PAROLED_ONE_YEAR",
+        "UNDOCUMENTED",
+        "DACA",
+        "TPS"
+      ],
+      "kind": "engine",
+      "name": "immigration_status",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing immigration_status: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing immigration_status: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing immigration_status: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "Enum"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "interest_income",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "taxable_interest_income + tax_exempt_interest_income; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head_interest/wife_interest; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "blocks": "Missing interest_income: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "ABD status",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "is_blind",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing is_blind: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing is_blind: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing is_blind: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "is_full_time_college_student",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing is_full_time_college_student: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing is_full_time_college_student: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing is_full_time_college_student: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "is_in_medicaid_facility",
+      "period": "MONTH",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing is_in_medicaid_facility: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing is_in_medicaid_facility: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing is_in_medicaid_facility: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "links",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "is_tax_unit_head",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing is_tax_unit_head: typed tax and marital links must establish this role explicitly. The reviewed catalog/frame map does not validate a tax-unit role crosswalk; do not derive legal spouse status from row order or PSID's partner-inclusive wife label. D1/D2/WP1 must adjudicate the links.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing is_tax_unit_head: typed tax and marital links must establish this role explicitly. The reviewed catalog/frame map does not validate a tax-unit role crosswalk; do not derive legal spouse status from row order or PSID's partner-inclusive wife label. D1/D2/WP1 must adjudicate the links.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing is_tax_unit_head: typed tax and marital links must establish this role explicitly. The reviewed catalog/frame map does not validate a tax-unit role crosswalk; do not derive legal spouse status from row order or PSID's partner-inclusive wife label. D1/D2/WP1 must adjudicate the links.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "links",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "is_tax_unit_spouse",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing is_tax_unit_spouse: typed tax and marital links must establish this role explicitly. The reviewed catalog/frame map does not validate a tax-unit role crosswalk; do not derive legal spouse status from row order or PSID's partner-inclusive wife label. D1/D2/WP1 must adjudicate the links.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing is_tax_unit_spouse: typed tax and marital links must establish this role explicitly. The reviewed catalog/frame map does not validate a tax-unit role crosswalk; do not derive legal spouse status from row order or PSID's partner-inclusive wife label. D1/D2/WP1 must adjudicate the links.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing is_tax_unit_spouse: typed tax and marital links must establish this role explicitly. The reviewed catalog/frame map does not validate a tax-unit role crosswalk; do not derive legal spouse status from row order or PSID's partner-inclusive wife label. D1/D2/WP1 must adjudicate the links.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "ABD status",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "meets_ssi_disability_criteria",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing meets_ssi_disability_criteria: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing meets_ssi_disability_criteria: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing meets_ssi_disability_criteria: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "own_children_in_household",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing own_children_in_household: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing own_children_in_household: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing own_children_in_household: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "int"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "pension_income",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "taxable_private_pension_income + tax_exempt_private_pension_income; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head_retirement_pensions/head_annuities and spouse retirement; 2023 ER85542/ER85544/ER85548; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a74 relevant variables; 2024 SIPP User's Guide",
+          "detail": "ERET[1-8]MNYN/TRET[1-8]AMT; cross-release equivalence and annualization await label-verified D2 readers",
+          "reader_milestone": "D2",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "receives_ssi",
+      "period": "MONTH",
+      "populations": {
+        "Microcosm": {
+          "blocks": "A projected Microcosm start must not reuse frame SSI_VAL or calibrated take-up as projected receipt; SSI4 supplies take-up and SSI9 supplies timing (design \u00a73.3)",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71 income and SSI variables",
+          "detail": "G25F receipt, G26F/G26FPER amount/unit; ER85536/ER85566/ER85604 distinguish reference person, spouse and other family members; verify recipient ownership before use",
+          "reader_milestone": "D1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a74 relevant variables",
+          "detail": "RSSI_YRYN/RSSI_MNYN/TSSI_AMT; receipt reports are separate from potential full-take-up eligibility",
+          "reader_milestone": "D2",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "rental_income",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "rental_income; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head_rent/wife_rent; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "blocks": "Missing rental_income: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "retirement_distributions",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "taxable_ira_distributions, tax_exempt_ira_distributions, taxable_401k_distributions, taxable_403b_distributions, taxable_sep_distributions, keogh_distributions; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "2023 ER85546 IRA income and Section W43-W49; distinguish cash-outs from recurring pensions; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a74 relevant variables; 2024 SIPP User's Guide",
+          "detail": "TTHR_INC_AMT/TIRA_INC_AMT; cross-release equivalence and annualization await label-verified D2 readers",
+          "reader_milestone": "D2",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "self_employment_income",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "self_employment_income_before_lsr; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head_farm/head_business_labor/wife_business_labor; SSI crosswalk must separate labor and asset portions; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "blocks": "Missing self_employment_income: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "social_security",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "social_security_retirement + social_security_disability + social_security_survivors + social_security_dependents; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head/wife/other-family-member Social Security totals; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a74 relevant variables; 2024 SIPP User's Guide",
+          "detail": "ESSSMNYN/TSSSAMT; cross-release equivalence and annualization await label-verified D2 readers",
+          "reader_milestone": "D2",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "living arrangement and in-kind support",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "ssi_lives_in_another_persons_household",
+      "period": "MONTH",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing ssi_lives_in_another_persons_household: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing ssi_lives_in_another_persons_household: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing ssi_lives_in_another_persons_household: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "living arrangement and in-kind support",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "ssi_lives_in_medical_treatment_facility",
+      "period": "MONTH",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing ssi_lives_in_medical_treatment_facility: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing ssi_lives_in_medical_treatment_facility: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing ssi_lives_in_medical_treatment_facility: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "living arrangement and in-kind support",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "ssi_medicaid_pays_majority_of_care",
+      "period": "MONTH",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing ssi_medicaid_pays_majority_of_care: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing ssi_medicaid_pays_majority_of_care: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing ssi_medicaid_pays_majority_of_care: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "living arrangement and in-kind support",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "ssi_others_pay_all_meals",
+      "period": "MONTH",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing ssi_others_pay_all_meals: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing ssi_others_pay_all_meals: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing ssi_others_pay_all_meals: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "immigration and qualifying quarters",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "ssi_qualifying_quarters_earnings",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing ssi_qualifying_quarters_earnings: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing ssi_qualifying_quarters_earnings: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing ssi_qualifying_quarters_earnings: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "int"
+    },
+    {
+      "category": "living arrangement and in-kind support",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "ssi_receives_food_from_others",
+      "period": "MONTH",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing ssi_receives_food_from_others: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing ssi_receives_food_from_others: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing ssi_receives_food_from_others: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "living arrangement and in-kind support",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "ssi_receives_outside_shelter_support",
+      "period": "MONTH",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing ssi_receives_outside_shelter_support: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing ssi_receives_outside_shelter_support: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing ssi_receives_outside_shelter_support: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "living arrangement and in-kind support",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "ssi_receives_shelter_from_others_in_household",
+      "period": "MONTH",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing ssi_receives_shelter_from_others_in_household: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing ssi_receives_shelter_from_others_in_household: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing ssi_receives_shelter_from_others_in_household: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "living arrangement and in-kind support",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "ssi_shelter_support_value",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing ssi_shelter_support_value: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing ssi_shelter_support_value: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing ssi_shelter_support_value: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "sstb_self_employment_income",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing sstb_self_employment_income: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing sstb_self_employment_income: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing sstb_self_employment_income: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "resource ownership",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "stock_assets",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "stock_assets: current household-vector carry does not establish person or marital-unit ownership; microcosm#1215; WP1 must rebuild and validate ownership",
+          "condition": "FRAME_LACKS_RESOURCES",
+          "status": "refuse"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71 wealth waves and contents",
+          "detail": "stocks/mutual funds (Sx11; 2023 ER83912); family balances need validated person and marital-unit ownership; never copy a household vector to one owner",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a74 Assets Table 4-1; microcosm#1215 body (person leaves TVAL_*, household totals THVAL_*)",
+          "detail": "TVAL_STMF; retain person ownership and spouse dependence; verify against release-specific dictionary",
+          "reader_milestone": "D2, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "survivor_benefits",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Missing survivor_benefits: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Missing survivor_benefits: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Missing survivor_benefits: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "take-up",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "takes_up_ssi_if_eligible",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "assumption_id": "POTENTIAL_FULL_TAKEUP",
+          "detail": "Potential-benefit estimand only. Observed receipt is separate: PSID \u00a71 G25F/G26F/G26FPER and ER85536/ER85566/ER85604 (D1); SIPP \u00a74 RSSI_YRYN/RSSI_MNYN/TSSI_AMT (D2). The frame's calibrated takes_up_ssi_if_eligible is replaced by SSI4 for projected receipt, design \u00a73.3.",
+          "status": "assumption"
+        },
+        "PSID": {
+          "assumption_id": "POTENTIAL_FULL_TAKEUP",
+          "detail": "Potential-benefit estimand only. Observed receipt is separate: PSID \u00a71 G25F/G26F/G26FPER and ER85536/ER85566/ER85604 (D1); SIPP \u00a74 RSSI_YRYN/RSSI_MNYN/TSSI_AMT (D2). The frame's calibrated takes_up_ssi_if_eligible is replaced by SSI4 for projected receipt, design \u00a73.3.",
+          "status": "assumption"
+        },
+        "SIPP": {
+          "assumption_id": "POTENTIAL_FULL_TAKEUP",
+          "detail": "Potential-benefit estimand only. Observed receipt is separate: PSID \u00a71 G25F/G26F/G26FPER and ER85536/ER85566/ER85604 (D1); SIPP \u00a74 RSSI_YRYN/RSSI_MNYN/TSSI_AMT (D2). The frame's calibrated takes_up_ssi_if_eligible is replaced by SSI4 for projected receipt, design \u00a73.3.",
+          "status": "assumption"
+        }
+      },
+      "value_type": "bool"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "unemployment_compensation",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "unemployment_compensation; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head_unemployment/wife_unemployment/ofum_unemployment; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "blocks": "Missing unemployment_compensation: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "veterans_benefits",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "veterans_benefits; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head_va_pension/ofum_va_pension; other veterans benefits still need D1 adjudication; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "blocks": "Missing veterans_benefits: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "income and SSI formula inputs",
+      "entity": "Person",
+      "kind": "engine",
+      "name": "workers_compensation",
+      "period": "YEAR",
+      "populations": {
+        "Microcosm": {
+          "citation": "docs/plans/microcosm-start.md:267-284",
+          "detail": "workers_compensation; use only a certified release containing these fields; sparse/dense starts listed at line 284 lack several of them",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71; src/populace_dynamics/data/family_income.py:150-263",
+          "detail": "head_workers_comp/wife_workers_comp/ofum_workers_comp; preserve owner; aggregated OFUM amounts cannot be assigned to one person",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "blocks": "Missing workers_compensation: the reviewed catalog has no verified source/crosswalk for this SSI input. Do not infer it from Social Security receipt, family totals or an engine default; D1/D2/WP1 must adjudicate it before population use.",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      },
+      "value_type": "float"
+    },
+    {
+      "category": "links",
+      "detail": "Household.household_id and Household.people define unique person membership",
+      "entity": "Context",
+      "kind": "context",
+      "name": "household_links",
+      "period": "case",
+      "populations": {
+        "Microcosm": {
+          "citation": "microcosm#1215 body, Reproduce (household and person table)",
+          "detail": "Household.household_id and Household.people define unique person membership",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71 unit and sample",
+          "detail": "Household.household_id and Household.people define unique person membership",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a74 publisher/unit",
+          "detail": "Household.household_id and Household.people define unique person membership",
+          "reader_milestone": "D2, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        }
+      }
+    },
+    {
+      "category": "links",
+      "detail": "Person.marital_unit_id and MaritalUnit.members define actual spouse links; PSID's wife label includes cohabiting partners and cannot establish legal marriage alone",
+      "entity": "Context",
+      "kind": "context",
+      "name": "marital_unit_links",
+      "period": "case",
+      "populations": {
+        "Microcosm": {
+          "citation": "microcosm#1215 body, Reproduce (person_marital_unit_id)",
+          "detail": "Person.marital_unit_id and MaritalUnit.members define actual spouse links; PSID's wife label includes cohabiting partners and cannot establish legal marriage alone; verify spouse and head roles independently",
+          "reader_milestone": "WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "PSID": {
+          "blocks": "Person.marital_unit_id and MaritalUnit.members define actual spouse links; PSID's wife label includes cohabiting partners and cannot establish legal marriage alone",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Person.marital_unit_id and MaritalUnit.members define actual spouse links; PSID's wife label includes cohabiting partners and cannot establish legal marriage alone",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      }
+    },
+    {
+      "category": "links",
+      "detail": "Person.tax_unit_id and Household.tax_units partition persons, with head/dependent roles supplied explicitly where inventoried",
+      "entity": "Context",
+      "kind": "context",
+      "name": "tax_unit_links",
+      "period": "case",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Person.tax_unit_id and Household.tax_units partition persons, with head/dependent roles supplied explicitly where inventoried",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Person.tax_unit_id and Household.tax_units partition persons, with head/dependent roles supplied explicitly where inventoried",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Person.tax_unit_id and Household.tax_units partition persons, with head/dependent roles supplied explicitly where inventoried",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      }
+    },
+    {
+      "category": "resource ownership",
+      "detail": "Each person owns the bank/stock/bond leaves; resource_ownership_validated attests a person/marital-unit allocation; family or household totals alone are insufficient",
+      "entity": "Context",
+      "kind": "context",
+      "name": "resource_ownership",
+      "period": "case",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Each person owns the bank/stock/bond leaves; resource_ownership_validated attests a person/marital-unit allocation; family or household totals alone are insufficient; microcosm#1215",
+          "condition": "FRAME_LACKS_RESOURCES",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Each person owns the bank/stock/bond leaves; resource_ownership_validated attests a person/marital-unit allocation; family or household totals alone are insufficient",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Each person owns the bank/stock/bond leaves; resource_ownership_validated attests a person/marital-unit allocation; family or household totals alone are insufficient",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      }
+    },
+    {
+      "category": "retirement accounts",
+      "detail": "Each RetirementAccount.balance belongs to one Person; PSID \u00a71 P20/P20P90 and ER83934 are balance candidates (D1, WP1); SIPP \u00a74 Table 4-1 is a candidate (D2, WP1); frame lacks DC balances",
+      "entity": "Context",
+      "kind": "context",
+      "name": "retirement_accounts.balance",
+      "period": "case",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Each RetirementAccount.balance belongs to one Person; PSID \u00a71 P20/P20P90 and ER83934 are balance candidates (D1, WP1); SIPP \u00a74 Table 4-1 is a candidate (D2, WP1); frame lacks DC balances",
+          "condition": "FRAME_LACKS_RESOURCES",
+          "status": "refuse"
+        },
+        "PSID": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a71 pension table P20/P20P90 and ER83934",
+          "detail": "Each RetirementAccount.balance belongs to one Person; PSID \u00a71 P20/P20P90 and ER83934 are balance candidates (D1, WP1); SIPP \u00a74 Table 4-1 is a candidate (D2, WP1); frame lacks DC balances",
+          "reader_milestone": "D1, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        },
+        "SIPP": {
+          "citation": "income-resources-20261021/research/data-sources.md \u00a74 Assets Table 4-1",
+          "detail": "Each RetirementAccount.balance belongs to one Person; PSID \u00a71 P20/P20P90 and ER83934 are balance candidates (D1, WP1); SIPP \u00a74 Table 4-1 is a candidate (D2, WP1); frame lacks DC balances",
+          "reader_milestone": "D2, WP1",
+          "reader_status": "not_read_by_ssi_runner",
+          "status": "source"
+        }
+      }
+    },
+    {
+      "category": "retirement accounts",
+      "detail": "Each RetirementAccount.lump_sum_access is explicit; PSID \u00a71 1984 C46 withdrawal entitlement is a candidate, other waves/access equivalence remain unverified (D1, WP1)",
+      "entity": "Context",
+      "kind": "context",
+      "name": "retirement_accounts.lump_sum_access",
+      "period": "case",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Each RetirementAccount.lump_sum_access is explicit; PSID \u00a71 1984 C46 withdrawal entitlement is a candidate, other waves/access equivalence remain unverified (D1, WP1)",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Each RetirementAccount.lump_sum_access is explicit; PSID \u00a71 1984 C46 withdrawal entitlement is a candidate, other waves/access equivalence remain unverified (D1, WP1)",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Each RetirementAccount.lump_sum_access is explicit; PSID \u00a71 1984 C46 withdrawal entitlement is a candidate, other waves/access equivalence remain unverified (D1, WP1)",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        }
+      }
+    },
+    {
+      "category": "retirement accounts",
+      "detail": "Each RetirementAccount.periodic_payment_eligible is explicit; pension receipt does not establish eligibility to elect periodic payment",
+      "entity": "Context",
+      "kind": "context",
+      "name": "retirement_accounts.periodic_payment_eligible",
+      "period": "case",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Each RetirementAccount.periodic_payment_eligible is explicit; pension receipt does not establish eligibility to elect periodic payment",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Each RetirementAccount.periodic_payment_eligible is explicit; pension receipt does not establish eligibility to elect periodic payment",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Each RetirementAccount.periodic_payment_eligible is explicit; pension receipt does not establish eligibility to elect periodic payment",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        }
+      }
+    },
+    {
+      "category": "retirement accounts",
+      "detail": "Each RetirementAccount.employment_exit_required records whether leaving work is necessary for any payment",
+      "entity": "Context",
+      "kind": "context",
+      "name": "retirement_accounts.employment_exit_required",
+      "period": "case",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Each RetirementAccount.employment_exit_required records whether leaving work is necessary for any payment",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Each RetirementAccount.employment_exit_required records whether leaving work is necessary for any payment",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Each RetirementAccount.employment_exit_required records whether leaving work is necessary for any payment",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        }
+      }
+    },
+    {
+      "category": "retirement accounts",
+      "detail": "Each RetirementAccount.withdrawal_penalty records the actual contractual withdrawal penalty; treatment of the 26 USC 72(t) additional tax remains an SSI2 question",
+      "entity": "Context",
+      "kind": "context",
+      "name": "retirement_accounts.withdrawal_penalty",
+      "period": "case",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Each RetirementAccount.withdrawal_penalty records the actual contractual withdrawal penalty; treatment of the 26 USC 72(t) additional tax remains an SSI2 question",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Each RetirementAccount.withdrawal_penalty records the actual contractual withdrawal penalty; treatment of the 26 USC 72(t) additional tax remains an SSI2 question",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Each RetirementAccount.withdrawal_penalty records the actual contractual withdrawal penalty; treatment of the 26 USC 72(t) additional tax remains an SSI2 question",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        }
+      }
+    },
+    {
+      "category": "retirement accounts",
+      "detail": "Each RetirementAccount.taxes is separate from penalties; do not deduct taxes to value a resource (POMS SI 01120.210 A.3)",
+      "entity": "Context",
+      "kind": "context",
+      "name": "retirement_accounts.taxes",
+      "period": "case",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Each RetirementAccount.taxes is separate from penalties; do not deduct taxes to value a resource (POMS SI 01120.210 A.3)",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Each RetirementAccount.taxes is separate from penalties; do not deduct taxes to value a resource (POMS SI 01120.210 A.3)",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Each RetirementAccount.taxes is separate from penalties; do not deduct taxes to value a resource (POMS SI 01120.210 A.3)",
+          "condition": "INPUT_CONTRACT_GAP",
+          "engine_blocks": "Any positive account balance whose withdrawal/periodic-payment facts require retirement-fund treatment the pinned engine cannot express correctly; POMS SI 01120.210; SSI2 must adjudicate",
+          "engine_condition": "RULES_ENGINE_GAP",
+          "status": "refuse"
+        }
+      }
+    },
+    {
+      "category": "timing",
+      "detail": "Case.timing must declare the frozen annual state; annual income in equal twelfths and resources frozen at annual values; actual monthly receipt waits for SSI9",
+      "entity": "Context",
+      "kind": "context",
+      "name": "timing_convention",
+      "period": "case",
+      "populations": {
+        "Microcosm": {
+          "blocks": "Case.timing must declare the frozen annual state; annual income in equal twelfths and resources frozen at annual values; actual monthly receipt waits for SSI9",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "PSID": {
+          "blocks": "Case.timing must declare the frozen annual state; annual income in equal twelfths and resources frozen at annual values; actual monthly receipt waits for SSI9",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        },
+        "SIPP": {
+          "blocks": "Case.timing must declare the frozen annual state; annual income in equal twelfths and resources frozen at annual values; actual monthly receipt waits for SSI9",
+          "condition": "INPUT_CONTRACT_GAP",
+          "status": "refuse"
+        }
+      }
+    },
+    {
+      "category": "interface measurement selection",
+      "detail": "The public household calculator also requests an SPM geography selection; set its spm geography_kind option explicitly to national for this federal-only interface",
+      "entity": "Context",
+      "kind": "context",
+      "name": "interface_geography",
+      "period": "case",
+      "populations": {
+        "Microcosm": {
+          "assumption_id": "INTERFACE_NATIONAL_GEOGRAPHY",
+          "detail": "The public household calculator also requests an SPM geography selection; set its spm geography_kind option explicitly to national for this federal-only interface",
+          "status": "assumption"
+        },
+        "PSID": {
+          "assumption_id": "INTERFACE_NATIONAL_GEOGRAPHY",
+          "detail": "The public household calculator also requests an SPM geography selection; set its spm geography_kind option explicitly to national for this federal-only interface",
+          "status": "assumption"
+        },
+        "SIPP": {
+          "assumption_id": "INTERFACE_NATIONAL_GEOGRAPHY",
+          "detail": "The public household calculator also requests an SPM geography selection; set its spm geography_kind option explicitly to national for this federal-only interface",
+          "status": "assumption"
+        }
+      }
+    }
+  ],
+  "schema_version": 1,
+  "scope": "Annualized potential federal SSI under an explicitly frozen annual state; metadata contract, no survey reader or receipt model"
+}
