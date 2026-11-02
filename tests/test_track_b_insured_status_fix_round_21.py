@@ -171,6 +171,19 @@ def test_a_current_period_after_that_prior_refuses():
     assert refused.reason is ASSIGNMENT
 
 
+def test_a_frozen_exit_after_that_prior_refuses():
+    # An exit keeps the credits through 2003, and the date past it still turns
+    # on where the prior puts the 1998 QC.
+    refused = _refusal(
+        _basis_person(),
+        _history(BIRTH.year, 2003, ANNUAL),
+        date(2027, 1, 1),
+        test=DISABILITY,
+        coverage_end_month=date(2003, 12, 1),
+    )
+    assert refused.detail == LISTED_PRIOR
+
+
 def test_an_unknown_year_refuses_a_prior_placement_decides():
     refused = _refusal(
         _basis_person(),

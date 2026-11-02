@@ -2847,7 +2847,8 @@ those fillings attains refuses by name and keeps the row's weight
 year with a prior that placement decides refuses
 (`test_an_unknown_year_refuses_a_prior_placement_decides`), and a current period
 after the prior searches the same fillings
-(`test_a_current_period_after_that_prior_refuses`).
+(`test_a_current_period_after_that_prior_refuses`). A frozen exit reaches the same
+refusal (`test_a_frozen_exit_after_that_prior_refuses`).
 
 This treats a missing fact. It adds no reading of the law, so it adds no entry to
 the register, and the one-filling reading now names the basis. Counts and
