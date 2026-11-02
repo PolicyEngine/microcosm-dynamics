@@ -190,10 +190,11 @@ Computed from the file without simulation:
 
 ### 2.3 What the frame is and is not calibrated to
 
-- **Calibrated** (this build's 6,102 targets, which Microcosm solved
-  under PE-US 2.2.1): the `national_state` target surface, which keeps the
-  6,102 national and state targets of the 33,250 Microcosm compiled and
-  drops the 27,148 congressional-district targets (`build_manifest.json`,
+- **Calibrated** (Microcosm calibrated this build's weights to 6,102
+  targets under PE-US 2.2.1): the `national_state` target surface, which
+  keeps the 6,102 national and state targets of the 33,250 Microcosm
+  compiled and drops the 27,148 congressional-district targets
+  (`build_manifest.json`,
   `calibration.target_surface_selection`). By source, from
   `us_source_coverage.json`: IRS SOI 4,619, Census population 936, CMS
   Medicaid 135, SSA 111, USDA SNAP 104, CMS ACA 102, Census state tax
@@ -650,8 +651,8 @@ and the SSI change outside the universe's marital units (§13).
    concurrent SS-SSI receipt.
 2. **Asset placement.** Each household's assets sit on its
    lowest-`A_LINENO` person; other members hold none. CPS reference
-   persons account for 99.6 percent of holders (microcosm#1215). Rows R3
-   and R4 test two alternative resource rules for this placement.
+   persons account for 99.6 percent of holders (microcosm#1215). We test
+   two alternative resource rules for this placement in rows R3 and R4.
 3. **No resource deeming in PE-US 2.18.0** (§4.1). Row R3 applies the
    spousal rule; the parent-to-child rule is not applied in any row.
 4. **The fund of a dependent's benefit is unknown.** PE-US's single
@@ -674,7 +675,7 @@ and the SSI change outside the universe's marital units (§13).
    all-beneficiary shares reflect this composition, and one-way breakdowns
    do not remove it: composition can also differ within age, sex, race and
    income cells.
-7. **Model versions.** Microcosm solved the weights under PE-US 2.2.1,
+7. **Model versions.** Microcosm calibrated the weights under PE-US 2.2.1,
    and the data release declares compatibility with policyengine-us 2.2.1
    and core 3.32.5 only. The run uses 2.18.0 (core 3.32.11), outside that
    declaration.
