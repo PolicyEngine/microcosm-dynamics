@@ -103,7 +103,7 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | S2-21 | 353 | Unmarked: CBO 49659's "safely bounded definitions remain open" | Left open as the brief requires; SM2 uses no part of 49659 | §3.1 | left open; settled by a validation lane's definitions-only extract |
 | S2-22 | 523 | Unmarked: "CBO 49659's mixed-source methods remain open pending a safely bounded definitions-only extract" | Same item as S2-21 | §3.1 | left open; as S2-21 |
 | S2-23 | 588 | Unmarked: "A 2020 table-only path is a proposed registered sensitivity" | Confirmed as sensitivity P-TABLE; it cannot become primary without amending Q6 | §7.3 | frozen here |
-| S2-24 | 669 | Unmarked: a source that does not publish the uncertainty a target needs leaves that item "open or inconclusive" | Applied: OACT publishes no deaths or exposures, so OACT's random-variation component stays open, and every OACT e65 member stays inconclusive (or fails, if its point residual lies outside ±0.1 year) until the component closes. That keeps lifetime earnings, and with it SM2 as a whole, from admission. A Poisson approximation from `R_ref`'s recipients is reported beside, labeled as likely understating the variation, and changes no verdict | §9.3, §9.5, §10 | left open; settled by OACT exposure or death counts by sex × band × quintile × year |
+| S2-24 | 669 | Unmarked: a source that does not publish the uncertainty a target needs leaves that item "open or inconclusive" | Applied: OACT publishes no deaths or exposures, so OACT's random-variation component stays open, and every OACT e65 member stays inconclusive (or fails, if its point residual lies outside ±0.1 year) until the component closes. That keeps lifetime earnings, and with it SM2 as a whole, from admission. A Poisson approximation from `R_ref`'s recipients is reported beside, labeled as likely understating the variation, and changes no verdict. Applied too to the public LMF's perturbation, which no public file lets the fit assess: that sensitivity stays open, outside every bound as U4 always was, and every NHIS result carries a label (fix round 1, low finding 5) | §9.3, §9.5, §10 | left open; settled by OACT exposure or death counts by sex × band × quintile × year; the perturbation, only by restricted-use linked files |
 | S2-25 | 698 | Unmarked: "`SOURCE_UNAVAILABLE` / open identification applies to the complete modern three-dimension joint source and missing source-age mappings" | Each trigger and fallback stated | §10 | frozen here |
 
 **Counts.** Of the 25 rows, this record freezes 20 and leaves 5 open, each
@@ -1288,7 +1288,7 @@ combined.
 | | OACT | **[open]** Study 129 prints rates and RMRs but no deaths or exposures (Tables 1–12), so the source cannot supply this component (row S2-24). It settles when OACT's exposure or death counts by sex × band × quintile × year are available. Until then every OACT e65 member is inconclusive or fails (below) |
 | U3, survey sampling | ACS (reference population and NCHS education denominators) | One refit per ACS replicate, with the variance formula that each year's PUMS documentation gives and the fit job records. NCHS's denominators move with the same replicate: each category's share within sex and band is re-tabulated from that replicate and scaled to NCHS's printed total. The fit job also reports the ratio of its replicate standard errors to NCHS's printed ones (Table VIII, I–19) |
 | | NHIS–LMF | Rao–Wu rescaled bootstrap: PSUs resampled with replacement within strata, separately for each design period: the 2009 layout's `STRAT_P`/`PSU_P` and the 2016 and 2018 layouts' `PSTRAT`/`PPSU`, with the periods' strata kept distinct; the fit job reads which names each intervening year uses. Resampling whole PSUs keeps every family and every person's whole history together, once the fit job confirms from each year's survey description that families nest within PSUs |
-| U4, linkage and perturbation sensitivity | NHIS–LMF | Discrete alternative fits, not draws: NHIS weights replaced by the original sample-adult weight with ineligible persons dropped; `HISPAN_I` 10 and 11 coded `unclassified` (X-R1). The fit reports each alternative's conformance; neither gates |
+| U4, linkage and perturbation sensitivity | NHIS–LMF | Linkage: one discrete alternative fit, not draws, with NHIS weights replaced by the original sample-adult weight and ineligible persons dropped; the fit reports its conformance, and it does not gate. Perturbation: **[open]**, because public data cannot assess it. NCHS substituted synthetic data "for follow-up time or underlying cause of death for select records" and did not perturb vital status (LMF description p. 1), and the public data dictionary flags none of the altered records, so no public alternative can isolate the effect. Only the restricted-use linked files, which this project excludes (§3.4), would settle it. Every NHIS target, and every comparison that uses NHIS, carries the label "public-file perturbation not assessed". X-R1, which recodes `HISPAN_I` 10 and 11, is a crosswalk sensitivity (§8.2), not part of U4 |
 
 **What OACT's open U2 means [frozen here].** S0.1 keeps a target whose
 source does not publish the uncertainty it needs "open or inconclusive",
@@ -1337,6 +1337,17 @@ e65 bounds and make passing easier, so this record applies S0.1's rule:
   per component and source in the order of §3's tables.
 - **ACS replicates** cover the ACS part of U3: one refit per replicate,
   with the Monte Carlo inputs at their point values.
+- **Component runs, reported only.** One joint Monte Carlo cannot show
+  what each component contributes, so the fit also runs U1, U2 and NHIS's
+  part of U3 one at a time: `B` draws of that component alone, from the
+  same child stream the joint run uses, with every other input at its
+  point value and a full refit per draw. The ACS replicate refits already
+  isolate the ACS part of U3, and U4's alternative is a discrete fit. For
+  every family member the fit reports each component's standard deviation
+  beside the joint one. The component runs set no bound and change no
+  verdict: the bound uses the joint draws and the ACS replicates, because
+  capping and the tails make the response nonlinear, and the components'
+  variances then need not add up to the joint variance.
 - **Combination.** For family member `k`,
   `SD_k = sqrt(Var_MC,k + Var_ACS,k)`, treating ACS sampling as independent
   of the other components. NCHS's education denominators are ACS too, and
@@ -1390,7 +1401,7 @@ e65 bounds and make passing easier, so this record applies S0.1's rule:
   Hispanic-origin e65 members also test the model's tail against NCHS's:
   their targets close the "100 and older" interval as NCHS does, while the
   model keeps the repository's closing (§9.2).
-- **Not in the family.** The sensitivities of §5, §6.5 and §7.3, and the
+- **Not in the family.** The sensitivities of §5, §6.5, §7.3 and §8.2, and the
   sources reported beside the fit.
 
 ### 9.5 Pass conjunction
