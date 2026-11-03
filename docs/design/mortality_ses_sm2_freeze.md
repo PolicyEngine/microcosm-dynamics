@@ -171,7 +171,7 @@ first fully supported year, the band's targets take their values from that
 first year (`BAND_BACKCAST_HOLD_FIRST`): 80–84 for 2010–2014 from 2015,
 and 85–89 for 2010–2019 from 2020. These copies are assumptions, not
 published values; they enter no critical-family count as new targets
-(§9.4), and §5 names the alternative. The fit records, and never fits, a
+(§9.4), and §5 registers the alternative, T-B1. The fit records, and never fits, a
 figure point plotted in a year before its band's first fully supported
 year.
 
@@ -586,7 +586,7 @@ the marginal targets.
 
 | Dimension | Ages the fit's sources support | Primary rule below | Primary rule above | Registered sensitivities |
 |---|---|---|---|---|
-| Lifetime earnings | 62–89 (bands 62–64 to 85–89, with backcasts before 2015 and 2020, §3.1) | `TAIL_E_HOLD_62_64_DOWN`: ages 25–61 take the 62–64 coefficient; ages 0–24 take the age-25 value | `TAIL_E_HOLD_85_89_UP`: ages 90–120 take the 85–89 coefficient | T-E1: ages 25–61 take the 65–69 coefficient instead, which avoids the early-claimer selection the source describes for 62–64 (Study 129 p. 6). T-E2: Cristia age shape (below). T-E3: a linear taper of each log contrast from its 85–89 value at age 89 to zero at age 110, and zero above, labeled "assumed convergence, not a finding" (the source reports narrower spreads at older ages, pp. 2, 8, but no rate). T-E4: every OACT band shifted one year younger (M-E5) |
+| Lifetime earnings | 62–89 (bands 62–64 to 85–89, with backcasts before 2015 and 2020, §3.1) | `TAIL_E_HOLD_62_64_DOWN`: ages 25–61 take the 62–64 coefficient; ages 0–24 take the age-25 value | `TAIL_E_HOLD_85_89_UP`: ages 90–120 take the 85–89 coefficient | T-E1: ages 25–61 take the 65–69 coefficient instead, which avoids the early-claimer selection the source describes for 62–64 (Study 129 p. 6). T-E2: Cristia age shape (below). T-E3: a linear taper of each log contrast from its 85–89 value at age 89 to zero at age 110, and zero above, labeled "assumed convergence, not a finding" (the source reports narrower spreads at older ages, pp. 2, 8, but no rate). T-E4: every OACT band shifted one year younger (M-E5). T-B1: in place of `BAND_BACKCAST_HOLD_FIRST`, a band takes, at each knot before its first fully supported year, the targets of the next younger band fully supported at that knot: 75–79's for 80–84 and for 85–89 at 2010–2014, and 80–84's for 85–89 at 2015–2019, labeled "band backcast from a younger band" |
 | Education | 25–64 (NCHS bands); 65–74, 75–84 and 85+ (NHIS–LMF) | `TAIL_D_HOLD_25_DOWN`: ages 0–24 take the 25–34 coefficient | The 85+ band runs to 120 | T-D1: ages 65–120 take the 55–64 coefficients, with no NHIS input, to show how much the 65+ coefficients rest on NHIS |
 | Race and Hispanic origin: `hispanic`, `black_non_hispanic` | Single ages 0–99 | None needed | `TAIL_R_HOLD_99_UP`: ages 100–120 take the age-99 coefficient; the fit reads no contrast from the "100 and older" interval | T-R1: a taper from the age-99 value to zero at age 110, labeled as T-E3 |
 | `other_non_hispanic` | 25–44, 45–64, 65–74, 75–84, 85+ (NHIS–LMF) | `TAIL_O_HOLD_25_DOWN`: ages 0–24 take the 25–44 coefficient | 85+ runs to 120 | T-R2: for 2019–2024, the partial AIAN-and-Asian composite (M-R4) replaces NHIS at every age, labeled "partial group" |
@@ -595,9 +595,11 @@ the marginal targets.
   `k`, let `c_b(k)` be Cristia's marginal log contrast against `q3` in age
   range `b` (M-C2). Ages 50–61 take the 62–64 coefficient times
   `c_50–64(k) / c_65–75(k)`, and ages 25–49 times
-  `c_35–49(k) / c_65–75(k)`. The pooled least-squares slope over
-  the four quintiles replaces a ratio when `|z| < 2` for the quintile's
-  65–75 odds ratio, and every ratio stays within `[0.5, 3]`; this record
+  `c_35–49(k) / c_65–75(k)`. For range `b`, the unweighted least-squares
+  slope through the origin of `c_b(k)` on `c_65–75(k)` over the sex's
+  four non-reference quintiles, `Σ_k c_b(k) c_65–75(k) / Σ_k c_65–75(k)²`,
+  replaces a quintile's ratio when `|z| < 2` for that quintile's 65–75
+  odds ratio, and every ratio stays within `[0.5, 3]`; this record
   fixes both guards to keep a ratio of small numbers from driving the
   sensitivity.
 - **Ages under 25.** NCHS leaves out ages below 25 because people that
@@ -811,9 +813,12 @@ age-standardized hazards for NHIS targets (§4, common scale).
 
 - **Solver.** Newton's method on the full system, started from the
   plain-addition coefficients (JR-A); convergence when every implied
-  target is within `1 × 10⁻¹⁰` of its target in log units. A second start
-  from all-zero coefficients must reach the same solution within
-  `1 × 10⁻⁹`.
+  target is within `1 × 10⁻¹⁰` of its target in log units. Each step
+  starts from the full Newton step and halves it, up to 30 times, until
+  the sum of squared log residuals falls; a start that would need a 31st
+  halving, or that has not converged after 100 steps, fails to converge.
+  A second start from all-zero coefficients must reach the same solution
+  within `1 × 10⁻⁹`.
 - **Failure.** If either start fails to converge, or the two disagree,
   the knot's calibration fails. That is a gate failure, not a tuning
   opportunity (§10, `GATE_FAIL_OR_REGRESSION_FAIL`), and whether it
@@ -835,8 +840,13 @@ Cristia age range `b`, `κ_X(s, b)` is the weighted least-squares slope,
 through the origin, of Cristia's conditional log contrasts (M-C3) on its
 marginal log contrasts (M-C2 for earnings, M-C5 for education and race),
 across the dimension's non-reference categories, with weights equal to
-the categories' shares in Cristia's Table 1 where it prints them and
-equal weights otherwise; `κ` stays within `[0, 1]`. JR-D's coefficients
+the categories' shares in Cristia's sample: for race and ethnicity, Table
+1's "Weighted" column (PDF p. 36), which pools sexes and ages; for
+education, the mean of Table 2's two Mortality Sample columns, 1984 and
+1996 (PDF p. 37); for earnings quintiles, equal weights, since each
+quintile holds a fifth by definition. The same weights serve every sex
+and age range, because neither table splits by them. `κ` stays within
+`[0, 1]`. JR-D's coefficients
 are `κ` times JR-A's, and ages outside 35–75 take the nearest range's `κ`.
 
 ### 6.5 Choice
@@ -1021,7 +1031,7 @@ age and for both sexes, by
 | Element | Value | Source or reason |
 |---|---|---|
 | Origin | 2024 | P-PRIMARY's last knot, so the alternative departs only where no data exist |
-| Earnings slope `g_E(s, B)` | For each sex and OACT band with at least ten annual points in 2005–2019: the least-squares slope, over those years, of `S(t) / S̄`, where `S(t) = L_E(q1)(t) − L_E(q5)(t)` from the annual figures and `S̄` is its mean over the same years. Bands with fewer points (80–84, five points; 85–89, none) take the pooled slope of 70–74 and 75–79 for the same sex. Ages outside 62–89 take the nearest band's slope | Study 129 calls the gradient's trends "generally, slowly growing" (p. 10); 2005–2019 are the fifteen pre-pandemic years with at least three bands present, and the estimator leaves out the pandemic years because of p. 9 |
+| Earnings slope `g_E(s, B)` | For each sex and OACT band with at least ten annual points in 2005–2019: the least-squares slope, over those years, of `S(t) / S̄`, where `S(t) = L_E(q1)(t) − L_E(q5)(t)` from the annual figures and `S̄` is its mean over the same years. Bands with fewer points (80–84, five points; 85–89, none) take the mean of the 70–74 and 75–79 slopes for the same sex, each computed as above before the zero floor; the floor below then applies to the mean. Ages outside 62–89 take the nearest band's slope | Study 129 calls the gradient's trends "generally, slowly growing" (p. 10); 2005–2019 are the fifteen pre-pandemic years with at least three bands present, and the estimator leaves out the pandemic years because of p. 9 |
 | Negative slopes | Set to zero: no widening for that sex and band, which then equals P-PRIMARY | The alternative is a widening path; a fitted narrowing is not evidence for it |
 | Education slope `g_D(s)` | `g_E(s, 62–64)` | No national education series longer than five years exists (§3.2); 62–64 is the earnings band nearest NCHS's ages |
 | Race and Hispanic origin | `m(t) = 1`, held flat | CBO 41681 describes differences between black and white Americans narrowing over time (pp. 1–2); no source here supports a widening race path |
@@ -1431,7 +1441,10 @@ pass, and neither can SM2 as a whole.
 
 - **Life tables.** Every fitted group life table (`q_F,g` for each knot,
   sex and group) satisfies `data/life_table.py`'s invariants:
-  `period_life_table` and `life_expectancy` agree; survivorship and
+  `period_life_table` and `life_expectancy` agree, both with `f0 = 0.5`,
+  the uniform-deaths convention the module applies at every other age
+  (`life_table.py:13`); `f0` moves only `L0` and `e0` (lines 143 and
+  173–177), which no SM2 quantity reads; survivorship and
   person-years are nonnegative and nonincreasing with age; changing the
   radix changes no life expectancy; raising any `q` cannot raise life
   expectancy at an earlier age (`life_table.py:39–51`).
@@ -1638,7 +1651,8 @@ publication rule, not a precision guarantee (S0.1 §2.5).
   on invented inputs.
 - The fit's normalization against SM1's `normalize_probabilities` called
   directly on the expanded rows.
-- `period_life_table` against `life_expectancy` for every fitted table.
+- `period_life_table` against `life_expectancy` for every fitted table,
+  both with `f0 = 0.5` (§9.6).
 - §9.2's direct sum for a race and Hispanic-origin target,
   `(Σ_{a=65..99} L(a) + l(100) × e100_T,g) / l(65)`, against
   `life_expectancy` on ages 0–100 with the probability at 100 set to
