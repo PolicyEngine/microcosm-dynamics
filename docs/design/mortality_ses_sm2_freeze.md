@@ -1333,7 +1333,8 @@ e65 bounds and make passing easier, so this record applies S0.1's rule:
   dimension's admission (§10). SM2 passes as a whole only when all three
   dimensions pass, so **SM2 cannot earn admission while this item stays
   open**. The fit still runs every step and publishes every member's
-  residual and bound, and each dimension's status, so education and race
+  residual and bound (except what §11.5 withholds for an NHIS target
+  below a floor), and each dimension's status, so education and race
   and Hispanic origin carry verdicts of their own.
 - **The OACT contrast members keep their verdicts.** Each draw refits to
   its own targets, so a contrast member checks the reconstruction (§9.4);
@@ -1492,7 +1493,7 @@ tunes anything so that sources agree** (S0.1 §2.5, frozen).
 | `SMALL_CELL_DISCLOSURE` | A published aggregate from NHIS or ACS microdata rests on fewer than 100 unweighted persons, or a published death-based cell on fewer than 20 deaths (§11.5) | Publication of that artifact until the writer suppresses the cell and any complement that reveals it | Suppression |
 | `CELL_CONSERVATION_BROKEN` | SM1's cell log on `R_ref` at any knot shows an infeasible cell, or a feasible cell that does not conserve deaths | SM2's admission | None |
 | `GATE_FAIL_OR_REGRESSION_FAIL` | A tier A check fails; a family member's point residual lies outside `±τ`; a knot's calibration fails to converge or converges to two solutions (§6.3); an invariant fails; an SM1 test regresses | SM2's admission and everything resting on it: SM3's registration on these coefficients and SM4's use of them. The fit publishes the result with no seed selection and no tolerance relief; a new attempt needs a new registered version and enters the lane's attempt ledger (design §8) | None |
-| `WEAK_POWER_OR_VACUITY` | A family member is inconclusive (§9.5), which includes every OACT e65 member while OACT's random-variation component stays open (§9.3); or a report presents the contrast members' pass, which reproduces inputs by construction, as evidence that the gradients are right | The affected dimension's admission, and with it SM2's admission as a whole (§9.5); the claim | None. SM2 makes no 0.90-power claim (S0.1 §2.5). The fit still publishes every residual, bound and dimension status |
+| `WEAK_POWER_OR_VACUITY` | A family member is inconclusive (§9.5), which includes every OACT e65 member while OACT's random-variation component stays open (§9.3); or a report presents the contrast members' pass, which reproduces inputs by construction, as evidence that the gradients are right | The affected dimension's admission, and with it SM2's admission as a whole (§9.5); the claim | None. SM2 makes no 0.90-power claim (S0.1 §2.5). The fit still publishes every residual, bound and dimension status, except what §11.5 withholds |
 
 ## 11. Build plan
 
@@ -1525,11 +1526,16 @@ registered version per milestone).
    (2010–2024).
 4. **`nhis_lmf.py`.** Readers for the NHIS 2009–2018 sample-adult and
    person files and the LMF files, the harmonization of §3.4 and §8.2, the
-   estimator of §4.5 and the Rao–Wu bootstrap of §9.3. It emits suppressed
-   aggregates only (§11.4, §11.5).
+   estimator of §4.5 and the Rao–Wu bootstrap of §9.3. Its estimates
+   pass to the fit in memory, inside the one registered run (item 10),
+   and never leave it; only the run's published artifact leaves it, and
+   every NHIS- or LMF-derived cell there meets §11.4 and §11.5.
+   Suppression acts on that output alone, so the fit never consumes a
+   suppressed value.
 5. **`reference_population.py`.** The ACS reader, the crosswalks, `Q̃`, the
-   ordered logit and `R_ref(t)` with its replicates (§6.2), as suppressed
-   aggregates.
+   ordered logit and `R_ref(t)` with its replicates (§6.2). The
+   calibration reads `R_ref(t)`'s full cell weights in memory, inside the
+   same run; suppression applies only to what the run publishes (§11.5).
 6. **`targets.py`.** The mappings of §4: extracted values to targets, with
    printing intervals and assumption labels.
 7. **`joint_fit.py`.** The calibration of §6.3, and the JR-A, JR-B, JR-D,
@@ -1587,6 +1593,13 @@ showing a rate, NVSR 74(4) p. 132). The writer suppresses a cell below
 either floor together with every complement that would reveal it by
 subtraction, and refuses an artifact that still holds one. This is a
 publication rule, not a precision guarantee (S0.1 §2.5).
+
+**An NHIS target below a floor.** A target whose estimate rests on fewer
+than 100 unweighted persons or 20 deaths stays in the fit and in the
+critical family: the run computes its residual and bound in memory, and
+the artifact publishes its verdict (pass, inconclusive or fail) and
+withholds its value, standard error, bound and residual, together with
+every complement that would reveal them.
 
 ### 11.6 Public files to download
 
@@ -1784,7 +1797,7 @@ every file below by exact name; each hash matches `S/files.sha256`.
 | `nhis2018_samadult_layout.pdf` | `9ab1b5345df69c11cff74ee1921abb2d02d3b7e698061c0d08589d00012da9a0` | pp. 6–11 |
 | `nhis2018_srvydesc.pdf` | `62662706d190edd80f7225a4f228169566defe5bf6f3a2a6ae29d3f17c4c1246` | pp. 25–26, 70–72 |
 | `cbo_wp2007-11_cristia.pdf` | `e8f376a6330b320bf778ac50a8831b21fbb7884a9f9b72bea761d720f779524c` | Not opened |
-| `cbo_wp2007-11_cristia.txt` | `199af4eab22c9313bb7cc4e1b4981de7357b93b66b3e3d07a75675e8b7247c46` | Printed pp. 6–12, 14, 18–19 masked; Tables 1, 3, 5, 6 and Figure 2 layouts masked |
+| `cbo_wp2007-11_cristia.txt` | `199af4eab22c9313bb7cc4e1b4981de7357b93b66b3e3d07a75675e8b7247c46` | Printed pp. 6–12, 14, 18–19 masked; Tables 1, 3, 5, 6 and Figure 2 layouts masked. This list left out Table 4, on which M-C4 relies; fix round 1 read its layout with every number masked and confirmed its race block (§13.6) |
 | `cbo_41681.pdf` | `e22720ad1ca203c5a801e61094c17a01d050b0c57ce929fa7dcb1d09573fb467` | Not opened |
 | `cbo_41681.txt` | `f6d2891687ecb41ac06201e2c0fbd856fe126d0c4ce9376c257875a2cdc973af` | pp. 1–3, lines matching definitions and sources, masked |
 
@@ -1792,7 +1805,11 @@ every file below by exact name; each hash matches `S/files.sha256`.
 display. Some integers still showed: page and year labels, a few
 three-digit counts in Table 14's "not stated" row, and one three-digit
 AIME breakpoint in Study 124's Table 2. None of them appears in this
-record.
+record. The first job's report names two more leaks that this paragraph
+left out: the percentage shares in Study 124's Table 3 and the
+percentages in Study 129's text, and the TR 2026 example values in
+`life_table.py`'s docstring. None of those appears in this record
+either.
 
 ### 13.4 Documents this job fetched
 
