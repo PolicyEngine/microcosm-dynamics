@@ -83,12 +83,12 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | S2-01 | 424 | **[proposed]** mapping assumption: OACT rate ratios used directly as annual-q multipliers, reported with the dynamic-AIME versus frozen-rank distinction and the beneficiary population difference | Confirmed and tightened: adds Study 129's exposure convention (deaths get a full year of exposure, which makes each published rate an initial-exposure estimate of an annual probability, p. 5 and Appendix B pp. 13–14), the age-basis mapping, and three named mapping assumptions (M-E2 to M-E4) that every report carries | §4.1 | frozen here |
 | S2-02 | 440 | **[open]** availability of earlier NCHS education editions | Settled by the NVSR listing and twelve earlier *Deaths: Final Data* reports: 2010–2017 cover reporting states only (31 rising to 49 states plus DC); 2018–2020 are national in the internet tables I–7 and I–19; 2021–2022 are national in printed Table 14 and Table VIII; the listing of 1 November 2026 holds no edition for 2023. The fit uses 2018–2022; 2010–2017 form a labeled sensitivity | §3.2 | frozen here |
 | S2-03 | 474 | **[open]** harmonization of earlier NHIS years | Rescoped to NHIS 2009–2018 sample adults. The 2009, 2016 and 2018 layouts carry `EDUC1`, `HISPAN_I`, `RACERPI2`, `AGE_P`, `SEX`, `SRVY_YR`, `INTV_QRT` and `HHX`/`FMX`/`FPX` with identical code lists; the design variables are `STRAT_P`/`PSU_P` in 2009 and `PSTRAT`/`PPSU` in 2016 and 2018. The fit job checks each intervening year's layout against these names before use | §3.4 | frozen here (window and variables); intervening layouts checked by the fit job |
-| S2-04 | 481 | **[open]** a three-dimension joint gradient conditional on lifetime earnings | Resolved by the joint route: joint marginal calibration on a public reference population, with the earnings–education–race dependence taken from a stated proxy. The dependence itself stays unidentified in public data, and §6.4 says so | §6 | frozen here (route); the dependence stays unidentified and named |
+| S2-04 | 481 | **[open]** a three-dimension joint gradient conditional on lifetime earnings | Resolved by the joint route: joint marginal calibration on a public reference population, with the earnings–education–race dependence taken from a stated proxy. The dependence itself stays unidentified in public data, and §6.4 says so. Where the fit applies the proxy's dependence outside its estimation sample, the copy is named assumption M-J1, with sensitivity JR-C-IND (§6.5, §6.6) | §6 | frozen here (route); the dependence stays unidentified and named |
 | S2-05 | 511 | **[open mapping]** Cristia's odds ratios | Frozen: predicted probabilities on a named reference population, then ratios to `q3`'s probability. Cristia enters only as a sensitivity and a source reported beside the fit; no log odds ratio enters as a log relative risk | §4.4 | frozen here |
 | S2-06 | 520 | **[proposed]** CBO 41681 as context only | Confirmed. It supplies the reason the widening alternative leaves race and Hispanic origin flat (pp. 1–2) and no coefficient or target | §3.1, §7.4 | frozen here |
-| S2-07 | 538 | **[proposed schema]** dimensions, columns, categories, references and unclassified treatment | Confirmed against `mortality_ses/specification.py`; tightened to one unclassified string per dimension, a fixed category order, and a crosswalk per source | §8 | frozen here |
+| S2-07 | 538 | **[proposed schema]** dimensions, columns, categories, references and unclassified treatment | Confirmed against `mortality_ses/specification.py`; tightened to one unclassified string per dimension, a fixed category order, and a crosswalk per source. `R_ref`'s persons under 25 hold the reference categories by rule, labeled `reference_below_25` (§6.2, §8.1) | §8 | frozen here |
 | S2-08 | 564 | **[proposed loader]** OACT contrasts `log(r_q) − log(r_q3)`, band expansion, a source-year matrix that says what happens before a band first appears | Confirmed; tightened with the band-backcast rule, the figure-year rule and two independent table transcriptions | §3.1, §4.1, §5 | frozen here |
-| S2-09 | 570 | **[open]** earnings ages below 62 and 90–120 | Frozen: the 62–64 coefficient holds down to age 25 and the age-25 value below; the 85–89 coefficient holds up to 120; four registered sensitivities | §5 | frozen here |
+| S2-09 | 570 | **[open]** earnings ages below 62 and 90–120 | Frozen: the 62–64 coefficient holds down to age 25 and the age-25 value below; the 85–89 coefficient holds up to 120; four registered sensitivities. `R_ref` holds everyone under 25 at the reference categories, so the values below 25 reach no one in the fit (§6.2) | §5, §6.2 | frozen here |
 | S2-10 | 579 | **[open]** terminal 100+ rule and any unsupported other-group coefficient | Frozen: race contrasts at 100–120 hold the age-99 contrast, and the fit reads no contrast from the 100+ interval; `other_non_hispanic` comes from NHIS–LMF, with NCHS's AIAN and Asian tables reported beside as a partial group | §4.3, §5 | frozen here |
 | S2-11 | 587 | **[open]** extraction and digitization of the 2022 gradient, its uncertainty, complete coverage | Frozen: vector extraction of Study 129 Figures 7–12, validated against Tables 7–12 at every table year, with a digitization half-width the validation sets; complete tables at every knot | §7.1–7.3 | frozen here |
 | S2-12 | 591 | **[open]** widening `CoefficientPath`: slope, origin, ages, caps; knot years and synchronization | Frozen: origin 2024, slopes from a frozen estimator on OACT's pre-pandemic annual figures, caps of 30 years and a 1.5 multiplier, race held flat; annual knots 2010–2024 with one synchronization rule | §7.4–7.5 | frozen here |
@@ -596,7 +596,10 @@ the marginal targets.
   population starts at 50.
   The held values below 25 exist because SM1's table must be complete; a
   frame that classifies a person under 25 on either dimension must
-  register that use first (§8.3).
+  register that use first (§8.3). `R_ref` classifies no one under 25 on
+  either dimension: it holds them at the reference categories (§6.2), so
+  these held values reach no one in the fit, and SM2 models no earnings or
+  education gradient below 25.
 - **The baseline's top.** Ages 100–120 multiply a baseline `q` that is
   already large, and SM1 caps each probability at one and conserves the
   cell's deaths by recomputing the factor over the uncapped rows
@@ -641,7 +644,14 @@ records which it does), with these attributes:
   year, and each spread row keeps the record's other attributes. Below the
   threshold, `AGEP` is the single age.
 - **Education and race and Hispanic origin.** From the ACS education,
-  Hispanic-origin and race items through the crosswalk in §8.2.
+  Hispanic-origin and race items through the crosswalk in §8.2; education
+  at ages 25 and over only.
+- **Persons under 25 [frozen here].** `R_ref` assigns no lifetime-earnings
+  or education category below age 25, the record's own limit (§5, §8.3).
+  Every person under 25 holds `q3` and `high_school`, the reference
+  categories, whose log relative risk is zero, and the diagnostic column
+  records `reference_below_25` on both dimensions (§8.1): a label, not a
+  classification. Race and Hispanic origin classify at every age.
 - **A lifetime-earnings quintile proxy `Q̃`.** At ages 62–89, among
   persons with positive Social Security income, `Q̃` is the weighted
   quintile of that income within sex and single age; the construction splits
@@ -659,7 +669,9 @@ records which it does), with these attributes:
   `P(Q̃ ≤ k | d, r, a) = expit(c_k(a) − λ_D,G[d] − λ_R,G[r])`,
   with `λ_D[high_school] = λ_R[white_non_hispanic] = 0` and cut points
   by single age, every parameter indexed by `(s, t)`. Ages 85 and over
-  use `G = 80–84`; ages below 62 use `G = 62–69`.
+  use `G = 80–84`, and ages 25–61 use `G = 62–69`; persons under 25 hold
+  the reference categories (above). §6.6 names this copying as assumption
+  M-J1.
   - **One fit per knot year [frozen here].** `R_ref(t)`, `Q̃`, the income
     amounts, the cut points and the replicate weights all belong to one
     ACS year, and §6.3 calibrates one knot at a time. A fit per year keeps
@@ -705,9 +717,10 @@ records which it does), with these attributes:
   that, at ages 62–89, every quintile holds exactly one fifth of the
   subpopulation with positive Social Security income (OACT cuts its
   quintiles at fifths of the records at each age, though their exposure
-  shares can differ slightly, pp. 3–5), and at other ages one fifth of the
-  whole population. Each recomputed cut point solves its share equation
-  by bisection until the share lies within `1 × 10⁻¹²` of its target. Persons without Social Security income at 62–89 take
+  shares can differ slightly, pp. 3–5), and at ages 25–61 and 90–120 one
+  fifth of the whole population; below 25 every person holds `q3`. Each
+  recomputed cut point solves its share equation by bisection until the
+  share lies within `1 × 10⁻¹²` of its target. Persons without Social Security income at 62–89 take
   `P(k | d, r)` from the same model. The fit
   evaluates OACT targets on the subpopulation with positive Social
   Security income (its own `P(d, r | s, a, t)`, the same `P(k | d, r)`);
@@ -772,7 +785,12 @@ For each knot `t` and sex `s`, the unknowns are:
 | `other_non_hispanic` | 5 bands | 5 NHIS contrasts (M-R4) |
 
 That is 247 equations in 247 unknowns per knot and sex. Coefficients at
-ages outside these blocks follow §5. The fit computes each target's implied
+ages outside these blocks follow §5. Below 25, `R_ref` holds everyone at
+`q3` and `high_school` (§6.2), so its rows there vary by race and
+Hispanic origin only, and the race coefficients at ages 0–24 carry no
+earnings or education composition. At ages 25–61 they and the education
+coefficients come out net of an earnings composition that rests on the
+copied dependence (M-J1, §6.6). The fit computes each target's implied
 value by expanding `R_ref(t)` into
 rows, one per (quintile, education,
 race) combination at each single age, with weight `w`, applying the
@@ -815,7 +833,7 @@ are `κ` times JR-A's, and ages outside 35–75 take the nearest range's `κ`.
 
 **Primary: JR-C.** Sensitivities: JR-A (labeled "plain addition of
 marginals"), JR-B (JR-C with `λ = 0`), JR-C with `λ` scaled by 0.5 and by
-1.5, JR-C-W (below), JR-D and JR-E. Reasons:
+1.5, JR-C-IND and JR-C-W (below), JR-D and JR-E. Reasons:
 
 1. **Q5 asks for one model.** "Education and race and Hispanic origin are
    further dimensions of the same model" calls for coefficients that hold
@@ -834,6 +852,14 @@ marginals"), JR-B (JR-C with `λ = 0`), JR-C with `λ` scaled by 0.5 and by
 5. **Q5's primacy of earnings stays visible.** Every route keeps OACT's
    contrasts as the earnings targets; no route lets an education or race
    source move them.
+
+**JR-C-IND, independence where the dependence is copied [frozen here].**
+Wherever M-J1 copies the dependence (§6.6), JR-C-IND sets
+`P(k | d, r) = 1/5` for every education and race category, and keeps the
+estimated dependence for recipients aged 62–84 only. Its label is
+"dependence outside recipients aged 62–84 set to independence". It shows
+how much the coefficients at ages 25–61 and 85 and over, and the targets
+evaluated on the whole population, rest on the copy.
 
 **JR-C-W, women's dependence from men's [frozen here].** The proxy is
 weakest for women (§6.2). In JR-C-W, women's ordered logit takes men's
@@ -859,6 +885,19 @@ dependence men show.
   record. No public source settles which way these move the estimated
   dependence; JR-C-W (§6.5) shows how much women's coefficients rest on
   it.
+- **M-J1, the copied dependence (assumption).** The ordered logit sees
+  only recipients aged 62–84 (§6.2). The fit applies that dependence to
+  persons it never observed: non-recipients at 62–89, everyone at 25–61,
+  recipients at 85–89 (through `G = 80–84`) and everyone at 90–120. No
+  public source shows how lifetime earnings depend on education and race
+  in those groups. The copy shapes other coefficients: at ages 25–61 the
+  education and race coefficients come out net of an earnings composition
+  nobody observes (§6.3), and the targets evaluated on the whole
+  population carry it. JR-C-IND (§6.5) replaces the copy with
+  independence. Below 25 nothing is copied: `R_ref` holds everyone at the
+  reference categories, so SM2 models no earnings or education gradient
+  there, and the race coefficients at 0–24 carry no earnings or
+  education composition.
 - **Interactions.** The model assumes the three effects add on the log
   scale. No public source has all three jointly with modern deaths. The
   fit job reports NHIS's education × race interaction terms at 65+ as a
@@ -1008,6 +1047,10 @@ dimension has one unclassified string, and
 the reason a person lacks a category goes in a separate diagnostic column
 `sm_<dimension>_unclassified_reason`, never into the dimension column. SM1
 also treats a missing value as unclassified (`specification.py:224–227`).
+The same column carries `reference_below_25` for a person under 25 in
+`R_ref`, who holds `q3` and `high_school` by rule rather than by
+classification (§6.2). SM1 reads only the dimension and `sex` columns
+(`specification.py:203–224`), so the label changes no risk.
 
 | `name` | `column` | `categories`, in this order | `reference` | `unclassified_values` |
 |---|---|---|---|---|
@@ -1080,7 +1123,10 @@ group definitions do not change.
 | Any projection (Track B, the open population) | `refuse` until the frame carries all three attributes and a registration names the rule | `FRAME_ATTRIBUTE_MISSING` (§10) |
 
 A person under 25 classified on lifetime earnings or education needs a
-registration of its own before any use (§5).
+registration of its own before any use (§5). `R_ref` classifies no one
+under 25 on either dimension: it holds them at the reference categories by
+rule, labeled `reference_below_25` (§6.2, §8.1), and that rule is not such
+a classification.
 
 ## 9. Conformance procedure: `SM2_SOURCE_RECONSTRUCTION_AND_CLUSTER_BOOTSTRAP`
 
@@ -1744,7 +1790,8 @@ ratios). Each hash matched its folder's `files.sha256`.
 **Repository files.** This record; `docs/design/s0_1_source_audit.md`
 (lines 1–60 and 324–707); `docs/design/mortality_groups_financing.md`
 (the lines this record cites); `src/populace_dynamics/data/life_table.py`
-(in full).
+(in full); `src/populace_dynamics/mortality_ses/specification.py` (a
+search for the columns it reads, lines 203–224).
 
 **What showed despite masking.** A few one- and two-digit counts from
 Table I of NVSR 70(19) and 74(6); number words and one axis label in CBO
