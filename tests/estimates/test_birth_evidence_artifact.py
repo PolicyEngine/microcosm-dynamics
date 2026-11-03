@@ -273,9 +273,15 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         # nothing in the historical projection imports them.
         Path("src/populace_dynamics/data/psid_income_wealth.py"),
         Path("src/populace_dynamics/data/psid_income_wealth_registry.py"),
+        # The income-and-resources aggregate-table readers (D4) are opt-in
+        # source readers; nothing in the historical projection imports them.
+        Path("src/populace_dynamics/income_resources/__init__.py"),
+        Path("src/populace_dynamics/income_resources/aggregate_coverage.py"),
+        Path("src/populace_dynamics/income_resources/aggregate_pensions.py"),
+        Path("src/populace_dynamics/income_resources/aggregate_poms.py"),
+        Path("src/populace_dynamics/income_resources/aggregate_tables.py"),
         # The SSI interface (SSI0) is opt-in; nothing in the historical
         # projection imports it.
-        Path("src/populace_dynamics/income_resources/__init__.py"),
         Path("src/populace_dynamics/income_resources/ssi/__init__.py"),
         Path("src/populace_dynamics/income_resources/ssi/_child.py"),
         Path("src/populace_dynamics/income_resources/ssi/contract.py"),
@@ -574,6 +580,19 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "the opt-in PSID income and wealth readers became reachable from "
         "the birth-evidence reducer: "
         f"{sorted(income_wealth_modules & reachable)}"
+    )
+    aggregate_table_modules = {
+        "populace_dynamics.income_resources",
+        "populace_dynamics.income_resources.aggregate_coverage",
+        "populace_dynamics.income_resources.aggregate_pensions",
+        "populace_dynamics.income_resources.aggregate_poms",
+        "populace_dynamics.income_resources.aggregate_tables",
+    }
+    assert aggregate_table_modules.issubset(module_paths)
+    assert aggregate_table_modules.isdisjoint(reachable), (
+        "the opt-in aggregate-table readers became reachable from the "
+        "birth-evidence reducer: "
+        f"{sorted(aggregate_table_modules & reachable)}"
     )
     ssi_modules = {
         "populace_dynamics.income_resources",
