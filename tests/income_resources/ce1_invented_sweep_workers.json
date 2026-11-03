@@ -19,11 +19,6 @@
   [
    "clergy_1973_1981",
    "pub_l_103_296_section_306_certificate",
-   "foreign_social_insurance_contributions"
-  ],
-  [
-   "clergy_1973_1981",
-   "pub_l_103_296_section_306_certificate",
    "ministerial_service"
   ],
   [
@@ -40,11 +35,6 @@
    "clergy_1982_2026",
    "pub_l_103_296_section_306_certificate",
    "clergy_or_religious_exemption"
-  ],
-  [
-   "clergy_1982_2026",
-   "pub_l_103_296_section_306_certificate",
-   "foreign_social_insurance_contributions"
   ],
   [
    "clergy_1982_2026",
@@ -310,11 +300,6 @@
    "se_clergy_gross_concept_1973_1987",
    "pub_l_103_296_section_306_certificate",
    "clergy_or_religious_exemption"
-  ],
-  [
-   "se_clergy_gross_concept_1973_1987",
-   "pub_l_103_296_section_306_certificate",
-   "foreign_social_insurance_contributions"
   ],
   [
    "se_clergy_gross_concept_1973_1987",
@@ -8172,10 +8157,9 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "noncovered",
    "decides": "pub_l_103_296_section_306_certificate"
@@ -8403,10 +8387,9 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "noncovered",
    "decides": "pub_l_103_296_section_306_certificate"
@@ -9030,10 +9013,9 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "covered",
    "decides": "ministry_without_exemption_or_vow"
@@ -9050,8 +9032,7 @@
      "no 1402(e) exemption in effect and no applicable poverty vow",
      "certificate filed under Pub. L. 103-296 section 306 for taxable year 1977, which ends before December 31, 1978, so it is not effective for that year"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "covered",
    "decides": "ministry_without_exemption_or_vow"
@@ -9066,10 +9047,9 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "deferred",
    "decides": "pub_l_103_296_section_306_certificate",
@@ -9089,8 +9069,7 @@
      "no 1402(e) exemption in effect and no applicable poverty vow",
      "certificate filed under Pub. L. 103-296 section 306 for taxable year 1975, which ends before December 31, 1978, so it is not effective for that year"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "covered",
    "decides": "residual"
@@ -15662,10 +15641,9 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "noncovered",
    "decides": "pub_l_103_296_section_306_certificate"
@@ -15680,10 +15658,9 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in the United States (Detroit, Michigan)",
-    "foreign_social_insurance_contributions": "no contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in the United States (Detroit, Michigan)"
    },
    "expected": "covered",
    "decides": "ministry_without_exemption_or_vow"
@@ -15698,17 +15675,16 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in the United States (Detroit, Michigan)",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in the United States (Detroit, Michigan)"
    },
    "expected": "covered",
    "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1973_1981",
-   "worker": "INVENTED (review r6 H-1, just misses on contributions): 1981: a United States citizen minister serving an Ontario congregation while no section 233 agreement is in effect, with a section 306 certificate filed, on whose earnings no Canadian contributions were required: section 306(a)(3) fails.",
+   "worker": "INVENTED (review r7 M-1, repro): 1981, calendar taxable year: a United States citizen minister with no 1402(e) exemption serves two Ontario congregations while no section 233 agreement is in effect; Canadian contributions were required on congregation A's earnings but not on congregation B's, and he holds an effective section 306 certificate. For congregation B's service: the exemption runs 'with respect to services described in paragraphs (1) and (2)', and paragraph (3) only limits who may file, so B's service is exempt too.",
    "facts": {
     "ministerial_service": [
      "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
@@ -15716,13 +15692,12 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "no contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
-   "expected": "covered",
-   "decides": "ministry_without_exemption_or_vow"
+   "expected": "noncovered",
+   "decides": "pub_l_103_296_section_306_certificate"
   },
   {
    "rule_id": "clergy_1973_1981",
@@ -15734,10 +15709,9 @@
     ],
     "clergy_or_religious_exemption": [
      "effective 1402(e) exemption",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "noncovered",
    "decides": "effective_1402e_exemption"
@@ -15752,10 +15726,9 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "noncovered",
    "decides": "pub_l_103_296_section_306_certificate"
@@ -15770,10 +15743,9 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in the United States (Detroit, Michigan)",
-    "foreign_social_insurance_contributions": "no contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in the United States (Detroit, Michigan)"
    },
    "expected": "covered",
    "decides": "ministry_without_exemption_or_vow"
@@ -15788,17 +15760,16 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in the United States (Detroit, Michigan)",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in the United States (Detroit, Michigan)"
    },
    "expected": "covered",
    "decides": "ministry_without_exemption_or_vow"
   },
   {
    "rule_id": "clergy_1982_2026",
-   "worker": "INVENTED (review r6 H-1, just misses on contributions): 1982: a United States citizen minister serving an Ontario congregation while no section 233 agreement is in effect, with a section 306 certificate filed, on whose earnings no Canadian contributions were required: section 306(a)(3) fails.",
+   "worker": "INVENTED (review r7 M-1, repro): 1982, calendar taxable year: a United States citizen minister with no 1402(e) exemption serves two Ontario congregations while no section 233 agreement is in effect; Canadian contributions were required on congregation A's earnings but not on congregation B's, and he holds an effective section 306 certificate. For congregation B's service: the exemption runs 'with respect to services described in paragraphs (1) and (2)', and paragraph (3) only limits who may file, so B's service is exempt too.",
    "facts": {
     "ministerial_service": [
      "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
@@ -15806,13 +15777,12 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "no contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
-   "expected": "covered",
-   "decides": "ministry_without_exemption_or_vow"
+   "expected": "noncovered",
+   "decides": "pub_l_103_296_section_306_certificate"
   },
   {
    "rule_id": "clergy_1982_2026",
@@ -15824,10 +15794,9 @@
     ],
     "clergy_or_religious_exemption": [
      "effective 1402(e) exemption",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "noncovered",
    "decides": "effective_1402e_exemption"
@@ -15844,8 +15813,7 @@
      "no 1402(e) exemption in effect and no applicable poverty vow",
      "filed no Pub. L. 103-296 section 306 certificate"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "covered",
    "decides": "ministry_without_exemption_or_vow"
@@ -15860,10 +15828,9 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when an agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when an agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "covered",
    "decides": "ministry_without_exemption_or_vow"
@@ -15878,10 +15845,9 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in the United States (Detroit, Michigan)",
-    "foreign_social_insurance_contributions": "no contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in the United States (Detroit, Michigan)"
    },
    "expected": "covered",
    "decides": "residual"
@@ -15896,17 +15862,16 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in the United States (Detroit, Michigan)",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in the United States (Detroit, Michigan)"
    },
    "expected": "covered",
    "decides": "residual"
   },
   {
    "rule_id": "se_clergy_gross_concept_1973_1987",
-   "worker": "INVENTED (review r6 H-1, just misses on contributions): 1983: ministry in Ontario with a certificate filed and no Canadian contributions required on its earnings.",
+   "worker": "INVENTED (review r7 M-1, repro): 1983: the two-congregation Ontario minister's congregation B ministry, on whose earnings no Canadian contributions were required, under his effective section 306 certificate: the exemption reaches it, so section 306(d) keeps its earnings out of self-employment income and the clergy family decides the service.",
    "facts": {
     "ministerial_service": [
      "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
@@ -15914,13 +15879,15 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "no contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
-   "expected": "covered",
-   "decides": "residual"
+   "expected": "deferred",
+   "decides": "pub_l_103_296_section_306_certificate",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
   },
   {
    "rule_id": "se_clergy_gross_concept_1973_1987",
@@ -15932,10 +15899,9 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+     "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
     ],
-    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-    "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada"
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
    },
    "expected": "covered",
    "decides": "residual"
@@ -17161,6 +17127,57 @@
    },
    "expected": "covered",
    "decides": "vow_duties_with_3121r_election"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r7 M-1, just misses pub_l_103_296_section_306_certificate on clergy_or_religious_exemption): 1981: a United States citizen minister serving an Ontario congregation while no section 233 agreement is in effect, on whose earnings from that or any other ministry in Canada no Canadian contributions were ever required: section 306(a)(3) fails, so he may not file a certificate and the ministry is covered.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "filed no Pub. L. 103-296 section 306 certificate"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
+   },
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
+  },
+  {
+   "rule_id": "clergy_1982_2026",
+   "worker": "INVENTED (review r7 M-1, just misses pub_l_103_296_section_306_certificate on clergy_or_religious_exemption): 1982: a United States citizen minister serving an Ontario congregation while no section 233 agreement is in effect, on whose earnings from that or any other ministry in Canada no Canadian contributions were ever required: section 306(a)(3) fails, so he may not file a certificate and the ministry is covered.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "filed no Pub. L. 103-296 section 306 certificate"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
+   },
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1973_1987",
+   "worker": "INVENTED (review r7 M-1, just misses pub_l_103_296_section_306_certificate on clergy_or_religious_exemption): 1983: a United States citizen minister serving an Ontario congregation while no section 233 agreement is in effect, on whose earnings from that or any other ministry in Canada no Canadian contributions were ever required: section 306(a)(3) fails, so he may not file a certificate and the ministry is covered.",
+   "facts": {
+    "ministerial_service": [
+     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+     "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401"
+    ],
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "filed no Pub. L. 103-296 section 306 certificate"
+    ],
+    "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
+   },
+   "expected": "covered",
+   "decides": "residual"
   }
  ]
 }

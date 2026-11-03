@@ -256,10 +256,6 @@ CE1_FIELD_PURPOSES = (
     # does with the service: leaves the person subject only to another
     # country's laws, or designates it as employment (410(a)(C)).
     "social_security_agreement_coverage",
-    # Whether contributions on the earnings from this service were required
-    # under another country's social insurance system (Pub. L. 103-296
-    # section 306(a)(3)).
-    "foreign_social_insurance_contributions",
 )
 TRIGGER_FACTS = frozenset((*FIELD_PURPOSES, *CE1_FIELD_PURPOSES))
 CONSEQUENCES = frozenset(

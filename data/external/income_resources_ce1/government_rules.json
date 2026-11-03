@@ -769,8 +769,7 @@
       "clergy_remuneration",
       "clergy_or_religious_exemption",
       "nonresident_alien_status",
-      "place_of_work",
-      "foreign_social_insurance_contributions"
+      "place_of_work"
     ],
     "consequence": "open",
     "identification_class": "awaiting_ce2",
@@ -964,7 +963,6 @@
             ],
             "pub_l_103_296_section_306_certificate": [
               "clergy_or_religious_exemption",
-              "foreign_social_insurance_contributions",
               "ministerial_service",
               "place_of_work"
             ],
@@ -1346,14 +1344,13 @@
         "when": {
           "ministerial_service": "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401",
           "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-          "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada",
-          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
         },
         "consequence": "noncovered",
         "overrides": [
           "ministry_without_exemption_or_vow"
         ],
-        "description": "Pub. L. 103-296 section 306 (the 26 U.S.C. 1402 notes): \"Notwithstanding any other provision of law\", an individual who performed 1402(c)(4) services \"which are subject to tax under section 1401\", where \"such services were performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act ... was in effect\" and the individual \"was required to pay contributions on the earnings from such services under the social insurance system of Canada\", may file a certificate \"effective for taxable years ending after December 31, 1978, and before January 1, 1985\". The exemption reaches only those services: the individual \"shall be exempt from payment of such tax with respect to services described in paragraphs (1) and (2)\", and section 306(d) withholds credit only from \"any income on which such tax would have been imposed but for such exemption\". So the case reads this service's place and contributions, not the person's: ministry the same minister performs in the United States in the same taxable year is not exempt and reaches ministry_without_exemption_or_vow."
+        "description": "Pub. L. 103-296 section 306 (the 26 U.S.C. 1402 notes): \"Notwithstanding any other provision of law\", an individual who performed 1402(c)(4) services \"which are subject to tax under section 1401\", where \"such services were performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act ... was in effect\" and the individual \"was required to pay contributions on the earnings from such services under the social insurance system of Canada\", may file a certificate \"effective for taxable years ending after December 31, 1978, and before January 1, 1985\". Paragraph (3) limits who may file; the exemption runs \"with respect to services described in paragraphs (1) and (2)\", which do not name contributions, and section 306(d) withholds credit only from \"any income on which such tax would have been imposed but for such exemption\". So the certificate condition carries (3) as the person's eligibility, and the case reads this service's place and 1401 tax: the same minister's Canadian ministry on whose earnings no Canadian contributions were required is exempt too, while his ministry in the United States is not and reaches ministry_without_exemption_or_vow (review r7 M-1)."
       },
       {
         "case_id": "ministry_without_exemption_or_vow",
@@ -1575,8 +1572,7 @@
       "clergy_remuneration",
       "clergy_or_religious_exemption",
       "nonresident_alien_status",
-      "place_of_work",
-      "foreign_social_insurance_contributions"
+      "place_of_work"
     ],
     "consequence": "open",
     "identification_class": "awaiting_ce2",
@@ -1904,7 +1900,6 @@
             ],
             "pub_l_103_296_section_306_certificate": [
               "clergy_or_religious_exemption",
-              "foreign_social_insurance_contributions",
               "ministerial_service",
               "place_of_work"
             ],
@@ -2341,14 +2336,13 @@
         "when": {
           "ministerial_service": "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401",
           "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-          "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada",
-          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
         },
         "consequence": "noncovered",
         "overrides": [
           "ministry_without_exemption_or_vow"
         ],
-        "description": "Pub. L. 103-296 section 306 (the 26 U.S.C. 1402 notes): \"Notwithstanding any other provision of law\", an individual who performed 1402(c)(4) services \"which are subject to tax under section 1401\", where \"such services were performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act ... was in effect\" and the individual \"was required to pay contributions on the earnings from such services under the social insurance system of Canada\", may file a certificate \"effective for taxable years ending after December 31, 1978, and before January 1, 1985\". The exemption reaches only those services: the individual \"shall be exempt from payment of such tax with respect to services described in paragraphs (1) and (2)\", and section 306(d) withholds credit only from \"any income on which such tax would have been imposed but for such exemption\". So the case reads this service's place and contributions, not the person's: ministry the same minister performs in the United States in the same taxable year is not exempt and reaches ministry_without_exemption_or_vow."
+        "description": "Pub. L. 103-296 section 306 (the 26 U.S.C. 1402 notes): \"Notwithstanding any other provision of law\", an individual who performed 1402(c)(4) services \"which are subject to tax under section 1401\", where \"such services were performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act ... was in effect\" and the individual \"was required to pay contributions on the earnings from such services under the social insurance system of Canada\", may file a certificate \"effective for taxable years ending after December 31, 1978, and before January 1, 1985\". Paragraph (3) limits who may file; the exemption runs \"with respect to services described in paragraphs (1) and (2)\", which do not name contributions, and section 306(d) withholds credit only from \"any income on which such tax would have been imposed but for such exemption\". So the certificate condition carries (3) as the person's eligibility, and the case reads this service's place and 1401 tax: the same minister's Canadian ministry on whose earnings no Canadian contributions were required is exempt too, while his ministry in the United States is not and reaches ministry_without_exemption_or_vow (review r7 M-1)."
       },
       {
         "case_id": "ministry_without_exemption_or_vow",

@@ -1346,8 +1346,7 @@
       "ministerial_service",
       "retirement_payment",
       "taxable_year_start",
-      "place_of_work",
-      "foreign_social_insurance_contributions"
+      "place_of_work"
     ],
     "worked_examples": [],
     "cases": [
@@ -1378,14 +1377,13 @@
         "when": {
           "ministerial_service": "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401",
           "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect",
-          "foreign_social_insurance_contributions": "contributions on the earnings from this service required under the social insurance system of Canada",
-          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985)"
+          "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)"
         },
         "consequence": "deferred",
         "defers_to": [
           "clergy_religious_service"
         ],
-        "description": "Pub. L. 103-296 section 306(d): income exempt under a section 306 certificate \"shall not constitute self-employment income under section 211(b)\". The exemption reaches only \"services described in paragraphs (1) and (2)\", 1402(c)(4) services performed in Canada while no section 233 agreement was in effect, on whose earnings Canadian contributions were required, so the case reads this service's place and contributions and the residual computes the earnings of ministry the same minister performs elsewhere. The clergy and religious family decides the service (clergy_1973_1981 and clergy_1982_2026, case pub_l_103_296_section_306_certificate), as se_clergy_gross_concept_1987_2026 defers foreign_agreement_sole_coverage. It ranks after retired_clergy_benefits, which are noncovered either way."
+        "description": "Pub. L. 103-296 section 306(d): income exempt under a section 306 certificate \"shall not constitute self-employment income under section 211(b)\". The exemption reaches only \"services described in paragraphs (1) and (2)\", 1402(c)(4) services subject to the 1401 tax and performed in Canada while no section 233 agreement was in effect; paragraph (3), Canadian contributions on the earnings from such services, limits who may file. So the case reads this service's place and the person's certificate, and the residual computes the earnings of ministry the same minister performs elsewhere (review r7 M-1). The clergy and religious family decides the service (clergy_1973_1981 and clergy_1982_2026, case pub_l_103_296_section_306_certificate), as se_clergy_gross_concept_1987_2026 defers foreign_agreement_sole_coverage. It ranks after retired_clergy_benefits, which are noncovered either way."
       },
       {
         "case_id": "past_ministerial_service_pension_open",
