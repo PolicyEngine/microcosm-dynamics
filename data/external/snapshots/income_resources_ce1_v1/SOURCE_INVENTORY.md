@@ -468,3 +468,12 @@ The two manifest provenance lines that recorded `-f2 -l3` and `-f2 -l2` now reco
 Three OCR derivatives that the round-1 retention check removed are restored, because they are the only text of scanned pages that se_units_1984_1985 cites: `irs_schedule_se_1984.pdf.txt` and `irs_schedule_se_1985.pdf.txt` (from commit `08b898e0`), and `irs_form1040_instructions_1985_extract.pdf.txt`, page 2 of the Form 1040 extract (original PDF page 31). The command `pdftoppm -r 140 -f <page> -l <page> -png <pdf> | tesseract stdin stdout` (tesseract 5.5.3, leptonica 1.87.0, pdftoppm 26.09.0) reproduces each one byte for byte.
 
 `irs_p517_2025.pdf` is not retained: it duplicates `irs_p517_2025.html`, which the registry now cites in its place. Check: 4,706 of the 4,835 six-word sequences in pdftotext -raw of printed pages 4-7 occur in the HTML capture's text after normalizing quotes, dashes, bullets, spacing before punctuation and list markers; the rest straddle page footers, headings, list markers or the HTML text's doubled periods.
+
+## Review-round 7 source records
+
+`sources_ce1r7.json` and `capture_manifest_ce1r7.txt` record the round-7 captures; `source_inventory.json` repeats them.
+
+| Capture | URL | Retrieval UTC | Bytes | SHA-256 |
+|---|---|---|---:|---|
+| ce1r7_cfr2025_26_31_3121b7_2.xml | https://www.govinfo.gov/content/pkg/CFR-2025-title26-vol17/xml/CFR-2025-title26-vol17-sec31-3121b7-2.xml | 2026-11-03T09:15:49Z | 62464 | `ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6` |
+| ce1r7_cfr1998_26_31_3121b7_2.xml | https://www.govinfo.gov/content/pkg/CFR-1998-title26-vol14/xml/CFR-1998-title26-vol14-sec31-3121b7-2.xml | 2026-11-03T09:08:29Z | 62212 | `4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4` |

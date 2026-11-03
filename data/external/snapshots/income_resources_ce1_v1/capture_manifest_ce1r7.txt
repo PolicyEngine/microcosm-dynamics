@@ -1,0 +1,6 @@
+# CE1 review-round 7 sources: UTC capture time SHA-256 byte-size file
+# Source URLs and provenance: sources_ce1r7.json.
+# URL https://www.govinfo.gov/content/pkg/CFR-2025-title26-vol17/xml/CFR-2025-title26-vol17-sec31-3121b7-2.xml
+2026-11-03T09:15:49Z ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6 62464 ce1r7_cfr2025_26_31_3121b7_2.xml
+# URL https://www.govinfo.gov/content/pkg/CFR-1998-title26-vol14/xml/CFR-1998-title26-vol14-sec31-3121b7-2.xml
+2026-11-03T09:08:29Z 4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4 62212 ce1r7_cfr1998_26_31_3121b7_2.xml

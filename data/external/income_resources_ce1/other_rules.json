@@ -3501,6 +3501,90 @@
         "authority": "42 USC 418, current law",
         "location": "418(d)(6)(A)",
         "quote": "If a retirement system covers positions of employees of the State and positions of employees of one or more political subdivisions of the State, or covers positions of employees of two or more political subdivisions of the State"
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(1), member at the time the service is performed",
+        "quote": "unless the employee is a member of a retirement system of such State, political subdivision or instrumentality at the time the service is performed. An employee is not a member of a retirement system at the time service is performed unless at that time he or she is a qualified participant (as defined in paragraph (d) of this section) in a retirement system that meets the requirements of paragraph (e) of this section with respect to that employee."
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(2), entity-by-entity membership",
+        "quote": "Under section 3121(b)(7)(F), whether an employee is a member of a retirement system is determined on an entity-by-entity rather than a position-by-position basis. Thus, if an employee is a member of a retirement system with respect to service he or she performs in one position in the employ of a State, political subdivision or instrumentality thereof, the employee is generally treated as a member of a retirement system with respect to all service performed for the same State, political subdivision or instrumentality in any other positions. A State is a separate entity from its political subdivisions, and an instrumentality is a separate entity from the State or political subdivision by which it is owned for purposes of this rule."
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(2), Example 1, a second position with the same county",
+        "quote": "In addition to this full-time employment, the individual is employed part-time in another position with the same county. The part-time position is not covered by the county retirement plan, however, and neither the service nor the compensation in the part-time position is considered in determining the employee's retirement benefit under the county retirement plan. Nevertheless, if the retirement plan meets the requirements of paragraph (e) of this section with respect to the individual, the exclusion from employment under section 3121(b)(7) applies to both the employee's full-time and part-time service with the county."
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(2), Example 2, a State plan member's city service",
+        "quote": "An individual is employed full-time by a State and is a member of its retirement plan. The individual is also employed part-time by a city located in the State, but does not participate in the city's retirement plan. The services of the individual for the city are not excluded from employment under section 3121(b)(7), because the determination of whether services constitute employment for such purposes is made separately with respect to each political subdivision for which services are performed."
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(d)(4)(i), former participants of the same entity",
+        "quote": "a former employee of a political subdivision with a deferred benefit under a defined benefit retirement system maintained by the political subdivision who is reemployed by the political subdivision but does not resume participation in the retirement system, may continue to be a qualified participant in the system after becoming reemployed if his or her total accrued benefit under the system meets the minimum retirement benefit requirement of paragraph (e)(2) of this section"
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(d)(4)(ii), re-hired annuitants of a state-wide system",
+        "quote": "if a teacher retires from service with a school district that participates in a state-wide teachers' retirement system, begins to receive benefits from the system, and later becomes a substitute teacher in another school district that participates in the same state-wide system, the employee is treated as a re-hired annuitant under this paragraph (d)(4)(ii)."
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(e)(2)(v), service for another entity; systems of multiple entities",
+        "quote": "In general, only compensation from and service for the State, political subdivision or instrumentality thereof that employs the employee (and the allocations or benefits related to such compensation or service) on a given day are considered in determining whether the employee's benefit under the retirement system on that day meets the requirements of this paragraph (e)(2), even if the employee has other allocations or benefits under the same retirement system from service with another State, political subdivision or instrumentality thereof. However, an employee's total allocations or benefits under a retirement system maintained by multiple States, political subdivisions or instrumentalities thereof (including the current employer) may be taken into account if:"
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "source note, T.D. 8354 (1991) as amended by T.D. 8794 (1998) and T.D. 8891 (2000)",
+        "quote": "[T.D. 8354, 56 FR 29570, June 28, 1991; 56 FR 40246, Aug. 14, 1991, as amended by T.D. 8794, 63 FR 70338, Dec. 21, 1998; T.D. 8891, 65 FR 44682, July 19, 2000]"
+      },
+      {
+        "capture": "ce1r7_cfr1998_26_31_3121b7_2.xml",
+        "sha256": "4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 1998 edition, before T.D. 8794 (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(2), entity-by-entity membership, 1998 text",
+        "quote": "Under section 3121(b)(7)(F), whether an employee is a member of a retirement system is determined on an entity-by-entity rather than a position-by-position basis. Thus, if an employee is a member of a retirement system with respect to service he or she performs in one position in the employ of a State, political subdivision or instrumentality thereof, the employee is generally treated as a member of a retirement system with respect to all service performed for the same State, political subdivision or instrumentality in any other positions. A State is a separate entity from its political subdivisions, and an instrumentality is a separate entity from the State or political subdivision by which it is owned for purposes of this rule."
+      },
+      {
+        "capture": "ce1r7_cfr1998_26_31_3121b7_2.xml",
+        "sha256": "4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 1998 edition, before T.D. 8794 (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(2), Example 1, 1998 text",
+        "quote": "In addition to this full-time employment, the individual is employed part-time in another position with the same county. The part-time position is not covered by the county retirement plan, however, and neither the service nor the compensation in the part-time position is considered in determining the employee's retirement benefit under the county retirement plan. Nevertheless, if the retirement plan meets the requirements of paragraph (e) of this section with respect to the individual, the exclusion from employment under section 3121(b)(7) applies to both the employee's full-time and part-time service with the county."
+      },
+      {
+        "capture": "ce1r7_cfr1998_26_31_3121b7_2.xml",
+        "sha256": "4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 1998 edition, before T.D. 8794 (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(2), Example 2, 1998 text",
+        "quote": "An individual is employed full-time by a State and is a member of its retirement plan. The individual is also employed part-time by a city located in the State, but does not participate in the city's retirement plan. The services of the individual for the city are not excluded from employment under section 3121(b)(7), because the determination of whether services constitute employment for such purposes is made separately with respect to each political subdivision for which services are performed."
+      },
+      {
+        "capture": "ce1r7_cfr1998_26_31_3121b7_2.xml",
+        "sha256": "4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 1998 edition, before T.D. 8794 (govinfo CFR XML, captured 2026-11-03)",
+        "location": "source note, T.D. 8354 and its 1991 correction only",
+        "quote": "[T.D. 8354, 56 FR 29570, June 28, 1991; 56 FR 40246, Aug. 14, 1991]"
       }
     ],
     "trigger_facts": [
@@ -3751,7 +3835,7 @@
         "precedence": 1,
         "when": {
           "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-          "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+          "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
           "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
@@ -3763,7 +3847,7 @@
         "precedence": 2,
         "when": {
           "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-          "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+          "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
           "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
@@ -3795,24 +3879,24 @@
         "precedence": 5,
         "when": {
           "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-          "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+          "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
           "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
-        "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)). Membership only in a system that fails the IRS qualified-system standards does not defeat it (POMS SL 50001.501 B). A position that only a Medicare HI-only modification reaches is outside OASDI agreement coverage, so a nonmember there is covered mandatorily (POMS SL 50001.570 B.3, B.4)."
+        "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)). Membership only in a system that fails the IRS qualified-system standards does not defeat it (POMS SL 50001.501 B). A position that only a Medicare HI-only modification reaches is outside OASDI agreement coverage, so a nonmember there is covered mandatorily (POMS SL 50001.570 B.3, B.4). Membership goes entity by entity (26 C.F.R. 31.3121(b)(7)-2(c)(2)): a member of the county's qualified system through another county position is a member for the poll work too (Example 1), and a member only of another entity's system, the State's included, is not (Example 2)."
       },
       {
         "case_id": "outside_agreement_member",
         "precedence": 6,
         "when": {
           "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-          "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+          "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
           "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "noncovered",
-        "description": "The state and local exclusion in 410(a)(7) applies to a member of a qualified retirement system: 410(a)(7)(F) gives \"retirement system\" the 418(b)(4) meaning \"except as provided in regulations prescribed by the Secretary of the Treasury\", and POMS SL 50001.501 B applies those standards. That includes a position that only a Medicare HI-only modification under 418(v), redesignated 418(n), reaches: 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding it from OASDI."
+        "description": "The state and local exclusion in 410(a)(7) applies to a member of a qualified retirement system: 410(a)(7)(F) gives \"retirement system\" the 418(b)(4) meaning \"except as provided in regulations prescribed by the Secretary of the Treasury\", and POMS SL 50001.501 B applies those standards. That includes a position that only a Medicare HI-only modification under 418(v), redesignated 418(n), reaches: 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding it from OASDI. Membership goes entity by entity (26 C.F.R. 31.3121(b)(7)-2(c)(2)): a member of the county's qualified system through another county position is a member for the poll work too (Example 1), and a member only of another entity's system, the State's included, is not (Example 2)."
       }
     ],
     "open_alternatives": [],
@@ -3990,6 +4074,90 @@
         "authority": "42 USC 418, current law",
         "location": "418(d)(6)(A)",
         "quote": "If a retirement system covers positions of employees of the State and positions of employees of one or more political subdivisions of the State, or covers positions of employees of two or more political subdivisions of the State"
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(1), member at the time the service is performed",
+        "quote": "unless the employee is a member of a retirement system of such State, political subdivision or instrumentality at the time the service is performed. An employee is not a member of a retirement system at the time service is performed unless at that time he or she is a qualified participant (as defined in paragraph (d) of this section) in a retirement system that meets the requirements of paragraph (e) of this section with respect to that employee."
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(2), entity-by-entity membership",
+        "quote": "Under section 3121(b)(7)(F), whether an employee is a member of a retirement system is determined on an entity-by-entity rather than a position-by-position basis. Thus, if an employee is a member of a retirement system with respect to service he or she performs in one position in the employ of a State, political subdivision or instrumentality thereof, the employee is generally treated as a member of a retirement system with respect to all service performed for the same State, political subdivision or instrumentality in any other positions. A State is a separate entity from its political subdivisions, and an instrumentality is a separate entity from the State or political subdivision by which it is owned for purposes of this rule."
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(2), Example 1, a second position with the same county",
+        "quote": "In addition to this full-time employment, the individual is employed part-time in another position with the same county. The part-time position is not covered by the county retirement plan, however, and neither the service nor the compensation in the part-time position is considered in determining the employee's retirement benefit under the county retirement plan. Nevertheless, if the retirement plan meets the requirements of paragraph (e) of this section with respect to the individual, the exclusion from employment under section 3121(b)(7) applies to both the employee's full-time and part-time service with the county."
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(2), Example 2, a State plan member's city service",
+        "quote": "An individual is employed full-time by a State and is a member of its retirement plan. The individual is also employed part-time by a city located in the State, but does not participate in the city's retirement plan. The services of the individual for the city are not excluded from employment under section 3121(b)(7), because the determination of whether services constitute employment for such purposes is made separately with respect to each political subdivision for which services are performed."
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(d)(4)(i), former participants of the same entity",
+        "quote": "a former employee of a political subdivision with a deferred benefit under a defined benefit retirement system maintained by the political subdivision who is reemployed by the political subdivision but does not resume participation in the retirement system, may continue to be a qualified participant in the system after becoming reemployed if his or her total accrued benefit under the system meets the minimum retirement benefit requirement of paragraph (e)(2) of this section"
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(d)(4)(ii), re-hired annuitants of a state-wide system",
+        "quote": "if a teacher retires from service with a school district that participates in a state-wide teachers' retirement system, begins to receive benefits from the system, and later becomes a substitute teacher in another school district that participates in the same state-wide system, the employee is treated as a re-hired annuitant under this paragraph (d)(4)(ii)."
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(e)(2)(v), service for another entity; systems of multiple entities",
+        "quote": "In general, only compensation from and service for the State, political subdivision or instrumentality thereof that employs the employee (and the allocations or benefits related to such compensation or service) on a given day are considered in determining whether the employee's benefit under the retirement system on that day meets the requirements of this paragraph (e)(2), even if the employee has other allocations or benefits under the same retirement system from service with another State, political subdivision or instrumentality thereof. However, an employee's total allocations or benefits under a retirement system maintained by multiple States, political subdivisions or instrumentalities thereof (including the current employer) may be taken into account if:"
+      },
+      {
+        "capture": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+        "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 2025 edition (govinfo CFR XML, captured 2026-11-03)",
+        "location": "source note, T.D. 8354 (1991) as amended by T.D. 8794 (1998) and T.D. 8891 (2000)",
+        "quote": "[T.D. 8354, 56 FR 29570, June 28, 1991; 56 FR 40246, Aug. 14, 1991, as amended by T.D. 8794, 63 FR 70338, Dec. 21, 1998; T.D. 8891, 65 FR 44682, July 19, 2000]"
+      },
+      {
+        "capture": "ce1r7_cfr1998_26_31_3121b7_2.xml",
+        "sha256": "4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 1998 edition, before T.D. 8794 (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(2), entity-by-entity membership, 1998 text",
+        "quote": "Under section 3121(b)(7)(F), whether an employee is a member of a retirement system is determined on an entity-by-entity rather than a position-by-position basis. Thus, if an employee is a member of a retirement system with respect to service he or she performs in one position in the employ of a State, political subdivision or instrumentality thereof, the employee is generally treated as a member of a retirement system with respect to all service performed for the same State, political subdivision or instrumentality in any other positions. A State is a separate entity from its political subdivisions, and an instrumentality is a separate entity from the State or political subdivision by which it is owned for purposes of this rule."
+      },
+      {
+        "capture": "ce1r7_cfr1998_26_31_3121b7_2.xml",
+        "sha256": "4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 1998 edition, before T.D. 8794 (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(2), Example 1, 1998 text",
+        "quote": "In addition to this full-time employment, the individual is employed part-time in another position with the same county. The part-time position is not covered by the county retirement plan, however, and neither the service nor the compensation in the part-time position is considered in determining the employee's retirement benefit under the county retirement plan. Nevertheless, if the retirement plan meets the requirements of paragraph (e) of this section with respect to the individual, the exclusion from employment under section 3121(b)(7) applies to both the employee's full-time and part-time service with the county."
+      },
+      {
+        "capture": "ce1r7_cfr1998_26_31_3121b7_2.xml",
+        "sha256": "4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 1998 edition, before T.D. 8794 (govinfo CFR XML, captured 2026-11-03)",
+        "location": "31.3121(b)(7)-2(c)(2), Example 2, 1998 text",
+        "quote": "An individual is employed full-time by a State and is a member of its retirement plan. The individual is also employed part-time by a city located in the State, but does not participate in the city's retirement plan. The services of the individual for the city are not excluded from employment under section 3121(b)(7), because the determination of whether services constitute employment for such purposes is made separately with respect to each political subdivision for which services are performed."
+      },
+      {
+        "capture": "ce1r7_cfr1998_26_31_3121b7_2.xml",
+        "sha256": "4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4",
+        "authority": "26 C.F.R. 31.3121(b)(7)-2, April 1, 1998 edition, before T.D. 8794 (govinfo CFR XML, captured 2026-11-03)",
+        "location": "source note, T.D. 8354 and its 1991 correction only",
+        "quote": "[T.D. 8354, 56 FR 29570, June 28, 1991; 56 FR 40246, Aug. 14, 1991]"
       }
     ],
     "trigger_facts": [
@@ -4233,7 +4401,7 @@
         "precedence": 1,
         "when": {
           "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-          "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+          "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
           "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
@@ -4245,7 +4413,7 @@
         "precedence": 2,
         "when": {
           "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-          "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+          "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
           "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
@@ -4277,24 +4445,24 @@
         "precedence": 5,
         "when": {
           "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-          "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+          "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
           "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "covered_above_threshold",
-        "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)). Membership only in a system that fails the IRS qualified-system standards does not defeat it (POMS SL 50001.501 B). A position that only a Medicare HI-only modification reaches is outside OASDI agreement coverage, so a nonmember there is covered mandatorily (POMS SL 50001.570 B.3, B.4)."
+        "description": "Mandatory coverage applies except remuneration below the statutory annual amount (410(a)(7)(F)(iv)). Membership only in a system that fails the IRS qualified-system standards does not defeat it (POMS SL 50001.501 B). A position that only a Medicare HI-only modification reaches is outside OASDI agreement coverage, so a nonmember there is covered mandatorily (POMS SL 50001.570 B.3, B.4). Membership goes entity by entity (26 C.F.R. 31.3121(b)(7)-2(c)(2)): a member of the county's qualified system through another county position is a member for the poll work too (Example 1), and a member only of another entity's system, the State's included, is not (Example 2)."
       },
       {
         "case_id": "outside_agreement_member",
         "precedence": 6,
         "when": {
           "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-          "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+          "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
           "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
           "election_work": "election official or election worker"
         },
         "consequence": "noncovered",
-        "description": "The state and local exclusion in 410(a)(7) applies to a member of a qualified retirement system: 410(a)(7)(F) gives \"retirement system\" the 418(b)(4) meaning \"except as provided in regulations prescribed by the Secretary of the Treasury\", and POMS SL 50001.501 B applies those standards. That includes a position that only a Medicare HI-only modification under 418(v), redesignated 418(n), reaches: 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding it from OASDI."
+        "description": "The state and local exclusion in 410(a)(7) applies to a member of a qualified retirement system: 410(a)(7)(F) gives \"retirement system\" the 418(b)(4) meaning \"except as provided in regulations prescribed by the Secretary of the Treasury\", and POMS SL 50001.501 B applies those standards. That includes a position that only a Medicare HI-only modification under 418(v), redesignated 418(n), reaches: 418(n)(3) and 410(p)(1) leave 410(a)(7) excluding it from OASDI. Membership goes entity by entity (26 C.F.R. 31.3121(b)(7)-2(c)(2)): a member of the county's qualified system through another county position is a member for the poll work too (Example 1), and a member only of another entity's system, the State's included, is not (Example 2)."
       }
     ],
     "open_alternatives": [],

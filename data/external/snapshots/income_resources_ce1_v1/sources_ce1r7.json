@@ -1,0 +1,18 @@
+[
+  {
+    "file": "ce1r7_cfr2025_26_31_3121b7_2.xml",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2025-title26-vol17/xml/CFR-2025-title26-vol17-sec31-3121b7-2.xml",
+    "retrieved_at": "2026-11-03T09:15:49Z",
+    "bytes": 62464,
+    "sha256": "ded049f0336603895253575e73a777ba994d11cc6af40295cd095f03dcad56e6",
+    "provenance": "Official CFR section XML, April 1, 2025 edition of 26 C.F.R. 31.3121(b)(7)-2 (T.D. 8354, 1991, as amended by T.D. 8794, 1998, and T.D. 8891, 2000); entity-by-entity membership, qualified participants, former participants and multiple-employer systems. An earlier request at 2026-11-03T08:56:41Z returned the same bytes."
+  },
+  {
+    "file": "ce1r7_cfr1998_26_31_3121b7_2.xml",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-1998-title26-vol14/xml/CFR-1998-title26-vol14-sec31-3121b7-2.xml",
+    "retrieved_at": "2026-11-03T09:08:29Z",
+    "bytes": 62212,
+    "sha256": "4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4",
+    "provenance": "Official CFR section XML, April 1, 1998 edition of 26 C.F.R. 31.3121(b)(7)-2, before T.D. 8794; its source note lists only T.D. 8354 (56 FR 29570, June 28, 1991) and 56 FR 40246 (Aug. 14, 1991). Word for word it differs from the 2025 edition only in (d)(2)(i)'s cash-out amount and in apostrophe characters."
+  }
+]

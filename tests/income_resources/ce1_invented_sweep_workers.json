@@ -843,7 +843,7 @@
    "facts": {
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "qualified_system_member_without_agreement"
@@ -854,7 +854,7 @@
    "facts": {
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "mandatory_nonmember_coverage"
@@ -865,7 +865,7 @@
    "facts": {
     "section_218_position": "covered by effective agreement/modification for OASDI (old-age, survivors and disability insurance); a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "covered",
    "decides": "section_218_agreement_coverage"
@@ -876,7 +876,7 @@
    "facts": {
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "qualified_system_member_without_agreement"
@@ -902,7 +902,7 @@
     "election_work": "election official or election worker",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -914,7 +914,7 @@
     "election_work": "election official or election worker",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "outside_agreement_member"
@@ -926,7 +926,7 @@
     "election_work": "election official or election worker",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -938,7 +938,7 @@
     "election_work": "election official or election worker",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "covered_above_threshold",
    "decides": "agreement_with_lower_threshold_member"
@@ -950,7 +950,7 @@
     "election_work": "election official or election worker",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "agreement_with_lower_threshold_nonmember"
@@ -973,7 +973,7 @@
     "election_work": "election official or election worker",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -985,7 +985,7 @@
     "election_work": "election official or election worker",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "outside_agreement_member"
@@ -997,7 +997,7 @@
     "election_work": "election official or election worker",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -1009,7 +1009,7 @@
     "election_work": "election official or election worker",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "covered_above_threshold",
    "decides": "agreement_with_lower_threshold_member"
@@ -1021,7 +1021,7 @@
     "election_work": "election official or election worker",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "agreement_with_lower_threshold_nonmember"
@@ -5235,11 +5235,11 @@
   },
   {
    "rule_id": "state_local_1991_2026",
-   "worker": "INVENTED: Iowa county employee, member of IPERS (qualified), position under the State's agreement for OASDI, 2005; agreement coverage holds regardless of membership (POMS SL 50001.501 A). The system is the qualified system the employing government's employees belong to through this employment, so the member text naming the employing State, subdivision or instrumentality is read as true of him.",
+   "worker": "INVENTED: Iowa county employee, member of IPERS (qualified), position under the State's agreement for OASDI, 2005; agreement coverage holds regardless of membership (POMS SL 50001.501 A). IPERS is a statewide system in which the employing county takes part, so the member text is true of him (26 C.F.R. 31.3121(b)(7)-2(e)(2)(v)).",
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "covered by effective agreement/modification for OASDI (old-age, survivors and disability insurance); a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "covered",
    "decides": "section_218_agreement_coverage"
@@ -5250,7 +5250,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "covered by effective agreement/modification for OASDI (old-age, survivors and disability insurance); a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "covered",
    "decides": "section_218_agreement_coverage"
@@ -5261,7 +5261,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "qualified_system_member_without_agreement"
@@ -5272,7 +5272,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "qualified_system_member_without_agreement"
@@ -5283,7 +5283,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "mandatory_nonmember_coverage"
@@ -5294,7 +5294,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "industry": "covered transportation service under 410(k)"
    },
    "expected": "covered",
@@ -5306,7 +5306,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "qualified_system_member_without_agreement"
@@ -5317,7 +5317,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
     "assignment": "service to relieve the individual from unemployment; service in a hospital, home or other institution by a patient or inmate; or temporary service in case of fire, storm, snow, earthquake, flood or similar emergency"
    },
    "expected": "noncovered",
@@ -5329,7 +5329,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
     "assignment": "service to relieve the individual from unemployment; service in a hospital, home or other institution by a patient or inmate; or temporary service in case of fire, storm, snow, earthquake, flood or similar emergency"
    },
    "expected": "noncovered",
@@ -5341,7 +5341,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
     "assignment": "service to relieve the individual from unemployment; service in a hospital, home or other institution by a patient or inmate; or temporary service in case of fire, storm, snow, earthquake, flood or similar emergency"
    },
    "expected": "noncovered",
@@ -5353,7 +5353,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "mandatory_nonmember_coverage"
@@ -5364,7 +5364,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
     "election_work": "election official or election worker"
    },
    "expected": "deferred",
@@ -5379,7 +5379,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "election_work": "election official or election worker"
    },
    "expected": "deferred",
@@ -5394,7 +5394,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "mandatory_nonmember_coverage"
@@ -5405,7 +5405,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
     "public_office_fee_basis": "position compensated solely on a fee basis, treated under 411(c)(2)(E) as a trade or business"
    },
    "expected": "deferred",
@@ -5420,7 +5420,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "mandatory_nonmember_coverage"
@@ -5431,7 +5431,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "mandatory_nonmember_coverage"
@@ -5442,7 +5442,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "mandatory_nonmember_coverage"
@@ -5453,18 +5453,18 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "mandatory_nonmember_coverage"
   },
   {
    "rule_id": "state_local_1991_2026",
-   "worker": "INVENTED: County X road clerk, 2012, no agreement, eligible for no County X plan, who is still an inactive vested member of the qualified system of City Y, a city in another State, from a job he left there in 2008. 410(a)(7)(F) reaches service 'by an individual who is not a member of a retirement system of such State, political subdivision, or instrumentality': City Y's system is not his State's, his county's or a county instrumentality's, and it does not cover his County X position, so the nonmember text is true and mandatory coverage applies.",
+   "worker": "INVENTED: County X road clerk, 2012, no agreement, eligible for no County X plan, who is still an inactive vested member of the qualified system of City Y, a city in another State, from a job he left there in 2008. 410(a)(7)(F) reaches service 'by an individual who is not a member of a retirement system of such State, political subdivision, or instrumentality', and 26 C.F.R. 31.3121(b)(7)-2(c)(2) judges membership entity by entity: County X maintains no system he belongs to and takes no part in City Y's, so the nonmember text is true and mandatory coverage applies.",
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "mandatory_nonmember_coverage"
@@ -5475,7 +5475,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "qualified_system_member_without_agreement"
@@ -5486,7 +5486,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "qualified_system_member_without_agreement"
@@ -5496,7 +5496,7 @@
    "worker": "INVENTED: District of Columbia employee hired 2005, nonmember of any U.S.-law retirement system other than FERS: excluded from this family by scope (410(a)(7)(F) names D.C. out), covered by 410(a)(7)(D); the residual here agrees in result.",
    "facts": {
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "residual"
@@ -5506,7 +5506,7 @@
    "worker": "INVENTED: employee of a federally recognized tribe's housing authority, 2015: a tribe is not a State or political subdivision; just misses the level text.",
    "facts": {
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "residual"
@@ -5727,7 +5727,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "agreement_with_lower_threshold_nonmember"
@@ -5739,7 +5739,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "covered_above_threshold",
    "decides": "agreement_with_lower_threshold_member"
@@ -5751,7 +5751,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "covered_above_threshold",
    "decides": "agreement_with_statutory_threshold"
@@ -5763,7 +5763,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement with no election worker exclusion; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "covered",
    "decides": "agreement_without_election_exclusion"
@@ -5775,7 +5775,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -5787,7 +5787,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -5799,7 +5799,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "outside_agreement_member"
@@ -5811,7 +5811,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -5822,7 +5822,7 @@
    "facts": {
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "residual"
@@ -5833,7 +5833,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "residual"
@@ -5845,7 +5845,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "outside_agreement_member"
@@ -5857,7 +5857,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -5869,7 +5869,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "agreement_with_lower_threshold_nonmember"
@@ -5881,7 +5881,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "covered_above_threshold",
    "decides": "agreement_with_lower_threshold_member"
@@ -5893,7 +5893,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "covered_above_threshold",
    "decides": "agreement_with_statutory_threshold"
@@ -5905,7 +5905,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement with no election worker exclusion; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "covered",
    "decides": "agreement_without_election_exclusion"
@@ -5917,7 +5917,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -5929,7 +5929,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -5941,7 +5941,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "outside_agreement_member"
@@ -5953,7 +5953,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -5964,7 +5964,7 @@
    "facts": {
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "residual"
@@ -5975,7 +5975,7 @@
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "residual"
@@ -5987,7 +5987,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "outside_agreement_member"
@@ -5999,7 +5999,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -6233,7 +6233,7 @@
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "election_work": "election official or election worker",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered_above_threshold",
    "decides": "outside_agreement_nonmember"
@@ -15932,33 +15932,33 @@
   },
   {
    "rule_id": "state_local_1991_2026",
-   "worker": "INVENTED (review r6 H-2): 2010: a teacher employed by a county school district, with no section 218 agreement, who belongs through this employment to the State-run qualified teachers' retirement system covering every district's teachers. 410(a)(7)(F)'s 'retirement system of such State' includes the State's system, so 410(a)(7) excludes her service.",
+   "worker": "INVENTED (review r6 H-2): 2010: a teacher employed by a county school district, with no section 218 agreement, who belongs through this employment to the State-run qualified teachers' retirement system in which every district, hers included, takes part. A statewide system the employing district takes part in is a system it maintains with others (26 C.F.R. 31.3121(b)(7)-2(d)(4)(ii), (e)(2)(v)), so 410(a)(7) excludes her service.",
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it"
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
    },
    "expected": "noncovered",
    "decides": "qualified_system_member_without_agreement"
   },
   {
    "rule_id": "state_local_1991_2026",
-   "worker": "INVENTED (review r6 H-2, just misses): 2010: a county road clerk, no agreement, whose county offers him no plan and who belongs to no system through this employment; he keeps a deferred membership in the State-run teachers' system from teaching years ago, which does not cover his county position, so mandatory coverage applies.",
+   "worker": "INVENTED (review r6 H-2, just misses; re-decided in review r7 H-1 on the regulation): 2010: a county road clerk, no agreement, whose county maintains no plan and takes no part in the State-run teachers' system; he keeps a deferred membership in that system from teaching years ago. Membership goes entity by entity, a State is a separate entity from its political subdivisions, and only service for the employing entity counts toward the minimum benefit (26 C.F.R. 31.3121(b)(7)-2(c)(2), Example 2, and (e)(2)(v)), so he is not a member of a system of the county and mandatory coverage applies.",
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition"
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
    },
    "expected": "covered",
    "decides": "mandatory_nonmember_coverage"
   },
   {
    "rule_id": "election_work_1991_0702",
-   "worker": "INVENTED (review r6 H-2): 1993: a county poll worker, outside any section 218 agreement, who belongs through this employment to the State-run qualified system that covers the county's election workers. 410(a)(7)(F) asks about a system 'of such State', so mandatory coverage does not reach her.",
+   "worker": "INVENTED (review r6 H-2): 1993: a county poll worker, outside any section 218 agreement, who belongs through this employment to the State-run qualified system in which the county takes part for its election workers. A statewide system the employing county takes part in counts (26 C.F.R. 31.3121(b)(7)-2(e)(2)(v)), so mandatory coverage does not reach her.",
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "election_work": "election official or election worker"
    },
    "expected": "noncovered",
@@ -15966,11 +15966,11 @@
   },
   {
    "rule_id": "election_work_1995",
-   "worker": "INVENTED (review r6 H-2): 2010: a county poll worker, outside any section 218 agreement, who belongs through this employment to the State-run qualified system that covers the county's election workers. 410(a)(7)(F) asks about a system 'of such State', so mandatory coverage does not reach her.",
+   "worker": "INVENTED (review r6 H-2): 2010: a county poll worker, outside any section 218 agreement, who belongs through this employment to the State-run qualified system in which the county takes part for its election workers. A statewide system the employing county takes part in counts (26 C.F.R. 31.3121(b)(7)-2(e)(2)(v)), so mandatory coverage does not reach her.",
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "election_work": "election official or election worker"
    },
    "expected": "noncovered",
@@ -16444,10 +16444,10 @@
   },
   {
    "rule_id": "state_local_1991_2026",
-   "worker": "INVENTED (review r6 M-1, just misses mandatory_nonmember_coverage on section_218_position): 2012: a county clerk who belongs to no qualified system through this employment, where the record does not show whether a section 218 agreement covers her position. Covered either way: by the agreement if one covers the position, by 410(a)(7)(F)'s mandatory rule if none does, so no case states her facts and the residual's covered decides.",
+   "worker": "INVENTED (review r6 M-1, just misses mandatory_nonmember_coverage on section_218_position): 2012: a county clerk who belongs to no qualified system the county maintains, where the record does not show whether a section 218 agreement covers her position. Covered either way: by the agreement if one covers the position, by 410(a)(7)(F)'s mandatory rule if none does, so no case states her facts and the residual's covered decides.",
    "facts": {
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
     "section_218_position": "not established whether a section 218 agreement covers the position for OASDI"
    },
    "expected": "covered",
@@ -16512,7 +16512,7 @@
    "facts": {
     "election_work": "not election work: the county's road maintenance clerk",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
    },
    "expected": "covered",
@@ -16524,7 +16524,7 @@
    "facts": {
     "election_work": "election official or election worker",
     "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
    },
    "expected": "covered",
@@ -16536,7 +16536,7 @@
    "facts": {
     "election_work": "not election work: the county's road maintenance clerk",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
    },
    "expected": "covered",
@@ -16548,7 +16548,7 @@
    "facts": {
     "election_work": "election official or election worker",
     "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
    },
    "expected": "covered",
@@ -16560,7 +16560,7 @@
    "facts": {
     "election_work": "not election work: the county's road maintenance clerk",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
    },
    "expected": "covered",
@@ -16572,7 +16572,7 @@
    "facts": {
     "election_work": "election official or election worker",
     "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
    },
    "expected": "covered",
@@ -16584,7 +16584,7 @@
    "facts": {
     "election_work": "not election work: the county's road maintenance clerk",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
    },
    "expected": "covered",
@@ -16596,7 +16596,7 @@
    "facts": {
     "election_work": "election official or election worker",
     "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
-    "public_retirement_system_participation": "not a member, through this employment, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it; an employee who belongs only to a system that fails those standards meets this condition",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
    },
    "expected": "covered",
@@ -16608,7 +16608,7 @@
    "facts": {
     "election_work": "not election work: the county's road maintenance clerk",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
    },
    "expected": "covered",
@@ -16620,7 +16620,7 @@
    "facts": {
     "election_work": "election official or election worker",
     "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count"
    },
    "expected": "covered",
@@ -16632,7 +16632,7 @@
    "facts": {
     "election_work": "not election work: the county's road maintenance clerk",
     "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
    },
    "expected": "covered",
@@ -16644,7 +16644,7 @@
    "facts": {
     "election_work": "election official or election worker",
     "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
    },
    "expected": "covered",
@@ -16666,7 +16666,7 @@
    "worker": "INVENTED (review r6 M-1, just misses qualified_system_member_without_agreement on government_level): the same facts for an employee of a private hospital: this family reaches only its level of government, so the residual sends the service to the other families.",
    "facts": {
     "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
-    "public_retirement_system_participation": "member, through this employment, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that covers the position, whether the State (a statewide system included), the political subdivision or the instrumentality maintains it",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
     "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches"
    },
    "expected": "covered",
@@ -16981,6 +16981,135 @@
    },
    "expected": "covered",
    "decides": "residual"
+  },
+  {
+   "rule_id": "state_local_1991_2026",
+   "worker": "INVENTED (review r7 H-1, repro 1, two positions): 2010: a county clerk who belongs to the county's qualified retirement system through her full-time job and is also paid as an evening library aide in a county position the plan excludes; no section 218 agreement. Membership goes entity by entity (26 C.F.R. 31.3121(b)(7)-2(c)(2), Example 1), so she is a member for the aide work too and 410(a)(7) excludes it.",
+   "facts": {
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
+   },
+   "expected": "noncovered",
+   "decides": "qualified_system_member_without_agreement"
+  },
+  {
+   "rule_id": "state_local_1991_2026",
+   "worker": "INVENTED (review r7 H-1, just misses qualified_system_member_without_agreement on membership): 2010: a State clerk who belongs to the State's qualified plan and also works part-time for a city in the State, in no city plan and outside any agreement. For the city service she is not a member of a system the city maintains (26 C.F.R. 31.3121(b)(7)-2(c)(2), Example 2), so mandatory coverage applies.",
+   "facts": {
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
+   },
+   "expected": "covered",
+   "decides": "mandatory_nonmember_coverage"
+  },
+  {
+   "rule_id": "state_local_1991_2026",
+   "worker": "INVENTED (review r7 H-1, deferred member of the same entity): 2010: a county road clerk who left the county in 2001 with a vested deferred benefit in the county's qualified plan that meets the minimum-benefit test, rehired in 2010 in a position the plan does not cover, no agreement. A former participant who returns to the same entity may remain a qualified participant (26 C.F.R. 31.3121(b)(7)-2(d)(4)(i)), so 410(a)(7) excludes the service.",
+   "facts": {
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
+   },
+   "expected": "noncovered",
+   "decides": "qualified_system_member_without_agreement"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED (review r7 H-1, repro 2, two positions): 1993: a county clerk who belongs to the county's qualified retirement system through her full-time job and is also paid $2,500 as a county poll worker, outside any section 218 agreement. Membership goes entity by entity (26 C.F.R. 31.3121(b)(7)-2(c)(2), Example 1), so she is a member for the poll work and 410(a)(7) excludes it.",
+   "facts": {
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "election_work": "election official or election worker",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
+   },
+   "expected": "noncovered",
+   "decides": "outside_agreement_member"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED (review r7 H-1, just misses outside_agreement_member on membership): 1993: a State clerk who belongs to the State's qualified plan and is also paid $2,500 as a poll worker by a county that maintains no plan she belongs to, outside any agreement. The county is a separate entity (26 C.F.R. 31.3121(b)(7)-2(c)(2), Example 2), so she is not a member for the poll work and mandatory coverage reaches pay at or above the statutory amount.",
+   "facts": {
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "election_work": "election official or election worker",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "outside_agreement_nonmember"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED (review r7 H-1, two positions, lower-amount agreement): 1993: a county clerk who belongs to the county's qualified system through her full-time job and also works as a county poll worker under an agreement with its own lower exclusion amount. She is a member for the poll work (26 C.F.R. 31.3121(b)(7)-2(c)(2), Example 1), so only the agreement's amount applies.",
+   "facts": {
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+    "election_work": "election official or election worker",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "agreement_with_lower_threshold_member"
+  },
+  {
+   "rule_id": "election_work_1991_0702",
+   "worker": "INVENTED (review r7 H-1, just misses agreement_with_lower_threshold_member on membership): 1993: a State clerk in the State's qualified plan who also works as a poll worker for a county under an agreement with its own lower exclusion amount, in no county plan. For the county service she is a nonmember (26 C.F.R. 31.3121(b)(7)-2(c)(2), Example 2), so mandatory coverage of optionally excluded service also applies (POMS SL 30001.357 NOTE).",
+   "facts": {
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+    "election_work": "election official or election worker",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "agreement_with_lower_threshold_nonmember"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED (review r7 H-1, repro 2, two positions): 2020: a county clerk who belongs to the county's qualified retirement system through her full-time job and is also paid $2,500 as a county poll worker, outside any section 218 agreement. Membership goes entity by entity (26 C.F.R. 31.3121(b)(7)-2(c)(2), Example 1), so she is a member for the poll work and 410(a)(7) excludes it.",
+   "facts": {
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "election_work": "election official or election worker",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
+   },
+   "expected": "noncovered",
+   "decides": "outside_agreement_member"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED (review r7 H-1, just misses outside_agreement_member on membership): 2020: a State clerk who belongs to the State's qualified plan and is also paid $2,500 as a poll worker by a county that maintains no plan she belongs to, outside any agreement. The county is a separate entity (26 C.F.R. 31.3121(b)(7)-2(c)(2), Example 2), so she is not a member for the poll work and mandatory coverage reaches pay at or above the statutory amount.",
+   "facts": {
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "section_218_position": "not covered for OASDI by any effective agreement/modification, including a position that only a Medicare hospital insurance modification under 418(v), redesignated 418(n), reaches",
+    "election_work": "election official or election worker",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "outside_agreement_nonmember"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED (review r7 H-1, two positions, lower-amount agreement): 2020: a county clerk who belongs to the county's qualified system through her full-time job and also works as a county poll worker under an agreement with its own lower exclusion amount. She is a member for the poll work (26 C.F.R. 31.3121(b)(7)-2(c)(2), Example 1), so only the agreement's amount applies.",
+   "facts": {
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+    "election_work": "election official or election worker",
+    "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "agreement_with_lower_threshold_member"
+  },
+  {
+   "rule_id": "election_work_1995",
+   "worker": "INVENTED (review r7 H-1, just misses agreement_with_lower_threshold_member on membership): 2020: a State clerk in the State's qualified plan who also works as a poll worker for a county under an agreement with its own lower exclusion amount, in no county plan. For the county service she is a nonmember (26 C.F.R. 31.3121(b)(7)-2(c)(2), Example 2), so mandatory coverage of optionally excluded service also applies (POMS SL 30001.357 NOTE).",
+   "facts": {
+    "government_level": "employee of a State (one of the 50 States, the Commonwealth of Puerto Rico or the Virgin Islands, each a State under 410(h)), of a political subdivision or of a wholly owned instrumentality, other than the District of Columbia, Guam and American Samoa",
+    "section_218_position": "covered for OASDI (old-age, survivors and disability insurance) by a section 218 agreement that excludes election workers paid less than an amount the agreement states below the statutory amount; a modification under 418(v), redesignated 418(n), that extends only Medicare hospital insurance does not count",
+    "election_work": "election official or election worker",
+    "public_retirement_system_participation": "not a member, when the service is performed, of any qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership only in a system this employer does not maintain does not count, and an employee who belongs only to a system that fails those standards meets this condition"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "agreement_with_lower_threshold_nonmember"
   }
  ]
 }
