@@ -86,13 +86,13 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | S2-04 | 481 | **[open]** a three-dimension joint gradient conditional on lifetime earnings | Resolved by the joint route: joint marginal calibration on a public reference population, with the earnings–education–race dependence taken from a stated proxy. The dependence itself stays unidentified in public data, and §6.4 says so. Where the fit applies the proxy's dependence outside its estimation sample, the copy is named assumption M-J1, with sensitivity JR-C-IND (§6.5, §6.6) | §6 | frozen here (route); the dependence stays unidentified and named |
 | S2-05 | 511 | **[open mapping]** Cristia's odds ratios | Frozen: predicted probabilities on a named reference population, then ratios to `q3`'s probability. Cristia enters only as a sensitivity and a source reported beside the fit; no log odds ratio enters as a log relative risk | §4.4 | frozen here |
 | S2-06 | 520 | **[proposed]** CBO 41681 as context only | Confirmed. It supplies the reason the widening alternative leaves race and Hispanic origin flat (pp. 1–2) and no coefficient or target | §3.1, §7.4 | frozen here |
-| S2-07 | 538 | **[proposed schema]** dimensions, columns, categories, references and unclassified treatment | Confirmed against `mortality_ses/specification.py`; tightened to one unclassified string per dimension, a fixed category order, and a crosswalk per source. `R_ref`'s persons under 25 hold the reference categories by rule, labeled `reference_below_25` (§6.2, §8.1) | §8 | frozen here |
+| S2-07 | 538 | **[proposed schema]** dimensions, columns, categories, references and unclassified treatment | Confirmed against `mortality_ses/specification.py`; tightened to one unclassified string per dimension, a fixed category order, and a crosswalk per source. `R_ref`'s persons under 25 hold the reference categories by rule, labeled `reference_below_25` (§6.2, §8.1). The ACS crosswalk maps every `SCHL`, `HISP` and `RAC1P` code in the 2010–2019 and 2021–2024 dictionaries; 2020's codes stay open until the fit job's first step (§8.2). NHIS `HISPAN_I` 00–11 map to `hispanic`, following S0.1's frozen reading, with 10 and 11 unclassified in X-R1 | §8 | frozen here (2020's ACS codes: checked by the fit job first) |
 | S2-08 | 564 | **[proposed loader]** OACT contrasts `log(r_q) − log(r_q3)`, band expansion, a source-year matrix that says what happens before a band first appears | Confirmed; tightened with the band-backcast rule, the figure-year rule and two independent table transcriptions | §3.1, §4.1, §5 | frozen here |
 | S2-09 | 570 | **[open]** earnings ages below 62 and 90–120 | Frozen: the 62–64 coefficient holds down to age 25 and the age-25 value below; the 85–89 coefficient holds up to 120; four registered sensitivities. `R_ref` holds everyone under 25 at the reference categories, so the values below 25 reach no one in the fit (§6.2) | §5, §6.2 | frozen here |
 | S2-10 | 579 | **[open]** terminal 100+ rule and any unsupported other-group coefficient | Frozen: race contrasts at 100–120 hold the age-99 contrast, and the fit reads no contrast from the 100+ interval; `other_non_hispanic` comes from NHIS–LMF, with NCHS's AIAN and Asian tables reported beside as a partial group | §4.3, §5 | frozen here |
 | S2-11 | 587 | **[open]** extraction and digitization of the 2022 gradient, its uncertainty, complete coverage | Frozen: vector extraction of Study 129 Figures 7–12, validated against Tables 7–12 at every table year, with a digitization half-width the validation sets; complete tables at every knot | §7.1–7.3 | frozen here |
 | S2-12 | 591 | **[open]** widening `CoefficientPath`: slope, origin, ages, caps; knot years and synchronization | Frozen: origin 2024, slopes from a frozen estimator on OACT's pre-pandemic annual figures, caps of 30 years and a 1.5 multiplier, race held flat; annual knots 2010–2024 with one synchronization rule | §7.4–7.5 | frozen here |
-| S2-13 | 602 | **[proposed]** `unclassified_rule="reference"` for SM3's overall denominator | Confirmed for SM3; `refuse` for conformance runs and for any projection until the frame carries the attributes | §8.3 | frozen here |
+| S2-13 | 602 | **[proposed]** `unclassified_rule="reference"` for SM3's overall denominator | Confirmed for SM3; `refuse` for conformance runs and for any projection until the frame carries the attributes. On `R_ref`, `refuse` applies after the under-25 rule and the ACS crosswalk, which map every code the dictionaries read list (§6.2, §8.2) | §8.3 | frozen here |
 | S2-14 | 606 | **[open: identification]** marginal contrasts do not determine mutually adjusted coefficients; freeze a joint route and its reference distribution | Five candidate routes and one unavailable route; primary JR-C; JR-A (plain addition, labeled), JR-B, JR-D and JR-E as sensitivities. NHIS targets compare as age-standardized hazard ratios on `R_ref(t)`'s single-age population, under named assumption M-H1 (§4, §4.5). The ordered logit fits once per knot year and sex on that year's ACS, and again inside every replicate, with a frozen optimizer, convergence rule and tie rule (§6.2). The ACS income item passes a frozen acceptance rule, and JR-C-W covers the proxy's weakness for women (§6.2, §6.5) | §4, §6 | frozen here |
 | S2-15 | 629 | **[open]** exact release dates of any earlier NHIS cohort used | Left open. The linked-mortality `.dat` files carry the listing date 26 April 2022; each NHIS year's release date settles from that year's survey description, which the fit job records. Nothing in SM2 depends on it, because SM2 claims no prospective origin | §3.4 | left open; settled by the fit job's per-year release ledger |
 | S2-16 | 641 | **[frozen tolerance; proposed operationalization]** e65 target from source ratios on one baseline, with a fixed reference population, marginalization and tail rule | Frozen; the 0.1-year limit stays | §9.2 | frozen here (operationalization); tolerance frozen, S0.1 §2.5 |
@@ -558,9 +558,10 @@ in Figure 2 (race and marital status) appears only as a plotted line.
   scale compares this ratio with an age-standardized model ratio, and
   §11.7 tests that the two agree whenever the model's hazards are
   proportional.
-- **Missing values.** `EDUC1` 97–99, `HISPAN_I` 11 and any race code that
-  §8.2 leaves unclassified drop out of that dimension's estimate only,
-  and the fit reports their counts.
+- **Missing values.** `EDUC1` 97–99, and any race code that §8.2 leaves
+  unclassified (none in the primary; `HISPAN_I` 10 and 11 under
+  sensitivity X-R1), drop out of that dimension's estimate only, and the
+  fit reports their counts.
 - **Variance.** §9.3.
 
 ## 5. Age support and tails
@@ -1064,35 +1065,50 @@ classification (§6.2). SM1 reads only the dimension and `sex` columns
 
 | SM category | Meaning | NCHS death certificate | NHIS `EDUC1` | ACS | SM3's PSID years (S0.1 §1.2) |
 |---|---|---|---|---|---|
-| `less_than_high_school` | No high school diploma or GED | "Less than high school diploma or GED" | 00–12 | Below a regular diploma or GED | Fewer than 12 |
-| `high_school` | Diploma or GED, no college | "High school diploma or GED" | 13–14 | Regular diploma or GED | 12 |
-| `some_college` | Some college without a degree, or an associate degree | Within "Some college or collegiate degree" | 15–17 | Some college, associate degree | 13–15 |
-| `college` | Bachelor's degree or higher | Within "Some college or collegiate degree" | 18–21 | Bachelor's degree or higher | 16–17 (the reader's upper code) |
-| `unclassified` | — | "Not stated" | 96–99 | Any code the year's data dictionary leaves without a level (the fit job records them) | Missing |
+| `less_than_high_school` | No high school diploma or GED | "Less than high school diploma or GED" | 00–12 | `SCHL` 01–15 (no schooling through "12th grade - no diploma") | Fewer than 12 |
+| `high_school` | Diploma or GED, no college | "High school diploma or GED" | 13–14 | `SCHL` 16–17 ("Regular high school diploma", "GED or alternative credential") | 12 |
+| `some_college` | Some college without a degree, or an associate degree | Within "Some college or collegiate degree" | 15–17 | `SCHL` 18–20 (some college, no degree; associate's degree) | 13–15 |
+| `college` | Bachelor's degree or higher | Within "Some college or collegiate degree" | 18–21 | `SCHL` 21–24 (bachelor's, master's, professional, doctorate) | 16–17 (the reader's upper code) |
+| `unclassified` | — | "Not stated" | 96–99 | None at 25 and over: `SCHL` covers every person aged 3 and over ("bb" marks under 3), and §6.2 holds everyone under 25 at `high_school` | Missing |
 
-The ACS column is semantic: the fit job maps each year's education codes
-from that year's data dictionary and tests that every code lands in
-exactly one category. NHIS codes come from the 2009, 2016 and 2018 person
-layouts (pp. 265, 296, 294).
+The ACS codes come from the data dictionaries for 2010–2019 and 2021–2024
+(§13.6): `SCHL` has the same 24 codes and the same universe in every one
+of them, and `HISP` and `RAC1P` the same code lists (the 2010 and 2011
+dictionaries word `RAC1P` 9 "Two or more major race groups", later ones
+"Two or More Races"). **2020 stays [open]:** its 1-year dictionary sits
+only under the Census Bureau's experimental-data path (§11.6), outside
+what fix round 1 could fetch. The fit job's first step fetches it,
+records its hash, and checks its `SCHL`, `HISP`, `RAC1P`, `AGEP` and
+`SSP` entries against the code lists above and §6.2's frozen texts; if
+they match, 2020 uses this crosswalk, and if they do not, 2020 counts as
+a missing ACS year (§10, `SOURCE_UNAVAILABLE` (iii)). For every year, the
+loader also tests that each code lands in exactly one category. NHIS
+codes come from the 2009, 2016 and 2018 person layouts (pp. 265, 296,
+294).
 
 **Race and Hispanic origin.**
 
 | SM category | NCHS life tables | NHIS (`HISPAN_I`, `RACERPI2`) | ACS | Cristia |
 |---|---|---|---|---|
-| `hispanic` | Hispanic (any race) | `HISPAN_I` 00–10 | Any Hispanic origin | Hispanic |
-| `white_non_hispanic` | NH white (single race from 2018; bridged 2010–2017) | `HISPAN_I` 12 and `RACERPI2` 01 | Not Hispanic, white alone | White |
-| `black_non_hispanic` | NH black | `HISPAN_I` 12 and `RACERPI2` 02 | Not Hispanic, black alone | Black |
-| `other_non_hispanic` | No complete table; AIAN NH and Asian NH (2019–2024) form a partial group | `HISPAN_I` 12 and `RACERPI2` 03–06 (AIAN only, Asian only, not releasable, multiple race) | Not Hispanic, any other race alone or two or more races | Other Race |
-| `unclassified` | — | `HISPAN_I` 11 | Any code the year's data dictionary leaves without a group (the fit job records them) | — |
+| `hispanic` | Hispanic (any race) | `HISPAN_I` 00–11 | `HISP` 02–24 | Hispanic |
+| `white_non_hispanic` | NH white (single race from 2018; bridged 2010–2017) | `HISPAN_I` 12 and `RACERPI2` 01 | `HISP` 01 and `RAC1P` 1 ("White alone") | White |
+| `black_non_hispanic` | NH black | `HISPAN_I` 12 and `RACERPI2` 02 | `HISP` 01 and `RAC1P` 2 ("Black or African American alone") | Black |
+| `other_non_hispanic` | No complete table; AIAN NH and Asian NH (2019–2024) form a partial group | `HISPAN_I` 12 and `RACERPI2` 03–06 (AIAN only, Asian only, not releasable, multiple race) | `HISP` 01 and `RAC1P` 3–9 (American Indian, Alaska Native and other AIAN codes, Asian, NHPI, some other race alone, two or more races) | Other Race |
+| `unclassified` | — | None in the primary; `HISPAN_I` 10 and 11 under sensitivity X-R1 | None: `HISP` and `RAC1P` code every person | — |
 
-`HISPAN_I` 10 ("type refused") stays `hispanic`, because its label names a
-Hispanic person whose type is unknown. Code 11 is `unclassified`, because
-the 2018 layout's notes assign it both to Hispanic people whose type was
-not ascertained and to people whose origin was not ascertained (2018
-Sample Adult layout, p. 8); sensitivity X-R1 treats 11 as `hispanic`. The
-public files carry no flag showing whether NCHS imputed race or
-ethnicity (2018 survey description pp. 25–26), so the fit cannot set
-imputed values apart.
+`HISPAN_I` 00–11 map to `hispanic` and 12 to the non-Hispanic groups, as
+S0.1 froze it ("00–11 Hispanic, 12 non-Hispanic", audit lines 468–469,
+inside the **[frozen findings]** block that opens at line 453).
+The 2018 layout's note puts respondents who "refused to answer Hispanic
+origin" in 10 and those who "didn't know it" in 11, and adds "When
+Hispanic origin was not ascertained, this variable was also assigned
+"11"" (2018 Sample Adult layout, p. 8). Codes 10 and 11 therefore get the
+same treatment in every run: `hispanic` in the primary, and `unclassified`
+in sensitivity X-R1, which drops both from the race estimates (§4.5). The
+same note places under 12 respondents who "answered 2,7,8, or 9 in
+ORIGIN_I", a variable this record does not read. The public files carry
+no flag showing whether NCHS imputed race or ethnicity (2018 survey
+description pp. 25–26), so the fit cannot set imputed values apart.
 
 **Lifetime earnings.** OACT's Lowest through Highest, Cristia's Bottom
 through Top, the ACS proxy `Q̃` and SM3's PSID quintiles all map to `q1`
@@ -1117,7 +1133,7 @@ group definitions do not change.
 
 | Use | Rule | Reason |
 |---|---|---|
-| SM2's fit and conformance on `R_ref` | `refuse` | The crosswalk leaves no reference-population person unclassified; one that appears is a construction error |
+| SM2's fit and conformance on `R_ref` | `refuse`, applied after §6.2's under-25 rule and §8.2's crosswalk | Those rules leave no reference-population person unclassified: everyone aged 25 and over carries a `SCHL` code 01–24, everyone carries `HISP` and `RAC1P` codes, everyone under 25 holds the reference on earnings and education, and everyone else at 25 and over takes `Q̃`'s quintile weights (§6.2). A person who still appears unclassified is a construction error, which stops the run and goes into the fit's report |
 | SM2's NHIS estimates | Not through SM1 | §4.5 drops unclassified persons from that dimension's estimate and reports the count |
 | SM3 | `reference` (confirms S0.1 §2.3) | SM3's estimand keeps unclassified persons in the overall ratio and in no group cell (S0.1 §1.1); under `reference` they take zero log risk on that dimension, SM1 still conserves the cell, and the cell log counts them (`specification.py:219–247`; `normalizer.py:17–35`) |
 | Any projection (Track B, the open population) | `refuse` until the frame carries all three attributes and a registration names the rule | `FRAME_ATTRIBUTE_MISSING` (§10) |
@@ -1228,7 +1244,7 @@ combined.
 | | OACT | **[open]** Study 129 prints rates and RMRs but no deaths or exposures (Tables 1–12), so the source cannot supply this component (row S2-24). It settles when OACT's exposure or death counts by sex × band × quintile × year are available. Until then every OACT e65 member is inconclusive or fails (below) |
 | U3, survey sampling | ACS (reference population and NCHS education denominators) | One refit per ACS replicate, with the variance formula that each year's PUMS documentation gives and the fit job records. NCHS's denominators move with the same replicate: each category's share within sex and band is re-tabulated from that replicate and scaled to NCHS's printed total. The fit job also reports the ratio of its replicate standard errors to NCHS's printed ones (Table VIII, I–19) |
 | | NHIS–LMF | Rao–Wu rescaled bootstrap: PSUs resampled with replacement within strata, separately for each design period: the 2009 layout's `STRAT_P`/`PSU_P` and the 2016 and 2018 layouts' `PSTRAT`/`PPSU`, with the periods' strata kept distinct; the fit job reads which names each intervening year uses. Resampling whole PSUs keeps every family and every person's whole history together, once the fit job confirms from each year's survey description that families nest within PSUs |
-| U4, linkage and perturbation sensitivity | NHIS–LMF | Discrete alternative fits, not draws: NHIS weights replaced by the original sample-adult weight with ineligible persons dropped; `HISPAN_I` 11 coded `hispanic` (X-R1). The fit reports each alternative's conformance; neither gates |
+| U4, linkage and perturbation sensitivity | NHIS–LMF | Discrete alternative fits, not draws: NHIS weights replaced by the original sample-adult weight with ineligible persons dropped; `HISPAN_I` 10 and 11 coded `unclassified` (X-R1). The fit reports each alternative's conformance; neither gates |
 
 **What OACT's open U2 means [frozen here].** S0.1 keeps a target whose
 source does not publish the uncertainty it needs "open or inconclusive",
