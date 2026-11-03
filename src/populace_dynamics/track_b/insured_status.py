@@ -77,8 +77,8 @@ from dataclasses import dataclass, replace
 from datetime import date, timedelta
 from enum import Enum
 from fractions import Fraction
-from itertools import product
-from math import prod
+from itertools import combinations, product
+from math import comb, prod
 from types import MappingProxyType
 
 from populace_dynamics.track_b._insured_status_qc import (
@@ -1975,11 +1975,12 @@ def _refuse_unsupported_priors(person, lower, upper, month, exit_month):
     credits or facts the record omits (``_prior_basis``), and those could
     insure the current period as well. So before credits alone call an
     established current period impossible, or leave its validity to UNKNOWN
-    earnings, each listed prior's basis is checked, and a prior's named
+    earnings, the rule checks each listed prior's basis, and a prior's named
     refusal keeps the row. A fully-route flag supplies fully insured status
     from a start the record doesn't give, as the possibility check reads it
     (``_recent_rule_possible``), so a prior the flag can carry shows nothing
-    missing.
+    missing. An input error also needs that support on every completion
+    (``_refuse_undecided_priors``).
     """
     flagged = bool(person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS)
     for index in range(len(person.prior_disability_periods)):
@@ -1993,6 +1994,120 @@ def _refuse_unsupported_priors(person, lower, upper, month, exit_month):
                 )
             ):
                 raise
+
+
+def _refuse_undecided_priors(person, lower, upper, month, exit_month):
+    """Refuse by name where open years decide a listed prior's support.
+
+    ``_refuse_unsupported_priors`` asks for one completion that supports each
+    listed prior, while a record whose own credits leave a prior unsupported
+    refuses it by name. So an input error needs each prior's support on every
+    completion. Every basis of an unflagged prior from 1956 asks for counts
+    that more credits only help, so lower credits speak for every completion.
+    More credits by a prior's start can instead unseat a flagged prior, which
+    needs 404.130(b) to fail there (``_flag_fits``), or an unflagged prior
+    from July 1952 through 1955 that rests on RS00301.480 B.1, a route that
+    20 of 40 in a later quarter through September 1960 can exclude
+    (RS00301.480 A). The rule checks those on every completion of the years
+    open by the prior's start (``_completions``). Credits after its start
+    year move neither its first quarter's tests nor B.1's counts and only add
+    to a later 20 of 40, so upper credits speak for every completion of those
+    years.
+    """
+    flagged = bool(person.conditions & _FULLY_INSURED_ROUTE_CONDITIONS)
+    for index, period in enumerate(person.prior_disability_periods):
+        if period.special_insured or (
+            date(1952, 7, 1) <= period.start < date(1956, 1, 1)
+        ):
+            completions = _completions(lower, upper, period.start.year)
+        else:
+            completions = (lower,)
+        for credits in completions:
+            try:
+                _prior_basis(
+                    person, credits, credits, index, month, exit_month
+                )
+            except InsuredConfigurationUnsupported:
+                if not (
+                    flagged
+                    and _flag_carries_prior(
+                        person, credits, credits, index, month, exit_month
+                    )
+                ):
+                    _refuse(
+                        InsuredUnsupportedReason.UNKNOWN_EARNINGS,
+                        "Unknown earnings decide a listed prior's support",
+                    )
+
+
+def _refuse_boundary_completions(person, lower, upper):
+    """Refuse by name where a completion could exceed the boundary cap.
+
+    ``_boundary_variants`` refuses more than 4096 assignments of the QCs in
+    years that hold a listed prior's first or last quarter, and a middle
+    count can have more assignments than either bound: two QCs in four
+    quarters have six. Each world counts some of those years with some of
+    their quarters open, so counting them all with every quarter open
+    through death bounds every completion's worlds, and an input error needs
+    that bound within the cap.
+    """
+    periods = tuple(
+        (_qid(p.start), _qid(p.end)) for p in person.prior_disability_periods
+    )
+    years = {q // 4 for pair in periods for q in pair} & upper.keys()
+    if all(lower[year] == upper[year] for year in years):
+        return
+    death = _qid(person.death_date) if person.death_date else None
+    assignments = 1
+    for year in years:
+        fixed, low = lower[year]
+        allowed = _allowed_quarters(
+            year, through_quarter=year * 4 + 3, death_quarter=death
+        )
+        vacant = len(set(allowed) - set(fixed))
+        assignments *= max(
+            comb(vacant, min(flexible, vacant))
+            for flexible in range(low, upper[year][1] + 1)
+        )
+    if assignments > 4096:
+        _refuse(
+            InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
+            "A completion may have more than 4096 boundary assignments",
+        )
+
+
+def _completions(lower, upper, last):
+    """Credits for each completion of the years open through ``last``.
+
+    A year before 1978 credits fixed quarters, so each set of its quarters
+    within the bounds is a completion, and agricultural QCs that a test may
+    place support a prior wherever every set they can fill does. A later
+    year's count takes any placement (RS00301.230 B). More than 4096
+    completions refuse by name.
+    """
+    years = [y for y in upper if y <= last and lower[y] != upper[y]]
+    options = []
+    for year in years:
+        fixed, low = lower[year]
+        high = upper[year][1]
+        if year >= 1978:
+            options.append([(fixed, count) for count in range(low, high + 1)])
+            continue
+        free = [q for q in range(year * 4, year * 4 + 4) if q not in fixed]
+        options.append(
+            [
+                (tuple(sorted((*fixed, *chosen))), 0)
+                for size in range(low, high + 1)
+                for chosen in combinations(free, size)
+            ]
+        )
+    if prod(map(len, options)) > 4096:
+        _refuse(
+            InsuredUnsupportedReason.UNKNOWN_EARNINGS,
+            "More than 4096 completions decide a listed prior's support",
+        )
+    for chosen in product(*options):
+        yield {**upper, **dict(zip(years, chosen, strict=True))}
 
 
 def _flag_carries_prior(person, lower, upper, index, month, exit_month):
@@ -3090,7 +3205,9 @@ def insured_status(
     Disagreement with the literal any-quarter reading retains the named
     alternate refusal; post-1980 endings can differ under 404.321(c).
     Establishment is an input error only if no ordinary, observable, or
-    flagged specialist route could validate any completion of the facts.
+    flagged specialist route could validate any completion of the facts,
+    each listed prior holds on every completion, and no completion can
+    exceed the boundary-assignment cap.
     Foreign credits preserve an unmodeled route before credit-count proofs;
     no totalization minimum or eligibility rule is claimed. A conservative
     minimum-QC proof precedes fully-insured-only flags and boundary
@@ -3174,6 +3291,10 @@ def insured_status(
             _refuse_unsupported_priors(
                 person, lower, upper, month, coverage_end_month
             )
+            _refuse_undecided_priors(
+                person, lower, upper, month, coverage_end_month
+            )
+            _refuse_boundary_completions(person, lower, upper)
         except InsuredConfigurationUnsupported:
             # A deferred row keeps its own reason, as it does once a
             # possible declaration survives.

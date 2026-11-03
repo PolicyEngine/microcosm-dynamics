@@ -46,17 +46,18 @@ observed, named convention-filled or unknown provenance. A coverage-end
 month stops assignment while elapsed-year and recent-work clocks continue.
 A nonempty foreign-totalization input is explicitly refused until encoded.
 
-Required outputs are annual QC ranges, favorable assigned-quarter witnesses,
-fully/currently/disability insurance, required counts and decision windows,
-DLI or a DLI range, unknown years, convention identifiers and the
-`decided_despite_unknowns` flag. Each unsupported configuration must return a
-named refusal retained in the shared evaluator denominator. A declaration that
-contradicts itself, such as a period that ends before it starts, fails before
-the rule runs. Otherwise an input error means every filling of the declaration
-is invalid; where the encoding can't show that, it refuses by name and keeps
-the row, so a listed prior that no completion supports refuses before the rule
-calls a later period impossible. Output and refusal records must bind the rule
-revision and input declaration.
+The encoding must output annual QC ranges, favorable assigned-quarter
+witnesses, fully/currently/disability insurance, required counts and decision
+windows, DLI or a DLI range, unknown years, convention identifiers and the
+`decided_despite_unknowns` flag. It must return a named refusal for each
+unsupported configuration, and the shared evaluator keeps that refusal in its
+denominator. It rejects a declaration that contradicts itself, such as a
+period that ends before it starts, before it applies the rule. Otherwise it
+raises an input error only where the declaration has no valid filling. Where
+it can't show that, it refuses by name and keeps the row. So where some
+completion of the unknown years leaves a listed prior unsupported, it refuses
+before it calls a later period impossible. It must bind each output and
+refusal record to the rule revision and the input declaration.
 
 ## Pasteable review_finding
 

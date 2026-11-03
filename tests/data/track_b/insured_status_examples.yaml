@@ -911,6 +911,7 @@ source_findings:
   poms_340_possible_unstated_ceiling:
     source: poms_rs_00301_345
     quote: $10,800 in a TY beginning after 1972 and before 1974;
-    finding: This ceiling could explain the short-taxable-year example in RS00301.340:10800/3=3600,
-      if printed10900 meant net earnings before the ceiling rather than already-covered
-      SEI. The capture does not state the cap step; both readings stay explicit.
+    finding: This ceiling could explain the short-taxable-year example in RS 00301.340,
+      where $10,800/3 gives $3,600, if the printed $10,900 meant net earnings before
+      the ceiling rather than already-covered SEI. The capture does not state the cap
+      step; both readings stay explicit.
