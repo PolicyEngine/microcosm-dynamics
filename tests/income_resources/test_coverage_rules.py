@@ -1980,6 +1980,24 @@ CASE_THRESHOLD_ENTRIES = {
         "threshold_id": "INVENTED_threshold",
         "income_years": [1967, 2024],
     },
+    # Review r7 low 10: a year that is no integer, or a threshold id that
+    # is no string, raises RegistryValidationError, not TypeError.
+    "text_last_year": {
+        "threshold_id": "INVENTED_threshold",
+        "income_years": [2023, "x"],
+    },
+    "text_first_year": {
+        "threshold_id": "INVENTED_threshold",
+        "income_years": ["x", 2024],
+    },
+    "one_year": {
+        "threshold_id": "INVENTED_threshold",
+        "income_years": [2023],
+    },
+    "list_threshold_id": {
+        "threshold_id": ["INVENTED_threshold"],
+        "income_years": [2023, 2024],
+    },
 }
 
 

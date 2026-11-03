@@ -618,6 +618,11 @@ def _check_case_thresholds(
             f"{rule.rule_id}: threshold_id_by_case entry needs threshold_id "
             "and income_years",
         )
+        _require(
+            isinstance(entry["threshold_id"], str),
+            f"{rule.rule_id}: threshold_id_by_case threshold_id must be a "
+            "string",
+        )
         threshold = thresholds.get(entry["threshold_id"])
         _require(
             threshold is not None,
@@ -626,14 +631,20 @@ def _check_case_thresholds(
         )
         years = entry["income_years"]
         _require(
-            isinstance(years, (list, tuple))
-            and len(years) == 2
-            and years[0] <= years[1],
+            isinstance(years, (list, tuple)) and len(years) == 2,
             f"{rule.rule_id}: threshold_id_by_case income_years must be "
             "[first, last]",
         )
+        # Review r7 low 10: read both years as data years before comparing
+        # them, so a year that is no integer raises RegistryValidationError,
+        # not TypeError.
         first = _data_year(years[0], "threshold_id_by_case income year")
         last = _data_year(years[1], "threshold_id_by_case income year")
+        _require(
+            first <= last,
+            f"{rule.rule_id}: threshold_id_by_case income_years must be "
+            "[first, last]",
+        )
         index = threshold.get("indexing") or {}
         for year in range(first, last + 1):
             _require(

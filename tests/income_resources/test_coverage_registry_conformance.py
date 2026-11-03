@@ -5483,7 +5483,7 @@ def stated(facts, fact):
     return (value,) if isinstance(value, (str, bool)) else tuple(value)
 
 
-def just_miss_workers(row, case, fact, own_text=False):
+def just_miss_workers(row, case, fact, own_text=False, workers=None):
     """INVENTED workers who just miss ``case`` on ``fact`` (review r6 M-1).
 
     Each states every other condition of the case exactly, does not state
@@ -5491,13 +5491,15 @@ def just_miss_workers(row, case, fact, own_text=False):
     lower-ranked case or the residual). Dropping ``fact`` from the case
     would make the case decide that worker, so the sweep test would fail.
     With ``own_text``, the worker also states for ``fact`` a text of its
-    own, which no case of the row reads.
+    own, which no case of the row reads. ``workers`` defaults to the sweep
+    fixture; the checker's own test passes its INVENTED worker instead of
+    adding it to the fixture's list (review r7 low 10).
     """
     rank = {c["case_id"]: c["precedence"] for c in row["cases"]}
     case_texts = {c["when"][fact] for c in row["cases"] if fact in c["when"]}
     others = {f: t for f, t in case["when"].items() if f != fact}
     found = []
-    for worker in INVENTED_SWEEP_WORKERS:
+    for worker in INVENTED_SWEEP_WORKERS if workers is None else workers:
         if worker["rule_id"] != row["rule_id"]:
             continue
         facts = worker["facts"]
@@ -5599,12 +5601,8 @@ def test_just_miss_checker_needs_an_own_text_below_the_case(kind):
         "facts": facts,
         "decides": "invented_other" if kind == "case_text" else "residual",
     }
-    INVENTED_SWEEP_WORKERS.append(worker)
-    try:
-        found = just_miss_workers(row, row["cases"][0], "age", True)
-        loose = just_miss_workers(row, row["cases"][0], "age")
-    finally:
-        INVENTED_SWEEP_WORKERS.remove(worker)
+    found = just_miss_workers(row, row["cases"][0], "age", True, [worker])
+    loose = just_miss_workers(row, row["cases"][0], "age", workers=[worker])
     assert bool(found) == (kind == "other")
     assert bool(loose) == (kind != "stated")
 
