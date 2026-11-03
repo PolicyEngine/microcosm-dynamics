@@ -93,7 +93,7 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | S2-11 | 587 | **[open]** extraction and digitization of the 2022 gradient, its uncertainty, complete coverage | Frozen: vector extraction of Study 129 Figures 7–12, validated against Tables 7–12 at every table year, with a digitization half-width the validation sets; complete tables at every knot | §7.1–7.3 | frozen here |
 | S2-12 | 591 | **[open]** widening `CoefficientPath`: slope, origin, ages, caps; knot years and synchronization | Frozen: origin 2024, slopes from a frozen estimator on OACT's pre-pandemic annual figures, caps of 30 years and a 1.5 multiplier, race held flat; annual knots 2010–2024 with one synchronization rule | §7.4–7.5 | frozen here |
 | S2-13 | 602 | **[proposed]** `unclassified_rule="reference"` for SM3's overall denominator | Confirmed for SM3; `refuse` for conformance runs and for any projection until the frame carries the attributes | §8.3 | frozen here |
-| S2-14 | 606 | **[open: identification]** marginal contrasts do not determine mutually adjusted coefficients; freeze a joint route and its reference distribution | Five candidate routes and one unavailable route; primary JR-C; JR-A (plain addition, labeled), JR-B, JR-D and JR-E as sensitivities | §6 | frozen here |
+| S2-14 | 606 | **[open: identification]** marginal contrasts do not determine mutually adjusted coefficients; freeze a joint route and its reference distribution | Five candidate routes and one unavailable route; primary JR-C; JR-A (plain addition, labeled), JR-B, JR-D and JR-E as sensitivities. NHIS targets compare as age-standardized hazard ratios on `R_ref(t)`'s single-age population, under named assumption M-H1 (§4, §4.5) | §4, §6 | frozen here |
 | S2-15 | 629 | **[open]** exact release dates of any earlier NHIS cohort used | Left open. The linked-mortality `.dat` files carry the listing date 26 April 2022; each NHIS year's release date settles from that year's survey description, which the fit job records. Nothing in SM2 depends on it, because SM2 claims no prospective origin | §3.4 | left open; settled by the fit job's per-year release ledger |
 | S2-16 | 641 | **[frozen tolerance; proposed operationalization]** e65 target from source ratios on one baseline, with a fixed reference population, marginalization and tail rule | Frozen; the 0.1-year limit stays | §9.2 | frozen here (operationalization); tolerance frozen, S0.1 §2.5 |
 | S2-17 | 649 | **[open]** whether the different source populations and baselines can satisfy the targets together | This record freezes the procedure: one joint calibration per knot on one reference population, and a named failure when it cannot reproduce every target. Whether it can is an outcome, so this record does not settle it | §6.3, §9 | left open; settled by the fit under §9's rule |
@@ -339,9 +339,31 @@ category `g`'s average annual probability of death over the target's ages,
 weighted by the category's population at each single age, and `H_ref` is
 the same for the reference category. Probabilities are annual `q` at the
 start-of-year age that SM1 and the baseline use (`baselines/base.py:19–28`;
-`mortality_ses/model.py:171–184`). NHIS targets are hazard ratios, so for
-them the implied quantity converts each normalized `q` to
-`μ = −ln(1 − q)` row by row before averaging, and both sides are hazards.
+`mortality_ses/model.py:171–184`). This crude form matches the OACT and
+NCHS education targets, which divide one category's crude rate within a
+band by another's (Study 129 p. 5; NVSR 74(4) Table 14).
+
+**NHIS targets: an age-standardized hazard ratio [frozen here].** NHIS's
+estimator holds attained age fixed within each band through single-year
+age terms (§4.5), so its hazard ratio is age-adjusted. A crude model-side
+ratio would load any difference between two categories' age mixes onto
+the category's coefficient. For an NHIS target the implied value is
+therefore
+
+`T_NHIS = ln( Σ_a W(a) μ̄_g(a) / Σ_a W(a) μ̄_ref(a) )`,
+
+summed over the band's single ages, where `μ̄_g(a)` averages
+`μ = −ln(1 − q)`, computed row by row from SM1's normalized `q`, over
+category `g`'s rows at age `a` (within the target's subpopulation, rows
+weighted by `w`), and `W(a)` is `R_ref(t)`'s total population of that sex
+at age `a`: one fixed set of weights for both categories. Above the ACS
+age top code, `W(a)` comes from §6.2's spread of top-coded records, so the
+85+ band runs on single ages 85–120. The target side needs no weights:
+under assumption M-H1 (§4.5) NHIS's ratio holds at every age of its band,
+so any fixed standard returns it. The sources read here give no reason to
+prefer another standard; NHIS's own person-time would make the implied
+value depend on survey records, while `R_ref(t)` is the population the
+coefficients act on.
 
 ### 4.1 OACT relative mortality ratios (lifetime earnings)
 
@@ -521,6 +543,14 @@ in Figure 2 (race and marital status) appears only as a plotted line.
   90–94 and 95+ for persons interviewed below 85, and one indicator per
   completed year since interview for persons top-coded at interview. The
   exponentiated category coefficients are the marginal hazard ratios.
+- **M-H1, proportional hazards within a band (assumption).** The model
+  gives each category one hazard ratio per band, so it assumes that ratio
+  holds at every attained age in the band. In the 85+ band the assumption
+  covers ages 85–120, including the ages that NHIS sees only through its
+  95+ indicator and through persons top-coded at interview. §4's common
+  scale compares this ratio with an age-standardized model ratio, and
+  §11.7 tests that the two agree whenever the model's hazards are
+  proportional.
 - **Missing values.** `EDUC1` 97–99, `HISPAN_I` 11 and any race code that
   §8.2 leaves unclassified drop out of that dimension's estimate only,
   and the fit reports their counts.
@@ -593,8 +623,16 @@ PUMS population of that year: every person record the file holds,
 including group-quarters records where the file carries them (the fit job
 records which it does), with these attributes:
 
-- **Sex and single age.** Ages at or above the year's top code (read from
-  that year's data dictionary) share the top-coded group's composition.
+- **Sex and single age.** `AGEP` gives single ages 0–99, top-coded by
+  state: every record at or above its state's threshold carries the state
+  mean of those ages (2024 top-coded-values document, "Explanation of
+  Topcoding"; each year's thresholds and means sit in that year's
+  top-and-bottom-coded-values CSV, which the fit job records). A record at
+  or above its state's threshold stands for every age from the threshold
+  to 120: the fit spreads its weight over those single ages in proportion
+  to the stationary person-years `Lx` of the TR 2026 `q` for that sex and
+  year, and each spread row keeps the record's other attributes. Below the
+  threshold, `AGEP` is the single age.
 - **Education and race and Hispanic origin.** From the ACS education,
   Hispanic-origin and race items through the crosswalk in §8.2.
 - **A lifetime-earnings quintile proxy `Q̃`.** At ages 62–89, among
@@ -655,7 +693,8 @@ rows, one per (quintile, education,
 race) combination at each single age, with weight `w`, applying the
 candidate coefficients and SM1's `normalize_probabilities` cell by cell
 against the baseline `q`, and averaging the normalized probabilities over
-the target's ages and subpopulation (§4, common scale).
+the target's ages and subpopulation: crude for OACT and NCHS targets, and
+age-standardized hazards for NHIS targets (§4, common scale).
 
 - **Solver.** Newton's method on the full system, started from the
   plain-addition coefficients (JR-A); convergence when every implied
@@ -1336,6 +1375,12 @@ publication rule, not a precision guarantee (S0.1 §2.5).
   quintiles hold one fifth each and nothing caps, the fitted and target
   e65 agree exactly; the fitted life tables satisfy `life_table.py`'s
   invariants.
+- **NHIS implied value under proportional hazards (M-H1):** when every
+  category's hazard at each age of a band equals a fixed multiple of the
+  reference category's, the age-standardized implied value of §4 equals
+  the log of that multiple for any positive weights `W` and any age mixes
+  of the two categories. A companion example with invented values shows
+  the crude ratio failing the same check when the age mixes differ.
 - The digitizer recovers known values from synthetic vector figures
   within the plotting tolerance and rejects a figure with inconsistent
   ticks.
