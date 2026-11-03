@@ -60,6 +60,7 @@ IRS-quote, fused-token, open-reading and operative-reading checkers, the
 unread-fact, worded-condition and just-miss checkers.
 """
 
+import ast
 import gzip
 import hashlib
 import importlib.util
@@ -95,9 +96,12 @@ REGISTRY_ARTIFACT = (
     / "income_resources_ce1"
     / "coverage_rules.json"
 )
+# Review r7 low 10: one parse at import feeds every module-level table
+# below. None of them changes it; a test that edits a row parses its own.
+REGISTRY_RAW = json.loads(REGISTRY_ARTIFACT.read_text())
 PUBLISHED_CASES = [
     (row["rule_id"], example["example_id"])
-    for row in json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    for row in REGISTRY_RAW["rules"]
     for example in row["worked_examples"]
 ]
 
@@ -105,6 +109,46 @@ PUBLISHED_CASES = [
 @pytest.fixture(scope="module")
 def registry():
     return load_registry(REGISTRY_ARTIFACT)
+
+
+REGISTRY_PARSE = "json.loads(REGISTRY_ARTIFACT.read_text())"
+
+
+def import_time_registry_parses(source):
+    """Calls of json.loads(REGISTRY_ARTIFACT.read_text()) that run when a
+    module with this source is imported: those in module-level statements
+    and in decorators, not those inside a function body."""
+    count = 0
+    for node in ast.parse(source).body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            parts = node.decorator_list
+        else:
+            parts = [node]
+        for part in parts:
+            count += sum(
+                1
+                for sub in ast.walk(part)
+                if isinstance(sub, ast.Call)
+                and ast.unparse(sub) == REGISTRY_PARSE
+            )
+    return count
+
+
+def test_registry_is_parsed_once_at_import():
+    """Review r7 low 10: one parse at import (REGISTRY_RAW) feeds the
+    module-level tables; the checker counts a second one, in a module-level
+    statement or a decorator, and ignores parses inside a test body."""
+    source = Path(__file__).read_text()
+    assert import_time_registry_parses(source) == 1
+    extra = f"\nSECOND = {REGISTRY_PARSE}\n"
+    assert import_time_registry_parses(source + extra) == 2
+    decorated = (
+        f"\n@pytest.mark.parametrize('row', {REGISTRY_PARSE}['rules'])\n"
+        "def test_invented(row):\n    pass\n"
+    )
+    assert import_time_registry_parses(source + decorated) == 2
+    inside = f"\ndef test_invented():\n    return {REGISTRY_PARSE}\n"
+    assert import_time_registry_parses(source + inside) == 1
 
 
 def citations(value):
@@ -3174,12 +3218,10 @@ REQUIRED_CONDITIONS = [
         "(F), (G), or (H) of section 210(a)(5) of the Social Security Act",
     ),
 ]
-REQUIRED_CONDITION_ROWS_ALL = json.loads(REGISTRY_ARTIFACT.read_text())[
-    "rules"
-]
+REQUIRED_CONDITION_ROWS_ALL = REGISTRY_RAW["rules"]
 REQUIRED_CONDITION_ROWS = {
     row["rule_id"]: row
-    for row in json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    for row in REGISTRY_RAW["rules"]
     if row["rule_id"] in {entry[0] for entry in REQUIRED_CONDITIONS}
 }
 
@@ -6055,7 +6097,7 @@ def test_state_and_local_cases_reach_only_their_level(registry, key, employer):
 # or a deferral, and INVENTED employers outside the level they reach.
 LEVEL_LIMITED_CASES = sorted(
     (row["rule_id"], case["case_id"])
-    for row in json.loads(REGISTRY_ARTIFACT.read_text())["rules"]
+    for row in REGISTRY_RAW["rules"]
     if row["family"] in STATE_LOCAL_FAMILIES
     for case in row["cases"]
     if case["consequence"] in LEVEL_LIMITED_CONSEQUENCES
