@@ -217,6 +217,16 @@
    "public_retirement_system_participation"
   ],
   [
+   "federal_1973_1983",
+   "army_corps_2360_student_aide",
+   "government_level"
+  ],
+  [
+   "federal_1984_1986",
+   "army_corps_2360_student_aide",
+   "government_level"
+  ],
+  [
    "federal_1987_2026",
    "after_official_during_2601d3_delay",
    "federal_service"
@@ -224,6 +234,21 @@
   [
    "federal_1987_2026",
    "after_official_during_2601d3_delay",
+   "government_level"
+  ],
+  [
+   "federal_1987_2026",
+   "after_official_service_from_1988_11_10",
+   "government_level"
+  ],
+  [
+   "federal_1987_2026",
+   "army_corps_2360_student_aide",
+   "government_level"
+  ],
+  [
+   "federal_1987_2026",
+   "fers_or_fsps_election",
    "government_level"
   ],
   [
@@ -17780,6 +17805,56 @@
    },
    "expected": "covered_above_threshold",
    "decides": "deemed_waiver_all_employees"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED (review r7 M-10(b), just misses fers_or_fsps_election on government_level): 2005: a former Federal employee who elected FERS in 1988 and now works for the State of Ohio; her State service falls after the election's effective date, but it is not in the employ of the United States, so this family's residual sends it to the State and local family.",
+   "facts": {
+    "government_level": "employee of the State of Ohio",
+    "federal_retirement_system": "service performed on or after the effective date of the individual's election, under a provision 410(a)(5)(H) names, to become subject to the Federal Employees' Retirement System (5 U.S.C. chapter 84) or the Foreign Service Pension System"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED (review r7 M-10(b), just misses after_official_service_from_1988_11_10 on government_level): 1995: a former Member of Congress (service in 1989-1992) now employed by the State of Ohio: the after-official rule reaches only service in the employ of the United States, so this family's residual sends the State service to the State and local family.",
+   "facts": {
+    "government_level": "employee of the State of Ohio",
+    "federal_service": "performed on or after a date on which the individual performed service described in 410(a)(5)(C)-(H), where that service was performed on or after 1988-11-10"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "federal_1973_1983",
+   "worker": "INVENTED (review r7 M-10(b), just misses army_corps_2360_student_aide on government_level): 1982: a student who works as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract the laboratory made with the nonprofit organization that employs him (2360(a) allows contracts \"with nonprofit organizations employing such students\"): he is the nonprofit's employee, not the United States', so this family's residual sends the service to the other families.",
+   "facts": {
+    "government_level": "employee of a nonprofit organization that employs the student and holds the 10 U.S.C. 2360 contract, not of the United States",
+    "federal_service": "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "federal_1984_1986",
+   "worker": "INVENTED (review r7 M-10(b), just misses army_corps_2360_student_aide on government_level): 1985: a student who works as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract the laboratory made with the nonprofit organization that employs him (2360(a) allows contracts \"with nonprofit organizations employing such students\"): he is the nonprofit's employee, not the United States', so this family's residual sends the service to the other families.",
+   "facts": {
+    "government_level": "employee of a nonprofit organization that employs the student and holds the 10 U.S.C. 2360 contract, not of the United States",
+    "federal_service": "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED (review r7 M-10(b), just misses army_corps_2360_student_aide on government_level): 1995: a student who works as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract the laboratory made with the nonprofit organization that employs him (2360(a) allows contracts \"with nonprofit organizations employing such students\"): he is the nonprofit's employee, not the United States', so this family's residual sends the service to the other families.",
+   "facts": {
+    "government_level": "employee of a nonprofit organization that employs the student and holds the 10 U.S.C. 2360 contract, not of the United States",
+    "federal_service": "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment"
+   },
+   "expected": "covered",
+   "decides": "residual"
   }
  ]
 }

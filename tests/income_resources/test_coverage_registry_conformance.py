@@ -1874,6 +1874,21 @@ def states_condition(text):
     return bool(WORDED_CONDITION.search(text.replace("_", " ")))
 
 
+# Review r7 M-10(c): the parameter guard also reads "only" and "limited"
+# (mutant D6b's untied "limited to ministers under 18"). Both guards read
+# a fixed word list, so a condition worded with none of the listed words
+# stays unseen; the PR states that limit. Reasons keep WORDED_CONDITION.
+PARAMETER_CONDITION_WORDS = re.compile(r"\b(only|limited)\b", re.IGNORECASE)
+
+
+def states_parameter_condition(text):
+    """Whether a parameter key or text states a condition: a word of
+    WORDED_CONDITION, or "only" or "limited"."""
+    return states_condition(text) or bool(
+        PARAMETER_CONDITION_WORDS.search(text.replace("_", " "))
+    )
+
+
 def parameter_leaves(value, path=()):
     if isinstance(value, dict):
         for key, child in value.items():
@@ -2331,9 +2346,9 @@ def condition_parameters(parameters):
         if key not in PARAMETER_EVIDENCE | SCOPE_KEY_EXEMPT
         and not OPTION_RECORDS.search(key)
         and (
-            states_condition(key)
+            states_parameter_condition(key)
             or any(
-                isinstance(value, str) and states_condition(value)
+                isinstance(value, str) and states_parameter_condition(value)
                 for _, value in parameter_leaves({key: parameters[key]})
             )
         )
@@ -2513,6 +2528,8 @@ def test_condition_case_checker_requires_a_tie(key, tie, with_cases, is_open):
             "subject to",
             "only for",
             "required_if",
+            "limited to",
+            "only",
         ]
     ),
     st.sampled_from([None, "cases", "reason"]),
@@ -5386,7 +5403,8 @@ JUST_MISS_STATED_LIMITS = {
 # Review r6 M-1: conditions of multi-condition cases that no worker just
 # misses. Each such condition can be dropped without failing a test, so
 # the number is the PR's stated limit; it may fall, never rise.
-UNSEEN_CONDITION_LIMIT = 178
+# Review r7: the round's just-miss workers bring it from 178 to 171.
+UNSEEN_CONDITION_LIMIT = 171
 
 
 @pytest.mark.parametrize(
@@ -5510,9 +5528,12 @@ def unseen_conditions(rows):
 )
 def test_listed_conditions_have_a_just_miss_worker(key):
     """Review r6 M-1: the exact-text oracle sees a dropped condition only
-    through a worker who just misses the case on it. Every condition the
-    review found drop-free has one with a deciding text of its own, and
-    every condition of a case this round adds or changes has one."""
+    through a worker who just misses the case on it. Each condition the
+    fixture's just_miss_required lists has one, with a deciding text of its
+    own where just_miss_own_text lists the condition. The list does not
+    hold every condition of every case a round changed (review r7
+    M-10(a)); the conditions no worker just misses are the stated limit
+    test_unseen_conditions_are_a_stated_limit counts."""
     rule_id, case_id, fact = key
     rows = {r["rule_id"]: r for r in REQUIRED_CONDITION_ROWS_ALL}
     (case,) = [c for c in rows[rule_id]["cases"] if c["case_id"] == case_id]
