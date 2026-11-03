@@ -29186,12 +29186,12 @@
         {
           "case_id": "section_7873_exempt_income",
           "consequence": "noncovered",
-          "description": "411(a)(14); 7873(a)-(b).",
+          "description": "411(a)(14); 7873(a)-(b). Review r7 low 5: the income condition read \"exempt under 7873(a)\", the conclusion this case draws, so a worker who just misses on membership had to state an exemption he could not have. 7873(a)(1) exempts income derived \"by a member of an Indian tribe directly or through a qualified Indian entity\" or by a qualified Indian entity \"from a fishing rights-related activity of such tribe\", and 7873(b)(1) defines the activity as \"any activity directly related to harvesting, processing, or transporting fish harvested in the exercise of a recognized fishing right of such tribe or to selling such fish\"; the condition now names the activity, and the membership, harvesting and entity conditions decide the exemption.",
           "precedence": 1,
           "when": {
             "tribal_fishing_member_activity": "substantially all harvesting performed by tribe members",
             "tribal_fishing_qualified_entity": "when received through an entity, the entity meets 7873(b)(3)",
-            "tribal_fishing_rights_income": "income from a fishing rights-related activity, exempt under 7873(a)",
+            "tribal_fishing_rights_income": "income from a fishing rights-related activity of the tribe (7873(b)(1))",
             "tribal_membership": "a member of the tribe, directly or through a qualified Indian entity"
           }
         },

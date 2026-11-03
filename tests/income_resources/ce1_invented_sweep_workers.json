@@ -3840,7 +3840,7 @@
   },
   {
    "rule_id": "federal_1984_1986",
-   "worker": "INVENTED: CSRS annuitant (retired 1981) reemployed as a House committee staffer since 1982, receiving his CSRS annuity on 1983-12-31 and in 1985. Under the (G) definition an individual receiving a CSRDF annuity is 'subject to' subchapter III, so (G)(i) does not reach him and paragraph (5) excludes the service ((B)(i) continuity and (B)(ii) both hold). He does not state the 'not subject' text (NOTE N3: the definition sits only in the case description).",
+   "worker": "INVENTED: CSRS annuitant (retired 1981) reemployed as a House committee staffer since 1982, receiving his CSRS annuity on 1983-12-31 and in 1985. Under the (G) definition an individual receiving a CSRDF annuity is 'subject to' subchapter III, so (G)(i) does not reach him and paragraph (5) excludes the service ((B)(i) continuity and (B)(ii) both hold). He does not state the 'not subject' text, whose closing words carry (G)'s definition.",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States",
     "federal_service": [
@@ -4270,7 +4270,7 @@
   },
   {
    "rule_id": "federal_1987_2026",
-   "worker": "INVENTED: Army Reserve member, enlisted 1985, performing weekend inactive duty training in November 1987; first service of any kind for the United States began 1985. Just misses the 410(l) case by date: 410(l)(1)(B) reaches inactive duty training only 'after December 1987', and active duty (410(l)(2)) does not include it, so the case text is false. Paragraph (5) cannot exclude him ((B)(i) continuity since 1983 and (B)(ii) annuity both fail) and no (a)(6) clause applies, so this row leaves the service to its residual; whether drill pay is employment at all rests on the base definition, which this row does not decide (NOTE N6).",
+   "worker": "INVENTED: Army Reserve member, enlisted 1985, performing weekend inactive duty training in November 1987; first service of any kind for the United States began 1985. Just misses the 410(l) case by date: 410(l)(1)(B) reaches inactive duty training only 'after December 1987', and active duty (410(l)(2)) does not include it, so the case text is false. Paragraph (5) cannot exclude him ((B)(i) continuity since 1983 and (B)(ii) annuity both fail) and no (a)(6) clause applies, so this row leaves the service to its residual; whether drill pay is employment at all rests on the base definition, which this row does not decide; the registry's scope_gaps record says no family reads it.",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States"
    },
@@ -4619,7 +4619,7 @@
   },
   {
    "rule_id": "federal_1987_2026",
-   "worker": "INVENTED: CSRS annuitant (retired 1981) reemployed as a House committee staffer since 1982, receiving his CSRS annuity on 1983-12-31 and in 1995. Under the (G) definition an individual receiving a CSRDF annuity is 'subject to' subchapter III, so (G)(i) does not reach him and paragraph (5) excludes the service ((B)(i) continuity and (B)(ii) both hold). He does not state the 'not subject' text (NOTE N3: the definition sits only in the case description).",
+   "worker": "INVENTED: CSRS annuitant (retired 1981) reemployed as a House committee staffer since 1982, receiving his CSRS annuity on 1983-12-31 and in 1995. Under the (G) definition an individual receiving a CSRDF annuity is 'subject to' subchapter III, so (G)(i) does not reach him and paragraph (5) excludes the service ((B)(i) continuity and (B)(ii) both hold). He does not state the 'not subject' text, whose closing words carry (G)'s definition.",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States",
     "federal_service": [
@@ -8169,7 +8169,7 @@
   },
   {
    "rule_id": "clergy_1968_1972",
-   "worker": "INVENTED: 1970: ordained priest who is also a vowed member of a religious order and preaches a weekend mission that his order does not require (not duties required by the order). 411(c)'s closing sentence keeps 411(c)(4) for 'service performed by a member of a religious order who has taken a vow of poverty', but Publication 517 (2025) taxes a vowed member's self-employment 'not required by, or done on behalf of, the order'; no case states the facts and the residual is open (NOTE N8).",
+   "worker": "INVENTED: 1970: ordained priest who is also a vowed member of a religious order and preaches a weekend mission that his order does not require (not duties required by the order). 411(c)'s closing sentence keeps 411(c)(4) for 'service performed by a member of a religious order who has taken a vow of poverty', but Publication 517 (2025) taxes a vowed member's self-employment 'not required by, or done on behalf of, the order'; no case states the facts and the residual is open.",
    "facts": {
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "religious_order_service": "member of a religious order who has taken a vow of poverty, performing ministry not required by the order"
@@ -8338,7 +8338,7 @@
   },
   {
    "rule_id": "clergy_1973_1981",
-   "worker": "INVENTED: 1978: ordained priest who is also a vowed member of a religious order and preaches a weekend mission that his order does not require (not duties required by the order). 411(c)'s closing sentence keeps 411(c)(4) for 'service performed by a member of a religious order who has taken a vow of poverty', but Publication 517 (2025) taxes a vowed member's self-employment 'not required by, or done on behalf of, the order'; no case states the facts and the residual is open (NOTE N8).",
+   "worker": "INVENTED: 1978: ordained priest who is also a vowed member of a religious order and preaches a weekend mission that his order does not require (not duties required by the order). 411(c)'s closing sentence keeps 411(c)(4) for 'service performed by a member of a religious order who has taken a vow of poverty', but Publication 517 (2025) taxes a vowed member's self-employment 'not required by, or done on behalf of, the order'; no case states the facts and the residual is open.",
    "facts": {
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "religious_order_service": "member of a religious order who has taken a vow of poverty, performing ministry not required by the order"
@@ -8513,7 +8513,7 @@
   },
   {
    "rule_id": "clergy_1982_2026",
-   "worker": "INVENTED: 2015: ordained priest who is also a vowed member of a religious order and preaches a weekend mission that his order does not require (not duties required by the order). 411(c)'s closing sentence keeps 411(c)(4) for 'service performed by a member of a religious order who has taken a vow of poverty', but Publication 517 (2025) taxes a vowed member's self-employment 'not required by, or done on behalf of, the order'; no case states the facts and the residual is open (NOTE N8).",
+   "worker": "INVENTED: 2015: ordained priest who is also a vowed member of a religious order and preaches a weekend mission that his order does not require (not duties required by the order). 411(c)'s closing sentence keeps 411(c)(4) for 'service performed by a member of a religious order who has taken a vow of poverty', but Publication 517 (2025) taxes a vowed member's self-employment 'not required by, or done on behalf of, the order'; no case states the facts and the residual is open.",
    "facts": {
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "religious_order_service": "member of a religious order who has taken a vow of poverty, performing ministry not required by the order"
@@ -8634,7 +8634,7 @@
   },
   {
    "rule_id": "se_religious_sect_1968_1985",
-   "worker": "INVENTED: 1985: sect member with an approved 1402(g) exemption who works for a church that elected under 3121(w); his church employee income comes before any 1402(g)(5) carve-out (NOTE N4: the effective date of Pub. L. 99-514 section 1882(a) is uncaptured).",
+   "worker": "INVENTED: 1985: sect member with an approved 1402(g) exemption who works for a church that elected under 3121(w); his church employee income comes before any 1402(g)(5) carve-out (no capture dates Pub. L. 99-514 section 1882(a)).",
    "facts": {
     "clergy_or_religious_exemption": "approved section 1402(g) religious-sect exemption, effective for the period",
     "church_employee_service": "employee of a church with a 3121(w) election in effect",
@@ -15354,7 +15354,7 @@
    "rule_id": "se_treaty_fishing_1968_2026",
    "worker": "INVENTED: 1975; a tribe member fishes directly under the tribe's treaty fishing right (secured before 1988-03-17); substantially all harvesting in the activity is by tribe members. Pub. L. 100-647 section 3044(a) reaches periods before enactment. The entity condition is vacuously true (no entity).",
    "facts": {
-    "tribal_fishing_rights_income": "income from a fishing rights-related activity, exempt under 7873(a)",
+    "tribal_fishing_rights_income": "income from a fishing rights-related activity of the tribe (7873(b)(1))",
     "tribal_membership": "a member of the tribe, directly or through a qualified Indian entity",
     "tribal_fishing_member_activity": "substantially all harvesting performed by tribe members",
     "tribal_fishing_qualified_entity": "when received through an entity, the entity meets 7873(b)(3)"
@@ -15366,7 +15366,7 @@
    "rule_id": "se_treaty_fishing_1968_2026",
    "worker": "INVENTED: 2000; a tribe member's share of fishing income derived through a tribal fishing cooperative that meets 7873(b)(3) (all equity held by tribe members, management by members).",
    "facts": {
-    "tribal_fishing_rights_income": "income from a fishing rights-related activity, exempt under 7873(a)",
+    "tribal_fishing_rights_income": "income from a fishing rights-related activity of the tribe (7873(b)(1))",
     "tribal_membership": "a member of the tribe, directly or through a qualified Indian entity",
     "tribal_fishing_member_activity": "substantially all harvesting performed by tribe members",
     "tribal_fishing_qualified_entity": [
@@ -16566,7 +16566,7 @@
   },
   {
    "rule_id": "nonprofit_1978_1983",
-   "worker": "INVENTED (review r6 M-1, just misses section_105b_departed_employee_request on nonprofit_organization): 1979: the same request by a departed employee of a 501(c)(4) civic league: the small-remuneration test decides.",
+   "worker": "INVENTED (review r6 M-1, just misses section_105b_departed_employee_request on nonprofit_organization; review r7 low 5 retells it): 1979: the same request by an employee who left in 1979 an organization that was a 501(c)(4) civic league through 1979, became an organization described in 501(c)(3) in 1980 and then filed Form SS-15, the form a 501(c)(3) organization used (RS 01901.540 C.6.b), in 1980, effective 1979-01-01, the first day of one of the 20 calendar quarters before the quarter of filing that C.3.b allows. His 1979 service was a civic league's, which former 410(a)(8)(B) never excluded, so the small-remuneration test decides.",
    "facts": {
     "historical_fica_treatment": "the employee (or a fiduciary acting for the employee or the estate, or a survivor) requested under Pub. L. 86-778 section 105(b), as amended by Pub. L. 89-97 section 316(c), that the remuneration be deemed remuneration for employment, on or after the date the organization filed its certificate; the organization paid the taxes on that remuneration on or before the due date of the tax return for the calendar quarter before the quarter in which it filed the certificate; and no credit or refund of those taxes (other than one that would be allowed if the service were employment) was obtained, or the amount was repaid before January 1, 1968 or, if later, the first day of the third year after the year in which the certificate was filed",
     "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
@@ -16581,12 +16581,12 @@
   },
   {
    "rule_id": "nonprofit_1978_1983",
-   "worker": "INVENTED (review r6 M-1, just misses section_105b_departed_employee_request on nonprofit_coverage_waiver): 1980: a departed employee of a charity whose certificate had been terminated before his service, with the section 105(b) request facts: no certificate is in effect for the service, so 410(a)(8)(B) excludes it.",
+   "worker": "INVENTED (review r6 M-1, just misses section_105b_departed_employee_request on nonprofit_coverage_waiver; review r7 low 5 retells it): 1980: a departed employee of a charity that filed its only certificate in 1981 Q2, effective with the first day of that quarter (RS 01901.540 C.3.b), with the section 105(b) request facts: his 1980 service, paid in 1980, falls before the certificate's effective date, so no certificate is in effect for it and 410(a)(8)(B) excludes it.",
    "facts": {
     "historical_fica_treatment": "the employee (or a fiduciary acting for the employee or the estate, or a survivor) requested under Pub. L. 86-778 section 105(b), as amended by Pub. L. 89-97 section 316(c), that the remuneration be deemed remuneration for employment, on or after the date the organization filed its certificate; the organization paid the taxes on that remuneration on or before the due date of the tax return for the calendar quarter before the quarter in which it filed the certificate; and no credit or refund of those taxes (other than one that would be allowed if the service were employment) was obtained, or the amount was repaid before January 1, 1968 or, if later, the first day of the third year after the year in which the certificate was filed",
     "nonprofit_coverage_waiver": [
      "no actual or deemed certificate in effect for this service: none filed or deemed filed; the service falls before the certificate's effective date (for a deemed certificate, before the first day of the first quarter for which the taxes were paid); a termination took effect before the service; or the only certificate covers another 3121(k)(1)(E) group",
-     "the charity's only certificate was terminated before the service"
+     "the charity's only certificate, filed in 1981 Q2, took effect on 1981-04-01, after the service"
     ],
     "nonprofit_employee_concurrence": "not employed by the organization on the date the certificate was filed, for service whose remuneration was paid before the first day of the calendar quarter in which the certificate was filed",
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded"
@@ -16633,12 +16633,12 @@
   },
   {
    "rule_id": "se_treaty_fishing_1968_2026",
-   "worker": "INVENTED (review r6 M-1, just misses section_7873_exempt_income on tribal_membership): 2010: a non-Indian partner in a tribe member's treaty-fishing operation: 7873(a) exempts income derived by a member, or by a qualified Indian entity, so his share is net earnings.",
+   "worker": "INVENTED (review r6 M-1, just misses section_7873_exempt_income on tribal_membership; review r7 low 5 retells it): 2010: a non-Indian fish buyer who, on his own account and through no entity, buys and resells fish that tribe members harvested in the exercise of the tribe's treaty fishing right; members perform substantially all the harvesting. Selling such fish is a fishing rights-related activity under 7873(b)(1), but 7873(a)(1) exempts only income a member derives, directly or through a qualified Indian entity, or a qualified Indian entity derives, so his income is net earnings.",
    "facts": {
     "tribal_fishing_member_activity": "substantially all harvesting performed by tribe members",
     "tribal_fishing_qualified_entity": "when received through an entity, the entity meets 7873(b)(3)",
-    "tribal_fishing_rights_income": "income from a fishing rights-related activity, exempt under 7873(a)",
-    "tribal_membership": "not a member of the tribe: a non-Indian partner in a member's fishing operation"
+    "tribal_fishing_rights_income": "income from a fishing rights-related activity of the tribe (7873(b)(1))",
+    "tribal_membership": "not a member of the tribe: a non-Indian who derives the income on his own account, through no entity"
    },
    "expected": "covered",
    "decides": "residual"
@@ -16843,7 +16843,7 @@
   },
   {
    "rule_id": "state_local_1991_2026",
-   "worker": "INVENTED (review r6 M-1, just misses qualified_system_member_without_agreement on government_level): the same facts for an employee of a private hospital: this family reaches only its level of government, so the residual sends the service to the other families.",
+   "worker": "INVENTED (review r6 M-1, just misses qualified_system_member_without_agreement on government_level; review r7 low 5 retells it): a county clerk who is a member of the county's qualified retirement system through that job and also works evenings for a private hospital: the hospital service is not in the employ of a State, a political subdivision or an instrumentality, so this family reaches only its level of government, and the residual sends that service to the other families.",
    "facts": {
     "government_level": "employee of a private hospital, not of a State, a political subdivision, an instrumentality or the United States",
     "public_retirement_system_participation": "member, when the service is performed, of a qualified retirement system (the IRS standards of 26 C.F.R. 31.3121(b)(7)-2, as POMS SL 50001.501 B cites them) that the State, political subdivision or instrumentality employing the individual maintains, alone or with other such entities (a statewide system included); membership goes entity by entity, not position by position (31.3121(b)(7)-2(c)(2)), so membership through one position with this employer generally counts for service in its other positions, and benefits from service for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and (e)(2)(v) allow",
@@ -16854,12 +16854,9 @@
   },
   {
    "rule_id": "clergy_1968_1972",
-   "worker": "INVENTED (review r6 M-7): 1970: an ordained minister with an approved 1402(e) exemption who works as a civil-service chaplain at a Veterans Administration hospital: POMS RS 01901.600 B.3.c treats the chaplaincy as work in the employ of the United States, not ministry, so the exemption does not reach it and the government-service families decide it.",
+   "worker": "INVENTED (review r6 M-7; review r7 low 5 drops the ministry text): 1970: an ordained minister with an approved 1402(e) exemption who works as a civil-service chaplain at a Veterans Administration hospital: POMS RS 01901.600 B.3.c treats the chaplaincy as work in the employ of the United States, not service in the exercise of the ministry, so it is not qualifying ministry, the exemption does not reach it and the government-service families decide it.",
    "facts": {
-    "ministerial_service": [
-     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
-     "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions"
-    ],
+    "ministerial_service": "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions",
     "clergy_or_religious_exemption": "effective 1402(e) exemption"
    },
    "expected": "covered",
@@ -16880,12 +16877,9 @@
   },
   {
    "rule_id": "clergy_1973_1981",
-   "worker": "INVENTED (review r6 M-7): 1978: an ordained minister with an approved 1402(e) exemption who works as a civil-service chaplain at a Veterans Administration hospital: POMS RS 01901.600 B.3.c treats the chaplaincy as work in the employ of the United States, not ministry, so the exemption does not reach it and the government-service families decide it.",
+   "worker": "INVENTED (review r6 M-7; review r7 low 5 drops the ministry text): 1978: an ordained minister with an approved 1402(e) exemption who works as a civil-service chaplain at a Veterans Administration hospital: POMS RS 01901.600 B.3.c treats the chaplaincy as work in the employ of the United States, not service in the exercise of the ministry, so it is not qualifying ministry, the exemption does not reach it and the government-service families decide it.",
    "facts": {
-    "ministerial_service": [
-     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
-     "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions"
-    ],
+    "ministerial_service": "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions",
     "clergy_or_religious_exemption": "effective 1402(e) exemption"
    },
    "expected": "covered",
@@ -16906,12 +16900,9 @@
   },
   {
    "rule_id": "clergy_1982_2026",
-   "worker": "INVENTED (review r6 M-7): 2015: an ordained minister with an approved 1402(e) exemption who works as a civil-service chaplain at a Veterans Administration hospital: POMS RS 01901.600 B.3.c treats the chaplaincy as work in the employ of the United States, not ministry, so the exemption does not reach it and the government-service families decide it.",
+   "worker": "INVENTED (review r6 M-7; review r7 low 5 drops the ministry text): 2015: an ordained minister with an approved 1402(e) exemption who works as a civil-service chaplain at a Veterans Administration hospital: POMS RS 01901.600 B.3.c treats the chaplaincy as work in the employ of the United States, not service in the exercise of the ministry, so it is not qualifying ministry, the exemption does not reach it and the government-service families decide it.",
    "facts": {
-    "ministerial_service": [
-     "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
-     "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions"
-    ],
+    "ministerial_service": "service as a chaplain in the employ of the United States (including the Armed Services), a wholly owned instrumentality of the United States, the District of Columbia, a State or local governmental entity, a foreign government, or any of their political subdivisions",
     "clergy_or_religious_exemption": "effective 1402(e) exemption"
    },
    "expected": "covered",
@@ -17034,7 +17025,7 @@
   },
   {
    "rule_id": "federal_1987_2026",
-   "worker": "INVENTED (review r6 M-10): 1990: a House staffer enrolled in CSRS who was on leave without pay on 1983-12-31 and made no 8332(k)(1) payments: under (G)'s closing words he was not subject to subchapter III that day, so (G)(i) covers his service.",
+   "worker": "INVENTED (review r6 M-10; review r7 low 5 re-dates it from 1990): 1987: a House staffer enrolled in CSRS who was on leave without pay on 1983-12-31 and made no 8332(k)(1) payments: under (G)'s closing words he was not subject to subchapter III that day, so (G)(i) covers his service.",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States",
     "federal_service": [
