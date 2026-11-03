@@ -7891,6 +7891,20 @@
         "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
         "location": "Effective Date of 1982 Amendment",
         "quote": "Amendment by section 269(b) of Pub. L. 97\u2013248 applicable to services performed after Dec. 31, 1982"
+      },
+      {
+        "capture": "ce1c_usc2024_26_3508.html",
+        "sha256": "f248abc5a35357f534c71d20cf055350af6143b6449e78a3e4206adcfb3aedc0",
+        "authority": "26 U.S.C. 3508 (2024 Code capture, text and notes)",
+        "location": "3508(b)(2)(A)(ii)-(iii)",
+        "quote": "(ii) is engaged in the trade or business of selling (or soliciting the sale of) consumer products in the home or otherwise than in a permanent retail establishment, or (iii) is engaged in the trade or business of the delivering or distribution of newspapers or shopping news (including any services directly related to such trade or business),"
+      },
+      {
+        "capture": "ce1c_usc2024_26_3508.html",
+        "sha256": "f248abc5a35357f534c71d20cf055350af6143b6449e78a3e4206adcfb3aedc0",
+        "authority": "26 U.S.C. 3508 (2024 Code capture, text and notes)",
+        "location": "Effective Date of 1996 Amendment",
+        "quote": "The amendments made by this section shall apply to services performed after December 31, 1995."
       }
     ],
     "trigger_facts": [
@@ -8085,6 +8099,9 @@
             ],
             "fixed_price_vendor_minor": [
               "newspaper_service_arrangement"
+            ],
+            "minor_vendor_direct_seller_after_1982_open": [
+              "newspaper_service_arrangement"
             ]
           }
         }
@@ -8127,30 +8144,56 @@
     "open_reason": null,
     "cases": [
       {
-        "case_id": "minor_direct_seller_after_1982_open",
+        "case_id": "minor_carrier_direct_seller_after_1982_open",
         "precedence": 1,
         "when": {
           "age": "under 18",
-          "direct_seller_contract": "a direct seller under 3508(b)(2)(A)(i) or (ii): engaged in the trade or business of selling (or soliciting the sale of) consumer products, newspapers or magazines included, otherwise than in a permanent retail establishment, with substantially all pay related to sales and a written contract providing the individual will not be treated as an employee for Federal tax purposes",
+          "employee_self_or_mixed": "employee",
+          "newspaper_service_arrangement": "delivery or distribution of newspapers or shopping news, not to a point for further delivery or distribution",
+          "direct_seller_contract": "selling (or soliciting the sale of) the goods the service involves, in the home or otherwise than in a permanent retail establishment, with substantially all pay for the service directly related to sales or other output rather than to the number of hours worked, under a written contract providing that the individual will not be treated as an employee with respect to the service for Federal tax purposes (3508(b)(2)(A)(ii)'s place of sale, (B) and (C); whether the goods are consumer products is not part of this fact)",
           "services_performed_date": "after 1982-12-31"
         },
         "consequence": "open",
-        "description": "410(q): \"Notwithstanding any other provision of this subchapter, the rules of section 3508 of the Internal Revenue Code of 1986 shall apply for purposes of this subchapter.\" It applies to services performed after 1982-12-31 (Pub. L. 97-248 section 269(b)). A direct seller under 3508(b)(2)(A)(i)-(ii) is not an employee, which would take a minor vendor out of 410(a)(14)'s employee exclusion; 3508(b)(2)(A)(iii) names newspaper delivery only from 1996 (review r6 M-11: the row had excluded such a minor). Ranked above the minor cases, whose conditions this worker may also meet.",
-        "open_reason": "MINOR_NEWSPAPER_DIRECT_SELLER_1983_1995_UNSETTLED: 410(q) applies 3508 to services after 1982 \"notwithstanding any other provision of this subchapter\", and 3508(b)(2)(A)(i)-(ii) reach sellers of consumer products outside a permanent retail establishment, while 3508(b)(2)(A)(iii) adds newspaper delivery only for services after 1995; no capture says whether a minor newspaper vendor under a direct-seller contract was a direct seller before 1996, so the case refuses.",
+        "description": "410(q): \"Notwithstanding any other provision of this subchapter, the rules of section 3508 of the Internal Revenue Code of 1986 shall apply for purposes of this subchapter.\" It applies to services performed after 1982-12-31 (Pub. L. 97-248 section 269(b)). The case reaches an employee under 18 in 410(a)(14)(A)'s delivery or distribution who meets 3508(b)(2)'s place-of-sale, pay and written-contract conditions; whether newspapers or magazines are consumer products is the open question, in the readings. Review r7 M-7: the case had no newspaper limit, and its condition said newspapers and magazines were consumer products, the answer its first reading denies. A minor who is not an employee is outside the row's employee exclusions on both readings, and the residual sends a seller of other goods to the other families, so the case reaches neither. Ranked above under_18_delivery, whose conditions this worker also meets.",
+        "open_reason": "MINOR_NEWSPAPER_CARRIER_DIRECT_SELLER_1983_1995_UNSETTLED: 410(q) applies 3508 to services after 1982 \"notwithstanding any other provision of this subchapter\". 3508(b)(2)(A)(i)-(ii) reach a person \"engaged in the trade or business of selling (or soliciting the sale of) consumer products\", and clause (iii), \"the delivering or distribution of newspapers or shopping news\", applies only to services performed after December 31, 1995 (Pub. L. 104-188 section 1118(b)). No capture says whether newspapers or magazines were consumer products under clauses (i)-(ii) before 1996, so the case refuses.",
         "open_alternatives": [
           {
             "name": "minor_exclusion_governs",
-            "description": "The vendor is not a direct seller under clauses (i)-(ii), and 410(a)(14)'s exclusion of a minor's newspaper service applies: noncovered."
+            "description": "Newspapers and magazines are not consumer products under 3508(b)(2)(A)(i)-(ii) before 1996, so the minor is not a direct seller, and 410(a)(14)'s exclusion of the minor's newspaper service applies: noncovered."
           },
           {
             "name": "direct_seller_rules_apply",
-            "description": "410(q) makes the vendor a direct seller and not an employee, so the earnings are self-employment income for the self-employment families to decide."
+            "description": "Newspapers and magazines are consumer products under 3508(b)(2)(A)(i)-(ii), so 410(q) makes the minor a direct seller and not an employee, and the earnings are self-employment income for the self-employment families to decide."
+          }
+        ]
+      },
+      {
+        "case_id": "minor_vendor_direct_seller_after_1982_open",
+        "precedence": 2,
+        "when": {
+          "age": "under 18",
+          "employee_self_or_mixed": "employee",
+          "newspaper_service_arrangement": "sale of newspapers or magazines to ultimate consumers at a fixed price, the pay being based on retention of the excess of that price over the amount charged to the vendor, whether or not the vendor is guaranteed a minimum amount of pay or is entitled to be credited with unsold newspapers or magazines turned back",
+          "direct_seller_contract": "selling (or soliciting the sale of) the goods the service involves, in the home or otherwise than in a permanent retail establishment, with substantially all pay for the service directly related to sales or other output rather than to the number of hours worked, under a written contract providing that the individual will not be treated as an employee with respect to the service for Federal tax purposes (3508(b)(2)(A)(ii)'s place of sale, (B) and (C); whether the goods are consumer products is not part of this fact)",
+          "services_performed_date": "after 1982-12-31"
+        },
+        "consequence": "open",
+        "description": "410(q): \"Notwithstanding any other provision of this subchapter, the rules of section 3508 of the Internal Revenue Code of 1986 shall apply for purposes of this subchapter.\" It applies to services performed after 1982-12-31 (Pub. L. 97-248 section 269(b)). The case reaches an employee under 18 in 410(a)(14)(B)'s fixed-price sale who meets 3508(b)(2)'s place-of-sale, pay and written-contract conditions; whether newspapers or magazines are consumer products is the open question, in the readings. Review r7 M-7: the case had no newspaper limit, and its condition said newspapers and magazines were consumer products, the answer its first reading denies. A minor who is not an employee is outside the row's employee exclusions on both readings, and the residual sends a seller of other goods to the other families, so the case reaches neither. Ranked above fixed_price_vendor_minor, whose conditions this worker also meets.",
+        "open_reason": "MINOR_NEWSPAPER_VENDOR_DIRECT_SELLER_1983_1995_UNSETTLED: 410(q) applies 3508 to services after 1982 \"notwithstanding any other provision of this subchapter\". 3508(b)(2)(A)(i)-(ii) reach a person \"engaged in the trade or business of selling (or soliciting the sale of) consumer products\", and clause (iii), \"the delivering or distribution of newspapers or shopping news\", applies only to services performed after December 31, 1995 (Pub. L. 104-188 section 1118(b)). No capture says whether newspapers or magazines were consumer products under clauses (i)-(ii) before 1996, so the case refuses.",
+        "open_alternatives": [
+          {
+            "name": "minor_exclusion_governs",
+            "description": "Newspapers and magazines are not consumer products under 3508(b)(2)(A)(i)-(ii) before 1996, so the minor is not a direct seller, and 410(a)(14)'s exclusion of the minor's newspaper service applies: noncovered."
+          },
+          {
+            "name": "direct_seller_rules_apply",
+            "description": "Newspapers and magazines are consumer products under 3508(b)(2)(A)(i)-(ii), so 410(q) makes the minor a direct seller and not an employee, and the earnings are self-employment income for the self-employment families to decide."
           }
         ]
       },
       {
         "case_id": "under_18_delivery",
-        "precedence": 2,
+        "precedence": 3,
         "when": {
           "age": "under 18",
           "employee_self_or_mixed": "employee",
@@ -8161,7 +8204,7 @@
       },
       {
         "case_id": "fixed_price_vendor_adult",
-        "precedence": 3,
+        "precedence": 4,
         "when": {
           "age": "18 or older",
           "employee_self_or_mixed": "employee",
@@ -8172,7 +8215,7 @@
       },
       {
         "case_id": "fixed_price_vendor_minor",
-        "precedence": 4,
+        "precedence": 5,
         "when": {
           "age": "under 18",
           "employee_self_or_mixed": "employee",

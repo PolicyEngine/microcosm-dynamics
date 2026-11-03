@@ -1468,8 +1468,9 @@ def test_open_readings_are_named_once_and_described_in_prose():
     # agreement exemption from 26 U.S.C. 1401(c) and 42 U.S.C. 433 and
     # closes the three pre-1983 agreement cases (88), and closes the
     # 1973-1987 church annuity contributions on 411(a)'s start from gross
-    # income (86).
-    assert described == 86
+    # income (86), and splits the minor newspaper direct-seller case by
+    # 410(a)(14) arrangement (review r7 M-7; 88).
+    assert described == 88
 
 
 READING_TEXT = {
@@ -5432,7 +5433,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 362
+    assert sum(len(row["cases"]) for row in rows) == 363
     deferred = [
         w for w in INVENTED_SWEEP_WORKERS if w["expected"] == "deferred"
     ]
