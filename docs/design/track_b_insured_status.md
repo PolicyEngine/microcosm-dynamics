@@ -2945,6 +2945,10 @@ refusal, the log found ten of `test_status_stress_refuses_a_start_no_filling_sup
 oracle shows no filling with both the earliest start and the best status or date,
 and it pins the moving start's detail.
 
+A cloud session then ran all 62 at `f37f7f79`, through every insured status
+module. All 62 failed a named test, with no restricted open
+(`round_21_mutations`, PR #562 comment 6594394873).
+
 These tests execute the invariants this round adds:
 
 - a computed status, date or result on a listed prior holds on each basis some
