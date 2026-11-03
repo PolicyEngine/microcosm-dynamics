@@ -227,7 +227,10 @@ def test_fra_date_and_quarter_match_independent_act_calendar(year, month, day):
     )
 
 
-def test_prior_period_is_capped_at_fra_for_status_and_requirement_helper():
+def test_prior_period_ends_by_fra_for_status_and_requirement_helper():
+    # She attains FRA in January 2027, so 404.321(c)(1) ends a period by
+    # 2026-12-31. A later declared end is an input error (round 23; this
+    # round capped it), and the period that ends there sets both results.
     birth = date(1960, 1, 2)
     common = dict(
         birth_date=birth,
@@ -238,21 +241,27 @@ def test_prior_period_is_capped_at_fra_for_status_and_requirement_helper():
         sspa211_provenance=OBSERVED,
         rib_entitlement_month=date(2028, 10, 1),
     )
-    overlong = i.Person(
+    with pytest.raises(InvalidFamilyInput, match="statutory FRA end"):
+        i.Person(
+            **common,
+            prior_disability_periods=(
+                i.DisabilityPeriod(date(2026, 1, 15), date(2028, 9, 30)),
+            ),
+        )
+    person = i.Person(
         **common,
         prior_disability_periods=(
-            i.DisabilityPeriod(date(2026, 1, 15), date(2028, 9, 30)),
+            i.DisabilityPeriod(date(2026, 1, 15), date(2026, 12, 31)),
         ),
     )
-    assert overlong.prior_disability_periods[0].end == date(2026, 12, 31)
     month = date(2028, 10, 1)
-    years = history(overlong, month, {y: 4 for y in range(2016, 2026)})
+    years = history(person, month, {y: 4 for y in range(2016, 2026)})
     result = i.insured_status(
-        overlong, years, month, test=i.InsuredTest.CURRENTLY
+        person, years, month, test=i.InsuredTest.CURRENTLY
     )
     assert not result.currently.insured
     assert result.currently.qc_count_lower == 5
-    assert i.fully_insured_requirement(overlong, month) == 40
+    assert i.fully_insured_requirement(person, month) == 40
 
 
 @settings(max_examples=12, deadline=None)
@@ -326,17 +335,24 @@ def test_every_supplied_prior_period_has_the_statutory_fra_cap(
     birth = date(birth_year, birth_month, birth_day)
     fra = _act_fra(birth)
     cap = fra.replace(day=1) - timedelta(days=1)
+    start = cap.replace(year=cap.year - 2, day=1)
     person = i.Person(
         birth,
-        prior_disability_periods=(
-            i.DisabilityPeriod(
-                cap.replace(year=cap.year - 2, day=1),
-                cap.replace(year=cap.year + extra_years, day=1),
-            ),
-        ),
+        prior_disability_periods=(i.DisabilityPeriod(start, cap),),
         prior_disability_periods_provenance=OBSERVED,
     )
     assert person.prior_disability_periods[0].end == cap
+    # A declared end past the cap is an input error (round 23), from the
+    # first day of the FRA month on.
+    for end in (
+        cap + timedelta(days=1),
+        cap.replace(year=cap.year + extra_years, day=1),
+    ):
+        with pytest.raises(InvalidFamilyInput, match="statutory FRA end"):
+            replace(
+                person,
+                prior_disability_periods=(i.DisabilityPeriod(start, end),),
+            )
     with pytest.raises(InvalidFamilyInput):
         replace(
             person,

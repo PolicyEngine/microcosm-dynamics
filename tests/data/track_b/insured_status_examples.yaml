@@ -201,9 +201,9 @@ examples:
     endpoint, giving 20/10. RS 00301.140 assigns a post-1977 QC to any quarter
     of its year if insured status would be met, and both placements insure, so
     the printed figures are placement-dependent intermediate counts, not an
-    erratum. The
-    first onset's 14 quarters and 7 QCs reproduce; the first record holds 9 QCs
-    there, of which the example says Joseph requires and has 7.
+    erratum. The first onset's 14 quarters and 7 QCs reproduce; the first
+    record holds 9 QCs there, of which the example says Joseph requires and
+    has 7.
   implemented:
     elapsed_quarters: 20
     required_qcs: 10
@@ -590,13 +590,14 @@ examples:
     allocated_earnings_difference: '100'
     qcs_both_readings: 3
   coverage: source_ambiguity
-  note: The capture labels10900 as SEI but prints3600 for each of3 quarters. Literal
-    already-covered SEI gives10900/3. An unstated10800 ceiling for TYbeginning1973,
-    from RS00301.345 B.2.g and its example C.1, explains3600 each if10900 meant net
-    earnings before the ceiling. Both readings are executed; neither an arithmetic
-    erratum nor the omitted ceiling is established by the capture. Both yield3QCs
-    and differ by100 in allocated earnings. Private helper consumes already-covered
-    SEI; public short taxable years remain refused.
+  note: The capture labels $10,900 as SEI but prints $3,600 for each of three
+    quarters. Literal already-covered SEI gives $10,900/3. An unstated $10,800
+    ceiling for the taxable year beginning in 1973, from RS 00301.345 B.2.g and
+    its example C.1, explains $3,600 each if $10,900 meant net earnings before
+    the ceiling. Both readings are executed; neither an arithmetic erratum nor
+    the omitted ceiling is established by the capture. Both yield three QCs and
+    differ by $100 in allocated earnings. Private helper consumes
+    already-covered SEI; public short taxable years remain refused.
   test_node: tests/test_track_b_insured_status_qc.py::test_rs00301_340_short_year_source_erratum_is_not_imitated
   execution_scope: allocation_helper
   public_refusal_reason: short_taxable_year_unsupported

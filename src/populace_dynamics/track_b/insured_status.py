@@ -493,8 +493,10 @@ class Person:
             self.current_disability_period_end is not None
             and self.current_disability_period_end > fra_end
         ):
-            # 404.321(b) ends a period by the month before FRA, so no
-            # completion has a later end.
+            # 404.321(c)(1) ends a period by the month before FRA, and
+            # 404.321(b), for a disability that ended before December 1980,
+            # by the month before 65, which is FRA for anyone 65 by then. So
+            # no completion has a later end.
             raise InvalidFamilyInput(
                 "Current period ends after its statutory FRA end"
             )
@@ -525,17 +527,16 @@ class Person:
                 and through > self.current_disability_period_end
             ) or (self.death_date is not None and through > self.death_date):
                 raise InvalidFamilyInput("Period continuity follows its end")
-        periods = sorted(
-            (
-                replace(p, end=min(p.end, fra_end)) if p.start < fra else p
-                for p in self.prior_disability_periods
-            ),
-            key=lambda p: p.start,
-        )
+        periods = sorted(self.prior_disability_periods, key=lambda p: p.start)
         for i, period in enumerate(periods):
             if period.start >= fra or period.start > fra_end:
                 raise InvalidFamilyInput(
                     "Disability period begins at or after FRA"
+                )
+            if period.end > fra_end:
+                # The same 404.321 end binds a listed prior.
+                raise InvalidFamilyInput(
+                    "Prior period ends after its statutory FRA end"
                 )
             if period.start < self.birth_date or (
                 self.death_date is not None and period.end > self.death_date

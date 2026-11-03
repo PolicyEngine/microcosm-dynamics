@@ -875,8 +875,18 @@ def test_classification_oracle_historical_boundary_lattice(flags):
         # absent/UNKNOWN side of the declaration boundary, not a malformed
         # Person constructor on the established side.
         established = onset < _fra(date(birth_year, 2, 2)).replace(day=1)
+        # 404.321(b) ends the 1890 cohort's prior by January 1955, the month
+        # before it attains 65, and a later declared end is an input error,
+        # so the lattice declares that end.
+        fra_end = _fra(date(birth_year, 2, 2)).replace(day=1) - timedelta(
+            days=1
+        )
         periods = (
-            (rule.DisabilityPeriod(date(1952, 7, 1), date(*prior_end)),)
+            (
+                rule.DisabilityPeriod(
+                    date(1952, 7, 1), min(date(*prior_end), fra_end)
+                ),
+            )
             if prior_end is not None
             else ()
         )

@@ -388,8 +388,8 @@ inventing a future end. Continuity within the query quarter can leave its
 endpoint ambiguous; continuity into a later quarter proves that the query
 quarter is interior.
 
-Established starts at or after FRA are invalid even if prior history is UNKNOWN, and every supplied prior period is capped at
-the month before FRA. The standalone requirement helper shares these
+Established starts at or after FRA are invalid even if prior history is UNKNOWN, and every supplied prior period must end by
+the month before FRA, so a later declared end is an input error (round 23). The standalone requirement helper shares these
 limits. A start in the FRA attainment month is also invalid because its
 mandatory end would precede its start, including a first-day birthday
 whose FRA is attained at the end of the previous month. The FRA date and
@@ -843,7 +843,7 @@ to a statutory sentence that does not state it.
 | --- | --- |
 | I1. A period cannot end before its onset or derived insured start; a supplied administrative end requires a declared established current period and closes a calendar month. | A216(i)(2)(C) says a period begins on the disability day or "the first day of the first quarter thereafter"; (D) says it ends "with the close" of the earlier listed month. C321(a), (c) agree. Every specialist route must still have a nonempty chronological period; no ordinary witness alone decides whether a specialist supplied the insured start. The end/established association is also a declaration contract. |
 | I2. Birth, disability onset, death, prior periods, entitlement, and SSN assignment must have consistent lifetime ordering. A query or coverage end cannot precede birth; medical onset or supplied entitlement cannot follow the query month; onset cannot follow death. A DIB entitlement month must precede the FRA month, and an RIB entitlement month cannot precede the month of attaining 62 (round 23). | B404.102 defines "You or your" as "the worker whose insured status is being considered"; A216(i)(2)(A) requires a period "during which an individual was under a disability". Dates refer to that same living worker. This lifetime and observation-calendar contract is independent of the insured route. It permits onset later within the query month and the quarter of death rather than imposing a day-of-query restriction. The entitlement bounds are an interface premise: the benefit calendar comes from Act 223(a)(1) and 202(a)(2), which are not captured, and an event outside it contradicts the declaration rather than posing an insured-status question. |
-| I3. An established period must start before its FRA-ending boundary, including no start in the FRA month. A declared current-period end after the preceding month end is an input error, as a continuity date after it already was (round 23); supplied prior periods are capped at that month end. | A216(i)(2)(B): "no such period shall begin ... after such individual attains retirement age"; (D)(i) ends at "the month preceding the month" of FRA. C321(a), (c)(1) say the same. A start after the mandatory month-end is impossible under both clauses, including first-day birthdays. The cap supplies no evidence against an earlier UNKNOWN end. No completion ends the current period later, so a later declared end is a contradiction, not a value to cap. |
+| I3. An established period must start before its FRA-ending boundary, including no start in the FRA month. A declared end of the current period or a supplied prior after the preceding month end is an input error, as a continuity date after it already was (round 23). | A216(i)(2)(B): "no such period shall begin ... after such individual attains retirement age"; (D)(i) ends at "the month preceding the month" of FRA. C321(a), (c)(1) say the same. A start after the mandatory month-end is impossible under both clauses, including first-day birthdays. The cap supplies no evidence against an earlier UNKNOWN end. No completion ends a period later, so a later declared end is a contradiction, not a value to cap. |
 | I4. Supplied prior periods precede the current onset and query, share no day with each other, and stay within the lifetime. A period may begin in the quarter the one before ended (round 23). | B404.130(f) refers to "a prior period of disability established for you". C321(a) says "Your period of disability begins on the day your disability begins if you are insured for disability on that day", and C321(b)–(c) end a period on a month's last day, so a new period can begin in the quarter the last one ended; RS .140 example 7 is that case. The shared quarter is an endpoint quarter of both periods, which B404.146(d)(1) and B404.130(f) count where it is a QC. Days, not quarters, are the declared history representation; specialist credits cannot change what "prior" means. UNKNOWN history is not treated as supplied empty history. |
 | I5. A supplied `special_insured` prior period begins before the age-31 attainment quarter. | B404.130(d)(1): a prior period "began before age 31" and the worker "were only insured under paragraph (c)"; (c)(1) requires age 31 not yet attained. A216(i)(3)(B)(iii) expressly uses "before the quarter" of age 31. The flag declares this particular adjudicated young-worker route, not every possible special credit regime. |
 | I6. An alien worker's actual pre2004 SSN assignment conflicts with declared SSPA applicability; birth on/after January 1, 2004 conflicts with declared exemption. Both never-assigned and an assigned SSN, or assignment before birth, remain invalid. A worker born before 2004 may pair a post2003 assignment or never-assigned status with an adjudicated exemption. | RS .102 B.1 says an alien assigned an SSN before 2004 "is exempt", including a nonwork SSN. B.3.b says, "If an alien worker could have legitimately been assigned an SSN before 1/1/2004, the worker is exempt from the requirements of section 211 of the SSPA." Its wrong-number SS-5 scenario issued another person's number "instead of assigning the alien worker their own SSN". Thus observed or convention-filled exemption overrides either later-assignment or never-assigned presumptions when legitimate pre2004 assignment was possible. Birth on/after January 1, 2004 rules out that exception independently of the assignment record. B.4.b's worker without an SSN "is nevertheless considered to meet the work SSN requirement" when work-authorized; meeting that requirement alone supplies no exemption. |
@@ -3228,8 +3228,11 @@ These tests execute the invariants this round adds:
 Verification class: statutory conformance on invented declarations only. This
 correction admits no population, behavioral, payment, or forecast claim. An
 independent review of `7b5b126a` reported seven mediums, 17 lows and six nits
-(PR #562 comment 6596920658). The rows and passages above now state the rule as
-it stands, and this section records what changed and why.
+(PR #562 comment 6596920658). A pre-screen of `8522452c` then found that a
+listed prior's end past the statutory end still capped silently, that two of
+this round's branches had no test that failed when they broke, and two text
+slips. The rows and passages above now state the rule as it stands, and this
+section records what changed and why.
 
 ### A current period begun on 404.130(c) alone
 
@@ -3262,13 +3265,40 @@ in that quarter, the function returns None, and with listed priors it stays
 open whenever some placement meets 404.130(b). `_settle_current_basis` then
 computes the date on both bases and refuses by name where they differ, with
 ASSIGNMENT_COMPLEXITY where placement decides and UNKNOWN_EARNINGS where an
-UNKNOWN year does. With one 1997 QC and four in each of 1998 to 2000 added,
-404.130(b) finds 19 of 40 at 2003Q1. A 1993 QC counts there only in 1993Q2 to
-Q4, and no later window counts it, so its placement decides between the two
-dates, as an UNKNOWN 1997 does
+UNKNOWN year does. It reads the flag at the lower completions' start, which is
+also the upper completions' start, since the rule refuses by UNKNOWN_EARNINGS
+wherever the two differ. With one 1997 QC and four in each of 1998 to 2000
+added, 404.130(b) finds 19 of 40 at 2003Q1. A 1993 QC counts there only in
+1993Q2 to Q4, and no later window counts it, so its placement decides between
+the two dates, as an UNKNOWN 1997 does
 (`test_a_placement_or_year_that_decides_the_basis_refuses`). The flag adds
 404.130(d) only for quarters after the period, so only the date last insured
 can move, and FULLY computes on either basis.
+
+An open flag never flags the period itself: `_with_current_period` appends it
+unflagged, and `_settle_current_basis` checks that the date stands on both
+bases. Listed priors leave the flag open even where every placement meets
+404.130(b). A woman born 1976-12-08 has a listed prior from 2002-03-19 to
+2006-01-31 and an onset on 2007-07-05, in 2007Q3, the quarter before she
+attains 31. Counting the prior's quarters, as 404.130(f) allows where that
+helps, the 40 quarters from 1997Q4 hold 24 QCs, or 25 when her one 2007 QC
+comes before Q4, and leaving them out still leaves at least 22. So 404.130(b)
+began the period on every placement, and 20 of 40 last holds at 2012Q2
+(`test_an_open_flag_keeps_paragraph_b_where_every_placement_meets_it`). A
+mutation that flags the period whenever the flag stays open brings in
+404.130(d) more than 40 quarters after she attained 21, and the record then
+refuses by the long-period register entry's name.
+
+404.130(c)(1) asks that its holder "have not become (or would not become) age
+31" in the quarter, so a period that begins in the quarter its holder attains
+31 never rests on 404.130(c), and `_current_period_special` leaves it
+unflagged. A woman born 1975-02-15 attains 31 on 2006-02-14, in 2006Q1, the
+quarter of her January 20 onset. With a flagged prior from 1997Q2 through
+1999, she is disabled again at 31 (404.130(d)(1)), so 404.130(d) counts the 40
+quarters from 1996Q2 less the ten inside the prior after its first. Her 17 QCs
+meet half of 30, and the period begins on the onset day on the
+subsequent-special rule
+(`test_a_period_begun_in_the_age_31_quarter_rests_on_paragraph_d`).
 
 One more QC can bring the date earlier, as the law reads. With 19 QCs before
 the onset, 404.130(b) fails at 2003Q1, the period rests on 404.130(c) alone,
@@ -3384,6 +3414,14 @@ reads 404.115's table from the captured regulation and checks column II for a
 living man and woman of every cohort at 62, 63, 64 and 66, and the death
 columns of the 33 rows from 1893 through 1925.
 
+The rule reads him as living unless he died by the day it reads his status, the
+query month's first day. If he dies later in December 1971, he is living on
+December 1, so the count runs through 1972 and he needs 22. If he dies on
+December 1, 404.110(b)(3) counts the years before 1971, the year he died, and
+his 20 QCs make him fully insured
+(`test_a_death_after_the_query_keeps_the_living_count`). No captured source
+reads the count for the whole month of a death.
+
 ### A flagged prior needs one placement for both halves
 
 A flag records a prior "for which you were only insured under paragraph (c)",
@@ -3446,14 +3484,25 @@ prior the flag can carry shows nothing missing (`_flag_carries_prior`,
 
 These lows and nits change code, each with a test:
 
-- low 12: a declared period end after the statutory FRA end raises
-  `InvalidFamilyInput`, as a continuity date after it already did, where
-  `7b5b126a` capped it silently
-  (`test_declared_dates_past_the_statutory_end_are_input_errors`);
+- low 12: a declared end of the current period or a listed prior after the
+  statutory FRA end raises `InvalidFamilyInput`, as a continuity date after it
+  already did, where `7b5b126a` capped both silently
+  (`test_declared_dates_past_the_statutory_end_are_input_errors`). Round 3
+  capped a listed prior's end, so its tests now check that the latest lawful
+  end constructs and a later one raises
+  (`test_prior_period_ends_by_fra_for_status_and_requirement_helper`,
+  `test_every_supplied_prior_period_has_the_statutory_fra_cap`), and
+  `test_classification_oracle_historical_boundary_lattice` ends the 1890
+  cohort's prior by January 1955, the month before it attains 65
+  (404.321(b));
 - low 16: a DIB entitlement month at or after FRA, and an RIB month before the
   one in which the holder attains 62, raise `InvalidFamilyInput` (Act
   223(a)(1), 202(a)(2)), where `7b5b126a` let them decide CURRENTLY
-  (`test_entitlement_months_must_be_possible`);
+  (`test_entitlement_months_must_be_possible`). Whether an RIB can begin in
+  the month a holder born on the first attains 62, or must wait for a month
+  throughout which the holder is 62, rests on Act 202(a)'s text, which no
+  captured source holds, so the check stays at the attainment month until a
+  follow-up captures it;
 - low 19: the pre-May-1983 refusal for a flagged prior fires only where the
   holder's age-31 quarter begins before May 1983, since 404.130(c) decided an
   onset before 31 under the earlier law too
@@ -3481,13 +3530,17 @@ entries read as placement-dependent intermediate counts (low 18); the
 long-period register entry adds the third parse (low 22); the fiscal-year
 helper names the 1971 to 1972 gap (nit 26); the examples cite RS 00301.345
 B.2.g and log Mary Brown's count (nit 27); and the note corrects the round 21
-and 22 slips the review found (nit 28).
+and 22 slips the review found (nit 28). The pre-screen's two slips change text
+too. The current-period comment and the low 12 test now cite 404.321(c)(1) for
+the FRA end, where they cited 404.321(b), which governs a disability that ended
+before December 1980. The RS 00301.340 note in the examples restores the dollar
+amounts it had lost, and the Joseph note no longer breaks mid-sentence.
 `test_the_note_cites_only_tests_that_exist` checks that every test this note
 cites exists and that it cites no scratch file, and the PR body carries the
-ledger path and current counts (low 20, nit 30). Blind roles run these
-modules, so the check lists only the tests folder and opens only this note and
-the insured status modules; at `8522452c` it searched every folder under
-`tests/` and read each module it found.
+ledger path and current counts (low 20, nit 30). Blind roles run these modules,
+so the check lists only the tests folder and opens only this note and the
+insured status modules; at `8522452c` it searched every folder under `tests/`
+and read each module it found.
 `test_the_note_check_reads_only_the_note_and_insured_modules` checks each Path
 listing and open before it runs.
 
@@ -3508,6 +3561,7 @@ reading this round corrects:
 | round 13 | test_disability_witness_uses_the_legal_annual_start_filling | `test_disability_witness_counts_the_quarter_a_prior_ended` |
 | round 13 | test_post1955_clear_start_cannot_replace_overlapped_alternate | `test_every_test_refuses_a_shared_quarter_alternate_by_name` |
 | round 13 | test_review_alternate_start_must_clear_same_prior_overlap | `test_an_alternate_start_can_share_the_quarter_a_prior_ended` |
+| round 3 periods | test_prior_period_is_capped_at_fra_for_status_and_requirement_helper | `test_prior_period_ends_by_fra_for_status_and_requirement_helper` |
 | round 4 routes | test_possible_lower_earnings_filling_prevents_upper_overlap_input_error | `test_every_onset_year_filling_starts_a_valid_period` |
 | round 4 routes | test_unknown_earnings_can_avoid_derived_prior_quarter_overlap | `test_unknown_onset_year_earnings_decide_the_current_start` |
 | round 6 ordering | test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle | `test_deferred_quarter_fillings_survive_a_shared_onset_quarter` |
@@ -3555,8 +3609,8 @@ and retires I13 and B15.
 ### Mutations
 
 The list of mutations (`round_23_mutations` in
-`track_b_insured_status_mutations.json`) takes round 22's 70 and adds 29 of
-this round's own, for 99. Round 22's anchors still hold for 53 of the 70. The
+`track_b_insured_status_mutations.json`) takes round 22's 70 and adds 37 of
+this round's own, for 107. Round 22's anchors still hold for 53 of the 70. The
 other 17 touched code round 23 rewrote, and each keeps its intent at the code
 that now does that job: two at the binding check, which now also asks for a
 basis; five in `_keeps_priors` and nine in `_prior_basis`, which now pass
@@ -3570,21 +3624,30 @@ rule only where more than 4,096 completions stand open: it refuses on their
 number instead of the flag, and
 `test_a_flag_every_completion_contradicts_refuses_by_that_name` kills it.
 
-Round 23's own 29 undo one change each. `m1_flag`, `m1_open_basis` and
+Round 23's own 37 undo one change each. `m1_flag`, `m1_open_basis` and
 `m1_settle` drop the current period's flag, close an open basis, or skip the
-basis check. `m2_listed` and `m2_current` bar a shared quarter again. `m3_exit`
-and `m13_birth` restore the exit-quarter and birth-quarter bars. `m4_rank`
-drops the earlier-quarter rank, `m5_earliest` the onset-quarter bound under
-UNKNOWN priors, and `basis_split_unreported` and `basis_split_always` misreport
-the basis split. `m6_men` ends a living man's count at the query. `m7_flagfits`
-drops the one-placement check, and `flag_middle` searches only the bounds.
+basis check, and `m8_age31` lets a period that begins in the age-31 quarter
+rest on 404.130(c). `open_flag_as_special` flags the period whenever its flag
+stays open, and `settle_accepts_open_flag` returns from the basis check on an
+open flag without comparing the two dates. `m2_listed` and `m2_current` bar a shared quarter again.
+`m3_exit` and `m13_birth` restore the exit-quarter and birth-quarter bars.
+`m4_rank` drops the earlier-quarter rank, `m5_earliest` the onset-quarter bound
+under UNKNOWN priors, and `no_earliest_widening` the step in
+`_status_decision` that widens an insured status's upper qualifying quarter to
+that bound. `basis_split_unreported` and `basis_split_always` misreport the
+basis split. `m6_men` ends a living man's count at the query, and
+`m4_living` reads a man who died by the query as living. `m7_flagfits` drops
+the one-placement check, `flag_fits_always` makes that check pass wherever
+404.130(b) can hold, and `flag_middle` searches only the bounds.
 `precedence_possible` and `precedence_unknown` let the input error or the
 UNKNOWN-earnings refusal come first. `pre1956_scan` scans past the quarters the
 prior covers, and `pre1956_none` refuses the B.1 prior. `low21` lets past
-blindness begin a prior before 1973, and `nit29` restores the general detail.
-`low12`, `low16_dib`, `low16_rib`, `low19`, `low23`, `low24` and `nit25` undo
-each low's check. `first_onset_short` and `first_onset_odd` move 404.130(c)'s
-12-quarter floor or round its half up. Each of the 29 fails round 23's module.
+blindness begin a prior before 1973, `blind_basis_1972` lets it begin one in
+1972, and `nit29` restores the general detail.
+`low12`, `low12_prior`, `low16_dib`, `low16_rib`, `low19`, `low23`, `low24` and
+`nit25` undo each low's check. `first_onset_short` and `first_onset_odd` move
+404.130(c)'s 12-quarter floor or round its half up. Each of the 37 fails round
+23's module.
 
 Six local mutations of the note check each fail its read guard before the check
 opens a file outside this note and the insured status modules: a recursive
@@ -3592,15 +3655,47 @@ opens a file outside this note and the insured status modules: a recursive
 `iterdir` over every module in `tests/`. The list holds mutations of the rule's
 source only, so it leaves these six out.
 
-Against `7b5b126a`, 42 of round 23's 67 cases fail. The 25 that pass hold
+The pre-screen of `8522452c` tried twelve mutations of its own. Seven now
+stand on the list: `m4_living` and `m8_age31`, which break the two branches it
+found untested, and `open_flag_as_special`, `settle_accepts_open_flag`,
+`blind_basis_1972`, `no_earliest_widening` and `flag_fits_always`. Two repeat
+`m2_listed` and `m4_rank`. One moves the QC module's period-start bound, and
+`test_disability_exclusion_never_adds_qc` and
+`test_death_future_and_disability_endpoint_exclusions` fail on it. Two survive
+every insured status module, the stress module included, and the round adds no
+test for either:
+
+- `special_ignores_blindness` lets a blind holder's current period carry the
+  flag. 404.130(e) asks a blind holder only for fully insured status, so the
+  DISABILITY witness takes that route alone (`blindness_fully_only`). Across
+  1,500 generated blind records, 1,459 with a listed prior and 714 computing,
+  it changes no answer.
+- `first_start_flag_true_only` reads an open flag as closed in the first-start
+  search. Across 6,000 generated records it turns 32 refusals into results and
+  changes no result, and across 5,000 records without priors it changes
+  nothing. All 32 have listed priors, and with listed priors
+  `_current_period_special` leaves the flag open wherever some placement meets
+  404.130(b). The stress oracle judges ten of them, the records without an
+  exit month whose placements it can enumerate (at most 2,304 each), and for
+  each its lawful fillings give the mutation's result on both readings of the
+  long-period cap. It can't judge the other 22: 19 end with an exit month, which it doesn't
+  model, and three hold 331,776, 14,155,776 and 764,411,904 placements. Each
+  difference found turns a refusal into a result, and the stress oracle finds
+  every refusal it judges needless, so the round pins none in a test. Closing
+  the listed-prior flag where every placement meets 404.130(b) waits for a
+  later round.
+
+Against `7b5b126a`, 44 of round 23's 70 cases fail. The 26 that pass hold
 behavior `7b5b126a` already had: the example 7 quote, the seven middle
 completions and the two contradicted flags, the January 1973 prior, the
 pre-1956 prior that computes, the seven published first onsets, the two valid
-entitlement months, two quarterly bounds, the note's citations and its read
-guard. The 42 fail on every run: `7b5b126a` raises an input error on all 61
-onsets of `test_any_onset_after_the_prior_day_keeps_its_own_start`, and the
-other two property tests each run an example `7b5b126a` fails. All three pass
-on every input of their strategies at this head, 11,700, 61 and 300 of them.
+entitlement months, two quarterly bounds, the onset in the age-31 quarter, the
+note's citations and its read guard. The 44 fail on every run: `7b5b126a`
+raises an input error on all 61 onsets of
+`test_any_onset_after_the_prior_day_keeps_its_own_start`, the other two
+property tests each run an example `7b5b126a` fails, and `7b5b126a` ends the
+open-flag record's date at 2011-09-30. All three pass on every
+input of their strategies at this head, 11,700, 61 and 300 of them.
 
 These tests execute the invariants this round adds:
 
@@ -3610,9 +3705,15 @@ These tests execute the invariants this round adds:
   (`test_an_ended_current_period_counts_as_the_prior_it_becomes`,
   `test_a_period_begun_on_paragraph_c_alone_opens_paragraph_d_after_it`, and
   the stress oracle through `check`);
+- a period that begins in the quarter its holder attains 31 never rests on
+  404.130(c)
+  (`test_a_period_begun_in_the_age_31_quarter_rests_on_paragraph_d`);
 - where placement or an UNKNOWN year decides that basis and the bases give
   different dates, the date refuses by name and keeps its row
   (`test_a_placement_or_year_that_decides_the_basis_refuses`);
+- an open flag never flags the current period, so where every placement meets
+  404.130(b) in its first quarter, 404.130(d) doesn't reach the quarters after
+  it (`test_an_open_flag_keeps_paragraph_b_where_every_placement_meets_it`);
 - periods share no day, and a period may begin in the quarter a prior ended
   (`test_rs00301_140_example_7_begins_on_the_onset_day`,
   `test_any_onset_after_the_prior_day_keeps_its_own_start`,
@@ -3629,9 +3730,15 @@ These tests execute the invariants this round adds:
   `test_a_prior_basis_split_widens_the_qualifying_quarters`,
   `test_unknown_priors_reach_the_onset_quarter`);
 - a living man born before January 2, 1913 counts elapsed years to 65 or 1975
-  from the year he reaches 62, and each 404.115 cohort gets its column
+  from the year he reaches 62, he stays living until the day he dies, and each
+  404.115 cohort gets its column
   (`test_the_404_115_table_gives_each_cohort_its_count`,
-  `test_a_man_who_reached_62_before_1973_counts_to_65`);
+  `test_a_man_who_reached_62_before_1973_counts_to_65`,
+  `test_a_death_after_the_query_keeps_the_living_count`);
+- no period, current or listed prior, ends after the statutory FRA end, and a
+  declared end past it is an input error
+  (`test_declared_dates_past_the_statutory_end_are_input_errors`,
+  `test_every_supplied_prior_period_has_the_statutory_fra_cap`);
 - a flagged prior stands only on a placement where a special route passes and
   404.130(b) fails
   (`test_a_flagged_prior_needs_paragraph_c_without_paragraph_b`,

@@ -287,6 +287,78 @@ def test_an_ended_current_period_counts_as_the_prior_it_becomes(
     assert _dli(_computed(listed, years, M1_MONTH)) == _dli(row.result)
 
 
+def test_a_period_begun_in_the_age_31_quarter_rests_on_paragraph_d():
+    # She attains 31 on 2006-02-14, in 2006Q1, the quarter of her January 20
+    # onset, so 404.130(c)(1) fails there and 404.130(d)(1) finds her
+    # disabled again at 31. Her prior rested on 404.130(c) alone, so
+    # 404.130(d) counts the 40 quarters from 1996Q2 less the ten inside the
+    # prior after its first: 17 QCs (three in 1996, the two of 1997 in Q1
+    # and Q2, and twelve from 2003) meet half of 30, and the period begins
+    # on the onset day.
+    prior = i.DisabilityPeriod(
+        date(1997, 4, 1), date(1999, 12, 31), special_insured=True
+    )
+    person = _ended(
+        date(1975, 2, 15), date(2006, 1, 20), date(2007, 12, 31), prior
+    )
+    month = date(2008, 1, 1)
+    annual = {1996: 4, 1997: 2, 2003: 4, 2004: 4, 2005: 4}
+    result = _computed(person, history(person, month, annual), month)
+    found = result.disability
+    assert result.current_disability_period_start == date(2006, 1, 20)
+    assert (found.insured, found.rule, found.qualifying_quarter) == (
+        True,
+        "subsequent_special",
+        date(2006, 1, 1),
+    )
+    assert (found.qc_count_lower, found.required) == (17, 15)
+    assert _dli(result) == (date(2008, 3, 31), date(2008, 3, 31), True)
+
+
+def test_an_open_flag_keeps_paragraph_b_where_every_placement_meets_it():
+    # Her listed prior leaves the flag open, but 404.130(b) holds at the
+    # 2007Q3 onset quarter on every placement. Counting the prior's
+    # quarters, as 404.130(f) allows where that helps, the 40 quarters from
+    # 1997Q4 hold 24 QCs, or 25 when her one 2007 QC comes before Q4, and
+    # leaving them out still leaves at least 22. So the period never rested on
+    # 404.130(c) alone, 404.130(d) doesn't reach the quarters after it, and
+    # 20 of 40 last holds at 2012Q2. Read as 404.130(c) alone, the open flag
+    # would bring in 404.130(d) more than 40 quarters after 21, where the
+    # readings of its cap differ and the record refuses.
+    prior = i.DisabilityPeriod(date(2002, 3, 19), date(2006, 1, 31))
+    person = _ended(
+        date(1976, 12, 8), date(2007, 7, 5), date(2008, 1, 31), prior
+    )
+    month, exit_month = date(2017, 3, 1), date(2008, 5, 1)
+    annual = {
+        1996: 4,
+        1997: 4,
+        1998: 3,
+        1999: 2,
+        2000: 1,
+        2001: 4,
+        2002: 2,
+        2004: 4,
+        2005: 3,
+        2006: 4,
+        2007: 1,
+        2008: 4,
+    }
+    years = history(person, month, annual, end=exit_month)
+    result = _computed(
+        person, years, month, test=DISABILITY, coverage_end_month=exit_month
+    )
+    found = result.disability
+    assert result.current_disability_period_start == date(2007, 7, 5)
+    assert (found.insured, found.rule, found.qualifying_quarter) == (
+        True,
+        "disability_20_of_40",
+        date(2007, 7, 1),
+    )
+    assert (found.qc_count_lower, found.required) == (25, 20)
+    assert _dli(result) == (date(2012, 6, 30), date(2012, 6, 30), False)
+
+
 # A period that shares the quarter a prior ended in.
 
 JANE = i.DisabilityPeriod(
@@ -735,6 +807,22 @@ def test_a_man_who_reached_62_before_1973_counts_to_65():
     )
 
 
+def test_a_death_after_the_query_keeps_the_living_count():
+    # On 1971-12-01 he is alive unless he died by that day, so a death later
+    # that month leaves 404.110(b)(2)(iv)'s count to 1972, and a death that
+    # day ends it at 1970 (404.110(b)(3)).
+    month = date(1971, 12, 1)
+    for died, expected in (
+        (date(1971, 12, 2), (False, 22)),
+        (date(1971, 12, 15), (False, 22)),
+        (date(1971, 12, 1), (True, 20)),
+    ):
+        person = _person(date(1908, 7, 1), sex=MALE, death_date=died)
+        years = history(person, month, {y: 1 for y in range(1951, 1971)})
+        fully = _computed(person, years, month, test=FULLY).fully
+        assert (fully.insured, fully.required) == expected, died
+
+
 # A flagged prior needs one placement for both halves.
 
 
@@ -1144,18 +1232,24 @@ def test_each_published_first_onset_reproduces(
 
 
 def test_declared_dates_past_the_statutory_end_are_input_errors():
-    # 404.321(b) ends a period by the month before FRA, June 2016 for a
-    # birth in June 1950.
+    # 404.321(c)(1) ends a period by the month before FRA. A June 1950 birth
+    # attains FRA in June 2016, so a period ends by 2016-05-31, and the end
+    # binds the current period and a listed prior alike.
+    birth = date(1950, 6, 15)
     for end, valid in (
         (date(2016, 5, 31), True),
         (date(2016, 6, 30), False),
         (date(2017, 12, 31), False),
     ):
+        prior = i.DisabilityPeriod(date(2010, 1, 1), end)
         if valid:
-            _ended(date(1950, 6, 15), date(2010, 1, 15), end)
+            _ended(birth, date(2010, 1, 15), end)
+            _person(birth, prior)
             continue
         with pytest.raises(i.InvalidFamilyInput, match="statutory FRA end"):
-            _ended(date(1950, 6, 15), date(2010, 1, 15), end)
+            _ended(birth, date(2010, 1, 15), end)
+        with pytest.raises(i.InvalidFamilyInput, match="statutory FRA end"):
+            _person(birth, prior)
 
 
 @pytest.mark.parametrize(
