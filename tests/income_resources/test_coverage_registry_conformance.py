@@ -1466,8 +1466,10 @@ def test_open_readings_are_named_once_and_described_in_prose():
     # clergy rows' agreement exemption before 1983-04-20 (92), and a minor
     # newspaper direct seller after 1982 (94). The review r7 fix dates the
     # agreement exemption from 26 U.S.C. 1401(c) and 42 U.S.C. 433 and
-    # closes the three pre-1983 agreement cases (88).
-    assert described == 88
+    # closes the three pre-1983 agreement cases (88), and closes the
+    # 1973-1987 church annuity contributions on 411(a)'s start from gross
+    # income (86).
+    assert described == 86
 
 
 READING_TEXT = {

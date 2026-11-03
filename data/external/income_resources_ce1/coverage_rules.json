@@ -20095,20 +20095,9 @@
           }
         },
         {
-          "case_id": "church_tsa_contributions_open",
-          "consequence": "open",
-          "description": "Review r6 M-11: the row counted this amount in the covered residual on no source. The 1987 row's case of the same text excludes it.",
-          "open_alternatives": [
-            {
-              "description": "The 1987 row's reading reaches 1973-1987: the amount stays out of net earnings (noncovered).",
-              "name": "later_guidance_applies"
-            },
-            {
-              "description": "No captured rule excludes the amount before 1987-12-22: the covered residual includes it.",
-              "name": "no_exclusion_before_1987"
-            }
-          ],
-          "open_reason": "CHURCH_TSA_CONTRIBUTIONS_1973_1987_UNSETTLED: se_clergy_gross_concept_1987_2026 leaves church contributions to a tax-sheltered annuity out of net earnings, reading 411(a)'s start from subtitle A gross income with Publication 517 (2025); no capture prints 411(a) or the Publication 517 list as in force in 1973-1987, so whether the same holds then is not settled, and the case refuses.",
+          "case_id": "church_tax_sheltered_annuity_contributions",
+          "consequence": "noncovered",
+          "description": "The condition reaches only contributions \"not included in the minister's gross income\". 411(a) starts from \"the gross income, as computed under subtitle A\" of the Code; before July 18, 1984 the clause read \"chapter 1 of the Internal Revenue Code of 1939\", and Pub. L. 98-369 section 2663(a)(8)(A) substituted \"subtitle A of the Internal Revenue Code of 1954\", an amendment \"not to be construed as changing or affecting any right, liability, status, or interpretation which existed\". From taxable years beginning after 1972 411(a)(7) has a minister compute net earnings without sections 107 and 119 (Pub. L. 85-239) and 911 and 931 (Pub. L. 92-603), and no other exclusion, so an amount subtitle A leaves out of gross income stays out of net earnings, as in the 1987 row's case of the same text. Review r7 M-4 closes the case on these captures: its second reading (\"No captured rule excludes the amount\") named no source, and the exclusion needs none beyond 411(a)'s start. Each year's subtitle A limits decide which contributions the condition reaches; a contribution included in gross income misses it and the covered residual counts it.",
           "precedence": 6,
           "when": {
             "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister, including any salary reduction contributions (elective deferrals), that are not included in the minister's gross income"
@@ -20198,6 +20187,27 @@
           "sha256": "35aa585a511a9ef6c51dcbacdeb91fd58fff59d8ada34cc165f1aae1140f85af"
         },
         {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_411.html",
+          "location": "1957 amendment note, subsec. (a)(7)",
+          "quote": "1957\u2014Subsec. (a)(7). Pub. L. 85\u2013239 permitted computation of net earnings without regard to sections 107 and 119 of the Internal Revenue Code of 1954 .",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_411.html",
+          "location": "1972 amendment note, subsec. (a), par. (7)",
+          "quote": "inserted provisions in par. (7) relating to the applicability of sections 911 and 931 of title 26",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_411.html",
+          "location": "1984 amendment note, subsec. (a)",
+          "quote": "1984\u2014Subsec. (a). Pub. L. 98\u2013369, \u00a7 2663(a)(8)(A) , substituted \u201csubtitle A of the Internal Revenue Code of 1954 \u201d for \u201cchapter 1 of the Internal Revenue Code of 1939 \u201d",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
           "capture": "lii_42_411.html",
           "location": "1987 amendment note, subsec. (a)(7)",
@@ -20208,6 +20218,20 @@
           "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
           "capture": "lii_42_411.html",
           "location": "411(a)(7); 1972 amendment/effective-date notes; 2004 section 422 amendment/effective-date note",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_411.html",
+          "location": "411(a), opening clause",
+          "quote": "means the gross income, as computed under subtitle A of the Internal Revenue Code of 1986 , derived by an individual from any trade or business carried on by such individual",
+          "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+        },
+        {
+          "authority": "42 U.S.C. 411 (LII capture 2026-10-21, text and historical amendment notes)",
+          "capture": "lii_42_411.html",
+          "location": "Effective Date of 1984 Amendment note, section 2663(a)(8)",
+          "quote": "Amendment by section 2663(a)(8) of Pub. L. 98\u2013369 effective July 18, 1984 , but not to be construed as changing or affecting any right, liability, status, or interpretation which existed (under the provisions of law involved) before that date",
           "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
         }
       ],

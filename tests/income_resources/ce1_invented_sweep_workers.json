@@ -318,6 +318,11 @@
   ],
   [
    "se_clergy_gross_concept_1973_1987",
+   "church_tax_sheltered_annuity_contributions",
+   "clergy_remuneration"
+  ],
+  [
+   "se_clergy_gross_concept_1973_1987",
    "foreign_agreement_sole_coverage",
    "clergy_or_religious_exemption"
   ],
@@ -16850,13 +16855,13 @@
   },
   {
    "rule_id": "se_clergy_gross_concept_1973_1987",
-   "worker": "INVENTED (review r6 M-11): 1980: a pastor whose church contributes to a tax-sheltered annuity for him, left out of his gross income: the 1973-1987 rule is not captured, so the case refuses.",
+   "worker": "INVENTED (review r7 M-4, reaches church_tax_sheltered_annuity_contributions): 1980: a pastor whose church contributes to a tax-sheltered annuity for him, left out of his gross income: 411(a) starts from gross income and 411(a)(7) adds back only sections 107, 119, 911 and 931, so the contribution stays out of his net earnings.",
    "facts": {
     "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
     "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister, including any salary reduction contributions (elective deferrals), that are not included in the minister's gross income"
    },
-   "expected": "refuses",
-   "decides": "church_tsa_contributions_open"
+   "expected": "noncovered",
+   "decides": "church_tax_sheltered_annuity_contributions"
   },
   {
    "rule_id": "se_religious_sect_1968_1985",
@@ -17266,6 +17271,16 @@
      "subject to the social security laws of a foreign country in a period when no agreement entered into pursuant to section 233 of the Social Security Act was in effect (before December 20, 1977, when Pub. L. 95-216 added section 233)"
     ],
     "clergy_remuneration": "salary and parsonage for ministry in Italy"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1973_1987",
+   "worker": "INVENTED (review r7 M-4, just misses church_tax_sheltered_annuity_contributions on clergy_remuneration): 1980: the same pastor's church contribution above the part his gross income leaves out for the year; the excess is included in his gross income, so the case's condition fails and the covered residual counts it.",
+   "facts": {
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
+    "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister that are included in the minister's gross income (the part above the year's exclusion)"
    },
    "expected": "covered",
    "decides": "residual"
