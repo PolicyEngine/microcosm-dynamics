@@ -3283,6 +3283,10 @@ both give the same date. Its records put every 1997 to 2002 QC in the 40
 quarters ending 2003Q1, so 404.130(b) holds there on every placement or on
 none. A run over its whole strategy space, 11,700 records, computed 11,599 that
 agree and refused the other 101 by the long-period register entry's name.
+`7b5b126a` gives a different date for 568 of those records, so 25 random draws
+miss them all in about 29% of runs. The test now always runs one of them: the
+review's record with four QCs in each of 1998 to 2000, where `7b5b126a` ended
+the date at 2012-09-30 and the rule gives 2012-12-31.
 
 ### A period that shares the quarter a prior ended in
 
@@ -3322,7 +3326,8 @@ failed at 3 of 6, where the law gives 6 of 6
 years after it, which the history leaves out, and a quarterly QC or earnings a
 caller declares after the exit quarter stays an input error
 (`test_quarterly_bounds_name_themselves`). Every exit month of a year gives the
-December exit's result (`test_the_exit_month_moves_nothing_in_its_year`), 40
+December exit's result (`test_the_exit_month_moves_nothing_in_its_year`, whose
+example is a February exit with four 2020 QCs that `7b5b126a` cut to one), 40
 QCs need no later quarter (`test_forty_qcs_need_no_later_quarter`), an UNKNOWN
 exit year refuses whatever its exit month
 (`test_an_unknown_exit_year_refuses_whatever_its_exit_month`), and an
@@ -3479,7 +3484,12 @@ B.2.g and log Mary Brown's count (nit 27); and the note corrects the round 21
 and 22 slips the review found (nit 28).
 `test_the_note_cites_only_tests_that_exist` checks that every test this note
 cites exists and that it cites no scratch file, and the PR body carries the
-ledger path and current counts (low 20, nit 30).
+ledger path and current counts (low 20, nit 30). Blind roles run these
+modules, so the check lists only the tests folder and opens only this note and
+the insured status modules; at `8522452c` it searched every folder under
+`tests/` and read each module it found.
+`test_the_note_check_reads_only_the_note_and_insured_modules` checks each Path
+listing and open before it runs.
 
 ### Renamed, retired and superseded
 
@@ -3576,11 +3586,21 @@ blindness begin a prior before 1973, and `nit29` restores the general detail.
 each low's check. `first_onset_short` and `first_onset_odd` move 404.130(c)'s
 12-quarter floor or round its half up. Each of the 29 fails round 23's module.
 
-Against `7b5b126a`, 42 of round 23's 66 cases fail. The 24 that pass hold
+Six local mutations of the note check each fail its read guard before the check
+opens a file outside this note and the insured status modules: a recursive
+`rglob`, a `**` glob, a subfolder glob, and a flat glob, a byte read and an
+`iterdir` over every module in `tests/`. The list holds mutations of the rule's
+source only, so it leaves these six out.
+
+Against `7b5b126a`, 42 of round 23's 67 cases fail. The 25 that pass hold
 behavior `7b5b126a` already had: the example 7 quote, the seven middle
 completions and the two contradicted flags, the January 1973 prior, the
 pre-1956 prior that computes, the seven published first onsets, the two valid
-entitlement months, two quarterly bounds and the note's citations.
+entitlement months, two quarterly bounds, the note's citations and its read
+guard. The 42 fail on every run: `7b5b126a` raises an input error on all 61
+onsets of `test_any_onset_after_the_prior_day_keeps_its_own_start`, and the
+other two property tests each run an example `7b5b126a` fails. All three pass
+on every input of their strategies at this head, 11,700, 61 and 300 of them.
 
 These tests execute the invariants this round adds:
 
@@ -3621,7 +3641,10 @@ These tests execute the invariants this round adds:
   or UNKNOWN-earnings refusal, and the row keeps its weight
   (`test_an_unsupported_prior_refuses_before_unknown_earnings`,
   `test_past_blindness_begins_a_prior_only_from_1973`,
-  `test_a_1965_prior_cannot_rest_on_past_blindness`).
+  `test_a_1965_prior_cannot_rest_on_past_blindness`);
+- the note check lists only the tests folder and opens only this note and the
+  insured status modules
+  (`test_the_note_check_reads_only_the_note_and_insured_modules`).
 
 ## Not in scope
 

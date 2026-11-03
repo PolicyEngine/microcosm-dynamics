@@ -30,7 +30,7 @@ from fractions import Fraction
 from pathlib import Path
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import insured_status as i
@@ -242,6 +242,7 @@ M1_ENDS = tuple(
 
 
 @PROPERTY
+@example(qcs_1997=0, qcs_2001=2, qcs_2002=4, qcs_2012=1, end=M1_END)
 @given(
     qcs_1997=st.integers(0, 4),
     qcs_2001=st.integers(1, 4),
@@ -255,7 +256,9 @@ def test_an_ended_current_period_counts_as_the_prior_it_becomes(
     # Differential: the 1997 to 2002 QCs all sit in the 40 quarters ending
     # 2003Q1, so 404.130(b) holds there on every placement or on none, and
     # the period's flag follows. The same period listed as a prior with that
-    # flag has the same DLI.
+    # flag has the same DLI. The example adds four QCs in each of 1998 to
+    # 2000 to the review's record, which leaves 18 of 40 at 2003Q1; without
+    # the flag, 7b5b126a ended its DLI at 2012-09-30 rather than 2012-12-31.
     annual = {
         1997: qcs_1997,
         1998: 4,
@@ -459,6 +462,7 @@ def test_an_established_period_keeps_its_row_after_a_february_exit():
 
 
 @PROPERTY
+@example(qcs_2019=0, qcs_2020=4, exit_month=2)
 @given(
     qcs_2019=st.integers(0, 4),
     qcs_2020=st.integers(0, 4),
@@ -468,7 +472,8 @@ def test_the_exit_month_moves_nothing_in_its_year(
     qcs_2019, qcs_2020, exit_month
 ):
     # An exit bars later years only, so every exit month of 2020 gives the
-    # December exit's result.
+    # December exit's result. In the example, 7b5b126a cut a February exit's
+    # four 2020 QCs to one.
     person = _person(date(2000, 6, 15))
     month = date(2024, 1, 1)
 
@@ -1286,14 +1291,56 @@ def test_quarterly_bounds_name_themselves(year, declared, message):
 
 def test_the_note_cites_only_tests_that_exist():
     # The note names tests as its evidence, so each must still run, and it
-    # cites no uncommitted scratch file.
+    # cites no uncommitted scratch file. That evidence lives in the insured
+    # status modules, so the check opens those and no other test file.
     tests = Path(__file__).resolve().parent
     note = (tests.parent / "docs/design/track_b_insured_status.md").read_text()
     defined = set()
-    for module in tests.rglob("*.py"):
+    for module in tests.glob("test_track_b_insured_status*.py"):
         defined.add(module.stem)
         defined.update(
             re.findall(r"^\s*def (test_\w+)", module.read_text(), re.M)
         )
     assert sorted(set(re.findall(r"`(test_\w+)", note)) - defined) == []
     assert "scratch/" not in note
+
+
+def test_the_note_check_reads_only_the_note_and_insured_modules(
+    monkeypatch,
+):
+    # Blind roles run these modules, so the note check may list only the
+    # tests folder itself and open only the note and the insured status
+    # modules. The guard checks each Path listing and open before it runs.
+    tests = Path(__file__).resolve().parent
+    note = tests.parent / "docs/design/track_b_insured_status.md"
+    path_open, glob, iterdir = Path.open, Path.glob, Path.iterdir
+    opened = []
+
+    def checked_open(path, *args, **kwargs):
+        resolved = path.resolve()
+        assert resolved == note or (
+            resolved.parent == tests
+            and resolved.name.startswith("test_track_b_insured_status")
+        ), resolved
+        opened.append(resolved)
+        return path_open(path, *args, **kwargs)
+
+    def flat_glob(path, pattern, *args, **kwargs):
+        assert path.resolve() == tests, path
+        assert "**" not in pattern and "/" not in pattern, pattern
+        return glob(path, pattern, *args, **kwargs)
+
+    def flat_iterdir(path):
+        assert path.resolve() == tests, path
+        return iterdir(path)
+
+    def recursive(path, *args, **kwargs):
+        raise AssertionError(f"recursive search of {path}")
+
+    monkeypatch.setattr(Path, "open", checked_open)
+    monkeypatch.setattr(Path, "glob", flat_glob)
+    monkeypatch.setattr(Path, "iterdir", flat_iterdir)
+    monkeypatch.setattr(Path, "rglob", recursive)
+    monkeypatch.setattr(Path, "walk", recursive)
+    test_the_note_cites_only_tests_that_exist()
+    assert note in opened and Path(__file__).resolve() in opened
