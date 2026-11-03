@@ -1,0 +1,219 @@
+new,old,title
+D3.g,D.1,Debt growth by sector
+D3.s,D.3,Debt outstanding by sector
+D3.t,D.2,Borrowing by sector
+F0.t,F.8,Instrument discrepancies
+F1.s,L.200,Monetary gold and special drawing rights (SDRs)
+F1.t,F.200,Monetary gold and special drawing rights (SDRs)
+F2.1.s,L.202,Interbank assets and liabilities
+F2.1.t,F.202,Interbank assets and liabilities
+F2.2.s,L.203,Checkable deposits and currency
+F2.2.t,F.203,Checkable deposits and currency
+F2.3.s,L.204,Time and savings deposits
+F2.3.t,F.204,Time and savings deposits
+F2.4.s,L.205,Other deposits
+F2.4.t,F.205,Other deposits
+F2.s,L.201,Currency and deposits
+F2.t,F.201,Currency and deposits
+F3.1.s,L.209,Open market paper
+F3.1.t,F.209,Open market paper
+F3.2.s,L.210,Treasury securities
+F3.2.t,F.210,Treasury securities
+F3.3.s,L.211,Agency- and GSE-backed securities
+F3.3.t,F.211,Agency- and GSE-backed securities
+F3.4.s,L.212,Municipal securities
+F3.4.t,F.212,Municipal securities
+F3.5.s,L.213,Corporate and foreign bonds
+F3.5.t,F.213,Corporate and foreign bonds
+F3.s,L.208,Debt securities
+F3.t,F.208,Debt securities
+F4.1.s,L.207,Federal funds and security repurchase agreements
+F4.1.t,F.207,Federal funds and security repurchase agreements
+F4.2.s,L.215,Depository institution loans not elsewhere classified
+F4.2.t,F.215,Depository institution loans not elsewhere classified
+F4.3.s,L.222,Consumer credit
+F4.3.t,F.222,Consumer credit
+F4.4.s,,Private credit loans
+F4.4.t,,Private credit loans
+F4.5.s,L.217,Total mortgages
+F4.5.t,F.217,Total mortgages
+F4.5a.s,L.218,One-to-four-family residential mortgages
+F4.5a.t,F.218,One-to-four-family residential mortgages
+F4.5b.s,L.219,Multifamily residential mortgages
+F4.5b.t,F.219,Multifamily residential mortgages
+F4.5c.s,L.220,Commercial mortgages
+F4.5c.t,F.220,Commercial mortgages
+F4.5d.s,L.221,Farm mortgages
+F4.5d.t,F.221,Farm mortgages
+F4.6.s,L.216,Other loans and advances
+F4.6.t,F.216,Other loans and advances
+F4.s,L.214,Loans
+F4.t,F.214,Loans
+F51.1.s,L.224,Corporate equities
+F51.1.t,F.224,Corporate equities
+F519.1.s,L.225.a,Direct investment equity
+F519.1.t,F.225.a,Direct investment equity
+F519.2.s,L.225.b,Miscellaneous other equity
+F519.2.t,F.225.b,Miscellaneous other equity
+F519.s,L.225,Other equity
+F519.t,F.225,Other equity
+F521.s,L.206,Money market fund shares
+F521.t,F.206,Money market fund shares
+F522.1.s,L.226,Mutual fund shares
+F522.1.t,F.226,Mutual fund shares
+F522.2.s,,Hedge fund shares
+F522.2.t,,Hedge fund shares
+F522.3.s,,Private debt fund shares
+F522.3.t,,Private debt fund shares
+F6.1.s,L.228,Life insurance reserves
+F6.1.t,F.228,Life insurance reserves
+F6.2.s,L.229,Pension entitlements
+F6.2.t,F.229,Pension entitlements
+F81.s,L.230,Trade credit
+F81.t,F.230,Trade credit
+F89.1.s,L.231,Taxes payable by businesses
+F89.1.t,F.231,Taxes payable by businesses
+F89.2.s,L.223,Direct investment intercompany debt
+F89.2.t,F.223,Direct investment intercompany debt
+F89.3.s,L.232,Total miscellaneous financial claims
+F89.3.t,F.232,Total miscellaneous financial claims
+F89.3a.s,L.233,Identified miscellaneous financial claims - part I
+F89.3a.t,F.233,Identified miscellaneous financial claims - part I
+F89.3b.s,L.234,Identified miscellaneous financial claims - part II
+F89.3b.t,F.234,Identified miscellaneous financial claims - part II
+F89.3c.s,L.235,Unidentified miscellaneous financial claims
+F89.3c.t,F.235,Unidentified miscellaneous financial claims
+M3.s,M.1.l,Financial accounts matrix--stocks
+M3.s.c,M.1.l.c,Financial accounts matrix--stocks (coded)
+M3.t,M.1.f,Financial accounts matrix--transactions
+M3.t.c,M.1.f.c,Financial accounts matrix--transactions (coded)
+S0.t,F.7,Sector discrepancies
+S1.1.i.a,S.1.a,Total economy - current account
+S1.1.i.q,S.1.q,Total economy - current account
+S1.2.i.a,S.2.a,Selected aggregates for total economy and sectors
+S1.2.i.q,S.2.q,Selected aggregates for total economy and sectors
+S1.b,B.1,Derivation of U.S. net wealth
+S11.1.b,B.103,Nonfinancial corporate business
+S11.1.i.a,S.5.a,Nonfinancial corporate business
+S11.1.i.q,S.5.q,Nonfinancial corporate business
+S11.1.r,R.103,Nonfinancial corporate business
+S11.1.s,L.103,Nonfinancial corporate business
+S11.1.t,F.103,Nonfinancial corporate business
+S11.2.b,B.104,Nonfinancial noncorporate business
+S11.2.i.a,S.4.a,Nonfinancial noncorporate business
+S11.2.i.q,S.4.q,Nonfinancial noncorporate business
+S11.2.r,R.104,Nonfinancial noncorporate business
+S11.2.s,L.104,Nonfinancial noncorporate business
+S11.2.t,F.104,Nonfinancial noncorporate business
+S11.s,L.102,Nonfinancial business
+S11.t,F.102,Nonfinancial business
+S12.i.a,S.6.a,Financial business
+S12.i.q,S.6.q,Financial business
+S12.s,L.108,Domestic financial sectors
+S12.t,F.108,Domestic financial sectors
+S121.i.a,S.61.a,Central bank
+S121.s,L.109,Central bank
+S121.t,F.109,Central bank
+S122.1.s,L.111,U.S.-chartered depository institutions
+S122.1.t,F.111,U.S.-chartered depository institutions
+S122.2.s,L.112,Foreign banking offices in U.S.
+S122.2.t,F.112,Foreign banking offices in U.S.
+S122.3.s,L.113,Banks in U.S.-affiliated areas
+S122.3.t,F.113,Banks in U.S.-affiliated areas
+S122.4.s,L.114,Credit unions
+S122.4.t,F.114,Credit unions
+S122.i.a,S.62.a,Private depository institutions
+S122.s,L.110,Private depository institutions
+S122.t,F.110,Private depository institutions
+S123.s,L.121,Money market funds
+S123.t,F.121,Money market funds
+S124.1.s,L.122,Mutual funds
+S124.1.t,F.122,Mutual funds
+S124.2.s,L.123,Closed-end funds
+S124.2.t,F.123,Closed-end funds
+S124.3.s,L.124,Exchange-traded funds
+S124.3.t,F.124,Exchange-traded funds
+S124.4.s,L.129,Mortgage real estate investment trusts (mortgage REITs)
+S124.4.t,F.129,Mortgage real estate investment trusts (mortgage REITs)
+S124.5.s,,Business development companies (BDCs)
+S124.5.t,,Business development companies (BDCs)
+S124.6.s,,Interval and tender offer funds
+S124.6.t,,Interval and tender offer funds
+S124.7.f.s,,Foreign hedge funds
+S124.7.s,,Hedge funds
+S124.7.t,,Hedge funds
+S124.8.s,,Private debt funds
+S124.8.t,,Private debt funds
+S125s1.1.s,L.125,Government-sponsored enterprises (GSEs)
+S125s1.1.t,F.125,Government-sponsored enterprises (GSEs)
+S125s1.2.s,L.126,Agency- and GSE-backed mortgage pools
+S125s1.2.t,F.126,Agency- and GSE-backed mortgage pools
+S125s1.3.s,L.127,Issuers of asset-backed securities (ABS)
+S125s1.3.t,F.127,Issuers of asset-backed securities (ABS)
+S125s2.1.s,L.128,Finance companies
+S125s2.1.t,F.128,Finance companies
+S125s3.s,L.130,Security brokers and dealers
+S125s3.t,F.130,Security brokers and dealers
+S125s5.s,L.132.c,Central clearing counterparties (CCPs)
+S127.1.s,L.131,Holding companies
+S127.1.t,F.131,Holding companies
+S127.2.s,L.132,Other financial business
+S127.2.t,F.132,Other financial business
+S128.i.a,S.63.a,Insurance companies
+S1281.1.s,L.116.g,Life insurance companies: general accounts
+S1281.1.t,F.116.g,Life insurance companies: general accounts
+S1281.2.s,L.116.s,Life insurance companies: separate accounts
+S1281.2.t,F.116.s,Life insurance companies: separate accounts
+S1281.s,L.116,Life insurance companies
+S1281.t,F.116,Life insurance companies
+S1282.1.s,L.115,Property-casualty insurance companies
+S1282.1.t,F.115,Property-casualty insurance companies
+S129.1.s,L.118,Private pension funds
+S129.1.t,F.118,Private pension funds
+S129.2.s,L.119,Federal government employee pension funds
+S129.2.t,F.119,Federal government employee pension funds
+S129.3.s,L.120,State and local government employee pension funds
+S129.3.t,F.120,State and local government employee pension funds
+S129.i.a,S.64.a,Pension funds
+S129.s,L.117,Private and public pension funds
+S129.t,F.117,Private and public pension funds
+S129s1.1.s,L.118.b,Private defined benefit pension funds
+S129s1.1.t,F.118.b,Private defined benefit pension funds
+S129s1.2.s,L.119.b,Federal government employee defined benefit pension funds
+S129s1.2.t,F.119.b,Federal government employee defined benefit pension funds
+S129s1.3.s,L.120.b,State and local government employee defined benefit pension funds
+S129s1.3.t,F.120.b,State and local government employee defined benefit pension funds
+S129s2.1.s,L.118.c,Private defined contribution pension funds
+S129s2.1.t,F.118.c,Private defined contribution pension funds
+S129s2.2.s,L.119.c,Federal government employee defined contribution pension funds
+S129s2.2.t,F.119.c,Federal government employee defined contribution pension funds
+S129s2.3.s,L.120.c,State and local government employee defined contribution pension funds
+S129s2.3.t,F.120.c,State and local government employee defined contribution pension funds
+S12R.i.a,S.65.a,Other financial business
+S13.s,L.105,General government
+S13.t,F.105,General government
+S1311.i.a,S.7.a,Federal government
+S1311.i.q,S.7.q,Federal government
+S1311.s,L.106,Federal government
+S1311.t,F.106,Federal government
+S13M.i.a,S.8.a,State and local governments
+S13M.i.q,S.8.q,State and local governments
+S13M.s,L.107,State and local governments
+S13M.t,F.107,State and local governments
+S14.b,B.101.h,Balance sheet of households
+S15.b,B.101.n,Balance sheet of nonprofit organizations
+S1M.b,B.101,Households and nonprofit organizations
+S1M.e.b,B.101.e,Balance sheet of households and nonprofit organizations with debt and equity holdings detail
+S1M.i.a,S.3.a,Households and nonprofit institutions serving households
+S1M.i.q,S.3.q,Households and nonprofit institutions serving households
+S1M.r,R.101,Households and nonprofit organizations
+S1M.s,L.101,Households and nonprofit organizations
+S1M.t,F.101,Households and nonprofit organizations
+S1P.s,L.6,Assets and liabilities of the personal sector
+S1P.t,F.6,Derivation of measures of personal saving
+S1S.s,L.100,Domestic nonfinancial sectors
+S1S.t,F.100,Domestic nonfinancial sectors
+S2.i.a,S.9.a,Rest of the world
+S2.i.q,S.9.q,Rest of the world
+S2.s,L.133,Rest of the world
+S2.t,F.133,Rest of the world
