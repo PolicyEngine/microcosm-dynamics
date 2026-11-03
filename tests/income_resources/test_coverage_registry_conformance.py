@@ -6356,9 +6356,14 @@ FEDERAL_CASE_FACTS = {
             "federal_service": FED_DELAYED_AFTER_OFFICIAL_SERVICE,
         },
     ),
+    # Review r7 low 11: the case reaches only 410(a)(5)(A) service, where
+    # its readings differ.
     ("federal_1987_2026", "fepca_waiver_reemployed_annuitant"): (
         "refuses",
-        {"federal_retirement_system": FED_FEPCA_SYSTEM},
+        {
+            "federal_retirement_system": FED_FEPCA_SYSTEM,
+            "federal_service": FED_ANNUITANT_SERVICE,
+        },
     ),
     ("federal_1987_2026", "defra_2601d_requalification"): (
         "noncovered",

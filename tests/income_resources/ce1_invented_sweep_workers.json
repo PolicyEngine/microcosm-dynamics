@@ -248,6 +248,11 @@
   ],
   [
    "federal_1987_2026",
+   "fepca_waiver_reemployed_annuitant",
+   "federal_service"
+  ],
+  [
+   "federal_1987_2026",
    "fers_or_fsps_election",
    "government_level"
   ],
@@ -17855,6 +17860,17 @@
    },
    "expected": "covered",
    "decides": "residual"
+  },
+  {
+   "rule_id": "federal_1987_2026",
+   "worker": "INVENTED (review r7 low 11, just misses fepca_waiver_reemployed_annuitant on federal_service): 2012: Ira, first hired by a Federal agency after 1983, retired on an annuity and reemployed with an approved waiver of annuity offset under the Federal Employees Pay Comparability Act; stated as fact, his reemployment service is not service 410(a)(5)(A) describes. None of the cases the waiver overrides can reach him, so both readings give covered and first_hired_after_1983 decides.",
+   "facts": {
+    "federal_retirement_system": "reemployed annuitant with an approved waiver of annuity offset under the Federal Employees Pay Comparability Act",
+    "federal_service": "first hired after 1983",
+    "government_level": "employee of the United States or of an instrumentality of the United States"
+   },
+   "expected": "covered",
+   "decides": "first_hired_after_1983"
   }
  ]
 }

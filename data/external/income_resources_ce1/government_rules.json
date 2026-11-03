@@ -5264,11 +5264,12 @@
         "case_id": "fepca_waiver_reemployed_annuitant",
         "precedence": 11,
         "when": {
-          "government_level": "employee of the United States or of an instrumentality of the United States",
-          "federal_retirement_system": "reemployed annuitant with an approved waiver of annuity offset under the Federal Employees Pay Comparability Act"
+          "federal_retirement_system": "reemployed annuitant with an approved waiver of annuity offset under the Federal Employees Pay Comparability Act",
+          "federal_service": "would be excluded under 410(a)(5)-(6) as in effect in January 1983",
+          "government_level": "employee of the United States or of an instrumentality of the United States"
         },
         "consequence": "open",
-        "description": "POMS RS 01901.340 C.3.c says these services are covered. The waiver law and its effective date are not captured, so CE1 does not apply that guidance across a row that begins in 1987; obtain the waiver law before classifying.",
+        "description": "POMS RS 01901.340 C.3.c says these services are covered. The waiver law and its effective date are not captured, so CE1 does not apply that guidance across a row that begins in 1987; obtain the waiver law before classifying. Review r7 low 11: the reading overridden_cases_until_waiver_law lets defra_2601d_requalification, grandfathered_continuous_service and federal_annuitant decide, and each of them reaches only service 410(a)(5)(A) describes, service that \"would be excluded from the term 'employment' for purposes of this subchapter if the provisions of paragraphs (5) and (6) of this subsection as in effect in January 1983 had remained in effect\". Elsewhere both readings give covered, so the case reaches only that service. The readings also agree on service after the waiver law's effective date, which is not captured, so the case still reaches that service.",
         "overrides": [
           "defra_2601d_requalification",
           "grandfathered_continuous_service",
