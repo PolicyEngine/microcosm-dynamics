@@ -9668,7 +9668,7 @@
   },
   {
    "rule_id": "casual_service_1968",
-   "worker": "INVENTED (review r6 M-6): $60 cash paid on 1978-01-05 for yard work for a neighbour in December 1977. The family's service axis sends the service to casual_service_1968; section 351(d) reaches remuneration paid after 1977, so the $100 calendar-year test applies (threshold casual_cash_annual for 1978).",
+   "worker": "INVENTED (review r6 M-6): $60 cash paid on 1978-01-05 for yard work for a neighbour in December 1977. The family's service axis sends the service to casual_service_1968; under CE1's chosen payment-date reading of section 351(d) the $100 calendar-year test applies (threshold casual_cash_annual for 1978). The conjunctive reading, which the row names and does not apply, would keep the $50 calendar-quarter test (review r7 M-6).",
    "facts": {
     "casual_service": "service not in the course of the employer's trade or business (yard work for a neighbour)",
     "cash_remuneration": "cash remuneration",
@@ -10448,23 +10448,23 @@
    "decides": "residual"
   },
   {
-   "rule_id": "casual_service_1978",
-   "worker": "INVENTED: Sven, the bookkeeper of his employer's hardware business for December 1977, paid $40 on 1978-01-06. Service in the course of the employer's trade or business is not nonbusiness work (POMS RS 01901.520 A), and the 1977 amendment changed only the nonbusiness cash test (\"year\" for \"quarter\", \"$100\" for \"$50\", 409 notes), so no casual test applies: the business case ranks above the date case.",
+   "rule_id": "casual_service_1968",
+   "worker": "INVENTED (review r7 low 5 moves it to the service row): Sven, the bookkeeper of his employer's hardware business for December 1977, paid $40 on 1978-01-06. Service in the course of the employer's trade or business is not nonbusiness work (POMS RS 01901.520 A), and the 1977 amendment changed only the nonbusiness cash test (\"year\" for \"quarter\", \"$100\" for \"$50\", 409 notes), so no casual test applies: the business case ranks above the payment-date case.",
    "facts": {
     "casual_service": "service in the course of the employer's trade or business, or any service for a corporation",
     "cash_remuneration": "cash remuneration",
-    "remuneration_paid_date": "remuneration paid before 1978-01-01"
+    "remuneration_paid_date": "remuneration paid on or after 1978-01-01"
    },
    "expected": "covered",
    "decides": "business_or_corporate_service"
   },
   {
-   "rule_id": "casual_service_1978",
-   "worker": "INVENTED: Tess, hired by a farmer (farm operated for profit) to paint his sailboat in the farmyard in December 1977 and paid in January 1978: 410(f)(5) agricultural labor, as casual_service_1968 sends it.",
+   "rule_id": "casual_service_1968",
+   "worker": "INVENTED (review r7 low 5 moves it to the service row): Tess, hired by a farmer (farm operated for profit) to paint his sailboat in the farmyard in December 1977 and paid in January 1978: 410(f)(5) agricultural labor; the farm case ranks above the payment-date case.",
    "facts": {
     "casual_service": "service not in the course of the employer's trade or business, performed on a farm operated for profit",
     "cash_remuneration": "cash remuneration",
-    "remuneration_paid_date": "remuneration paid before 1978-01-01"
+    "remuneration_paid_date": "remuneration paid on or after 1978-01-01"
    },
    "expected": "deferred",
    "decides": "farm_operated_for_profit",
@@ -10473,13 +10473,13 @@
    ]
   },
   {
-   "rule_id": "casual_service_1978",
-   "worker": "INVENTED: Uma, a nanny in a private home in town for December 1977, paid in January 1978: domestic service goes to the domestic family, as casual_service_1968 sends it.",
+   "rule_id": "casual_service_1968",
+   "worker": "INVENTED (review r7 low 5 moves it to the service row): Uma, a nanny in a private home in town for December 1977, paid in January 1978: domestic service goes to the domestic family; the domestic case ranks above the payment-date case.",
    "facts": {
     "domestic_service": "domestic service in a private home of the employer",
     "casual_service": "service not in the course of the employer's trade or business",
     "cash_remuneration": "cash remuneration",
-    "remuneration_paid_date": "remuneration paid before 1978-01-01"
+    "remuneration_paid_date": "remuneration paid on or after 1978-01-01"
    },
    "expected": "deferred",
    "decides": "domestic_service_in_private_home",
@@ -10488,12 +10488,12 @@
    ]
   },
   {
-   "rule_id": "casual_service_1978",
-   "worker": "INVENTED: Vic, paid in January 1978 for December 1977 campaign work for a candidate only in meals and a jacket: 409(a)(6)(A) excludes noncash pay for nonbusiness work, and the 1977 amendment changed only the cash test.",
+   "rule_id": "casual_service_1968",
+   "worker": "INVENTED (review r7 low 5 moves it to the service row): Vic, paid in January 1978 for December 1977 campaign work for a candidate only in meals and a jacket: 409(a)(6)(A) excludes noncash pay for nonbusiness work, and the 1977 amendment changed only the cash test; the noncash case ranks above the payment-date case.",
    "facts": {
     "casual_service": "service not in the course of the employer's trade or business (campaign work for a candidate)",
     "cash_remuneration": "remuneration paid in any medium other than cash",
-    "remuneration_paid_date": "remuneration paid before 1978-01-01"
+    "remuneration_paid_date": "remuneration paid on or after 1978-01-01"
    },
    "expected": "noncovered",
    "decides": "noncash_remuneration"

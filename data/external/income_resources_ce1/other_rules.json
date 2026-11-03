@@ -962,6 +962,27 @@
         "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
         "location": "Effective Date of 1977 Amendment note (Pub. L. 95-216 section 351(d))",
         "quote": "shall apply with respect to remuneration paid and services rendered after December 31, 1977"
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 U.S.C. 409 (LII capture, text and historical notes)",
+        "location": "409(a)(6)(C)",
+        "quote": "Cash remuneration paid by an employer in any calendar year to an employee for service not in the course of the employer\u2019s trade or business, if the cash remuneration paid in such year by the employer to the employee for such service is less than $100."
+      },
+      {
+        "capture": "poms_rs_01901520.html",
+        "sha256": "5d7a5d1a6697cdf8cbf7c9ec60290f034cd4dbfc580fe3611ee0e0f93727a476",
+        "authority": "SSA POMS RS 01901.520",
+        "location": "C.1",
+        "quote": "Beginning January 1, 1978 The 1977 amendments impose a cash-pay test of $100 in any calendar year, subsequent to 1977, for determining whether remuneration for nonbusiness work is \u201cwages.\u201d"
+      },
+      {
+        "capture": "poms_rs_01901520.html",
+        "sha256": "5d7a5d1a6697cdf8cbf7c9ec60290f034cd4dbfc580fe3611ee0e0f93727a476",
+        "authority": "SSA POMS RS 01901.520",
+        "location": "C.2",
+        "quote": "1955 Through 1977 Effective January 1, 1955, nonbusiness work performed by an employee is covered under Social Security. The 1954 amendments eliminate the regularity-of-employment test. However, the $50 cash pay test (the wage exclusion) is retained."
       }
     ],
     "trigger_facts": [
@@ -1005,7 +1026,21 @@
             ]
           }
         }
-      }
+      },
+      "named_options": [
+        {
+          "group": "section_351d_cash_test_date",
+          "name": "payment_date_decides_cash_test",
+          "status": "operational_chosen_reading",
+          "explanation": "Pay on or after 1978-01-01 takes the $100 calendar-year test of the year paid (threshold casual_cash_annual), whatever year the nonbusiness work was rendered: the test measures \"cash remuneration paid by an employer in any calendar year\" (409(a)(6)(C)). Neither cited source decides such pay, so CE1 chooses this reading (review r7 M-6)."
+        },
+        {
+          "group": "section_351d_cash_test_date",
+          "name": "paid_and_rendered_after_1977",
+          "status": "conjunctive_reading_not_operational",
+          "explanation": "The amendments reach only pay both paid and for services rendered after 1977, so pay on or after 1978-01-01 for work rendered before 1978 keeps the $50 calendar-quarter test (threshold casual_cash_quarterly). POMS RS 01901.520 C.2 keeps that test for \"nonbusiness work performed\" from 1955 through 1977, and nonprofit_1968_1977 gives this reading's result for 409(p)."
+        }
+      ]
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -1137,7 +1172,7 @@
           "remuneration_paid_date": "remuneration paid on or after 1978-01-01"
         },
         "consequence": "covered_above_threshold",
-        "description": "Pub. L. 95-216 section 351(d) applies the 1977 amendments \"with respect to remuneration paid and services rendered after December 31, 1977\". The cash test is a test of remuneration paid, so the date paid decides which test applies, as election_work_1968 reads the same clause: pay on or after 1978-01-01 for nonbusiness work rendered before 1978 takes the $100 calendar-year test, threshold casual_cash_annual for the year paid, as threshold_id_by_case names, not this row's quarterly amount. It ranks below the farm, domestic, business and noncash cases, which the 1977 amendment did not change (review r6 M-6)."
+        "description": "Pub. L. 95-216 section 351(d) applies the 1977 amendments \"with respect to remuneration paid and services rendered after December 31, 1977\". For pay on or after 1978-01-01 for nonbusiness work rendered before 1978 the clause has two readings, and CE1 states its choice (named_options, group section_351d_cash_test_date): the date paid decides, so such pay takes the $100 calendar-year test, threshold casual_cash_annual for the year paid, as threshold_id_by_case names, not this row's quarterly amount. 409(a)(6)(C) tests \"cash remuneration paid by an employer in any calendar year\". The other reading, that the amendments reach only pay both paid and for services rendered after 1977, keeps the $50 calendar-quarter test for this pay. The cited sources reach the pay under both tests: POMS RS 01901.520 C.1 imposes the $100 test \"in any calendar year, subsequent to 1977\", and C.2 keeps the $50 test for \"nonbusiness work performed\" from 1955 through 1977. nonprofit_1968_1977 gives the other reading's result for 409(p), which came from the same section 351. The case ranks below the farm, domestic, business and noncash cases, which the 1977 amendment did not change (review r6 M-6). Review r7 M-6 drops the earlier claim that election_work_1968 reads the same clause: it reads section 353(g), \"remuneration paid after December 31, 1977\"."
       }
     ],
     "open_alternatives": [],
@@ -1379,7 +1414,7 @@
           "remuneration_paid_date": "remuneration paid before 1978-01-01"
         },
         "consequence": "covered_above_threshold",
-        "description": "Pub. L. 95-216 section 351(d) applies the 1977 amendments \"with respect to remuneration paid and services rendered after December 31, 1977\". The cash test is a test of remuneration paid, so the date paid decides which test applies, as election_work_1968 reads the same clause: pay before 1978 for nonbusiness work rendered on or after 1978-01-01 keeps the $50 calendar-quarter test, threshold casual_cash_quarterly for the year paid, as threshold_id_by_case names. It ranks below the domestic, farm, business and noncash cases, which decide such service as casual_service_1968 does (review r6 M-6: the service-date case could never be reached, because the family's service axis sends earlier service to casual_service_1968)."
+        "description": "Pub. L. 95-216 section 351(d) applies the 1977 amendments \"with respect to remuneration paid and services rendered after December 31, 1977\". Pay before 1978 for nonbusiness work rendered on or after 1978-01-01 is not remuneration paid after December 31, 1977, so both readings of the clause keep the $50 calendar-quarter test for it, threshold casual_cash_quarterly for the year paid, as threshold_id_by_case names: the payment-date reading casual_service_1968 chooses, and the reading that the amendments reach only pay both paid and for services rendered after 1977. It ranks below the domestic, farm, business and noncash cases, which decide such service as casual_service_1968 does (review r6 M-6: the service-date case could never be reached, because the family's service axis sends earlier service to casual_service_1968). Review r7 M-6 drops the earlier claim that election_work_1968 reads the same clause: it reads section 353(g)."
       }
     ],
     "open_alternatives": [],

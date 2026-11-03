@@ -1641,7 +1641,10 @@ def test_closed_rows_name_their_operative_reading():
     assert {key: value for key, value in problems.items() if value} == {}
     assert "fishing_crew_share_service_1989" in resolved
     assert "se_units_1984_1985" in resolved
-    assert len(resolved) == 9
+    # Review r7 M-6: casual_service_1968 names its chosen reading of Pub. L.
+    # 95-216 section 351(d) and the conjunctive reading it does not apply.
+    assert "casual_service_1968" in resolved
+    assert len(resolved) == 10
 
 
 @settings(deadline=None)
