@@ -11,7 +11,7 @@ is not a git repository, and removes, whole:
   exposure inventory flags when rerun at that commit;
 - every file on a standing exclusion record (``STANDING_EXCLUSIONS``),
   whatever inventories the build names: B2's run record and attempt
-  ledger, which no inventory scan lists;
+  ledger, and B0.2's files, which no inventory scan lists;
 - ``data/external/psid_codebook_field_evidence/``, whose code maps carry
   frequency columns for B2's 2012 and 2014 labor-income variables;
 - any other file that holds both a code map and frequencies, unless it
@@ -62,8 +62,12 @@ CONTEXT_DIR = "_review_context"
 #: Standing exclusion records, in the inventories' ``q6_exclusions`` form.
 #: Every root excludes their paths, whatever inventories a build names: they
 #: hold values a blind reviewer must not see, and no exposure-inventory scan
-#: lists them.
-STANDING_EXCLUSIONS = ("docs/design/track_b_b2_outcome_exclusions.json",)
+#: lists them. The second is B0.2's work, which successor-design roles may
+#: not read.
+STANDING_EXCLUSIONS = (
+    "docs/design/track_b_b2_outcome_exclusions.json",
+    "docs/design/track_b_b0_2_exclusions.json",
+)
 #: A file holding both of these is a codebook table and is removed.
 CODE_MAP_RX = re.compile(r"code_map", re.IGNORECASE)
 FREQUENCY_RX = re.compile(r"frequenc", re.IGNORECASE)

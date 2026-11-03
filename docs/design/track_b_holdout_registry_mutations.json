@@ -4,7 +4,7 @@
   "admitted_scope": "The held-out data registry's rules on invented registries, temporary git repositories and the committed registry; no population, behavioral or forecast claim.",
   "mutation_method": "One deliberate production-line change per check; both registry test modules run in full and are expected to fail; original bytes restored before the next check. Failed test ids are pytest's own report node ids, written by a reporting plugin, not parsed from summary lines. No mutated implementation is committed.",
   "restored_source_sha256": {
-    "src/populace_dynamics/track_b/holdout_registry.py": "9ca7fc52839d637f29596f369578ff255a528114fe8956c767e4fb3d84ddac5d"
+    "src/populace_dynamics/track_b/holdout_registry.py": "0b31ff1446e26562b29294bd1ef48c8be7f6d6587c1f8e99881bbacf4da240cf"
   },
   "checks": [
     {
@@ -893,8 +893,8 @@
     },
     {
       "mutation": "an unset event path leaks TypeError",
-      "old": "    except (TypeError, ValueError, OSError) as error:\n        raise LookupError(f\"cannot read the GitHub event: {error}\") from None",
-      "new": "    except (ValueError, OSError) as error:\n        raise LookupError(f\"cannot read the GitHub event: {error}\") from None",
+      "old": "    except (TypeError, ValueError, OSError, RecursionError) as error:\n        raise LookupError(f\"cannot read the GitHub event: {error}\") from None",
+      "new": "    except (ValueError, OSError, RecursionError) as error:\n        raise LookupError(f\"cannot read the GitHub event: {error}\") from None",
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
@@ -909,10 +909,38 @@
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
-        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[1]",
-        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[False]",
-        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[None]",
-        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[true]"
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[1-40]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[1-64]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[False-40]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[False-64]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[None-40]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[None-64]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[true-40]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[true-64]"
+      ]
+    },
+    {
+      "mutation": "a too deeply nested event leaks RecursionError",
+      "old": "    except (TypeError, ValueError, OSError, RecursionError) as error:\n        raise LookupError(f\"cannot read the GitHub event: {error}\") from None",
+      "new": "    except (TypeError, ValueError, OSError) as error:\n        raise LookupError(f\"cannot read the GitHub event: {error}\") from None",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_too_deeply_nested_event_raises[pull_request]",
+        "tests/test_track_b_holdout_registry.py::test_a_too_deeply_nested_event_raises[push]"
+      ]
+    },
+    {
+      "mutation": "a 64-digit zero push boundary falls back without created",
+      "old": "        if event.get(\"created\") is not True:\n",
+      "new": "        if len(before) == 40 and event.get(\"created\") is not True:\n",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[1-64]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[False-64]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[None-64]",
+        "tests/test_track_b_holdout_registry.py::test_a_zero_push_boundary_needs_a_created_branch[true-64]"
       ]
     }
   ]

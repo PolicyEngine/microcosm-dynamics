@@ -1362,11 +1362,12 @@ def _landed_union(
 
 def _event() -> Mapping[str, Any]:
     """The GitHub event payload at ``GITHUB_EVENT_PATH``. Raises
-    ``LookupError`` when it cannot be read or is not a JSON object."""
+    ``LookupError`` when it cannot be read, is nested too deeply to parse,
+    or is not a JSON object."""
     path = os.environ.get("GITHUB_EVENT_PATH")
     try:
         payload = json.loads(Path(path).read_text(encoding="utf-8"))
-    except (TypeError, ValueError, OSError) as error:
+    except (TypeError, ValueError, OSError, RecursionError) as error:
         raise LookupError(f"cannot read the GitHub event: {error}") from None
     if not isinstance(payload, Mapping):
         raise LookupError("the GitHub event is not a JSON object")
@@ -1389,9 +1390,9 @@ def base_commit(repository: Path) -> str:
 
     Raises ``LookupError`` when none of these resolves, and on a push
     whose event cannot be read, whose ``before`` commit does not
-    resolve, or whose all-zero ``before`` comes without ``created``: a
-    push is compared with its own boundary, never with a nearer commit
-    that would check less history."""
+    resolve, or whose all-zero ``before`` comes without ``created`` set
+    to true: a push is compared with its own boundary, never with a
+    nearer commit that would check less history."""
     head = _commit(repository, "HEAD")
     if head is None:
         raise LookupError(f"no HEAD in {repository}")

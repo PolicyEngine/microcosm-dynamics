@@ -399,7 +399,11 @@ def test_invalid_computation_is_never_a_denominator_row(layer):
 def test_g_money_consumers_reject_other_layer_results_and_outcomes(layer):
     result = COMPUTE[layer]()
     row = _outcome(layer)
-    guard = g.SavingsClauseGuard(JAN, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        JAN,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     with pytest.raises(g.InvalidFamilyInput):
         g.evaluate_family("wrong-result", 1, lambda: result)
     with pytest.raises(g.InvalidFamilyInput):
@@ -420,7 +424,11 @@ def test_g_guard_and_report_reject_sibling_refusal_reasons(layer, monkeypatch):
     def refuse():
         raise error
 
-    guard = g.SavingsClauseGuard(JAN, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        JAN,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     with pytest.raises(g.InvalidFamilyInput):
         guard.evaluate("wrong-reason", 1, refuse)
     monkeypatch.setattr(

@@ -70,7 +70,11 @@ def _records(months, *, cohort=1935, gpo=False, explicit=False, style="built"):
 def _run(records, entry):
     original = deepcopy(records)
     guards = {
-        key: g.SavingsClauseGuard(NOW, earlier_months_unknown=False)
+        key: g.SavingsClauseGuard(
+            NOW,
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        )
         for key in records
     }
     try:

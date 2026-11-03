@@ -1,0 +1,30 @@
+{
+  "recorded_at": "2026-10-24T12:56:19.831588Z",
+  "request_times_retained": false,
+  "sources": [
+    {
+      "url": "https://www.census.gov/programs-surveys/aspp/data.html",
+      "status": "SOURCE_BLOCKED",
+      "http_status": 403,
+      "detail": "Plain urllib request refused; no alternate headers, user agents or proxies used."
+    },
+    {
+      "url": "https://www.census.gov/data/tables/2025/econ/aspp/aspp-historical-tables.html",
+      "status": "SOURCE_UNAVAILABLE",
+      "http_status": null,
+      "detail": "Initial plain request produced no capture; diagnostic response status was not retained. Census data portal independently returned HTTP 403. No further Census requests made."
+    },
+    {
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0301500000",
+      "status": "SOURCE_NOT_FOUND",
+      "http_status": 404,
+      "detail": "Guessed chapter index does not exist; substantive RS and SL sections captured from verified source links."
+    },
+    {
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0301507000",
+      "status": "SOURCE_UNAVAILABLE",
+      "http_status": null,
+      "detail": "Guessed section TOC produced no capture; diagnostic response status was not retained."
+    }
+  ]
+}
