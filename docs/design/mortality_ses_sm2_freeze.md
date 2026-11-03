@@ -402,7 +402,7 @@ coefficients act on.
   retired workers with exposure in each year by AIME within sex and
   single year of age and cuts quintiles there (pp. 3–4), so the study ranks
   survivors anew at every age; the study notes that people in high quintiles
-  at younger ages move into lower quintiles at older ages (p. 2). SM3's
+  at younger ages move into lower quintiles at older ages (p. 3). SM3's
   attribute is a frozen partial-career rank (S0.1 §1.2). The fitted
   coefficients are contrasts between dynamic-rank groups; applying them to
   frozen-rank attributes is assumption M-E3. No source here identifies the
@@ -504,9 +504,10 @@ coefficients act on.
 
 ### 4.4 Cristia's odds ratios (sensitivity and beside only)
 
-**Log odds ratios never enter as log relative risks.** Cristia's models
-predict death in the next year with the bottom quintile as reference
-(p. 18). Tables 5–6 hold, for each sex and age range, a column with age
+**Log odds ratios never enter as log relative risks.** This section cites
+Cristia's prose by printed page; the PDF page runs two higher (S0.1), and
+the tables carry PDF pages (§3.1). Cristia's models predict death in the
+next year with the bottom quintile as reference (printed p. 18). Tables 5–6 hold, for each sex and age range, a column with age
 and birth year only (columns 1, 3, 5) and a column that adds race,
 marital status and education (columns 2, 4, 6); the third specification
 in Figure 2 (race and marital status) appears only as a plotted line.
@@ -518,7 +519,7 @@ in Figure 2 (race and marital status) appears only as a plotted line.
   observation years; if the pinned historical file starts later, its
   earliest year, reported), with equal quintile shares. The ranges are 35–49,
   50–64 and 65–75. Tables 5–6 print the first range as "30-49", but the
-  sample keeps ages 35–75 only (p. 8); this record reads it as 35–49 and
+  sample keeps ages 35–75 only (printed p. 8); this record reads it as 35–49 and
   reports the misprint.
 - **M-C2, marginal earnings contrasts (columns 1, 3, 5).** At each age
   `a` in `b`, solve the intercept `α(a)` so that
@@ -541,7 +542,7 @@ in Figure 2 (race and marital status) appears only as a plotted line.
   that they are mutually exclusive.
 - **M-C5, marginal group ratios (Tables 3–4).** Directly age-standardized
   one-year mortality ratios against all same-sex persons in the band
-  (p. 14). Contrasts against a reference category are differences of
+  (printed p. 14). Contrasts against a reference category are differences of
   their logs; they are rate ratios already and need no conversion.
 - **M-C6, uncertainty.** Tables 5–6 print robust z statistics in
   parentheses, not standard errors (table notes), so
@@ -598,7 +599,7 @@ the marginal targets.
 
 | Dimension | Ages the fit's sources support | Primary rule below | Primary rule above | Registered sensitivities |
 |---|---|---|---|---|
-| Lifetime earnings | 62–89 (bands 62–64 to 85–89, with backcasts before 2015 and 2020, §3.1) | `TAIL_E_HOLD_62_64_DOWN`: ages 25–61 take the 62–64 coefficient; ages 0–24 take the age-25 value | `TAIL_E_HOLD_85_89_UP`: ages 90–120 take the 85–89 coefficient | T-E1: ages 25–61 take the 65–69 coefficient instead, which avoids the early-claimer selection the source describes for 62–64 (Study 129 p. 6). T-E2: Cristia age shape (below). T-E3: a linear taper of each log contrast from its 85–89 value at age 89 to zero at age 110, and zero above, labeled "assumed convergence, not a finding" (the source reports narrower spreads at older ages, pp. 2, 8, but no rate). T-E4: every OACT band shifted one year younger (M-E5). T-B1: in place of `BAND_BACKCAST_HOLD_FIRST`, a band takes, at each knot before its first fully supported year, the targets of the next younger band fully supported at that knot: 75–79's for 80–84 and for 85–89 at 2010–2014, and 80–84's for 85–89 at 2015–2019, labeled "band backcast from a younger band" |
+| Lifetime earnings | 62–89 (bands 62–64 to 85–89, with backcasts before 2015 and 2020, §3.1) | `TAIL_E_HOLD_62_64_DOWN`: ages 25–61 take the 62–64 coefficient; ages 0–24 take the age-25 value | `TAIL_E_HOLD_85_89_UP`: ages 90–120 take the 85–89 coefficient | T-E1: ages 25–61 take the 65–69 coefficient instead, which avoids the early-claimer selection the source describes for 62–64 (Study 129 p. 6). T-E2: Cristia age shape (below). T-E3: a linear taper of each log contrast from its 85–89 value at age 89 to zero at age 110, and zero above, labeled "assumed convergence, not a finding" (the source reports narrower spreads at older ages, pp. 3, 8, but no rate). T-E4: every OACT band shifted one year younger (M-E5). T-B1: in place of `BAND_BACKCAST_HOLD_FIRST`, a band takes, at each knot before its first fully supported year, the targets of the next younger band fully supported at that knot: 75–79's for 80–84 and for 85–89 at 2010–2014, and 80–84's for 85–89 at 2015–2019, labeled "band backcast from a younger band" |
 | Education | 25–64 (NCHS bands); 65–74, 75–84 and 85+ (NHIS–LMF) | `TAIL_D_HOLD_25_DOWN`: ages 0–24 take the 25–34 coefficient | The 85+ band runs to 120 | T-D1: ages 65–120 take the 55–64 coefficients, with no NHIS input, to show how much the 65+ coefficients rest on NHIS |
 | Race and Hispanic origin: `hispanic`, `black_non_hispanic` | Single ages 0–99 | None needed | `TAIL_R_HOLD_99_UP`: ages 100–120 take the age-99 coefficient; the fit reads no contrast from the "100 and older" interval | T-R1: a taper from the age-99 value to zero at age 110, labeled as T-E3 |
 | `other_non_hispanic` | 25–44, 45–64, 65–74, 75–84, 85+ (NHIS–LMF) | `TAIL_O_HOLD_25_DOWN`: ages 0–24 take the 25–44 coefficient | 85+ runs to 120 | T-R2: for 2019–2024, the partial AIAN-and-Asian composite (M-R4) replaces NHIS at every age, labeled "partial group" |
@@ -845,7 +846,7 @@ age-standardized hazards for NHIS targets (§4, common scale).
 | **JR-C: full joint calibration with a public earnings proxy (primary)** | Conditional coefficients that reproduce every marginal target on one named population, given the proxy's dependence and log-additivity | `P(k, d, r \| s, a)` | ACS PUMS with the Social Security income quintile and the ordered logit (§6.2) | Supplies the education targets at 65+, the split and `other_non_hispanic`; cannot supply the earnings dependence | The proxy's dependence differs from the AIME quintile's (§6.6); effects interact rather than add; the dependence in the deployment population (PSID cohorts) differs from the ACS's |
 | **JR-D: Cristia-bridged shrinkage** | The 1983–2003 ratio of mutually adjusted to marginal contrasts in SIPP–SSA data at 35–75, carried to modern marginals | None named; it is implicit in Cristia's sample | Cristia's Tables 3–6 | Nothing | The ratio may not carry across two to four decades and a different population; columns 2, 4, 6 also adjust for marital status; rounded z statistics; it reproduces no modern marginal on any named population, so no e65 check applies |
 | **JR-E: NHIS direct joint model** | Education and race hazard ratios adjusted for each other in NHIS's 2009–2019 population; earnings as JR-B | The NHIS sample itself | NHIS–LMF | Supplies everything for education × race at attained ages 25+; cannot supply earnings, single ages above 84 at interview, or deaths after 2019 | Does not reproduce NCHS's targets (different population, years and reporting); survey precision; the earnings overlap as JR-B |
-| **JR-F: PSID reference population (not available)** | As JR-C, with the deployment population's own joint distribution | The PSID cohort's lifetime-earnings × education × race distribution | — | — | PSID use follows the project's data-access record. This record does not use it; §12 states the rule for the primary |
+| **JR-F: PSID reference population (not used, §12)** | As JR-C, with the deployment population's own joint distribution | The PSID cohort's lifetime-earnings × education × race distribution | — | — | PSID use follows the project's data-access record. This record does not use it; §12 states the rule for the primary |
 
 **JR-D's definition [frozen here].** For dimension `X`, sex `s` and
 Cristia age range `b`, `κ_X(s, b)` is the weighted least-squares slope,
@@ -1406,7 +1407,9 @@ e65 bounds and make passing easier, so this record applies S0.1's rule:
 | **Total** | **6,884** | |
 
 - **Joint-survey targets.** The 30 NHIS targets are in the family; they
-  are the only survey-estimated targets.
+  are the only targets whose estimates this project computes from survey
+  records. NCHS's education rates also rest on a survey, through their
+  ACS denominators (§3.2), and U3 carries that sampling error (§9.3).
 - **One member per published or estimated quantity.** A target imposed at
   several knots (a backcast copy, a held target or an NHIS target) is one
   member, tested by its largest absolute residual across the knots that
