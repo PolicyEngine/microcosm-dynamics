@@ -46,9 +46,9 @@ those sources; nothing here feeds a blind role.
   targets, PDF objects or drawing operators, a code from a codebook, a
   tolerance the design or S0.1 sets, a rule or seed this record sets, or a
   constant it derives from those (the Bonferroni critical value).
-- **Data.** This job opened no PSID, HRS, SIPP or NHIS microdata file and
-  computed nothing on real data. PSID use follows the project's
-  data-access record. This record uses and compares no DYNASIM, Urban
+- **Data.** Neither the freeze job nor its fix round opened a PSID, HRS,
+  SIPP, NHIS or ACS microdata file, and neither computed anything on real
+  data. PSID use follows the project's data-access record. This record uses and compares no DYNASIM, Urban
   Institute or PWBM material, which reaches these gates only through a
   validation lane (S0.1 scope). CBO publication 49659 stays closed; its
   methods count as
@@ -93,7 +93,7 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | S2-11 | 587 | **[open]** extraction and digitization of the 2022 gradient, its uncertainty, complete coverage | Frozen: vector extraction of Study 129 Figures 7–12, validated against Tables 7–12 at every table year, with a digitization half-width the validation sets; complete tables at every knot | §7.1–7.3 | frozen here |
 | S2-12 | 591 | **[open]** widening `CoefficientPath`: slope, origin, ages, caps; knot years and synchronization | Frozen: origin 2024, slopes from a frozen estimator on OACT's pre-pandemic annual figures, caps of 30 years and a 1.5 multiplier, race held flat; annual knots 2010–2024 with one synchronization rule | §7.4–7.5 | frozen here |
 | S2-13 | 602 | **[proposed]** `unclassified_rule="reference"` for SM3's overall denominator | Confirmed for SM3; `refuse` for conformance runs and for any projection until the frame carries the attributes | §8.3 | frozen here |
-| S2-14 | 606 | **[open: identification]** marginal contrasts do not determine mutually adjusted coefficients; freeze a joint route and its reference distribution | Five candidate routes and one unavailable route; primary JR-C; JR-A (plain addition, labeled), JR-B, JR-D and JR-E as sensitivities. NHIS targets compare as age-standardized hazard ratios on `R_ref(t)`'s single-age population, under named assumption M-H1 (§4, §4.5). The ordered logit fits once per knot year and sex on that year's ACS, and again inside every replicate, with a frozen optimizer, convergence rule and tie rule (§6.2) | §4, §6 | frozen here |
+| S2-14 | 606 | **[open: identification]** marginal contrasts do not determine mutually adjusted coefficients; freeze a joint route and its reference distribution | Five candidate routes and one unavailable route; primary JR-C; JR-A (plain addition, labeled), JR-B, JR-D and JR-E as sensitivities. NHIS targets compare as age-standardized hazard ratios on `R_ref(t)`'s single-age population, under named assumption M-H1 (§4, §4.5). The ordered logit fits once per knot year and sex on that year's ACS, and again inside every replicate, with a frozen optimizer, convergence rule and tie rule (§6.2). The ACS income item passes a frozen acceptance rule, and JR-C-W covers the proxy's weakness for women (§6.2, §6.5) | §4, §6 | frozen here |
 | S2-15 | 629 | **[open]** exact release dates of any earlier NHIS cohort used | Left open. The linked-mortality `.dat` files carry the listing date 26 April 2022; each NHIS year's release date settles from that year's survey description, which the fit job records. Nothing in SM2 depends on it, because SM2 claims no prospective origin | §3.4 | left open; settled by the fit job's per-year release ledger |
 | S2-16 | 641 | **[frozen tolerance; proposed operationalization]** e65 target from source ratios on one baseline, with a fixed reference population, marginalization and tail rule | Frozen; the 0.1-year limit stays | §9.2 | frozen here (operationalization); tolerance frozen, S0.1 §2.5 |
 | S2-17 | 649 | **[open]** whether the different source populations and baselines can satisfy the targets together | This record freezes the procedure: one joint calibration per knot on one reference population, and a named failure when it cannot reproduce every target. Whether it can is an outcome, so this record does not settle it | §6.3, §9 | left open; settled by the fit under §9's rule |
@@ -297,10 +297,17 @@ year.
   Census Bureau's ACS 1-year PUMS person files for each knot year
   2010–2024, with their person weights and replicate weights. NCHS built
   its 2020 education denominators from the 2020 1-year PUMS (NVSR 72(10)
-  internet tables, p. 2), and the fit uses that file too; the fit job
-  records any data-quality note the Census Bureau attaches to it. §6
-  defines the population built from these files. This job opened no ACS file
-  or ACS documentation and did not check their URLs (§11.6).
+  internet tables, p. 2), and the fit uses that file too. The Census
+  Bureau "did not release its standard 2020 ACS 1-year" PUMS because of
+  the pandemic and released the file "with experimental weights and
+  replicate weights" (its 2020 PUMS documentation page, §13.6); the fit
+  labels the 2020 knot's reference population accordingly and records any
+  further note. §6 defines the population built from these files. The
+  first freeze job opened no ACS file or documentation. Fix round 1 read
+  the ACS data dictionaries for 2010–2019 and 2021–2024, the subject
+  definitions for 2010–2024 and the 2024 top-coded-values document
+  (§13.6), and opened no ACS microdata; the data files' URLs stay
+  unchecked (§11.6).
 - **Baseline [frozen, S0.1 §1.1].** OACT's TR 2026 single-age, sex and
   year `q` through the pinned accessor `data/tr2026.death_probability`,
   historical through 2023 and Alternative II from 2024, ages 0–120 with
@@ -641,9 +648,11 @@ records which it does), with these attributes:
   weight that straddles a quintile boundary so each quintile holds exactly
   one fifth.
   This is the public stand-in for OACT's AIME quintile (M-E3, M-E4): both
-  rank people within sex and single age, and both rank by a quantity tied
-  to the worker's benefit (OACT notes that ranking by AIME or by PIA is
-  equivalent within a birth year, Study 129 p. 2, note 2).
+  rank people within sex and single age. OACT ranks by AIME, which orders
+  people as their PIA does within a birth year (Study 129 p. 2, note 2);
+  the ACS ranks by the Social Security income each person reports, which
+  departs from the person's own PIA in the ways the last bullet of this
+  list sets out.
 - **The dependence model.** For each knot year `t` and sex `s`, on that
   year's persons with positive Social Security income aged 62–84, for
   each age group `G ∈ {62–69, 70–79, 80–84}`, a weighted ordered logit
@@ -703,15 +712,52 @@ records which it does), with these attributes:
   evaluates OACT targets on the subpopulation with positive Social
   Security income (its own `P(d, r | s, a, t)`, the same `P(k | d, r)`);
   every other target on the whole population.
-- **What the proxy is not.** A benefit amount is not an AIME. Study 129
-  itself names two reasons they part: a worker who claims at 62 takes a
-  larger reduction than one who waits (p. 7), and dually entitled
-  beneficiaries receive a partial spouse benefit on top of their own
-  (p. 8, note 1). This job did not read the ACS documentation, so it
-  makes no claim about which benefit types the ACS income item covers;
-  the fit job reads each year's data dictionary and records that
-  definition before building `Q̃` (§11.6). §6.6 lists what the gap leaves
+- **What the proxy is not, and where it is weakest.** A benefit amount is
+  not an AIME, and Study 129 itself shows how they part. The amount
+  depends on when the worker claims: the NRA is the age of first
+  entitlement "without an age-based reduction" (p. 6), and "workers who
+  can wait to retire may do so to receive a higher monthly Social Security
+  benefit" (p. 9). A person "may be entitled as a retired worker on their
+  own record and as a spouse on another record", and where the spouse
+  benefit is the higher, "The total benefit is the same amount as the
+  full spouse benefit" (p. 8, note 1), so the total follows the other
+  record, not the beneficiary's own AIME. Women
+  "often became dually entitled", so that their AIME "may not have closely
+  aligned with their family income level" (p. 8). The ACS item also
+  counts more than a retired-worker benefit: in every year 2010–2024 its
+  definition includes survivor benefits, permanent disability insurance
+  payments made by the Social Security Administration, and railroad
+  retirement (next bullet), none of which OACT's AIME ranking sees (M-E4);
+  Study 129 does not discuss survivors. **The proxy is therefore weakest
+  for women:** for a dually entitled woman, `Q̃` ranks an amount set on
+  her spouse's record, not her own AIME. JR-C-W (§6.5) shows how much
+  women's coefficients rest on it, and §6.6 lists what the gap leaves
   unidentified.
+- **The income item's acceptance rule [frozen here].** This round read
+  the item in the subject definitions for every year 2010–2024
+  ("Income in the Past 12 Months", item 4; 2010 p. 79, 2024 p. 95) and in
+  the data dictionaries for 2010–2019 and 2021–2024 (§13.6). The
+  dictionaries define `SSP` as "Social Security income past 12 months"
+  for persons 15 and over. The subject definitions hold two wordings, one
+  for 2010–2016 ("Social Security income includes Social Security
+  pensions and survivor benefits, permanent disability insurance payments
+  made by the Social Security Administration prior to deductions for
+  medical insurance, and railroad retirement insurance checks from the
+  U.S. government. Medicare reimbursements are not included.") and one for
+  2017–2024, headed "Social Security or Railroad Retirement income", which
+  reads "Social Security and U.S. railroad retirement pensions and
+  survivor benefits" in place of "Social Security pensions and survivor
+  benefits" and is otherwise the same. Both describe the same benefit
+  types, which this record takes as the proxy's stated content, not as a
+  failure. For each year it uses, the fit job checks the year's subject
+  definition and `SSP` dictionary entry: a file whose SHA-256 equals the
+  one §13.6 lists passes, and any other copy passes when the item's text
+  matches the frozen wording for its years, line breaks and spacing aside.
+  A year that fails, or whose documents the fit job cannot obtain (2020's
+  dictionary is one, §8.2), takes `λ` from the nearest passing year, the
+  earlier year on a tie, keeps its own file for everything else, and
+  carries the label "income-item definition borrowed from" that year. If
+  no year passes, `SOURCE_UNAVAILABLE` (vi) applies (§10).
 
 ### 6.3 Joint marginal calibration [frozen here]
 
@@ -769,7 +815,7 @@ are `κ` times JR-A's, and ages outside 35–75 take the nearest range's `κ`.
 
 **Primary: JR-C.** Sensitivities: JR-A (labeled "plain addition of
 marginals"), JR-B (JR-C with `λ = 0`), JR-C with `λ` scaled by 0.5 and by
-1.5, JR-D and JR-E. Reasons:
+1.5, JR-C-W (below), JR-D and JR-E. Reasons:
 
 1. **Q5 asks for one model.** "Education and race and Hispanic origin are
    further dimensions of the same model" calls for coefficients that hold
@@ -789,16 +835,30 @@ marginals"), JR-B (JR-C with `λ = 0`), JR-C with `λ` scaled by 0.5 and by
    contrasts as the earnings targets; no route lets an education or race
    source move them.
 
+**JR-C-W, women's dependence from men's [frozen here].** The proxy is
+weakest for women (§6.2). In JR-C-W, women's ordered logit takes men's
+`λ_D,G` and `λ_R,G` of the same knot year and age group, and women's cut
+points follow §6.2's recomputation; men's tables equal JR-C's. Its label
+is "women's dependence borrowed from men". The calibration runs
+separately for each sex (§6.3), so JR-B's women's tables already show
+`λ = 0` for women alone, and JR-C-W adds the other alternative: the
+dependence men show.
+
 ### 6.6 What stays unidentified
 
 - **The dependence between OACT's AIME quintile and education or race.**
   The Social Security income quintile stands in for it. Benefits that do
-  not follow the worker's own AIME move the proxy away from OACT's
-  quintile: claiming-age reductions (Study 129 p. 7), spouse benefits for
-  the dually entitled (p. 8, note 1), and any benefit type the ACS item
-  covers that OACT's population excludes (M-E4; the item's definition is
-  the fit job's to record, §6.2). No public source settles which way
-  these move the estimated dependence.
+  not follow the person's own AIME move the proxy away from OACT's
+  quintile: claiming-age reductions (Study 129 pp. 6, 9), the full spouse
+  benefit that a dually entitled beneficiary receives in total (p. 8,
+  note 1), and the survivor, disability and railroad retirement benefits
+  that the ACS item counts and OACT's AIME ranking never sees (§6.2,
+  M-E4). **The gap is widest for women**, whose AIME the study says "may
+  not have closely aligned with their family income level" (p. 8): for a
+  dually entitled woman, the proxy ranks an amount set on the spouse's
+  record. No public source settles which way these move the estimated
+  dependence; JR-C-W (§6.5) shows how much women's coefficients rest on
+  it.
 - **Interactions.** The model assumes the three effects add on the log
   scale. No public source has all three jointly with modern deaths. The
   fit job reports NHIS's education × race interaction terms at 65+ as a
@@ -1278,7 +1338,7 @@ tunes anything so that sources agree** (S0.1 §2.5, frozen).
 | Condition | Trigger for SM2 | What it stops | Fallback |
 |---|---|---|---|
 | `GRADIENT_SOURCES_INCONSISTENT` | Two comparable sources disagree beyond SM2's fit tolerance. "Comparable": the same SM category definitions and sex, overlapping ages, calendar windows that overlap at least half the shorter one, and populations that differ at most in institutional coverage. Assessed: (a) Study 129 against Study 124 at table years 1995–2015, bands 62–84; (b) NCHS life tables against NHIS–LMF for `hispanic` and `black_non_hispanic` at 25–84. Not assessed: OACT against Cristia (different years, ages and earnings measures), NCHS education against NHIS at 25–64 (their windows share two of NCHS's five years), and `other_non_hispanic` against the partial composite (different groups). Metric: the difference in temporary life expectancy over the pair's shared ages, each built by applying the source's ratios to the TR 2026 baseline of the year compared: for (a), from 62 to the top of the year's oldest band printed in both studies, per table year, sex and quintile (5 × 2 × 5 = 50 comparisons); for (b), from 25 to 85, per NCHS year 2010–2019, sex and group (10 × 2 × 2 = 40). Triggered when a comparison's simultaneous 95 percent bound, Bonferroni over these 90 comparisons, excludes ±0.1 year | Nothing about SM2's admission. OACT stays primary for earnings and NCHS for race; the other source stays a registered sensitivity; the fit's report publishes the disagreement. Pair (a) has no random-variation term (§9.3), so the fit reports a disagreement it finds and it does not trigger | None needed |
-| `SOURCE_UNAVAILABLE` | (i) The digitization fails validation, or the digitizer cannot read a figure; (ii) an NHIS or LMF file is missing or its hash differs; (iii) an ACS year is missing; (iv) the ordered logit does not converge for some knot, sex or ACS replicate (§6.2); (v) any source file's hash differs from §13 or the fit job's manifest | (i) P-PRIMARY, and with it SM2's admission; (ii) admission of education and race; (iii) one missing year: nothing, the knot uses the nearest year, labeled; two or more: SM2's admission; (iv) JR-C, and with it SM2's admission; (v) the run | (i) P-TABLE, computed and published labeled, never substituted; the Q6 question goes to Max (§12). (ii) T-D1 for education at 65+, Cristia's conditional `college`/`some_college` contrast for the split, T-R2 for `other_non_hispanic` at 2019–2024 only (earlier knots then have no `other_non_hispanic` source and the report marks them unavailable); all labeled, none admitted. (iv) JR-B, labeled, not admitted |
+| `SOURCE_UNAVAILABLE` | (i) The digitization fails validation, or the digitizer cannot read a figure; (ii) an NHIS or LMF file is missing or its hash differs; (iii) an ACS year is missing; (iv) the ordered logit does not converge for some knot, sex or ACS replicate (§6.2); (v) any source file's hash differs from §13 or the fit job's manifest (the ACS documents of §13.6 follow §6.2's text rule instead); (vi) no ACS year's income-item documents pass §6.2's acceptance rule | (i) P-PRIMARY, and with it SM2's admission; (ii) admission of education and race; (iii) one missing year: nothing, the knot uses the nearest year, labeled; two or more: SM2's admission; (iv) JR-C, and with it SM2's admission; (v) the run; (vi) JR-C, and with it SM2's admission (a year that fails alone only borrows `λ`, labeled, §6.2) | (i) P-TABLE, computed and published labeled, never substituted; the Q6 question goes to Max (§12). (ii) T-D1 for education at 65+, Cristia's conditional `college`/`some_college` contrast for the split, T-R2 for `other_non_hispanic` at 2019–2024 only (earlier knots then have no `other_non_hispanic` source and the report marks them unavailable); all labeled, none admitted. (iv) and (vi) JR-B, labeled, not admitted |
 | `EXPOSURE_UNRESOLVED` | Any report calls a comparison with a source reported beside the fit out of sample or a holdout, or describes a later role as blind to these sources | That claim | None: every SM2 source is an exposed target (§1) |
 | `FRAME_ATTRIBUTE_MISSING` | A frame that would use SM2's coefficients lacks a dimension's column; the Microcosm frame lacks education (design §7.2) | Use of the coefficients on that frame; closed-cohort work continues, labeled | None. The reference population's missing lifetime earnings is a declared proxy (§6.2), not this condition |
 | `SMALL_CELL_DISCLOSURE` | A published aggregate from NHIS or ACS microdata rests on fewer than 100 unweighted persons, or a published death-based cell on fewer than 20 deaths (§11.5) | Publication of that artifact until the writer suppresses the cell and any complement that reveals it | Suppression |
@@ -1391,7 +1451,8 @@ publication rule, not a precision guarantee (S0.1 §2.5).
 | Public LMF, NHIS 2009–2018 | https://ftp.cdc.gov/pub/Health_Statistics/NCHS/datalinkage/linked_mortality/NHIS_2009_MORT_2019_PUBLIC.dat through `NHIS_2018_MORT_2019_PUBLIC.dat`, and `R_ReadInProgramAllSurveys.R` in the same folder | Names, sizes and dates from the folder listing; no file downloaded |
 | NHIS 2009–2018 data files | https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NHIS/ followed by the year | Not listed in this job; the fit job lists each year's folder and records the sample-adult and person file names, sizes and hashes |
 | NHIS 2009–2018 documentation | https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NHIS/ followed by the year, files `samadult_layout.pdf`, `personsx_layout.pdf`, `srvydesc.pdf` | 2009, 2016 and 2018 downloaded |
-| ACS 1-year PUMS person files and data dictionaries, 2010–2024 | The Census Bureau's PUMS directory, https://www2.census.gov/programs-surveys/acs/data/pums/ followed by `<year>/1-Year/` | **Not checked**: census.gov lay outside this job's fetch scope. The fit job confirms each URL and records sizes and hashes before use |
+| ACS 1-year PUMS person files, 2010–2024 | The Census Bureau's PUMS directory, https://www2.census.gov/programs-surveys/acs/data/pums/ followed by `<year>/1-Year/`; for 2020, the file with experimental weights under https://www2.census.gov/programs-surveys/acs/experimental/2020/data/pums/1-Year/, which the Census Bureau's 2020 experimental-PUMS page links | **Not checked**: no round fetched or listed a data directory. The fit job confirms each URL and records sizes and hashes before use |
+| ACS PUMS documentation, 2010–2024 | Data dictionaries under https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/ (`PUMSDataDict10.pdf` to `PUMSDataDict12.pdf`, `PUMSDataDict13.txt` to `PUMSDataDict16.txt`, then `PUMS_Data_Dictionary_<year>.txt`); subject definitions under https://www2.census.gov/programs-surveys/acs/tech_docs/subject_definitions/ (`<year>_ACSSubjectDefinitions.pdf`); top-coded values under https://www2.census.gov/programs-surveys/acs/tech_docs/pums/top_coded_values/. The 2020 1-year dictionary sits only under https://www2.census.gov/programs-surveys/acs/experimental/2020/documentation/pums/ (`PUMS_Data_Dictionary_2020.txt`) | Fix round 1 fetched every dictionary but 2020's, every subject-definitions file 2010–2024 and the 2024 top-coded values (§13.6). 2020's dictionary lay outside that round's cleared path; the fit job fetches it first (§8.2) |
 | TR 2026 death probabilities | Already in the repository behind `data/tr2026.death_probability` (S0.1 §1.1) | — |
 
 ### 11.7 Invariants for property-based tests (Hypothesis, invented data)
@@ -1592,3 +1653,102 @@ it to the background, saving its output under
 NHIS layouts, and a search with a Python check); a fourth time a commit
 and push did. The job stopped the first three and opened none of the four
 saved files.
+
+### 13.6 Fix round 1 (3 November 2026)
+
+A second job revised this record to answer independent review r1
+(`EV/mortality-groups-financing-20261021/builds/sm2-review-r1.md`). It
+counts as exposed, like the first, and nothing from it feeds a blind role.
+
+**Restricted lists.** It read the six lists of §13.1 and a seventh,
+`EV/coordinator/restricted-files-pending-20261101.md`
+(`84ab3e1f4c5824a3fd97f8a742a293737deabc680d674724e7e6f2cf4dfc00f5`, 16
+lines), in parts of at most 30 lines, every part shown in full, and opened
+no harness-saved copy of any. All seven hashes matched its brief, and no
+newer pending file existed.
+
+**Documents fetched.** Thirty-five files on 3 November 2026, from
+`www.census.gov/` and `www2.census.gov/programs-surveys/acs/tech_docs/`
+only; none is microdata. `DD` is
+`https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/`
+and `SD` is
+`https://www2.census.gov/programs-surveys/acs/tech_docs/subject_definitions/`.
+
+| What | URL | Bytes | SHA-256 |
+|---|---|---:|---|
+| Data-dictionary directory listing | `DD` | 35542 | `6353cd1d26a14086aa6ed2f3edc5fcc1b09e60546de0e19910d00409b5944579` |
+| 2010 data dictionary | `DD` `PUMSDataDict10.pdf` | 369558 | `4b4cc0b1adca2abff28e67cf796b6074e45cdf9c8609b88c5e4a45d84fb8fb48` |
+| 2011 data dictionary | `DD` `PUMSDataDict11.pdf` | 360302 | `a0127a8b40d472a11def2efc6dc3a88b8425b707a6eb63f860002c641c054963` |
+| 2012 data dictionary | `DD` `PUMSDataDict12.pdf` | 369966 | `89570a1831bc5c9ee5a72cd89ebdda978ef1f799f1d1353e418f3e1eeb409b1b` |
+| 2013 data dictionary | `DD` `PUMSDataDict13.txt` | 264904 | `14f0061974fc6a1db746679766abe1c4d81afd8e4ef4b5b83579e64d136f98c2` |
+| 2014 data dictionary | `DD` `PUMSDataDict14.txt` | 190795 | `9dd3f70392159c4fa15b55b437ea77796f877b3ec8973561c9762b697abb1f7c` |
+| 2015 data dictionary | `DD` `PUMSDataDict15.txt` | 207251 | `0b6b75d176dcb8572972d11d303ff1f02a11d1b58ca40702508ab3b834dade53` |
+| 2016 data dictionary | `DD` `PUMSDataDict16.txt` | 211482 | `b21a4dd6500b03fe61de92f5433a3b25b635b07492a9806b51db2d8a49e2b89b` |
+| 2017 data dictionary | `DD` `PUMS_Data_Dictionary_2017.txt` | 294848 | `ea5bcde2a07b0c76ac145fac108e9013480b686a9d70afc4e3f4a6512ccbfd69` |
+| 2018 data dictionary | `DD` `PUMS_Data_Dictionary_2018.txt` | 298670 | `843a18e15b6cb7c7326261d478947a1415c4674c62419a8d01946a5a5df4d5fd` |
+| 2019 data dictionary | `DD` `PUMS_Data_Dictionary_2019.txt` | 300134 | `2ecbd86e979aa4e94945012e7537e53c37a4deff7f0435adb000b98b5a50ce77` |
+| 2021 data dictionary | `DD` `PUMS_Data_Dictionary_2021.txt` | 301277 | `53fb9da5c36b68670c54ab12baa13c4767f6b3e43db326585635c5a333090b60` |
+| 2022 data dictionary | `DD` `PUMS_Data_Dictionary_2022.txt` | 301115 | `4a920e7c2a83dc5bede6620e5edf9bed825a8950072271bbbadd800c400ba9e6` |
+| 2023 data dictionary | `DD` `PUMS_Data_Dictionary_2023.txt` | 303015 | `0e58d8edd725d44035c32ee2697acb3963eb39c36caf4096e0ce494c64bb6dc6` |
+| 2024 data dictionary | `DD` `PUMS_Data_Dictionary_2024.txt` | 306867 | `9a98282277aa7f2dafb12b0bdf38b258689d3a1a9c2abbd9b5e2c1ddde6f7b32` |
+| Subject-definitions directory listing | `SD` | 20306 | `a2e01395460524851da9ce5eee71732f61667e56cbf914cc65d6ecbd17117a82` |
+| 2010 subject definitions | `SD` `2010_ACSSubjectDefinitions.pdf` | 688859 | `dd016f630ab0435e2e3edfe21ec5aed5ca5a24391e1efb7a5f022d0332336012` |
+| 2011 subject definitions | `SD` `2011_ACSSubjectDefinitions.pdf` | 700744 | `7eedd173f80fccf700edf83628b4c0d6ae14b1bcc8b7a41f2c5d59a28366cd5e` |
+| 2012 subject definitions | `SD` `2012_ACSSubjectDefinitions.pdf` | 804765 | `61c7199b24f9ac03b46bfaef968ea152e9d4ab427d43772f05cfc48b842da62f` |
+| 2013 subject definitions | `SD` `2013_ACSSubjectDefinitions.pdf` | 813312 | `bcc860028009411b4b45961a7abc50ecc4eaf2cea3e7676da8bbc8fcc3a98d9f` |
+| 2014 subject definitions | `SD` `2014_ACSSubjectDefinitions.pdf` | 1216961 | `bff06e9d1477147c5171aacb452954a554f21d465bbe4e96322dd03c7ca7a048` |
+| 2015 subject definitions | `SD` `2015_ACSSubjectDefinitions.pdf` | 851793 | `881329f214c54e4249165c271107d599b906a96561e9415739ad08f487ffef7d` |
+| 2016 subject definitions | `SD` `2016_ACSSubjectDefinitions.pdf` | 1422620 | `028829c7dc01d5575bd9ecb4bf373f559ad1590be7599ce2de448d66a583203f` |
+| 2017 subject definitions | `SD` `2017_ACSSubjectDefinitions.pdf` | 932466 | `8676e64c48a8519da8648764ad7b326603f12fa1c8a9e0fba9b6965a03e85112` |
+| 2018 subject definitions | `SD` `2018_ACSSubjectDefinitions.pdf` | 1653091 | `842c8188751a22208a71360c8474c770236c313e58196356cb998bb0724f260c` |
+| 2019 subject definitions | `SD` `2019_ACSSubjectDefinitions.pdf` | 1076378 | `ce42270355d9dce11fe8608454402fb80b9b0ce4a4e83ebd55a71f8a117574ed` |
+| 2020 subject definitions | `SD` `2020_ACSSubjectDefinitions.pdf` | 1091755 | `70082ff6739486fa9e7524c34507f59a292d05afcb5fc9f3402a7985ecde5bc5` |
+| 2021 subject definitions | `SD` `2021_ACSSubjectDefinitions.pdf` | 1088859 | `a1db9fb258ff6ff25c5ac4d9a4817eca35f31bb49e238aaad616e6d6f568398e` |
+| 2022 subject definitions | `SD` `2022_ACSSubjectDefinitions.pdf` | 1136140 | `3ba434d7c72ae71c6c8fe4903493cc063a92eca488b89e2e1e490124378caeed` |
+| 2023 subject definitions | `SD` `2023_ACSSubjectDefinitions.pdf` | 1102515 | `6edcfa27b10eaea093867256523cdc6f256a6c7991f4b02823d9034de2e31033` |
+| 2024 subject definitions | `SD` `2024_ACSSubjectDefinitions.pdf` | 1170567 | `6e0c5b1a5d3ebf7e300e583ac6424cbd5f09de50d69e7ef03aa6d070d9c4a7a8` |
+| 2016–2020 PUMS documentation page | https://www.census.gov/programs-surveys/acs/microdata/documentation.2020.html | 368498 | `0893dd7309bb7f88026e3ae23ca8011f127178a8c281c85b6a99a0a6f0bf59c8` |
+| 2020 experimental-PUMS page | https://www.census.gov/programs-surveys/acs/data/experimental-data/2020-1-year-pums.html | 351006 | `3fc562a7536230843d11fc04dd01b491b73772b0fdb99726f0feb1955212e7b1` |
+| 2024 PUMS documentation page | https://www.census.gov/programs-surveys/acs/microdata/documentation.2024.html | 380383 | `b84b42278085eeb4731df9442200a02f207f9f1dd14123b30ee202c54b5fea05` |
+| 2024 top-coded values | https://www2.census.gov/programs-surveys/acs/tech_docs/pums/top_coded_values/2024PUMS_top_coded_values.pdf | 155706 | `d5ff127b7cfa33a8bbea84590472a0ae5806054762ac246471648f38b56196a7` |
+
+From the dictionaries the round read the entries for `SSP`, `SCHL`,
+`HISP`, `RAC1P`, `AGEP`, `ADJINC` and `SEX`; from the subject definitions,
+the Social Security income definition; from the top-coded-values
+document, its variable list and its explanation of top-coding; from the
+pages, their links and the 2020 page's note on experimental weights. The
+2020 1-year dictionary sits under
+`www2.census.gov/programs-surveys/acs/experimental/`, outside the round's
+cleared path, so it fetched nothing there.
+
+**Other files opened outside the repository.** The review r1 file; from
+the review's scratch folder, `m1_invented.py` and `schema_check.py`; the
+first job's brief, report and OACT counts check; in S0.1's source folder,
+`oact_study129.txt` (lines on pp. 2–9, masked), `nchs_nvsr75-05.txt`
+(pp. 1–2, the table notes and technical notes pp. 53–62, masked),
+`nchs_nvsr74-02.txt` (a search for classification ratios),
+`nchs_nvsr74-04.txt` (p. 132, masked),
+`nchs_lmf_public-use-linked-mortality-file-description.txt` (p. 1),
+`nchs_lmf_public-use-linked-mortality-files-data-dictionary.txt` (a
+search for a perturbation flag), `nhis2018_samadult_layout.pdf` (pp. 6–8),
+`nhis2018_srvydesc.pdf` (converted to text in the round's scratch folder;
+search hits on pp. 8, 16, 70 and 82–94, and pp. 83, 92 and 93 read),
+`cbo_41681.txt` (pp. 1–2, masked),
+`cbo_wp2007-11_cristia.txt` (table titles) and
+`cbo_wp2007-11_cristia.pdf` (Tables 1, 2 and 4, PDF pp. 36, 37 and 39,
+every number masked); in the SM2 source folder, `files.sha256`,
+`nchs_us_life_tables_2019_nvsr70-19.txt` and
+`nchs_us_life_tables_2023_nvsr74-06.txt` (searches for classification
+ratios). Each hash matched its folder's `files.sha256`.
+
+**Repository files.** This record; `docs/design/s0_1_source_audit.md`
+(lines 1–60 and 324–707); `docs/design/mortality_groups_financing.md`
+(the lines this record cites); `src/populace_dynamics/data/life_table.py`
+(in full).
+
+**What showed despite masking.** A few one- and two-digit counts from
+Table I of NVSR 70(19) and 74(6); number words and one axis label in CBO
+41681's prose on pp. 1–2; in the ACS dictionaries, the `ADJINC` factors
+and the dollar bounds of the income items; and the TR 2026 example values
+in `life_table.py`'s docstring, which the round read in full. None of
+them appears in this record.
