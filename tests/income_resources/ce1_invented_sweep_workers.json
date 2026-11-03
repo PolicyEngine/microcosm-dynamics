@@ -468,6 +468,11 @@
   ],
   [
    "se_clergy_gross_concept_1973_1987",
+   "past_ministerial_service_pension_open",
+   "retirement_payment"
+  ],
+  [
+   "se_clergy_gross_concept_1973_1987",
    "pub_l_103_296_section_306_certificate",
    "clergy_or_religious_exemption"
   ],
@@ -721,6 +726,11 @@
    "religious_order_1984_2026",
    "election_status_not_established",
    "religious_order_service"
+  ],
+  [
+   "se_clergy_gross_concept_1973_1987",
+   "past_ministerial_service_pension_open",
+   "retirement_payment"
   ],
   [
    "se_nonresident_alien_1983_2026",
@@ -17937,6 +17947,17 @@
     "taxable_year_start": "1985-01-01"
    },
    "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1973_1987",
+   "worker": "INVENTED (review r7, the brief's just-miss rule, just misses past_ministerial_service_pension_open on retirement_payment): 1980: a pastor still serving his congregation, with no 1402(e) exemption, who receives no pension or retirement allowance for past ministerial services: the open case does not reach him, and the covered residual counts his salary as nonexempt ministry earnings.",
+   "facts": {
+    "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
+    "retirement_payment": "no pension or retirement allowance received",
+    "clergy_remuneration": "salary for current ministerial services"
+   },
+   "expected": "covered",
    "decides": "residual"
   }
  ]
