@@ -7,10 +7,11 @@ A period begins in a quarter its holder was insured (404.320(b)(2), 404.321(a)).
 A DisabilityPeriod records no blindness, and Person.statutory_blindness speaks
 only for the present, so a record doesn't say whether an unflagged prior rested
 on past blindness, which asks only for fully insured status (404.130(e)), or on
-404.130(b) or (c), which ask for that and more. A computed result has to stand
-on each basis some placement allows.
+404.130(b), or (d) after a flagged prior, which ask for that and more (round 22
+keeps 404.130(c) to flagged priors). A computed result has to stand on each
+basis some placement allows.
 
-Every placement 404.130(b) or (c) allows also passes 404.130(e), so a filling
+Every placement 404.130(b) or (d) allows also passes 404.130(e), so a filling
 that keeps the prior on them speaks for both. A result none attains refuses by
 name. A prior no placement supports on any basis rests on credits or facts the
 record omits, and those could move other results, so it refuses by name too.
@@ -319,7 +320,7 @@ def test_each_basis_matches_every_placement(seed, declare):
                     )
                     is expected
                 ), (case, sorted(filling), index, blind)
-        # 404.130(b) and (c) ask for fully insured status too.
+        # 404.130(b) and (d) ask for fully insured status too.
         assert all(
             passes or not strict
             for strict, passes in zip(held[False], held[True], strict=True)

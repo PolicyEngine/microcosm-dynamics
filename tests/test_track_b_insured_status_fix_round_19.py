@@ -847,7 +847,7 @@ def test_the_worst_filling_matches_every_placement(
 def _lawful_prior(birth, credits, begins, special, blind=True):
     at = quarter(begins)
     if not special:
-        return disability(birth, credits, at, (), blind)
+        return disability(birth, credits, at, (), blind, paragraph_c=False)
     return (
         disability(birth, credits, at, (), False)
         and recent(usable(credits, at, ()), at, (), 40) < 20
@@ -866,7 +866,8 @@ def test_placement_binds_a_prior_only_when_it_splits_them(
 ):
     birth = date(1960, 2, 2)
     begins = date(begins_year, 3 * begins_quarter + 1, 1)
-    assume(not special or begins < date(1991, 2, 2))
+    # A flag needs a start before the quarter she attains 31, 1991Q1.
+    assume(not special or begins < date(1991, 1, 1))
     prior = i.DisabilityPeriod(
         begins, date(begins_year, 12, 31), special_insured=special
     )

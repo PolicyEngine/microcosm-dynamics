@@ -1237,6 +1237,7 @@ def _witness(
     ignore_fully_insured=False,
     use_periods_only=None,
     ordinary_only=False,
+    under31_route=True,
 ):
     end = _qid(at)
     best = None
@@ -1316,7 +1317,12 @@ def _witness(
                 subsequent = any(
                     p.special_insured for p in person.prior_disability_periods
                 )
-                if (young or subsequent) and not ordinary_only:
+                # A flag records a prior "for which you were only insured
+                # under paragraph (c)" (404.130(d)(1)), so 404.130(c) can't
+                # begin an unflagged prior alone.
+                if not ordinary_only and (
+                    young and under31_route or subsequent and not young
+                ):
                     first = max(
                         1937 * 4, _qid(_attain(person.birth_date, 21)) + 1
                     )
@@ -1722,7 +1728,9 @@ def _prior_passes(person, credits, index, exit_month, *, blind, **options):
     """Whether a route insures a listed prior's start, with earlier priors.
 
     ``blind`` reads the holder as blind then, which asks only for fully
-    insured status (404.130(e)).
+    insured status (404.130(e)). Only a flagged prior can begin on 404.130(c)
+    alone, and an unflagged one rests on 404.130(b), or on 404.130(d) after a
+    flagged prior.
     """
     period = person.prior_disability_periods[index]
     earlier = replace(
@@ -1736,6 +1744,7 @@ def _prior_passes(person, credits, index, exit_month, *, blind, **options):
         period.start,
         exit_month,
         InsuredTest.DISABILITY,
+        under31_route=period.special_insured,
         **options,
     )[0]
 
@@ -1772,15 +1781,17 @@ def _every_placement_begins(
     earlier priors, so a later prior resting on one fails here, and the search
     that follows then keeps the fillings it holds on.
     """
+    period = person.prior_disability_periods[index]
     return _every_placement_passes(
         replace(
             person, statutory_blindness=blind, prior_disability_periods=()
         ),
         lower,
-        person.prior_disability_periods[index].start,
+        period.start,
         month,
         exit_month,
         InsuredTest.DISABILITY,
+        under31_route=period.special_insured,
         **options,
     )
 
@@ -1789,18 +1800,19 @@ def _prior_basis(person, lower, upper, index, month, exit_month):
     """Whether past blindness alone can support a listed prior's start.
 
     A period begins in a quarter its holder was insured (404.320(b)(2),
-    404.321(a)). The record doesn't say whether an unflagged prior rested on
-    past blindness, which asks only for fully insured status (404.130(e)), or
-    on 404.130(b) or (c), which ask for that and more. A result has to stand
-    on each basis some placement allows. Every placement 404.130(b) or (c)
-    allows also passes 404.130(e), so a filling that keeps the prior on them
-    speaks for both, and they hold the prior wherever a placement meets them.
-    A flagged prior's holder "were only insured under paragraph (c)"
-    (404.130(d)(1)), so no placement supports that prior if none passes a
-    route or all of them pass 404.130(b). A prior no placement supports rests
-    on credits or facts this record omits, and those could move other results,
-    so the rule refuses it by name. Upper credits bound every completion of an
-    UNKNOWN year.
+    404.321(a)). A flag records a prior "for which you were only insured under
+    paragraph (c)" (404.130(d)(1)), so no placement supports a flagged prior
+    if none passes a route or all of them pass 404.130(b), and 404.130(c)
+    can't begin an unflagged prior alone. The record doesn't say whether an
+    unflagged prior rested on past blindness, which asks only for fully
+    insured status (404.130(e)), or on 404.130(b), or (d) after a flagged
+    prior, which ask for that and more. A result has to stand on each basis some placement
+    allows. Every placement 404.130(b) or (d) allows also passes 404.130(e),
+    so a filling that keeps the prior on them speaks for both, and they hold
+    the prior wherever a placement meets them. A prior no placement supports
+    rests on credits or facts this record omits, and those could move other
+    results, so the rule refuses it by name. Upper credits bound every
+    completion of an UNKNOWN year.
     """
     if person.prior_disability_periods[index].special_insured:
         if _prior_passes(

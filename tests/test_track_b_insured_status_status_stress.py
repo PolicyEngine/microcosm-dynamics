@@ -11,12 +11,15 @@ four partial years, no prior, a clear prior or an overlapping prior, and
 blindness in a quarter of cases all vary by seed. A second generator adds a
 DIB entitlement month, which ends a CURRENTLY window before the onset. A third
 draws ages 22-30 at onset, where 404.130(c) applies. A fourth declares a
-special-insured prior after age 31, where 404.130(d) applies. A declared prior
-limits the fillings only through its own start (``prior_holds``), and a record
-doesn't say whether an unflagged prior rested on past blindness, so a computed
-result has to stand on each basis the record allows (``basis_worlds``). No
-flags, raw earnings or death are claimed, and UNKNOWN facts appear only in
-``check_unknown_ending`` and ``check_every_history``.
+special-insured prior before age 31 and an onset after it, where 404.130(d)
+applies, and a fifth adds an unflagged prior between them. A declared prior
+limits the fillings only through its own start (``prior_holds``). An unflagged
+prior's holder wasn't "only insured under paragraph (c)" (404.130(d)(1)), so
+404.130(c) can't begin it alone, and a record doesn't say whether it rested on
+past blindness, so a computed result has to stand on each basis the record
+allows (``basis_worlds``). No flags, raw earnings or death are claimed, and
+UNKNOWN facts appear only in ``check_unknown_ending`` and
+``check_every_history``.
 
 Every annual placement and both all-prior treatments are enumerated. A lawful
 filling has its own first insured start (404.321(a)), and that start supplies
@@ -135,14 +138,29 @@ def under_31(birth, use, at, periods, special=False, reading=LAST_40):
 
 
 def disability(
-    birth, credits, at, periods, blind, special=False, reading=LAST_40
+    birth,
+    credits,
+    at,
+    periods,
+    blind,
+    special=False,
+    reading=LAST_40,
+    *,
+    paragraph_c=True,
 ):
+    """404.130(b) to (e) at one quarter of one filling.
+
+    ``paragraph_c`` false leaves out 404.130(c), which can't begin an
+    unflagged prior alone (404.130(d)(1)).
+    """
     use = usable(credits, at, periods)
     fully = len(use) >= requirement(birth, at // 4, periods)
+    young = at < quarter(date(birth.year + 31, birth.month, birth.day))
     return fully and (
         blind
         or recent(use, at, periods, 40) >= 20
-        or under_31(birth, use, at, periods, special, reading)
+        or (paragraph_c or not young)
+        and under_31(birth, use, at, periods, special, reading)
     )
 
 
@@ -157,6 +175,13 @@ def last_insured(birth, credits, at, periods, blind, special, reading):
             )
         ),
         default=None,
+    )
+
+
+def flags(case):
+    """Each declared prior's special_insured flag."""
+    return case.get(
+        "flags", (case.get("special", False),) * len(case["prior"])
     )
 
 
@@ -184,7 +209,7 @@ def lawful_fillings(case, reading=LAST_40, *, keep=None, dated=True):
         case["month"],
     )
     blind, prior, annual = case["blind"], case["prior"], case["annual"]
-    special = case.get("special", False)
+    special = any(flags(case))
     at = quarter(month)
     events = [
         event for event in (case.get("entitlement"),) if event is not None
@@ -316,10 +341,8 @@ def public(case, **options):
             rule.EarningsProvenance.UNKNOWN if through is None else observed
         ),
         prior_disability_periods=tuple(
-            rule.DisabilityPeriod(
-                a, b, special_insured=case.get("special", False)
-            )
-            for a, b in case["prior"]
+            rule.DisabilityPeriod(a, b, special_insured=flag)
+            for (a, b), flag in zip(case["prior"], flags(case), strict=True)
         ),
         prior_disability_periods_provenance=(
             rule.EarningsProvenance.UNKNOWN if unknown_prior else observed
@@ -529,10 +552,19 @@ def prior_can_begin(case, credits, periods, blind=True):
     """404.130(a), (e): even a blind prior begins fully insured.
 
     Each prior counts the periods before it or disregards them (404.130(f)).
+    These priors carry no flag, so a nonblind one rests on 404.130(b)
+    (404.130(d)(1)).
     """
     return all(
         any(
-            disability(case["birth"], credits, quarter(begins), used, blind)
+            disability(
+                case["birth"],
+                credits,
+                quarter(begins),
+                used,
+                blind,
+                paragraph_c=False,
+            )
             for used in (periods[:index], ())
         )
         for index, (begins, _) in enumerate(periods)
@@ -542,14 +574,24 @@ def prior_can_begin(case, credits, periods, blind=True):
 def prior_holds(case, credits, index, blind=True):
     """One declared prior's own start on one filling, on one basis.
 
-    An unflagged prior rests on past blindness, which asks only for full
-    insurance (404.130(e)), or on 404.130(b) or (c). A flagged prior's holder
-    "were only insured under paragraph (c)" (404.130(d)(1)).
+    A flag records a prior "for which you were only insured under paragraph
+    (c)" (404.130(d)(1)). An unflagged prior rests on past blindness, which
+    asks only for full insurance (404.130(e)), on 404.130(b), or on
+    404.130(d) after a flagged prior.
     """
     at = quarter(case["prior"][index][0])
-    if not case.get("special"):
+    marks = flags(case)
+    if not marks[index]:
         return any(
-            disability(case["birth"], credits, at, used, blind)
+            disability(
+                case["birth"],
+                credits,
+                at,
+                used,
+                blind,
+                any(marks[:index]),
+                paragraph_c=False,
+            )
             for used in (case["prior"][:index], ())
         )
     return (
@@ -565,11 +607,13 @@ def basis_worlds(case, fillings):
     rest on either basis. The first world is the strictest with a filling, and
     a prior no filling supports on any basis leaves no world.
     """
-    count = len(case["prior"])
-    bases = (
-        ((False,) * count,)
-        if case.get("special")
-        else tuple(product((False, True), repeat=count))
+    marks = flags(case)
+    bases = tuple(
+        basis
+        for basis in product((False, True), repeat=len(marks))
+        if not any(
+            blind and flag for blind, flag in zip(basis, marks, strict=True)
+        )
     )
     worlds = (
         [
@@ -588,7 +632,7 @@ def basis_worlds(case, fillings):
 def check(case):
     worlds = tuple(
         lawful_fillings(case, reading)
-        for reading in (READINGS if case.get("special") else READINGS[:1])
+        for reading in (READINGS if any(flags(case)) else READINGS[:1])
     )
     try:
         result = public(case)
@@ -630,7 +674,7 @@ def no_period_fillings(case, reading=LAST_40):
     The positions match ``lawful_fillings``, and no filling has a start.
     """
     birth, month, blind = case["birth"], case["month"], case["blind"]
-    special = case.get("special", False)
+    special = any(flags(case))
     at = quarter(month)
     found = []
     for credits in placements(case["annual"]):
@@ -690,7 +734,7 @@ def check_no_period(case):
         result = public({**case, "no_period": True})
     except rule.InsuredConfigurationUnsupported:
         return "refused"
-    for reading in READINGS if case.get("special") else READINGS[:1]:
+    for reading in READINGS if any(flags(case)) else READINGS[:1]:
         bases = basis_worlds(case, no_period_fillings(case, reading))
         assert bases, (case, "computed a prior no filling supports", result)
         for fillings in bases:
@@ -1020,6 +1064,13 @@ BASIS_PRIOR = {
         2003: 3,
     },
 }
+# The same record for a woman born in 1968. The 1998Q1 prior then falls before
+# age 31, and 404.130(c) holds it on every placement with 18 of its 36 quarters.
+YOUNG_PRIOR = {
+    **BASIS_PRIOR,
+    "birth": date(1968, 2, 2),
+    "annual": {y: n for y, n in BASIS_PRIOR["annual"].items() if y > 1988},
+}
 # 18 of 37 elapsed quarters pass the route at 1990Q2, and 20 of 40 pass the
 # ordinary rule.
 SPECIAL_PRIOR = {
@@ -1110,17 +1161,58 @@ def basis_prior_declaration(seed):
 def two_basis_declaration(seed):
     """The same record after a prior with its own basis.
 
-    A 1984Q1 prior passes 404.130(c) on 17 QCs. A 1986Q2 prior falls past age
-    31, so with 1980's QCs gone it finds 16 of 40 and past blindness alone can
-    begin it. The two priors can rest on different bases in either order.
+    A 1984Q1 prior falls before age 31 and passes 404.130(c) on 17 QCs, but
+    unflagged it rests on past blindness alone. A 1985Q1 prior finds 20 of 40
+    in 1980 to 1984. A 1986Q2 prior falls past age 31, so with 1980's QCs gone
+    it finds 16 of 40 and past blindness alone can begin it. The two priors can
+    rest on different bases in either order.
     """
     case = basis_prior_declaration(seed)
-    if random.Random(f"two-basis-{seed}").random() < 0.5:
-        first = (date(1984, 1, 1), date(1984, 12, 31))
+    draw = random.Random(f"two-basis-{seed}").random()
+    if draw < 2 / 3:
+        year = 1984 if draw < 1 / 3 else 1985
+        first = (date(year, 1, 1), date(year, 12, 31))
         return {**case, "prior": (first, *case["prior"])}
     first = (date(1986, 4, 1), date(1986, 12, 31))
     annual = {year: n for year, n in case["annual"].items() if year != 1980}
     return {**case, "annual": annual, "prior": (first, *case["prior"])}
+
+
+def young_basis_declaration(seed):
+    """The record before age 31, near the same edges.
+
+    404.130(c) can begin the 1998Q1 prior where 404.130(b) can't, and an
+    unflagged prior can't rest on it alone (404.130(d)(1)). Each draw moves
+    the years ``basis_prior_declaration`` moves, and a quarter of draws flag
+    the prior.
+    """
+    case = basis_prior_declaration(seed)
+    flagged = random.Random(f"young-{seed}").random() < 0.25
+    return {
+        **case,
+        "birth": YOUNG_PRIOR["birth"],
+        "annual": {y: n for y, n in case["annual"].items() if y > 1988},
+        "special": flagged,
+    }
+
+
+def mixed_flag_declaration(seed):
+    """A flagged prior, then an unflagged one before the onset.
+
+    The later prior rests on past blindness, on 404.130(b), or after age 31 on
+    404.130(d), which the flagged prior opens, and never on 404.130(c) alone
+    (404.130(d)(1)). Draws put its start on either side of age 31. A record
+    with no year between the flagged prior and the onset keeps one prior.
+    """
+    case = subsequent_declaration(seed)
+    draw = random.Random(f"mixed-{seed}")
+    ((begins, ends),) = case["prior"]
+    years = range(ends.year + 1, case["onset"].year)
+    if not years:
+        return case
+    year = draw.choice(years)
+    later = (date(year, draw.choice((1, 4, 7, 10)), 1), date(year, 12, 31))
+    return {**case, "prior": ((begins, ends), later), "flags": (True, False)}
 
 
 def special_prior_declaration(seed):
@@ -1397,6 +1489,23 @@ def test_status_stress_priors_on_different_bases(seed):
 @given(seed=st.integers(0, 2**32 - 1))
 def test_status_stress_a_flagged_prior_at_its_edge(seed):
     check_no_period(special_prior_declaration(seed))
+
+
+@settings(max_examples=30, deadline=None, derandomize=True)
+@given(seed=st.integers(0, 2**32 - 1))
+def test_status_stress_a_young_prior_on_either_basis(seed):
+    case = young_basis_declaration(seed)
+    check_no_period(case)
+    check({**case, "onset": date(2004, 1, 15), "ending": date(2004, 12, 31)})
+
+
+@settings(max_examples=30, deadline=None, derandomize=True)
+@given(seed=st.integers(0, 2**32 - 1))
+def test_status_stress_an_unflagged_prior_after_a_flagged_one(seed):
+    case = mixed_flag_declaration(seed)
+    assume(len(case["prior"]) == 2)
+    check(case)
+    check_no_period(case)
 
 
 # The same sweep found these two for UNKNOWN establishment.
