@@ -2877,7 +2877,7 @@
         "reporting_unit": "The employer unit over which the threshold aggregates remuneration (aggregation_scope employer_employee_quarter/year); not a case condition.",
         "section_218_group": "section_218_group names the coverage group (418(b)(5), 418(d)(4)); whether the group, and this position in it, is under an effective agreement is the judgement section_218_position states, so no case reads the group name."
       },
-      "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers (POMS SL 30001.357 C: \"the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies it per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12)."
+      "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers, with the period the agreement counts it over (POMS SL 30001.357 C: \"Some State agreements specify a lower threshold amount for election workers, e.g., $50 a calendar quarter or $100 a calendar year. In these States, the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies the amount and its period, a calendar quarter or a calendar year as the agreement says, per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12; review r7 low 4 adds the period)."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3242,7 +3242,7 @@
         "reporting_unit": "The employer unit over which the threshold aggregates remuneration (aggregation_scope employer_employee_quarter/year); not a case condition.",
         "section_218_group": "section_218_group names the coverage group (418(b)(5), 418(d)(4)); whether the group, and this position in it, is under an effective agreement is the judgement section_218_position states, so no case reads the group name."
       },
-      "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers (POMS SL 30001.357 C: \"the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies it per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12)."
+      "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers, with the period the agreement counts it over (POMS SL 30001.357 C: \"Some State agreements specify a lower threshold amount for election workers, e.g., $50 a calendar quarter or $100 a calendar year. In these States, the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies the amount and its period, a calendar quarter or a calendar year as the agreement says, per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12; review r7 low 4 adds the period)."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -3789,7 +3789,7 @@
         "reporting_unit": "The employer unit over which the threshold aggregates remuneration (aggregation_scope employer_employee_quarter/year); not a case condition.",
         "section_218_group": "section_218_group names the coverage group (418(b)(5), 418(d)(4)); whether the group, and this position in it, is under an effective agreement is the judgement section_218_position states, so no case reads the group name."
       },
-      "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers (POMS SL 30001.357 C: \"the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies it per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12)."
+      "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers, with the period the agreement counts it over (POMS SL 30001.357 C: \"Some State agreements specify a lower threshold amount for election workers, e.g., $50 a calendar quarter or $100 a calendar year. In these States, the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies the amount and its period, a calendar quarter or a calendar year as the agreement says, per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12; review r7 low 4 adds the period)."
     },
     "worked_examples": [],
     "rare_exclusion": {
@@ -4355,7 +4355,7 @@
         "reporting_unit": "The employer unit over which the threshold aggregates remuneration (aggregation_scope employer_employee_quarter/year); not a case condition.",
         "section_218_group": "section_218_group names the coverage group (418(b)(5), 418(d)(4)); whether the group, and this position in it, is under an effective agreement is the judgement section_218_position states, so no case reads the group name."
       },
-      "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers (POMS SL 30001.357 C: \"the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies it per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12)."
+      "agreement_amount_input": "The amount the State's section 218 agreement specifies for election workers, with the period the agreement counts it over (POMS SL 30001.357 C: \"Some State agreements specify a lower threshold amount for election workers, e.g., $50 a calendar quarter or $100 a calendar year. In these States, the Social Security and Medicare tax applies when the amount specified in the State's agreement is met\"). No registry threshold holds it: a consumer supplies the amount and its period, a calendar quarter or a calendar year as the agreement says, per State and period for the lower-threshold cases, and threshold_id applies only to the statutory-amount and outside-agreement cases (review r6 M-12; review r7 low 4 adds the period)."
     },
     "worked_examples": [],
     "rare_exclusion": {
