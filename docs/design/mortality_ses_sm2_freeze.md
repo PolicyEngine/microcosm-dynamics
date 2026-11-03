@@ -81,8 +81,8 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | Row | Audit line | S0.1 item | Resolution | Where | State |
 |---|---|---|---|---|---|
 | S2-01 | 424 | **[proposed]** mapping assumption: OACT rate ratios used directly as annual-q multipliers, reported with the dynamic-AIME versus frozen-rank distinction and the beneficiary population difference | Confirmed and tightened: adds Study 129's exposure convention (deaths get a full year of exposure, which makes each published rate an initial-exposure estimate of an annual probability, p. 5 and Appendix B pp. 13–14), the age-basis mapping, and three named mapping assumptions (M-E2 to M-E4) that every report carries | §4.1 | frozen here |
-| S2-02 | 440 | **[open]** availability of earlier NCHS education editions | Settled by the NVSR listing and twelve earlier *Deaths: Final Data* reports: 2010–2017 cover reporting states only (31 rising to 49 states plus DC); 2018–2020 are national in the internet tables I–7 and I–19; 2021–2022 are national in printed Table 14 and Table VIII; the listing of 1 November 2026 holds no edition for 2023. The fit uses 2018–2022; 2010–2017 form a labeled sensitivity | §3.2 | frozen here |
-| S2-03 | 474 | **[open]** harmonization of earlier NHIS years | Rescoped to NHIS 2009–2018 sample adults. The 2009, 2016 and 2018 layouts carry `EDUC1`, `HISPAN_I`, `RACERPI2`, `AGE_P`, `SEX`, `SRVY_YR`, `INTV_QRT` and `HHX`/`FMX`/`FPX` with identical code lists; the design variables are `STRAT_P`/`PSU_P` in 2009 and `PSTRAT`/`PPSU` in 2016 and 2018. The fit job checks each intervening year's layout against these names before use | §3.4 | frozen here (window and variables); intervening layouts checked by the fit job |
+| S2-02 | 440 | **[open]** availability of earlier NCHS education editions | Settled by the NVSR listing and twelve earlier *Deaths: Final Data* reports: 2010–2017 cover reporting states only (31 rising to 49 states plus DC); 2018–2020 are national in the internet tables I–7 and I–19; 2021–2022 are national in printed Table 14 and Table VIII; the listing of 1 November 2026 holds no edition for 2023. The fit uses 2018–2022; 2010–2017 form a labeled sensitivity. A fitted year whose layout fails the loader's check counts as unobserved under §7.5, labeled (fix round 1) | §3.2 | frozen here |
+| S2-03 | 474 | **[open]** harmonization of earlier NHIS years | Rescoped to NHIS 2009–2018 sample adults. The 2009, 2016 and 2018 layouts carry `EDUC1`, `HISPAN_I`, `RACERPI2`, `AGE_P`, `SEX`, `SRVY_YR`, `INTV_QRT` and `HHX`/`FMX`/`FPX` with identical code lists; the design variables are `STRAT_P`/`PSU_P` in 2009 and `PSTRAT`/`PPSU` in 2016 and 2018. The fit job checks each intervening year's layout against these names and code lists before use; a year that fails leaves the pool, labeled "NHIS year dropped: layout", and if no year passes, `SOURCE_UNAVAILABLE` (ii) applies (fix round 1) | §3.4, §9.3 | frozen here (window and variables); intervening layouts checked by the fit job, with the failure outcome frozen |
 | S2-04 | 481 | **[open]** a three-dimension joint gradient conditional on lifetime earnings | Resolved by the joint route: joint marginal calibration on a public reference population, with the earnings–education–race dependence taken from a stated proxy. The dependence itself stays unidentified in public data, and §6.4 says so. Where the fit applies the proxy's dependence outside its estimation sample, the copy is named assumption M-J1, with sensitivity JR-C-IND (§6.5, §6.6) | §6 | frozen here (route); the dependence stays unidentified and named |
 | S2-05 | 511 | **[open mapping]** Cristia's odds ratios | Frozen: predicted probabilities on a named reference population, then ratios to `q3`'s probability. Cristia enters only as a sensitivity and a source reported beside the fit; no log odds ratio enters as a log relative risk | §4.4 | frozen here |
 | S2-06 | 520 | **[proposed]** CBO 41681 as context only | Confirmed. It supplies the reason the widening alternative leaves race and Hispanic origin flat (pp. 1–2), with p. 1's qualifier that the black–white gap held for men and narrowed for women, and no coefficient or target | §3.1, §7.4 | frozen here |
@@ -200,7 +200,11 @@ year.
   plus "not stated" in the counts. Rates are per 100,000 population; the
   population tables print each estimate with its standard error. This job
   read the 2018, 2020 and 2022 layouts with values masked and the 2019 and
-  2021 titles only; the fit job's loader checks every year's layout.
+  2021 titles only; the fit job's loader checks every year's layout. A
+  year whose layout does not match this one (bands, sexes, the three
+  education levels and the columns) counts as unobserved under §7.5,
+  labeled, as a missing file does under `SOURCE_UNAVAILABLE` (vii) (§10);
+  the same rule covers every life-table year in §3.3.
 - **Limits stated by the source.** No data below 25 (schooling may be
   incomplete) and none at 65 and over ("reporting quality is poorer at
   older ages"), with completeness the technical notes state (NVSR 74(4)
@@ -217,7 +221,8 @@ year.
   reporting states, not the United States, so their denominators and
   composition differ from the reference population (§6). This job did not
   check their category sets and age bands; sensitivity E-S1's loader checks
-  them before use.
+  them before use, and a year whose categories or bands differ from the
+  2018–2022 layout leaves E-S1, labeled.
 - **Ages 65 and over and the `some_college`/`college` split.** NCHS
   supplies neither (§4.2). NHIS–LMF supplies both (§3.4).
 
@@ -295,7 +300,8 @@ year.
   `other_non_hispanic` contrasts. Beside: education contrasts at 25–64
   and `hispanic` and `black_non_hispanic` contrasts, next to NCHS's.
 - **Release dates of the 2009–2018 NHIS files** stay **[open]** (row
-  S2-15); the fit job records each from that year's survey description.
+  S2-15); the fit job records each from that year's survey description,
+  or "not stated" where a description gives none.
 
 ### 3.5 Reference population and baseline
 
@@ -662,7 +668,9 @@ records which it does), with these attributes:
   state: every record at or above its state's threshold carries the state
   mean of those ages (2024 top-coded-values document, "Explanation of
   Topcoding"; each year's thresholds and means sit in that year's
-  top-and-bottom-coded-values CSV, which the fit job records). A record at
+  top-and-bottom-coded-values CSV, which the fit job records; a year
+  whose CSV the fit job cannot obtain counts as a missing ACS year under
+  `SOURCE_UNAVAILABLE` (iii), §10). A record at
   or above its state's threshold stands for every age from the threshold
   to 120: the fit spreads its weight over those single ages in proportion
   to the stationary person-years `Lx` of the TR 2026 `q` for that sex and
@@ -1310,7 +1318,7 @@ combined.
 | | NCHS life tables | Poisson with expected deaths `q_x × P_x`, where `P_x` is the group's population at age `x` in `R_ref(t)`. The life-table reports print no death counts, so this is a registered approximation, used at the Medicare-supplemented ages too. For the open interval (§9.2), Poisson on its central rate `1 / e100` with expected deaths `P_100+ / e100`, `P_100+` being the group's population at 100 and over in `R_ref(t)` |
 | | OACT | **[open]** Study 129 prints rates and RMRs but no deaths or exposures (Tables 1–12), so the source cannot supply this component (row S2-24). It settles when OACT's exposure or death counts by sex × band × quintile × year are available. Until then every OACT e65 member is inconclusive or fails (below) |
 | U3, survey sampling | ACS (reference population and NCHS education denominators) | One refit per ACS replicate, with the variance formula that each year's PUMS documentation gives and the fit job records. NCHS's denominators move with the same replicate: each category's share within sex and band is re-tabulated from that replicate and scaled to NCHS's printed total. The fit job also reports the ratio of its replicate standard errors to NCHS's printed ones (Table VIII, I–19) |
-| | NHIS–LMF | Rao–Wu rescaled bootstrap: PSUs resampled with replacement within strata, separately for each design period: the 2009 layout's `STRAT_P`/`PSU_P` and the 2016 and 2018 layouts' `PSTRAT`/`PPSU`, with the periods' strata kept distinct; the fit job reads which names each intervening year uses. Resampling whole PSUs keeps every family and every person's whole history together, once the fit job confirms from each year's survey description that families nest within PSUs |
+| | NHIS–LMF | Rao–Wu rescaled bootstrap: PSUs resampled with replacement within strata, separately for each design period: the 2009 layout's `STRAT_P`/`PSU_P` and the 2016 and 2018 layouts' `PSTRAT`/`PPSU`, with the periods' strata kept distinct, as the 2018 survey description directs for pooled years: years within one design period pool as one, and different periods count as statistically independent, with distinct strata (pp. 92–93); the fit job reads which names each intervening year uses. Resampling whole PSUs keeps every family and every person's whole history together, once the fit job confirms from each year's survey description that families nest within PSUs. Where a description does not confirm it, the fit job checks the files instead: a family whose records carry more than one PSU or stratum merges those PSUs, and their strata, into one resampling unit, and the fit reports how many merges it made |
 | U4, linkage and perturbation sensitivity | NHIS–LMF | Linkage: one discrete alternative fit, not draws, with NHIS weights replaced by the original sample-adult weight and ineligible persons dropped; the fit reports its conformance, and it does not gate. Perturbation: **[open]**, because public data cannot assess it. NCHS substituted synthetic data "for follow-up time or underlying cause of death for select records" and did not perturb vital status (LMF description p. 1), and the public data dictionary flags none of the altered records, so no public alternative can isolate the effect. Only the restricted-use linked files, which this project excludes (§3.4), would settle it. Every NHIS target, and every comparison that uses NHIS, carries the label "public-file perturbation not assessed". X-R1, which recodes `HISPAN_I` 10 and 11, is a crosswalk sensitivity (§8.2), not part of U4 |
 
 **What OACT's open U2 means [frozen here].** S0.1 keeps a target whose
@@ -1423,10 +1431,19 @@ e65 bounds and make passing easier, so this record applies S0.1's rule:
   reconstruction check. The
   e65 members compare two different constructions (the model on the
   reference population against the source's ratios on the baseline), so
-  they also test composition, capping and tails. The race and
+  they also test composition, capping and tails. For earnings that test
+  is narrow: with `Q̃`'s exact fifths among recipients at 62–89 (§6.2),
+  each earnings e65 member checks chiefly whether its band's five printed
+  RMRs average to one, plus capping, the spread of composition across the
+  band's single ages, and the tail above 89. The race and
   Hispanic-origin e65 members also test the model's tail against NCHS's:
   their targets close the "100 and older" interval as NCHS does, while the
   model keeps the repository's closing (§9.2).
+- **What the contrast members cost.** The 6,614 contrast members cannot
+  fail by chance, yet they raise the Bonferroni constant for the 270 e65
+  members from `Φ⁻¹(1 − 0.025 / 270) ≈ 3.738` to about 4.486, which makes
+  those bounds about 20 percent wider; the family still follows S0.1's
+  definition (audit lines 657–659), and this record leaves it unchanged.
 - **Not in the family.** The sensitivities of §5, §6.5, §7.3 and §8.2, and the
   sources reported beside the fit.
 
