@@ -71,12 +71,14 @@ PUBLIC_NAMES = {
         "NESEProrationPolicy",
         "WorkEarnings",
         "RETBeneficiary",
+        "RETFamilyMonth",
         "RecordYear",
         "calculated_excess",
         "countable_earnings",
         "PartialPaymentAllocation",
         "partial_payments",
         "BeneficiaryMonth",
+        "RedistributedBeneficiaryMonth",
         "WorkerLedger",
         "RETLedger",
         "apply_ret_year",
@@ -158,6 +160,8 @@ def test_cross_layer_public_names_and_members_have_explicit_audit_coverage():
             "RecordCondition",
             "BeneficiaryCondition",
             "OwnBenefitKind",
+            "SavingsClauseReading",
+            "DeductionReason",
         }
     )
     for module, names in PUBLIC_NAMES.items():
@@ -434,6 +438,8 @@ def test_object_new_declarations_do_not_hide_missing_fields(case):
 
 @cache
 def _sealed_samples():
+    from tests.test_track_b_ret_ledger_deductions import family_record
+
     objects, _, _ = _world(100)
     samples = {
         type(value).__name__: value
@@ -458,6 +464,14 @@ def _sealed_samples():
     ledger = COMPUTE["ret"]()
     samples["WorkerLedger"] = ledger.workers[0]
     samples["BeneficiaryMonth"] = ledger.months[0]
+    redistributed = ret.apply_ret_year(
+        family_record(separate=True), load_ret_parameters()
+    )
+    samples["RedistributedBeneficiaryMonth"] = next(
+        row
+        for row in redistributed.months
+        if type(row) is ret.RedistributedBeneficiaryMonth
+    )
     samples["PartialPaymentAllocation"] = ret.partial_payments(
         1, {"nh": 2}, {"nh": 2}
     )
@@ -478,6 +492,7 @@ SEALED_NAMES = (
     "RETConfigurationUnsupported",
     "PartialPaymentAllocation",
     "BeneficiaryMonth",
+    "RedistributedBeneficiaryMonth",
     "WorkerLedger",
     "RETLedger",
     "RETOutcome",

@@ -82,7 +82,11 @@ def _compute_refused(entry_point, params):
         return household()
     if entry_point == "household-month-outcome":
         guards = {
-            key: g.SavingsClauseGuard(NOW, earlier_months_unknown=False)
+            key: g.SavingsClauseGuard(
+                NOW,
+                earlier_months_unknown=False,
+                reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+            )
             for key in records
         }
         try:

@@ -1,0 +1,230 @@
+[
+  {
+    "identifier": "poms_rs_01505_000",
+    "publisher": "Social Security Administration",
+    "edition": "SSA - POMS: RS 01505.000 - Program Administration - Table of Contents - 03/07/2024",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301505000",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_rs_01505_toc.html",
+    "sha256": "fdc07d643ddf12867f5f205b69f2f263f7ae860fc2384c7549fbc926842b7b88",
+    "byte_size": 18436,
+    "retrieved_at": "2026-10-24T12:41:26.961290Z",
+    "units": [
+      "cited_text"
+    ],
+    "years": [],
+    "geography": [
+      "United States",
+      "states and local governments"
+    ],
+    "parser": "coverage_reference",
+    "role": "CE1 cited rules and CE3 classifier context; no observed coverage series",
+    "selector": {
+      "title": "RS 01505.000 Program Administration"
+    },
+    "record_kind": "reference"
+  },
+  {
+    "identifier": "poms_rs_01505_042",
+    "publisher": "Social Security Administration",
+    "edition": "SSA - POMS: RS 01505.042 - Procedures to Resolve General State and Local Coverage Issues - 11/30/2016",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301505042",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_rs_0301505042.html",
+    "sha256": "b1f3b3c916cff0ec4a97958d062d21ec1f1ae4ed0a2a67d7f6ae134901960cf6",
+    "byte_size": 24780,
+    "retrieved_at": "2026-10-24T12:46:23.938874Z",
+    "units": [
+      "cited_text"
+    ],
+    "years": [],
+    "geography": [
+      "United States",
+      "states and local governments"
+    ],
+    "parser": "coverage_reference",
+    "role": "CE1 cited rules and CE3 classifier context; no observed coverage series",
+    "selector": {
+      "title": "RS 01505.042 Procedures to Resolve General State and Local Coverage Issues",
+      "sections": [
+        "A. Tolerance rule for questionable coverage",
+        "B. Questions for development and documentation",
+        "C. Make a coverage determination and correct earnings"
+      ]
+    },
+    "record_kind": "reference"
+  },
+  {
+    "identifier": "poms_rs_01505_044",
+    "publisher": "Social Security Administration",
+    "edition": "SSA - POMS: RS 01505.044 - Directing Requests for Coverage and Wage Information on State and Local Government Employees - 04/15/2021",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301505044",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_rs_0301505044.html",
+    "sha256": "54983d7e1719c0408542163b8c58ade88221127f09157ba958e049449e1e2012",
+    "byte_size": 27481,
+    "retrieved_at": "2026-10-24T12:46:24.014005Z",
+    "units": [
+      "cited_text"
+    ],
+    "years": [],
+    "geography": [
+      "United States",
+      "states and local governments"
+    ],
+    "parser": "coverage_reference",
+    "role": "CE1 cited rules and CE3 classifier context; no observed coverage series",
+    "selector": {
+      "title": "RS 01505.044 Directing Requests for Coverage and Wage Information on State and Local Government Employees",
+      "sections": [
+        "A. Directing requests for information",
+        "B. How to obtain coverage and wage information"
+      ]
+    },
+    "record_kind": "reference"
+  },
+  {
+    "identifier": "poms_sl_20001_201",
+    "publisher": "Social Security Administration",
+    "edition": "SSA - POMS: SL 20001.201 - Introduction to Section 218 and State and Local Coverage - 05/05/2025",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/1920001201",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_sl_1920001201.html",
+    "sha256": "da4d3c8986a873700b7e6287995f7fcb4e94ac2dce945acdaab8ef8b598a5a88",
+    "byte_size": 26925,
+    "retrieved_at": "2026-10-24T12:46:24.020978Z",
+    "units": [
+      "cited_text"
+    ],
+    "years": [],
+    "geography": [
+      "United States",
+      "states and local governments"
+    ],
+    "parser": "coverage_reference",
+    "role": "CE1 cited rules and CE3 classifier context; no observed coverage series",
+    "selector": {
+      "title": "SL 20001.201 Introduction to Section 218 and State and Local Coverage",
+      "sections": [
+        "A. Overview",
+        "B. Timeline"
+      ]
+    },
+    "record_kind": "reference"
+  },
+  {
+    "identifier": "poms_sl_30001_331",
+    "publisher": "Social Security Administration",
+    "edition": "SSA - POMS: SL 30001.331 - Divided-Vote Referendums - 11/16/2023",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/1930001331",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_sl_1930001331.html",
+    "sha256": "88301a88d2b2dea7dc930638c59a14dcf5811bd83e6a06add5874565caf884f4",
+    "byte_size": 38827,
+    "retrieved_at": "2026-10-24T12:46:24.026434Z",
+    "units": [
+      "cited_text"
+    ],
+    "years": [],
+    "geography": [
+      "United States",
+      "states and local governments"
+    ],
+    "parser": "coverage_reference",
+    "role": "CE1 cited rules and CE3 classifier context; no observed coverage series",
+    "selector": {
+      "title": "SL 30001.331 Divided-Vote Referendums",
+      "sections": [
+        "A. Divided-vote referendum authority (Section 218(d)(6))",
+        "B. Referendum conditions",
+        "C. Certification form requirements",
+        "D. Employees eligible to vote",
+        "E. Employees not eligible to vote",
+        "F. Dividing the retirement system into separate \"deemed\" retirement systems following the referendum",
+        "G. Referendum time limitations"
+      ]
+    },
+    "record_kind": "reference"
+  },
+  {
+    "identifier": "poms_sl_30001_347",
+    "publisher": "Social Security Administration",
+    "edition": "SSA - POMS: SL 30001.347 - Providing Coverage for Police Officers and Firefighters - 01/29/2020",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/1930001347",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_sl_1930001347.html",
+    "sha256": "f06dc121e076162f3aab7bdaece9177d6efd1050de67024c8bca026368afb155",
+    "byte_size": 38455,
+    "retrieved_at": "2026-10-24T12:46:24.213639Z",
+    "units": [
+      "cited_text"
+    ],
+    "years": [],
+    "geography": [
+      "United States",
+      "states and local governments"
+    ],
+    "parser": "coverage_reference",
+    "role": "CE1 cited rules and CE3 classifier context; no observed coverage series",
+    "selector": {
+      "title": "SL 30001.347 Providing Coverage for Police Officers and Firefighters",
+      "sections": [
+        "A. Covering police officer and firefighter positions as part of an absolute coverage group",
+        "B. Covering police officer and firefighter positions as a retirement system coverage group"
+      ]
+    },
+    "record_kind": "reference"
+  },
+  {
+    "identifier": "poms_sl_50001_501",
+    "publisher": "Social Security Administration",
+    "edition": "SSA - POMS: SL 50001.501 - Mandatory Social Security Coverage - 01/29/2020",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/1950001501",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_sl_1950001501.html",
+    "sha256": "375714297f63819fc408cf7110af8bec29fcec7733c1dbc19bab2e48b6062604",
+    "byte_size": 28428,
+    "retrieved_at": "2026-10-24T12:46:24.213956Z",
+    "units": [
+      "cited_text"
+    ],
+    "years": [],
+    "geography": [
+      "United States",
+      "states and local governments"
+    ],
+    "parser": "coverage_reference",
+    "role": "CE1 cited rules and CE3 classifier context; no observed coverage series",
+    "selector": {
+      "title": "SL 50001.501 Mandatory Social Security Coverage",
+      "sections": [
+        "A. Mandatory Social Security coverage",
+        "B. Qualified Retirement System for purposes of mandatory coverage",
+        "C. Cessation of mandatory coverage for State and local government employees",
+        "D. Services not subject to mandatory Social Security coverage"
+      ]
+    },
+    "record_kind": "reference"
+  },
+  {
+    "identifier": "poms_sl_50001_510",
+    "publisher": "Social Security Administration",
+    "edition": "SSA - POMS: SL 50001.510 - Mandatory Medicare Coverage - 12/09/2003",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/1950001510",
+    "capture_file": "data/external/snapshots/income_resources_d4_v1/poms_sl_1950001510.html",
+    "sha256": "16eb3195b465303fff01c75caa044f123d23de16a9e9598b11fabf7f14b93578",
+    "byte_size": 29099,
+    "retrieved_at": "2026-10-24T12:46:24.254142Z",
+    "units": [
+      "cited_text"
+    ],
+    "years": [],
+    "geography": [
+      "United States",
+      "states and local governments"
+    ],
+    "parser": "coverage_reference",
+    "role": "CE1 cited rules and CE3 classifier context; no observed coverage series",
+    "selector": {
+      "title": "SL 50001.510 Mandatory Medicare Coverage",
+      "sections": [
+        "A. Continuing employment exception",
+        "B. Services not subject to mandatory Medicare coverage"
+      ]
+    },
+    "record_kind": "reference"
+  }
+]
