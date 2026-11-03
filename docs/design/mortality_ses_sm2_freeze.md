@@ -89,7 +89,7 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | S2-07 | 538 | **[proposed schema]** dimensions, columns, categories, references and unclassified treatment | Confirmed against `mortality_ses/specification.py`; tightened to one unclassified string per dimension, a fixed category order, and a crosswalk per source. `R_ref`'s persons under 25 hold the reference categories by rule, labeled `reference_below_25` (§6.2, §8.1). The ACS crosswalk maps every `SCHL`, `HISP` and `RAC1P` code in the 2010–2019 and 2021–2024 dictionaries; 2020's codes stay open until the fit job's first step (§8.2). NHIS `HISPAN_I` 00–11 map to `hispanic`, following S0.1's frozen reading, with 10 and 11 unclassified in X-R1 | §8 | frozen here (2020's ACS codes: checked by the fit job first) |
 | S2-08 | 564 | **[proposed loader]** OACT contrasts `log(r_q) − log(r_q3)`, band expansion, a source-year matrix that says what happens before a band first appears | Confirmed; tightened with the band-backcast rule, the figure-year rule and two independent table transcriptions | §3.1, §4.1, §5 | frozen here |
 | S2-09 | 570 | **[open]** earnings ages below 62 and 90–120 | Frozen: the 62–64 coefficient holds down to age 25 and the age-25 value below; the 85–89 coefficient holds up to 120; four registered sensitivities. `R_ref` holds everyone under 25 at the reference categories, so the values below 25 reach no one in the fit (§6.2) | §5, §6.2 | frozen here |
-| S2-10 | 579 | **[open]** terminal 100+ rule and any unsupported other-group coefficient | Frozen: race contrasts at 100–120 hold the age-99 contrast, and the fit reads no contrast from the 100+ interval; `other_non_hispanic` comes from NHIS–LMF, with NCHS's AIAN and Asian tables reported beside as a partial group | §4.3, §5 | frozen here |
+| S2-10 | 579 | **[open]** terminal 100+ rule and any unsupported other-group coefficient | Frozen: race contrasts at 100–120 hold the age-99 contrast, and the fit reads no contrast from the 100+ interval; the e65 targets read that interval's `Tx` and `lx` for NCHS's closing only (§9.2); `other_non_hispanic` comes from NHIS–LMF, with NCHS's AIAN and Asian tables reported beside as a partial group | §4.3, §5, §9.2 | frozen here |
 | S2-11 | 587 | **[open]** extraction and digitization of the 2022 gradient, its uncertainty, complete coverage | Frozen: vector extraction of Study 129 Figures 7–12, validated against Tables 7–12 at every table year, with a digitization half-width the validation sets; complete tables at every knot | §7.1–7.3 | frozen here |
 | S2-12 | 591 | **[open]** widening `CoefficientPath`: slope, origin, ages, caps; knot years and synchronization | Frozen: origin 2024, slopes from a frozen estimator on OACT's pre-pandemic annual figures, caps of 30 years and a 1.5 multiplier, race held flat; annual knots 2010–2024 with one synchronization rule | §7.4–7.5 | frozen here |
 | S2-13 | 602 | **[proposed]** `unclassified_rule="reference"` for SM3's overall denominator | Confirmed for SM3; `refuse` for conformance runs and for any projection until the frame carries the attributes. On `R_ref`, `refuse` applies after the under-25 rule and the ACS crosswalk, which map every code the dictionaries read list (§6.2, §8.2) | §8.3 | frozen here |
@@ -243,7 +243,13 @@ year.
   the total, NH black and NH white tables only, and NCHS models old-age
   mortality for the Hispanic, AIAN and Asian NH tables (pp. 2, 54–55); the
   2008-onward method smooths death rates above about 85, at ages that
-  depend on the group (p. 53).
+  depend on the group (p. 53). A Kannisto logistic model smooths the
+  Medicare-blended rates at 85–99 and predicts them at 100–120 (p. 57); a
+  Brass relational logit, with the white non-Hispanic age pattern as its
+  standard, predicts the older ages of the Hispanic, AIAN and Asian NH
+  tables (pp. 59–62). Every table then closes its "100 and older" row with
+  `∞q100 = 1.0`, `∞d100 = l100` and `∞L100 = T100`, the sum of the
+  extrapolated `Lx` for 100–120 (pp. 61–62).
 - **Fit.** Hispanic, NH white and NH black for every knot year 2010–2024
   (bridged race through 2017, single race from 2018, both labeled). The
   2006–2009 tables lie before the first knot, and the fit does not use
@@ -462,7 +468,9 @@ coefficients act on.
   exact ages `x` and `x + 1` (NVSR 75(5) p. 2), the baseline's convention;
   the mapping is the identity.
 - **M-R3, ages 100–120.** The "100 and older" interval holds no single-age
-  `q`, so it supplies no target (§5).
+  `q`, so it supplies no contrast target (§5). The e65 targets alone read
+  it, for NCHS's closing of the open interval: `e100 = T100 / l100` from
+  the printed `Tx` and `lx` of that row (§9.2).
 - **M-R4, `other_non_hispanic`.** NHIS–LMF supplies the marginal hazard
   ratio against `white_non_hispanic` at attained ages 25–44, 45–64,
   65–74, 75–84 and 85+, by sex, pooled and held constant over time (fit).
@@ -475,7 +483,8 @@ coefficients act on.
   definitions (§8.2), and every path labels the 2017–2018 break.
 - **M-R6, ratios to the total population.** For the e65 target only
   (§9.2), each group's `q` divides by the NCHS total-population `q` at the
-  same age and year.
+  same age and year, and each group's open-interval `e100` divides by the
+  total's.
 - **Properties the source states and every report repeats:** the
   misclassification adjustment, the Medicare supplement at 66–99 for
   three groups only, modeled old-age mortality for the other groups, and
@@ -1172,6 +1181,7 @@ failure stops the procedure (§10, `GATE_FAIL_OR_REGRESSION_FAIL`).
   `[ln(r_k − h) − ln(r_ref + h), ln(r_k + h) − ln(r_ref − h)]`. The
   procedure never uses the approximation `h / r` as a log tolerance (S0.1
   §2.5). The half-widths are 0.005 for an RMR; 0.0000005 for a six-decimal `qx`;
+  0.5 for a printed `lx` or `Tx` (used only in §9.2's open interval);
   0.05 per 100,000 for an NCHS education rate, carried through
   `q = m / (1 + m/2)`; `δ_dig` (§7.2) for a digitized RMR; and zero for an
   NHIS estimate this project computes. The model-implied contrast must lie
@@ -1205,19 +1215,53 @@ failure stops the procedure (§10, `GATE_FAIL_OR_REGRESSION_FAIL`).
   every age above the subpopulation's range. `h_all(a)` is the same
   average over every row of that subpopulation. The fitted group
   probability is `q_F,g(a) = q_base(s, a, t) × h_g(a) / h_all(a)`.
-- **The target.** `q_T,g(a) = min(1, q_base(s, a, t) × ρ_g(a))`, with
-  `ρ_g` the source's ratio of group `g` to its whole population: for OACT,
-  the RMR of `g`'s band at the knot (after backcasts and holds; above 89
-  the 85–89 RMR); for `hispanic`, `white_non_hispanic` and
-  `black_non_hispanic`, `q_g(a) / q_total(a)` from the knot's NCHS tables
-  (M-R6), holding the age-99 ratio above 99; for `other_non_hispanic`, the
-  NHIS hazard ratio for `a`'s band times `q_NHW(a) / q_total(a)`.
-- **Closing rule.** Both life expectancies come from
-  `data/life_table.life_expectancy(q[0..120], 65)`, the backward recursion
-  with the constant-terminal-`q` closing at the last age
-  (`life_table.py:17–37, 181–203`). The module calls that closing "a
-  builder default awaiting ratification" (lines 30–31); this record fixes
-  it for SM2's e65 only.
+- **Earnings targets.** `q_T,g(a) = min(1, q_base(s, a, t) × ρ_g(a))` at
+  every age 0–120, with `ρ_g` the RMR of `g`'s band at the knot (after
+  backcasts and holds; above 89 the 85–89 RMR), and
+  `e65_T,g = life_expectancy(q_T,g[0..120], 65)` under the closing rule
+  below. OACT publishes RMRs, not life tables, so it has no closing of its
+  own, and S0.1 asks for a fixed tail rule (audit lines 643–646).
+- **Race and Hispanic-origin targets keep NCHS's conventions.** S0.1
+  requires "the source's age/closing conventions" for NCHS life-table
+  targets (audit lines 647–648). At single ages 65–99,
+  `q_T,g(a) = min(1, q_base(s, a, t) × ρ_g(a))`, with
+  `ρ_g(a) = q_g(a) / q_total(a)` from the knot's NCHS tables for
+  `hispanic`, `white_non_hispanic` and `black_non_hispanic` (M-R6), and
+  `ρ(a) = HR_b(a) × q_NHW(a) / q_total(a)` for `other_non_hispanic`, with
+  `HR_b(a)` the NHIS hazard ratio of `a`'s band. Survivors run
+  `l(65) = 1` and `l(a + 1) = l(a)(1 − q_T,g(a))`, and person-years
+  `L(a) = (l(a) + l(a + 1)) / 2`, NCHS's equation 17 (NVSR 75(5) p. 61).
+  The open interval closes as NCHS closes it. NCHS sets `∞q100 = 1.0`,
+  `∞d100 = l100` and `∞L100 = T100`, "the sum of the extrapolated Lx
+  values for ages 100–120" (pp. 61–62), so the interval's life expectancy
+  is `e100 = T100 / l100`. The target applies the group's ratio to the
+  baseline as M-R6 does at single ages:
+  `e100_T,g = e100_base × e100_g / e100_total`, where `e100_g` and
+  `e100_total` divide the printed `Tx` by the printed `lx` in the "100 and
+  older" rows of the group's and the total's tables, and
+  `e100_base = life_expectancy(q_base(s, ·, t)[0..120], 100)`. For
+  `other_non_hispanic`, `e100_T = e100_base × (e100_NHW / e100_total) /
+  HR_85+`. An open interval's central death rate is `l100 / T100 =
+  1 / e100`, so this applies the source's ratio of open-interval death
+  rates. Then `e65_T,g = (Σ_{a=65..99} L(a) + l(100) × e100_T,g) / l(65)`,
+  which equals `life_table.py`'s backward recursion from 99 down to 65
+  seeded with `e100_T,g`.
+- **The model side, and the closing rule.** `e65_F,g =
+  life_expectancy(q_F,g[0..120], 65)` for every group: the backward
+  recursion with the constant-terminal-`q` closing at the last age
+  (`life_table.py:17–37, 181–203`), applied to the fitted probabilities,
+  whose race coefficients at 100–120 hold the age-99 value (§5). The
+  module calls that closing "a builder default awaiting ratification"
+  (lines 30–31); this record fixes it for the model side, the earnings
+  targets and `e100_base` only. Target and model therefore close the top
+  differently for race and Hispanic origin, so a mismatch in the tail
+  reaches the residual instead of cancelling. No ruling this record cites
+  prescribes the earlier construction, in which both sides shared the
+  repository's tail: the design's §5.3 sets the 0.1-year limit, and the
+  design mentions the closing only to call it "a builder-default
+  constant-terminal-q closing rule that awaits ratification" (line 143;
+  line 1146 repeats that §2.1 discloses it). So no sensitivity keeps that
+  construction.
 - **The limit.** `|e65(q_F,g) − e65(q_T,g)| ≤ 0.1` year, **the design's
   limit, which stays at 0.1 year** (design §5.3), for every earnings
   quintile and every race and Hispanic-origin group, both sexes, at every
@@ -1240,7 +1284,7 @@ combined.
 |---|---|---|
 | U1, rounding and digitization | Every printed value; every digitized RMR | Uniform within the printing interval of §9.1, independently for each printed cell; uniform within `±δ_dig` for each digitized value |
 | U2, random mortality variation | NCHS education | Poisson on the printed death counts: the `1/D` term of Formula 9 (NVSR 74(4) p. 132) and nothing else. Formula 9's ACS term `(SE(P)/P)²` enters through U3's replicate refits, so the ACS variance counts once |
-| | NCHS life tables | Poisson with expected deaths `q_x × P_x`, where `P_x` is the group's population at age `x` in `R_ref(t)`. The life-table reports print no death counts, so this is a registered approximation, used at the Medicare-supplemented ages too |
+| | NCHS life tables | Poisson with expected deaths `q_x × P_x`, where `P_x` is the group's population at age `x` in `R_ref(t)`. The life-table reports print no death counts, so this is a registered approximation, used at the Medicare-supplemented ages too. For the open interval (§9.2), Poisson on its central rate `1 / e100` with expected deaths `P_100+ / e100`, `P_100+` being the group's population at 100 and over in `R_ref(t)` |
 | | OACT | **[open]** Study 129 prints rates and RMRs but no deaths or exposures (Tables 1–12), so the source cannot supply this component (row S2-24). It settles when OACT's exposure or death counts by sex × band × quintile × year are available. Until then every OACT e65 member is inconclusive or fails (below) |
 | U3, survey sampling | ACS (reference population and NCHS education denominators) | One refit per ACS replicate, with the variance formula that each year's PUMS documentation gives and the fit job records. NCHS's denominators move with the same replicate: each category's share within sex and band is re-tabulated from that replicate and scaled to NCHS's printed total. The fit job also reports the ratio of its replicate standard errors to NCHS's printed ones (Table VIII, I–19) |
 | | NHIS–LMF | Rao–Wu rescaled bootstrap: PSUs resampled with replacement within strata, separately for each design period: the 2009 layout's `STRAT_P`/`PSU_P` and the 2016 and 2018 layouts' `PSTRAT`/`PPSU`, with the periods' strata kept distinct; the fit job reads which names each intervening year uses. Resampling whole PSUs keeps every family and every person's whole history together, once the fit job confirms from each year's survey description that families nest within PSUs |
