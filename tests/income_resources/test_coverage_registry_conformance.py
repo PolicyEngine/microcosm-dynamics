@@ -1705,6 +1705,10 @@ FUSED_IDENTIFIER = re.compile(
 FUSED_WORDS = re.compile(r"\bnotwith\b")
 # A word or number run into a parenthesized year: "517(2025)".
 FUSED_PAREN_YEAR = re.compile(r"\w\((?:1[89]|20)\d\d\)")
+# Review r7 low 8: a sentence run into the next one ("duties.Noncovered",
+# "(3121(r)(1)(B)).POMS"). A digit before the point is a section number
+# ("section 4.B"), so it does not count.
+FUSED_SENTENCE = re.compile(r"[a-z)]\.[A-Z]")
 LINKS = re.compile(r"https?://\S+|#\S+|\S+\.(?:pdf|html?|txt|json|xml)\b")
 VERBATIM = {
     "quote",
@@ -1732,20 +1736,23 @@ def published_strings(value):
 
 
 def fused_tokens(text):
-    """Words or citations run into a number, in prose (text with a space)
-    or in an identifier. Links and anchors are skipped."""
+    """Words or citations run into a number, or a sentence run into the
+    next, in prose (text with a space), and words run into a number in an
+    identifier. Links and anchors are skipped."""
     if " " in text.strip():
         plain = LINKS.sub(" ", text)
         return (
             FUSED_PROSE.findall(plain)
             + FUSED_WORDS.findall(plain)
             + FUSED_PAREN_YEAR.findall(plain)
+            + FUSED_SENTENCE.findall(plain)
         )
     return FUSED_IDENTIFIER.findall(text) + FUSED_PAREN_YEAR.findall(text)
 
 
 def test_published_prose_has_no_fused_tokens():
-    """Review r2 low 10: no word or citation runs into a number.
+    """Review r2 low 10: no word or citation runs into a number, and
+    (review r7 low 8) no sentence runs into the next.
 
     Quotations, search strings, links and anchors are verbatim and skipped.
     """
@@ -1770,6 +1777,10 @@ def test_fused_token_detector_flags_only_fused_forms(word, number, year):
     assert not fused_tokens(f"INVENTED Publication {number} ({year}) text")
     assert fused_tokens(f"INVENTED_section{number}")
     assert not fused_tokens(f"INVENTED_section_{number}")
+    assert fused_tokens(f"INVENTED rule {number} applies.Noncovered text")
+    assert fused_tokens(f"INVENTED (see {word} {number}).POMS text")
+    assert not fused_tokens(f"INVENTED rule {number} applies. Noncovered")
+    assert not fused_tokens(f"INVENTED Supplement {year}, section 4.B")
 
 
 VOCATIONAL = "nonresident_alien_vocational_service"

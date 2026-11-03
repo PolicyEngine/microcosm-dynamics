@@ -474,11 +474,11 @@
         "open_alternatives": [
           {
             "name": "exemption_reaches_all_chapter_2_income",
-            "description": "Before 1402(g)(5) took effect the exemption reached all chapter 2 income, church employee income included: noncovered."
+            "description": "Before 1402(g)(5) took effect the exemption reached all chapter 2 income, church employee income included: noncovered. Source: 1402(g)(1) grants \"an exemption from the tax imposed by this chapter\" (lii_26_1402.html); the reading takes 1402(g)(5), which Pub. L. 99-514 section 1882(a) added (the 1986 amendment note), to reach no year before it took effect (review r7 low 8)."
           },
           {
             "name": "section_1882a_reaches_1984",
-            "description": "1402(g)(5)'s limit applies to 1984-85 church employee income: the exemption does not reach it, and the residual applies (covered)."
+            "description": "1402(g)(5)'s limit applies to 1984-85 church employee income: the exemption does not reach it, and the residual applies (covered). Source: 1402(g)(5) as Pub. L. 99-514 section 1882(a) added it (the 1986 amendment note in lii_26_1402.html); the 1988 note redesignates it (3), and the 1989 note records that Pub. L. 101-239 substituted \"shall apply\" for \"shall not apply\" in its text, which now reads \"This subsection shall apply with respect to services which are described in subparagraph (B) of section 3121(b)(8)\". The reading takes that limit back to 1984, which no captured note dates (review r7 low 8)."
           }
         ]
       },
