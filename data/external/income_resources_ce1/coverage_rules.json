@@ -18309,7 +18309,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "The service is not for a State or local government within this family's scope, so this family's cases do not exclude it; apply the other families. That is not a finding that 410(a)(7) reaches nothing: its clauses for the District of Columbia (410(a)(7)(C)-(E)) still reach, for example, a District clerk under the Civil Service Retirement System, which other families decide (review r6 low 5)."
+        "description": "The service is not for a State or local government within this family's scope, so this family's cases do not exclude it; apply the other families. That is not a finding that 410(a)(7) reaches nothing: its clauses (C)-(E) (in the 1994 and current editions, (C) Guam and American Samoa, (D) the District of Columbia and (E) Guam's temporary or intermittent employees) still reach, for example, a District clerk under the Civil Service Retirement System, which other families decide (review r6 low 5; review r7 low 2 corrects the clauses' labels)."
       },
       "rule_id": "state_local_1968_1983",
       "trigger_facts": [
@@ -18540,7 +18540,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "The service is not for a State or local government within this family's scope, so this family's cases do not exclude it; apply the other families. That is not a finding that 410(a)(7) reaches nothing: its clauses for the District of Columbia (410(a)(7)(C)-(E)) still reach, for example, a District clerk under the Civil Service Retirement System, which other families decide (review r6 low 5)."
+        "description": "The service is not for a State or local government within this family's scope, so this family's cases do not exclude it; apply the other families. That is not a finding that 410(a)(7) reaches nothing: its clauses (C)-(E) (in the 1994 and current editions, (C) Guam and American Samoa, (D) the District of Columbia and (E) Guam's temporary or intermittent employees) still reach, for example, a District clerk under the Civil Service Retirement System, which other families decide (review r6 low 5; review r7 low 2 corrects the clauses' labels)."
       },
       "rule_id": "state_local_1983_1991",
       "trigger_facts": [
@@ -19026,7 +19026,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "The service is not for a State or local government within this family's scope, so this family's cases do not exclude it; apply the other families. That is not a finding that 410(a)(7) reaches nothing: its clauses for the District of Columbia (410(a)(7)(C)-(E)) still reach, for example, a District clerk under the Civil Service Retirement System, which other families decide (review r6 low 5)."
+        "description": "The service is not for a State or local government within this family's scope, so this family's cases do not exclude it; apply the other families. That is not a finding that 410(a)(7) reaches nothing: its clauses (C)-(E) (in the 1994 and current editions, (C) Guam and American Samoa, (D) the District of Columbia and (E) Guam's temporary or intermittent employees) still reach, for example, a District clerk under the Civil Service Retirement System, which other families decide (review r6 low 5; review r7 low 2 corrects the clauses' labels)."
       },
       "rule_id": "state_local_1991_2026",
       "trigger_facts": [
