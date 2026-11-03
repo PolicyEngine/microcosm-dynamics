@@ -3620,7 +3620,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families. This family does not read 410(a)'s base definition: service outside the United States is employment only under 410(a)(B), \"by a citizen or resident of the United States as an employee (i) of an American employer\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983), and no family in this registry reads that condition, so this residual does not reach a noncitizen's service abroad (registry scope_gaps, review r6 M-5)."
+      "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families. This family does not read 410(a)'s base definition. Outside the United States, 410(a) makes service employment only (A)(ii) on or in connection with an American vessel or American aircraft under a contract of service entered into within the United States, or one during which the craft touches at a United States port, while the employee is employed on and in connection with it, \"irrespective of the citizenship or residence of either\"; (B) \"by a citizen or resident of the United States\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983) as an employee (i) of an American employer or (ii) of a foreign affiliate of an American employer \"during any period for which there is in effect an agreement, entered into pursuant to section 3121(l)\" with respect to the affiliate (Pub. L. 98-21 section 321(b), for agreements entered into after April 20, 1983, wrote \"American employer\" for \"a domestic corporation\" and \"affiliate\" for \"subsidiary\"); or (C) \"regardless of where or by whom performed\", where an agreement under section 433 designates the service as employment or recognizes it as equivalent to employment (added by Pub. L. 98-21 section 322(a)(1), effective in taxable years beginning on or after April 20, 1983). No family in this registry reads these conditions, so neither this residual nor a covered case of this family reaches service abroad that none of them reaches: a noncitizen's before 1984, and a nonresident noncitizen's from 1984, that is not on or in connection with an American vessel or aircraft as (A)(ii) states and that no section 433 agreement designates (registry scope_gaps, review r6 M-5 and r7 H-2)."
     }
   },
   {
@@ -3999,7 +3999,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families. This family does not read 410(a)'s base definition: service outside the United States is employment only under 410(a)(B), \"by a citizen or resident of the United States as an employee (i) of an American employer\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983), and no family in this registry reads that condition, so this residual does not reach a noncitizen's service abroad (registry scope_gaps, review r6 M-5)."
+      "description": "Federal service is covered when none of the stated statutory exclusion cases applies; apply the other families. This family does not read 410(a)'s base definition. Outside the United States, 410(a) makes service employment only (A)(ii) on or in connection with an American vessel or American aircraft under a contract of service entered into within the United States, or one during which the craft touches at a United States port, while the employee is employed on and in connection with it, \"irrespective of the citizenship or residence of either\"; (B) \"by a citizen or resident of the United States\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983) as an employee (i) of an American employer or (ii) of a foreign affiliate of an American employer \"during any period for which there is in effect an agreement, entered into pursuant to section 3121(l)\" with respect to the affiliate (Pub. L. 98-21 section 321(b), for agreements entered into after April 20, 1983, wrote \"American employer\" for \"a domestic corporation\" and \"affiliate\" for \"subsidiary\"); or (C) \"regardless of where or by whom performed\", where an agreement under section 433 designates the service as employment or recognizes it as equivalent to employment (added by Pub. L. 98-21 section 322(a)(1), effective in taxable years beginning on or after April 20, 1983). No family in this registry reads these conditions, so neither this residual nor a covered case of this family reaches service abroad that none of them reaches: a noncitizen's before 1984, and a nonresident noncitizen's from 1984, that is not on or in connection with an American vessel or aircraft as (A)(ii) states and that no section 433 agreement designates (registry scope_gaps, review r6 M-5 and r7 H-2)."
     }
   },
   {
@@ -4544,7 +4544,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins. This family does not read 410(a)'s base definition: service outside the United States is employment only under 410(a)(B), \"by a citizen or resident of the United States as an employee (i) of an American employer\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983), and no family in this registry reads that condition, so this residual does not reach a noncitizen's service abroad (registry scope_gaps, review r6 M-5)."
+      "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins. This family does not read 410(a)'s base definition. Outside the United States, 410(a) makes service employment only (A)(ii) on or in connection with an American vessel or American aircraft under a contract of service entered into within the United States, or one during which the craft touches at a United States port, while the employee is employed on and in connection with it, \"irrespective of the citizenship or residence of either\"; (B) \"by a citizen or resident of the United States\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983) as an employee (i) of an American employer or (ii) of a foreign affiliate of an American employer \"during any period for which there is in effect an agreement, entered into pursuant to section 3121(l)\" with respect to the affiliate (Pub. L. 98-21 section 321(b), for agreements entered into after April 20, 1983, wrote \"American employer\" for \"a domestic corporation\" and \"affiliate\" for \"subsidiary\"); or (C) \"regardless of where or by whom performed\", where an agreement under section 433 designates the service as employment or recognizes it as equivalent to employment (added by Pub. L. 98-21 section 322(a)(1), effective in taxable years beginning on or after April 20, 1983). No family in this registry reads these conditions, so neither this residual nor a covered case of this family reaches service abroad that none of them reaches: a noncitizen's before 1984, and a nonresident noncitizen's from 1984, that is not on or in connection with an American vessel or aircraft as (A)(ii) states and that no section 433 agreement designates (registry scope_gaps, review r6 M-5 and r7 H-2)."
     }
   },
   {
@@ -5286,7 +5286,7 @@
     "open_alternatives": [],
     "residual_default": {
       "consequence": "covered",
-      "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins. This family does not read 410(a)'s base definition: service outside the United States is employment only under 410(a)(B), \"by a citizen or resident of the United States as an employee (i) of an American employer\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983), and no family in this registry reads that condition, so this residual does not reach a noncitizen's service abroad (registry scope_gaps, review r6 M-5)."
+      "description": "Federal service is covered when no case matches; the cases apply in precedence order, first match wins. This family does not read 410(a)'s base definition. Outside the United States, 410(a) makes service employment only (A)(ii) on or in connection with an American vessel or American aircraft under a contract of service entered into within the United States, or one during which the craft touches at a United States port, while the employee is employed on and in connection with it, \"irrespective of the citizenship or residence of either\"; (B) \"by a citizen or resident of the United States\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983) as an employee (i) of an American employer or (ii) of a foreign affiliate of an American employer \"during any period for which there is in effect an agreement, entered into pursuant to section 3121(l)\" with respect to the affiliate (Pub. L. 98-21 section 321(b), for agreements entered into after April 20, 1983, wrote \"American employer\" for \"a domestic corporation\" and \"affiliate\" for \"subsidiary\"); or (C) \"regardless of where or by whom performed\", where an agreement under section 433 designates the service as employment or recognizes it as equivalent to employment (added by Pub. L. 98-21 section 322(a)(1), effective in taxable years beginning on or after April 20, 1983). No family in this registry reads these conditions, so neither this residual nor a covered case of this family reaches service abroad that none of them reaches: a noncitizen's before 1984, and a nonresident noncitizen's from 1984, that is not on or in connection with an American vessel or aircraft as (A)(ii) states and that no section 433 agreement designates (registry scope_gaps, review r6 M-5 and r7 H-2)."
     }
   },
   {
@@ -6727,6 +6727,20 @@
         "authority": "POMS RS 01901.620 (2024-07-02)",
         "location": "B.4, last condition",
         "quote": "the individual remains a member of the order even though their services may be directed by a third party outside the U.S., the right to direct and control remains with the member's order within the U.S."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a), preamble, clause (C)",
+        "quote": "(C) if it is service, regardless of where or by whom performed, which is designated as employment or recognized as equivalent to employment under an agreement entered into under section 433 of this title ;"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "Effective Date of 1983 Amendment, section 322(a)(1)",
+        "quote": "Amendment by section 322(a)(1) of Pub. L. 98\u201321 effective in taxable years beginning on or after Apr. 20, 1983"
       }
     ],
     "trigger_facts": [
@@ -6735,7 +6749,8 @@
       "clergy_remuneration",
       "nonresident_alien_status",
       "place_of_work",
-      "citizenship"
+      "citizenship",
+      "social_security_agreement_coverage"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
@@ -6945,11 +6960,12 @@
         "case_id": "election_member_abroad_not_covered",
         "precedence": 2,
         "consequence": "noncovered",
-        "description": "POMS RS 01901.620 B.4: a member's services outside the United States are covered under the election only if the member is a United States citizen; otherwise the vow-of-poverty exclusion still applies.Noncovered whether or not an election is in effect: with no election 410(a)(8)(A) excludes the duties (vow_duties_without_election), and with one this member is outside what 3121(r) makes employment, so the case reads no election and ranks above election_status_not_established (review r6 M-2).",
+        "description": "POMS RS 01901.620 B.4: a member's services outside the United States are covered under the election only if the member is a United States citizen; otherwise the vow-of-poverty exclusion still applies. 410(a)(C), effective in taxable years beginning on or after April 20, 1983, makes service employment \"regardless of where or by whom performed\" where an agreement under section 433 designates it as employment or recognizes it as equivalent, so the case reads only service no such agreement designates (review r7 low 9).Noncovered whether or not an election is in effect: with no election 410(a)(8)(A) excludes the duties (vow_duties_without_election), and with one this member is outside what 3121(r) makes employment, so the case reads no election and ranks above election_status_not_established (review r6 M-2).",
         "when": {
           "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
           "place_of_work": "outside the United States",
-          "citizenship": "not a United States citizen"
+          "citizenship": "not a United States citizen",
+          "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
         }
       },
       {
@@ -7122,6 +7138,20 @@
         "authority": "POMS RS 01901.620 (2024-07-02)",
         "location": "B.4, last condition",
         "quote": "the individual remains a member of the order even though their services may be directed by a third party outside the U.S., the right to direct and control remains with the member's order within the U.S."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a), preamble, clause (C)",
+        "quote": "(C) if it is service, regardless of where or by whom performed, which is designated as employment or recognized as equivalent to employment under an agreement entered into under section 433 of this title ;"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "Effective Date of 1983 Amendment, section 322(a)(1)",
+        "quote": "Amendment by section 322(a)(1) of Pub. L. 98\u201321 effective in taxable years beginning on or after Apr. 20, 1983"
       }
     ],
     "trigger_facts": [
@@ -7129,7 +7159,8 @@
       "clergy_or_religious_exemption",
       "clergy_remuneration",
       "nonresident_alien_status",
-      "place_of_work"
+      "place_of_work",
+      "social_security_agreement_coverage"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
@@ -7476,11 +7507,12 @@
         "case_id": "election_member_abroad_not_covered",
         "precedence": 2,
         "consequence": "noncovered",
-        "description": "POMS RS 01901.620 B.4: a member's services outside the United States are covered under the election only if the member is a United States citizen or, from January 1, 1984, a resident alien; otherwise the vow-of-poverty exclusion still applies.Noncovered whether or not an election is in effect: with no election 410(a)(8)(A) excludes the duties (vow_duties_without_election), and with one this member is outside what 3121(r) makes employment, so the case reads no election and ranks above election_status_not_established (review r6 M-2).",
+        "description": "POMS RS 01901.620 B.4: a member's services outside the United States are covered under the election only if the member is a United States citizen or, from January 1, 1984, a resident alien; otherwise the vow-of-poverty exclusion still applies. 410(a)(C), effective in taxable years beginning on or after April 20, 1983, makes service employment \"regardless of where or by whom performed\" where an agreement under section 433 designates it as employment or recognizes it as equivalent, so the case reads only service no such agreement designates (review r7 low 9).Noncovered whether or not an election is in effect: with no election 410(a)(8)(A) excludes the duties (vow_duties_without_election), and with one this member is outside what 3121(r) makes employment, so the case reads no election and ranks above election_status_not_established (review r6 M-2).",
         "when": {
           "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
           "place_of_work": "outside the United States",
-          "nonresident_alien_status": "neither a United States citizen nor a resident alien"
+          "nonresident_alien_status": "neither a United States citizen nor a resident alien",
+          "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
         }
       },
       {

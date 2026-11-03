@@ -4571,6 +4571,14 @@ ORDER_MEMBERS = {
 }
 
 
+ORDER_NO_AGREEMENT = (
+    "no agreement under section 433 (section 233 of the Social Security "
+    "Act) designates this service as employment or recognizes it as "
+    "equivalent to employment (410(a)(C), effective in taxable years "
+    "beginning on or after April 20, 1983)"
+)
+
+
 @pytest.mark.parametrize("member", sorted(ORDER_MEMBERS))
 @pytest.mark.parametrize(
     "rule_id", ["religious_order_1968_1983", "religious_order_1984_2026"]
@@ -4596,6 +4604,9 @@ def test_religious_order_members_resolve_from_their_facts(
         "place_of_work": place,
         "citizenship": status,
         "nonresident_alien_status": status,
+        # Review r7 low 9: no section 433 agreement designates the service
+        # (410(a)(C)); the sweep fixture holds the member it reaches.
+        "social_security_agreement_coverage": ORDER_NO_AGREEMENT,
     }
     assert resolved_consequence(rule, facts) == expected
     decided = rule.resolve(cases_met(rule, facts))
@@ -6371,6 +6382,59 @@ def test_federal_covered_cases_name_federal_service(registry):
                 for text in case["when"].values()
             ), (rule_id, case["case_id"])
     assert covered
+
+
+# Review r7 H-2 and low 1: the scope gap names each clause of 410(a)'s
+# preamble that reaches service abroad, with (B)(ii)'s 3121(l) condition,
+# and each federal residual that points to it names the same clauses.
+SCOPE_GAP_CLAUSES = (
+    "(A)(ii)",
+    "irrespective of the citizenship or residence of either",
+    '"by a citizen or resident of the United States"',
+    "during any period for which there is in effect an agreement, entered "
+    "into pursuant to section 3121(l)",
+    '(C) "regardless of where or by whom performed"',
+    "an agreement under section 433",
+)
+
+
+def scope_gap_problems(text):
+    """The preamble clauses a scope-gap or residual text leaves out."""
+    return [clause for clause in SCOPE_GAP_CLAUSES if clause not in text]
+
+
+def scope_gap_texts():
+    raw = json.loads(REGISTRY_ARTIFACT.read_text())
+    (gap,) = raw["scope_gaps"]
+    residuals = {
+        row["rule_id"]: row["residual_default"]["description"]
+        for row in raw["rules"]
+        if "registry scope_gaps" in row["residual_default"]["description"]
+    }
+    return gap, residuals
+
+
+def test_scope_gap_and_federal_residuals_name_the_preamble_clauses():
+    gap, residuals = scope_gap_texts()
+    assert "(A), (B) and (C)" in gap["provision"]
+    assert scope_gap_problems(gap["gap"]) == []
+    assert sorted(residuals) == sorted(FEDERAL_ROWS)
+    for rule_id, text in residuals.items():
+        assert scope_gap_problems(text) == [], rule_id
+    cited = {c["location"] for c in gap["citations"]}
+    assert {
+        "410(a), preamble, clause (A)",
+        "410(a), preamble, clause (B)(ii)",
+        "410(a), preamble, clause (C)",
+    } <= cited
+
+
+@settings(deadline=None)
+@given(st.sampled_from(SCOPE_GAP_CLAUSES), st.booleans())
+def test_scope_gap_checker_flags_a_dropped_clause(clause, residual):
+    gap, residuals = scope_gap_texts()
+    text = residuals["federal_1987_2026"] if residual else gap["gap"]
+    assert clause in scope_gap_problems(text.replace(clause, "INVENTED"))
 
 
 FEDERAL_LEVEL_EMPLOYERS = {

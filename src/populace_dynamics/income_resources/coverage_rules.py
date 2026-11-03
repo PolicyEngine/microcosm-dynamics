@@ -252,8 +252,9 @@ CE1_FIELD_PURPOSES = (
     # The date remuneration is paid, where an amendment keys on payment and
     # the family on service (election work, 1977 amendment).
     "remuneration_paid_date",
-    # Whether a social security (totalization) agreement leaves a person
-    # subject only to another country's social security laws.
+    # What a social security (totalization) agreement under 42 U.S.C. 433
+    # does with the service: leaves the person subject only to another
+    # country's laws, or designates it as employment (410(a)(C)).
     "social_security_agreement_coverage",
     # Whether contributions on the earnings from this service were required
     # under another country's social insurance system (Pub. L. 103-296

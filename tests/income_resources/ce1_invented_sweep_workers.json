@@ -7343,7 +7343,8 @@
      "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed"
     ],
     "place_of_work": "outside the United States",
-    "citizenship": "not a United States citizen"
+    "citizenship": "not a United States citizen",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "noncovered",
    "decides": "election_member_abroad_not_covered"
@@ -7361,7 +7362,8 @@
      "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed"
     ],
     "place_of_work": "outside the United States",
-    "citizenship": "United States citizen"
+    "citizenship": "United States citizen",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "covered",
    "decides": "vow_duties_with_3121r_election"
@@ -7380,7 +7382,8 @@
     ],
     "place_of_work": "outside the United States",
     "citizenship": "not a United States citizen",
-    "nonresident_alien_status": "resident alien"
+    "nonresident_alien_status": "resident alien",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "noncovered",
    "decides": "election_member_abroad_not_covered"
@@ -7504,7 +7507,8 @@
     "place_of_work": [
      "outside the United States"
     ],
-    "citizenship": "United States citizen"
+    "citizenship": "United States citizen",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "covered",
    "decides": "vow_duties_with_3121r_election"
@@ -7595,7 +7599,8 @@
      "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed"
     ],
     "place_of_work": "outside the United States",
-    "nonresident_alien_status": "neither a United States citizen nor a resident alien"
+    "nonresident_alien_status": "neither a United States citizen nor a resident alien",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "noncovered",
    "decides": "election_member_abroad_not_covered"
@@ -7613,7 +7618,8 @@
      "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed"
     ],
     "place_of_work": "outside the United States",
-    "nonresident_alien_status": "United States citizen"
+    "nonresident_alien_status": "United States citizen",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "covered",
    "decides": "vow_duties_with_3121r_election"
@@ -7631,7 +7637,8 @@
      "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed"
     ],
     "place_of_work": "outside the United States",
-    "nonresident_alien_status": "resident alien"
+    "nonresident_alien_status": "resident alien",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "covered",
    "decides": "vow_duties_with_3121r_election"
@@ -7773,7 +7780,8 @@
     "place_of_work": [
      "outside the United States"
     ],
-    "nonresident_alien_status": "United States citizen"
+    "nonresident_alien_status": "United States citizen",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "covered",
    "decides": "vow_duties_with_3121r_election"
@@ -8840,7 +8848,8 @@
      "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed"
     ],
     "place_of_work": "outside the United States",
-    "citizenship": "United States citizen"
+    "citizenship": "United States citizen",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "covered",
    "decides": "vow_duties_with_3121r_election"
@@ -8889,7 +8898,8 @@
      "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed"
     ],
     "place_of_work": "outside the United States",
-    "nonresident_alien_status": "United States citizen"
+    "nonresident_alien_status": "United States citizen",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "covered",
    "decides": "vow_duties_with_3121r_election"
@@ -16184,7 +16194,8 @@
     "religious_order_service": "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
     "clergy_or_religious_exemption": "not established whether a 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covers the period",
     "place_of_work": "outside the United States",
-    "citizenship": "not a United States citizen"
+    "citizenship": "not a United States citizen",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "noncovered",
    "decides": "election_member_abroad_not_covered"
@@ -16486,7 +16497,8 @@
     ],
     "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed",
     "place_of_work": "in Ohio, in the United States",
-    "citizenship": "not a United States citizen"
+    "citizenship": "not a United States citizen",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "covered",
    "decides": "vow_duties_with_3121r_election"
@@ -16501,7 +16513,8 @@
     ],
     "clergy_or_religious_exemption": "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed",
     "place_of_work": "in Ohio, in the United States",
-    "nonresident_alien_status": "neither a United States citizen nor a resident alien"
+    "nonresident_alien_status": "neither a United States citizen nor a resident alien",
+    "social_security_agreement_coverage": "no agreement under section 433 (section 233 of the Social Security Act) designates this service as employment or recognizes it as equivalent to employment (410(a)(C), effective in taxable years beginning on or after April 20, 1983)"
    },
    "expected": "covered",
    "decides": "vow_duties_with_3121r_election"
@@ -17110,6 +17123,44 @@
    },
    "expected": "covered_above_threshold",
    "decides": "agreement_with_lower_threshold_nonmember"
+  },
+  {
+   "rule_id": "religious_order_1984_2026",
+   "worker": "INVENTED (review r7 low 9, just misses election_member_abroad_not_covered on social_security_agreement_coverage): 1995: an active vowed brother, neither a United States citizen nor a resident alien, whom his order (under its effective 3121(r) election) sends to its house in a country whose agreement with the United States under section 433 designates his service there as United States employment. 410(a)(C) makes that service employment regardless of where or by whom performed, so the election covers it.",
+   "facts": {
+    "religious_order_service": [
+     "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+     "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
+    ],
+    "clergy_or_religious_exemption": [
+     "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period",
+     "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed"
+    ],
+    "place_of_work": "outside the United States",
+    "nonresident_alien_status": "neither a United States citizen nor a resident alien",
+    "social_security_agreement_coverage": "an agreement under section 433 designates this service as United States employment"
+   },
+   "expected": "covered",
+   "decides": "vow_duties_with_3121r_election"
+  },
+  {
+   "rule_id": "religious_order_1968_1983",
+   "worker": "INVENTED (review r7 low 9, just misses election_member_abroad_not_covered on social_security_agreement_coverage): 1983, in a taxable year that began on 1983-07-01: an active vowed brother, not a United States citizen, serving abroad under his order's effective 3121(r) election in a country whose agreement with the United States under section 433 designates his service as United States employment. 410(a)(C) reaches taxable years beginning on or after April 20, 1983, so the election covers the service.",
+   "facts": {
+    "religious_order_service": [
+     "member of a religious order who has taken a vow of poverty as a member of such order, performing duties required by such order",
+     "member of a religious order who is subject to a vow of poverty as a member of such order, performs tasks usually required (and to the extent usually required) of an active member of such order and is not considered retired because of old age or total disability (3121(r)(2)), performing duties required by such order"
+    ],
+    "clergy_or_religious_exemption": [
+     "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period",
+     "effective 3121(r) election by the member's order, or by the autonomous subdivision of it to which the member belongs, covering the period; for a retroactive quarter, the member was a member when performing the service and was living on the first day of the quarter in which the certificate was filed"
+    ],
+    "place_of_work": "outside the United States",
+    "citizenship": "not a United States citizen",
+    "social_security_agreement_coverage": "an agreement under section 433 designates this service as United States employment"
+   },
+   "expected": "covered",
+   "decides": "vow_duties_with_3121r_election"
   }
  ]
 }
