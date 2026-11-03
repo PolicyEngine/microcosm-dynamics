@@ -2809,30 +2809,23 @@
           }
         },
         {
-          "case_id": "foreign_agreement_sole_coverage_before_1983",
-          "consequence": "open",
-          "description": "No capture holds 26 U.S.C. 1401(c) or 42 U.S.C. 433 or dates when an agreement first exempted self-employment income, so for taxable years beginning before 1983-04-20 the case refuses, as se_nonresident_alien_1968_1983's agreement case does: the two families agree on one date (review r6 M-9). Ranked above the ministry cases, which the agreement would displace.",
-          "open_alternatives": [
-            {
-              "description": "An agreement in effect for the year exempts the ministry earnings: noncovered.",
-              "name": "agreement_exemption_in_force"
-            },
-            {
-              "description": "No agreement exempted self-employment income before 1983-04-20: the ministry cases decide (usually covered).",
-              "name": "no_exemption_before_1983"
-            }
+          "case_id": "foreign_agreement_sole_coverage",
+          "consequence": "noncovered",
+          "description": "Publication 517 (2025) lists this among the exceptions to SE tax on ministerial earnings: \"You are subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country.\" 26 U.S.C. 1401(c): \"During any period in which there is in effect an agreement entered into pursuant to section 233 of the Social Security Act with any foreign country, the self-employment income of an individual shall be exempt\" to the extent the agreement subjects it \"exclusively to the laws applicable to the social security system of such foreign country\". Pub. L. 95-216 section 317(b)(1) added the subsection (\"Subsec. (c). Pub. L. 95\u2013216, \u00a7 317(b)(1) , added subsec. (c).\"), and section 317(a) added section 233 itself (42 U.S.C. 433, \"as added Pub. L. 95\u2013216, title III, \u00a7 317(a) , Dec. 20, 1977\"), whose (c)(1)(B)(i) has every agreement place self-employment in one system \"but not under both\". Neither captured page gives section 317 another date (the 1401 page's Effective Date of 1977 Amendment note, section 104, covers title I only), so the condition carries the limit the subsection states, an agreement under section 233 in effect for the period, and no worker meets it before December 20, 1977. Pub. L. 98-21 section 124(b) redesignated the subsection (d) and Pub. L. 101-508 made it (c) again; Pub. L. 108-203 section 415 replaced \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\", and a person subject only to the partner country's laws meets both wordings. Review r7 M-2 dates the exemption on these captures; the pre-1983 open cases it closes rested on Pub. L. 98-21 section 322(c), the date of 411(b)'s section 433 exception, not of 1401(c). It overrides cnmi_noncitizen_resident_ministry and ministry_without_exemption_or_vow: on either CNMI reading the exemption leaves the earnings noncovered.",
+          "overrides": [
+            "cnmi_noncitizen_resident_ministry",
+            "ministry_without_exemption_or_vow"
           ],
-          "open_reason": "AGREEMENT_EXEMPTION_BEFORE_1983_UNDATED: no CE1 capture holds 26 U.S.C. 1401(c) or 42 U.S.C. 433, or dates when a social security agreement first exempted a minister's self-employment income from SECA, so for taxable years beginning before 1983-04-20 whether an agreement made the minister subject only to another country's laws is not settled.",
           "precedence": 3,
           "when": {
-            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning before 1983-04-20",
+            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
           }
         },
         {
           "case_id": "cnmi_noncitizen_resident_ministry",
           "consequence": "open",
-          "description": "411(b)'s final sentence names four places; Publication 517 (2025) adds the CNMI. The case ranks above nonresident_alien_ministry, which every such minister also meets. An exempt minister is noncovered on both readings (nonresident_alien_ministry, or effective_1402e_exemption), so the case reads that no effective 1402(e) exemption is shown (review r6 M-2). Public Law 94-241, which POMS RS 01901.320 cites for the Commonwealth, is an Act of the 94th Congress, so no worker meets the text before that Congress; clergy_1968_1972 carries no CNMI case.",
+          "description": "411(b)'s final sentence names four places; Publication 517 (2025) adds the CNMI. The case ranks above nonresident_alien_ministry, which every such minister also meets, and below foreign_agreement_sole_coverage, noncovered on both readings. An exempt minister is noncovered on both readings (nonresident_alien_ministry, or effective_1402e_exemption), so the case reads that no effective 1402(e) exemption is shown (review r6 M-2). Public Law 94-241, which POMS RS 01901.320 cites for the Commonwealth, is an Act of the 94th Congress, so no worker meets the text before that Congress; clergy_1968_1972 carries no CNMI case.",
           "open_alternatives": [
             {
               "description": "nonresident_alien_ministry decides: the earnings are not self-employment income.",
@@ -2919,6 +2912,62 @@
         }
       ],
       "citations": [
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1401(c)",
+          "quote": "During any period in which there is in effect an agreement entered into pursuant to section 233 of the Social Security Act with any foreign country, the self-employment income of an individual shall be exempt from the taxes imposed by this section to the extent that such self-employment income is subject under such agreement exclusively to the laws applicable to the social security system of such foreign country.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1977 amendment note, subsec. (c)",
+          "quote": "Subsec. (c). Pub. L. 95\u2013216, \u00a7 317(b)(1) , added subsec. (c).",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1983 amendment note, subsecs. (c), (d)",
+          "quote": "Subsecs. (c), (d). Pub. L. 98\u201321, \u00a7 124(b) , added subsec. (c) and redesignated former subsec. (c) as (d).",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1990 amendment note, subsecs. (c), (d)",
+          "quote": "Pub. L. 101\u2013508 redesignated subsec. (d) as (c) and struck out former subsec. (c) which provided a credit against self-employment taxes imposed by this section.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "2004 amendment note, subsec. (c)",
+          "quote": "2004\u2014Subsec. (c). Pub. L. 108\u2013203 substituted \u201cexclusively to the laws applicable to\u201d for \u201cto taxes or contributions for similar purposes under\u201d.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "Effective Date of 1977 Amendment note (title I only)",
+          "quote": "Pub. L. 95\u2013216, title I, \u00a7 104 , Dec. 20, 1977 , 91 Stat. 1514 , provided that: \u201cThe amendments made by this title [amending this section, sections 3101 and 3111 of this title, and sections 401, 415, and 430 of Title 42, The Public Health and Welfare] shall apply with respect to remuneration paid or received, and taxable years beginning, after 1977.\u201d",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "42 U.S.C. 433 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_42_433.html",
+          "location": "433(c)(1)(B)(i)",
+          "quote": "that employment or self- employment , or any service which is recognized as equivalent to employment or self- employment under this subchapter or the social security system of a foreign country which is a party to such agreement, shall, on or after the effective date of such agreement, result in a period of coverage under the system established under this subchapter or under the system established under the laws of such foreign country, but not under both",
+          "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68"
+        },
+        {
+          "authority": "42 U.S.C. 433 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_42_433.html",
+          "location": "source credit",
+          "quote": "(Aug. 14, 1935, ch. 531, title II, \u00a7 233, as added Pub. L. 95\u2013216, title III, \u00a7 317(a) , Dec. 20, 1977 , 91 Stat. 1538",
+          "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68"
+        },
         {
           "authority": "IRS Publication 517 (2025); later-edition explanatory guidance, not contemporaneous historical text",
           "capture": "irs_p517_2025.html",
@@ -3209,7 +3258,7 @@
                 "ministerial_service",
                 "nonresident_alien_status"
               ],
-              "foreign_agreement_sole_coverage_before_1983": [
+              "foreign_agreement_sole_coverage": [
                 "clergy_or_religious_exemption",
                 "ministerial_service"
               ],
@@ -3233,7 +3282,7 @@
           }
         },
         "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
-        "foreign_ministry": "From taxable years beginning in 1973 a minister serving abroad needs neither an American employer nor a predominantly United States congregation (POMS NL 00711.065 1331.2). Case nonresident_alien_ministry applies 411(b) to a nonresident alien, whose earnings are not self-employment income. Case cnmi_noncitizen_resident_ministry leaves open a noncitizen CNMI resident who is a nonresident alien (Publication 517 against 411(b)'s four places). Case pub_l_103_296_section_306_certificate applies Pub. L. 103-296 section 306 to ministry performed in Canada, for taxable years ending 1979-1984, while no United States-Canada section 233 agreement was in effect, on whose earnings Canadian contributions were required; the certificate exempts only that service.",
+        "foreign_ministry": "From taxable years beginning in 1973 a minister serving abroad needs neither an American employer nor a predominantly United States congregation (POMS NL 00711.065 1331.2). Case nonresident_alien_ministry applies 411(b) to a nonresident alien, whose earnings are not self-employment income. Case cnmi_noncitizen_resident_ministry leaves open a noncitizen CNMI resident who is a nonresident alien (Publication 517 against 411(b)'s four places). Case pub_l_103_296_section_306_certificate applies Pub. L. 103-296 section 306 to 1402(c)(4) ministry subject to the 1401 tax and performed in Canada, for taxable years ending 1979-1984, while no United States-Canada section 233 agreement was in effect, under the certificate of a minister who was required to pay Canadian contributions on the earnings from such service (section 306(a)(3) limits who may file); the certificate exempts only such service (review r7 M-1). Case foreign_agreement_sole_coverage applies 26 U.S.C. 1401(c), added December 20, 1977, and Publication 517's exception for a minister whom a social security agreement under section 233 in effect for the period makes subject only to a foreign country's social security laws.",
         "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
         "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
         "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
@@ -3566,35 +3615,14 @@
         {
           "case_id": "foreign_agreement_sole_coverage",
           "consequence": "noncovered",
-          "description": "Publication 517 (2025) lists this among the exceptions to SE tax on ministerial earnings: \"You are subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country.\" Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c) \"FOR AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\", replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a minister subject only to the partner country's laws meets both wordings. The condition can hold only while such an agreement is in effect. The captures hold neither 42 U.S.C. 433 nor 26 U.S.C. 1401(c), so they do not show when the exemption began. From taxable years beginning on or after 1983-04-20, the date both this family and self_employment_nonresident_alien use; earlier years reach foreign_agreement_sole_coverage_before_1983 (review r6 M-9).",
+          "description": "Publication 517 (2025) lists this among the exceptions to SE tax on ministerial earnings: \"You are subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country.\" 26 U.S.C. 1401(c): \"During any period in which there is in effect an agreement entered into pursuant to section 233 of the Social Security Act with any foreign country, the self-employment income of an individual shall be exempt\" to the extent the agreement subjects it \"exclusively to the laws applicable to the social security system of such foreign country\". Pub. L. 95-216 section 317(b)(1) added the subsection (\"Subsec. (c). Pub. L. 95\u2013216, \u00a7 317(b)(1) , added subsec. (c).\"), and section 317(a) added section 233 itself (42 U.S.C. 433, \"as added Pub. L. 95\u2013216, title III, \u00a7 317(a) , Dec. 20, 1977\"), whose (c)(1)(B)(i) has every agreement place self-employment in one system \"but not under both\". Neither captured page gives section 317 another date (the 1401 page's Effective Date of 1977 Amendment note, section 104, covers title I only), so the condition carries the limit the subsection states, an agreement under section 233 in effect for the period, and no worker meets it before December 20, 1977. Pub. L. 98-21 section 124(b) redesignated the subsection (d) and Pub. L. 101-508 made it (c) again; Pub. L. 108-203 section 415 replaced \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\", and a person subject only to the partner country's laws meets both wordings. Review r7 M-2 dates the exemption on these captures; the pre-1983 open cases it closes rested on Pub. L. 98-21 section 322(c), the date of 411(b)'s section 433 exception, not of 1401(c). It overrides cnmi_noncitizen_resident_ministry and ministry_without_exemption_or_vow: on either CNMI reading the exemption leaves the earnings noncovered.",
           "overrides": [
             "cnmi_noncitizen_resident_ministry",
             "ministry_without_exemption_or_vow"
           ],
           "precedence": 3,
           "when": {
-            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20",
-            "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
-          }
-        },
-        {
-          "case_id": "foreign_agreement_sole_coverage_before_1983",
-          "consequence": "open",
-          "description": "No capture holds 26 U.S.C. 1401(c) or 42 U.S.C. 433 or dates when an agreement first exempted self-employment income, so for taxable years beginning before 1983-04-20 the case refuses, as se_nonresident_alien_1968_1983's agreement case does: the two families agree on one date (review r6 M-9). Ranked above the ministry cases, which the agreement would displace.",
-          "open_alternatives": [
-            {
-              "description": "An agreement in effect for the year exempts the ministry earnings: noncovered.",
-              "name": "agreement_exemption_in_force"
-            },
-            {
-              "description": "No agreement exempted self-employment income before 1983-04-20: the ministry cases decide (usually covered).",
-              "name": "no_exemption_before_1983"
-            }
-          ],
-          "open_reason": "AGREEMENT_EXEMPTION_BEFORE_1983_UNDATED: no CE1 capture holds 26 U.S.C. 1401(c) or 42 U.S.C. 433, or dates when a social security agreement first exempted a minister's self-employment income from SECA, so for taxable years beginning before 1983-04-20 whether an agreement made the minister subject only to another country's laws is not settled.",
-          "precedence": 4,
-          "when": {
-            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning before 1983-04-20",
+            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
           }
         },
@@ -3617,7 +3645,7 @@
             "nonresident_alien_ministry",
             "ministry_without_exemption_or_vow"
           ],
-          "precedence": 5,
+          "precedence": 4,
           "when": {
             "clergy_or_religious_exemption": "not shown to have an effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
@@ -3628,7 +3656,7 @@
           "case_id": "nonresident_alien_ministry",
           "consequence": "noncovered",
           "description": "411(b): self-employment income is net earnings derived by an individual other than a nonresident alien individual, except, for taxable years beginning on or after April 20, 1983, as a section 433 agreement provides. A resident of Puerto Rico, the Virgin Islands, Guam or American Samoa is not a nonresident alien for this purpose. The general family self_employment_nonresident_alien states the same rule.",
-          "precedence": 6,
+          "precedence": 5,
           "when": {
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
             "nonresident_alien_status": "nonresident alien individual for the taxable year (a noncitizen who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa is not one), and, for a taxable year beginning on or after 1983-04-20, no agreement under section 433 covers the earnings"
@@ -3641,7 +3669,7 @@
           "overrides": [
             "ministry_without_exemption_or_vow"
           ],
-          "precedence": 7,
+          "precedence": 6,
           "when": {
             "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)",
             "ministerial_service": "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401",
@@ -3652,7 +3680,7 @@
           "case_id": "ministry_without_exemption_or_vow",
           "consequence": "covered",
           "description": "411(c)'s closing sentence lifts 411(c)(4)-(5) unless a 1402(e) exemption is effective, so ministry, order duties without a vow of poverty and Christian Science practice are self-employment; service status is distinct from employee status for income tax.",
-          "precedence": 8,
+          "precedence": 7,
           "when": {
             "clergy_or_religious_exemption": "no 1402(e) exemption in effect and no applicable poverty vow",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -3662,7 +3690,7 @@
           "case_id": "effective_1402e_exemption",
           "consequence": "noncovered",
           "description": "411(c)(4)-(5) exclude ministry, order duties without a vow of poverty and Christian Science practice only while a 1402(e) exemption is effective (411(c), closing sentence); other work of an exempt minister is not excluded by it. A Christian Science reader counts as a minister (Publication 517: \"For tax purposes, Christian Science readers are considered the same as ordained, commissioned, or licensed ministers.\").",
-          "precedence": 9,
+          "precedence": 8,
           "when": {
             "clergy_or_religious_exemption": "effective 1402(e) exemption",
             "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner"
@@ -3672,7 +3700,7 @@
           "case_id": "non_ministerial_service",
           "consequence": "covered",
           "description": "411(c)(4)-(5) and the 1402(e) exemption reach only ministry, order duties and Christian Science practice, so this family does not exclude other work; apply the other families.",
-          "precedence": 10,
+          "precedence": 9,
           "when": {
             "ministerial_service": "not ministry, order duties or Christian Science practice"
           }
@@ -3681,13 +3709,69 @@
           "case_id": "exemption_status_unknown",
           "consequence": "open",
           "description": "Do not infer exemption status from clergy occupation.",
-          "precedence": 11,
+          "precedence": 10,
           "when": {
             "clergy_or_religious_exemption": "not established"
           }
         }
       ],
       "citations": [
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1401(c)",
+          "quote": "During any period in which there is in effect an agreement entered into pursuant to section 233 of the Social Security Act with any foreign country, the self-employment income of an individual shall be exempt from the taxes imposed by this section to the extent that such self-employment income is subject under such agreement exclusively to the laws applicable to the social security system of such foreign country.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1977 amendment note, subsec. (c)",
+          "quote": "Subsec. (c). Pub. L. 95\u2013216, \u00a7 317(b)(1) , added subsec. (c).",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1983 amendment note, subsecs. (c), (d)",
+          "quote": "Subsecs. (c), (d). Pub. L. 98\u201321, \u00a7 124(b) , added subsec. (c) and redesignated former subsec. (c) as (d).",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1990 amendment note, subsecs. (c), (d)",
+          "quote": "Pub. L. 101\u2013508 redesignated subsec. (d) as (c) and struck out former subsec. (c) which provided a credit against self-employment taxes imposed by this section.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "2004 amendment note, subsec. (c)",
+          "quote": "2004\u2014Subsec. (c). Pub. L. 108\u2013203 substituted \u201cexclusively to the laws applicable to\u201d for \u201cto taxes or contributions for similar purposes under\u201d.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "Effective Date of 1977 Amendment note (title I only)",
+          "quote": "Pub. L. 95\u2013216, title I, \u00a7 104 , Dec. 20, 1977 , 91 Stat. 1514 , provided that: \u201cThe amendments made by this title [amending this section, sections 3101 and 3111 of this title, and sections 401, 415, and 430 of Title 42, The Public Health and Welfare] shall apply with respect to remuneration paid or received, and taxable years beginning, after 1977.\u201d",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "42 U.S.C. 433 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_42_433.html",
+          "location": "433(c)(1)(B)(i)",
+          "quote": "that employment or self- employment , or any service which is recognized as equivalent to employment or self- employment under this subchapter or the social security system of a foreign country which is a party to such agreement, shall, on or after the effective date of such agreement, result in a period of coverage under the system established under this subchapter or under the system established under the laws of such foreign country, but not under both",
+          "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68"
+        },
+        {
+          "authority": "42 U.S.C. 433 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_42_433.html",
+          "location": "source credit",
+          "quote": "(Aug. 14, 1935, ch. 531, title II, \u00a7 233, as added Pub. L. 95\u2013216, title III, \u00a7 317(a) , Dec. 20, 1977 , 91 Stat. 1538",
+          "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68"
+        },
         {
           "authority": "Public Law 108-203, Social Security Protection Act of 2004",
           "capture": "govinfo_plaw_108publ203.html",
@@ -4181,10 +4265,6 @@
                 "ministerial_service",
                 "clergy_or_religious_exemption"
               ],
-              "foreign_agreement_sole_coverage_before_1983": [
-                "clergy_or_religious_exemption",
-                "ministerial_service"
-              ],
               "nonresident_alien_ministry": [
                 "ministerial_service",
                 "nonresident_alien_status"
@@ -4205,7 +4285,7 @@
           }
         },
         "employment_consequence": "Excluded from employee employment under 410(a)(8)(A).",
-        "foreign_ministry": "Case nonresident_alien_ministry applies 411(b): a nonresident alien's earnings are not self-employment income unless a section 433 agreement covers them (Publication 517: individuals must generally be citizens or resident aliens). Case foreign_agreement_sole_coverage applies Publication 517's exception for a minister whom a social security agreement makes subject only to a foreign country's social security laws. Case cnmi_noncitizen_resident_ministry leaves open a noncitizen CNMI resident who is a nonresident alien (Publication 517 against 411(b)'s four places). Case pub_l_103_296_section_306_certificate applies Pub. L. 103-296 section 306 to ministry performed in Canada, for taxable years ending 1979-1984, while no United States-Canada section 233 agreement was in effect, on whose earnings Canadian contributions were required; the certificate exempts only that service.",
+        "foreign_ministry": "Case nonresident_alien_ministry applies 411(b): a nonresident alien's earnings are not self-employment income unless a section 433 agreement covers them (Publication 517: individuals must generally be citizens or resident aliens). Case foreign_agreement_sole_coverage applies 26 U.S.C. 1401(c), added December 20, 1977, and Publication 517's exception for a minister whom a social security agreement under section 233 in effect for the period makes subject only to a foreign country's social security laws. Case cnmi_noncitizen_resident_ministry leaves open a noncitizen CNMI resident who is a nonresident alien (Publication 517 against 411(b)'s four places). Case pub_l_103_296_section_306_certificate applies Pub. L. 103-296 section 306 to 1402(c)(4) ministry subject to the 1401 tax and performed in Canada, for taxable years ending 1979-1984, while no United States-Canada section 233 agreement was in effect, under the certificate of a minister who was required to pay Canadian contributions on the earnings from such service (section 306(a)(3) limits who may file); the certificate exempts only such service (review r7 M-1).",
         "government_chaplain": "Government chaplain duties are not qualifying ministry under this exclusion; apply relevant government-service family.",
         "ministry_definition": "Religious worship, sacerdotal functions, and specified religious organization or assigned duties per RS 01901.600 A.2.",
         "prior_coverage_election": "A valid pre-1968 Form 2031 coverage election prevents later 1402(e) exemption.",
@@ -19960,10 +20040,22 @@
           }
         },
         {
+          "case_id": "foreign_agreement_sole_coverage",
+          "consequence": "deferred",
+          "defers_to": [
+            "clergy_religious_service"
+          ],
+          "description": "26 U.S.C. 1401(c), which Pub. L. 95-216 section 317(b)(1) added on December 20, 1977 (\"Subsec. (c). Pub. L. 95\u2013216, \u00a7 317(b)(1) , added subsec. (c).\"), exempts \"the self-employment income of an individual\" \"During any period in which there is in effect an agreement entered into pursuant to section 233 of the Social Security Act with any foreign country\", to the extent the agreement subjects it to that country's system alone. The clergy and religious family decides the service (clergy_1973_1981 and clergy_1982_2026, case foreign_agreement_sole_coverage), as se_clergy_gross_concept_1987_2026 defers the same case; review r7 M-2 dates the exemption from 1977, so this row, which starts in 1973, carries it too, and no worker meets the condition before an agreement under section 233 takes effect. It ranks after exempt_minister, which defers to the same family, and before retired_clergy_benefits, as in se_clergy_gross_concept_1987_2026.",
+          "precedence": 2,
+          "when": {
+            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect"
+          }
+        },
+        {
           "case_id": "retired_clergy_benefits",
           "consequence": "noncovered",
           "description": "411(a)(7); Public Law 108-203 section 422 applies to years beginning before, on or after 1994-12-31.",
-          "precedence": 2,
+          "precedence": 3,
           "when": {
             "clergy_retirement_benefit": "parsonage rental value or allowance provided after retirement, or another retirement benefit from a church plan after retirement"
           }
@@ -19974,8 +20066,8 @@
           "defers_to": [
             "clergy_religious_service"
           ],
-          "description": "Pub. L. 103-296 section 306(d): income exempt under a section 306 certificate \"shall not constitute self-employment income under section 211(b)\". The exemption reaches only \"services described in paragraphs (1) and (2)\", 1402(c)(4) services subject to the 1401 tax and performed in Canada while no section 233 agreement was in effect; paragraph (3), Canadian contributions on the earnings from such services, limits who may file. So the case reads this service's place and the person's certificate, and the residual computes the earnings of ministry the same minister performs elsewhere (review r7 M-1). The clergy and religious family decides the service (clergy_1973_1981 and clergy_1982_2026, case pub_l_103_296_section_306_certificate), as se_clergy_gross_concept_1987_2026 defers foreign_agreement_sole_coverage. It ranks after retired_clergy_benefits, which are noncovered either way.",
-          "precedence": 3,
+          "description": "Pub. L. 103-296 section 306(d): income exempt under a section 306 certificate \"shall not constitute self-employment income under section 211(b)\". The exemption reaches only \"services described in paragraphs (1) and (2)\", 1402(c)(4) services subject to the 1401 tax and performed in Canada while no section 233 agreement was in effect; paragraph (3), Canadian contributions on the earnings from such services, limits who may file. So the case reads this service's place and the person's certificate, and the residual computes the earnings of ministry the same minister performs elsewhere (review r7 M-1). The clergy and religious family decides the service (clergy_1973_1981 and clergy_1982_2026, case pub_l_103_296_section_306_certificate), as this row and se_clergy_gross_concept_1987_2026 defer foreign_agreement_sole_coverage. It ranks after retired_clergy_benefits, which are noncovered either way.",
+          "precedence": 4,
           "when": {
             "clergy_or_religious_exemption": "certificate filed under Pub. L. 103-296 section 306, effective for this taxable year (one ending after December 31, 1978 and before January 1, 1985), by an individual who was required to pay contributions under the social insurance system of Canada on the earnings from services described in section 306(a)(1) and (2) (section 306(a)(3) limits who may file, not which of those services the exemption reaches)",
             "ministerial_service": "service described in 1402(c)(4) (a minister's ministry or a religious order member's order duties, not a Christian Science practitioner's practice) that is subject to tax under section 1401",
@@ -19997,7 +20089,7 @@
             }
           ],
           "open_reason": "PAST_MINISTRY_PENSION_1973_1987_UNSETTLED: the only captured source for leaving a pension for past ministerial services, from a plan that is not a church plan, out of net earnings is Publication 517 (2025), which se_clergy_gross_concept_1987_2026 applies; no capture states the rule for 1973-1987, so the case refuses.",
-          "precedence": 4,
+          "precedence": 5,
           "when": {
             "retirement_payment": "pension payment or retirement allowance received for past ministerial services"
           }
@@ -20017,13 +20109,41 @@
             }
           ],
           "open_reason": "CHURCH_TSA_CONTRIBUTIONS_1973_1987_UNSETTLED: se_clergy_gross_concept_1987_2026 leaves church contributions to a tax-sheltered annuity out of net earnings, reading 411(a)'s start from subtitle A gross income with Publication 517 (2025); no capture prints 411(a) or the Publication 517 list as in force in 1973-1987, so whether the same holds then is not settled, and the case refuses.",
-          "precedence": 5,
+          "precedence": 6,
           "when": {
             "clergy_remuneration": "contributions by the church to a tax-sheltered annuity plan set up for the minister, including any salary reduction contributions (elective deferrals), that are not included in the minister's gross income"
           }
         }
       ],
       "citations": [
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1401(c)",
+          "quote": "During any period in which there is in effect an agreement entered into pursuant to section 233 of the Social Security Act with any foreign country, the self-employment income of an individual shall be exempt from the taxes imposed by this section to the extent that such self-employment income is subject under such agreement exclusively to the laws applicable to the social security system of such foreign country.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1977 amendment note, subsec. (c)",
+          "quote": "Subsec. (c). Pub. L. 95\u2013216, \u00a7 317(b)(1) , added subsec. (c).",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "42 U.S.C. 433 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_42_433.html",
+          "location": "433(c)(1)(B)(i)",
+          "quote": "that employment or self- employment , or any service which is recognized as equivalent to employment or self- employment under this subchapter or the social security system of a foreign country which is a party to such agreement, shall, on or after the effective date of such agreement, result in a period of coverage under the system established under this subchapter or under the system established under the laws of such foreign country, but not under both",
+          "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68"
+        },
+        {
+          "authority": "42 U.S.C. 433 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_42_433.html",
+          "location": "source credit",
+          "quote": "(Aug. 14, 1935, ch. 531, title II, \u00a7 233, as added Pub. L. 95\u2013216, title III, \u00a7 317(a) , Dec. 20, 1977 , 91 Stat. 1538",
+          "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68"
+        },
         {
           "authority": "Public Law 108-203, Social Security Protection Act of 2004",
           "capture": "govinfo_plaw_108publ203.html",
@@ -20293,10 +20413,10 @@
           "defers_to": [
             "clergy_religious_service"
           ],
-          "description": "Publication 517 (2025) excepts from SE tax a minister who is \"subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country\", and the row's Mexico example turns on it: \"The United States doesn't have a social security agreement with Mexico, so you are subject to U.S. SE tax\". The clergy and religious family decides the service (clergy_1982_2026, case foreign_agreement_sole_coverage).",
+          "description": "Publication 517 (2025) excepts from SE tax a minister who is \"subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country\", and the row's Mexico example turns on it: \"The United States doesn't have a social security agreement with Mexico, so you are subject to U.S. SE tax\". The clergy and religious family decides the service (clergy_1982_2026, case foreign_agreement_sole_coverage). 26 U.S.C. 1401(c), which Pub. L. 95-216 section 317(b)(1) added on December 20, 1977, exempts such income \"During any period in which there is in effect an agreement entered into pursuant to section 233 of the Social Security Act\", so the condition carries that limit (review r7 M-2).",
           "precedence": 2,
           "when": {
-            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20"
+            "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect"
           }
         },
         {
@@ -20328,6 +20448,34 @@
         }
       ],
       "citations": [
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1401(c)",
+          "quote": "During any period in which there is in effect an agreement entered into pursuant to section 233 of the Social Security Act with any foreign country, the self-employment income of an individual shall be exempt from the taxes imposed by this section to the extent that such self-employment income is subject under such agreement exclusively to the laws applicable to the social security system of such foreign country.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1977 amendment note, subsec. (c)",
+          "quote": "Subsec. (c). Pub. L. 95\u2013216, \u00a7 317(b)(1) , added subsec. (c).",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "42 U.S.C. 433 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_42_433.html",
+          "location": "433(c)(1)(B)(i)",
+          "quote": "that employment or self- employment , or any service which is recognized as equivalent to employment or self- employment under this subchapter or the social security system of a foreign country which is a party to such agreement, shall, on or after the effective date of such agreement, result in a period of coverage under the system established under this subchapter or under the system established under the laws of such foreign country, but not under both",
+          "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68"
+        },
+        {
+          "authority": "42 U.S.C. 433 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_42_433.html",
+          "location": "source credit",
+          "quote": "(Aug. 14, 1935, ch. 531, title II, \u00a7 233, as added Pub. L. 95\u2013216, title III, \u00a7 317(a) , Dec. 20, 1977 , 91 Stat. 1538",
+          "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68"
+        },
         {
           "authority": "Public Law 108-203, Social Security Protection Act of 2004",
           "capture": "govinfo_plaw_108publ203.html",
@@ -24513,22 +24661,15 @@
       "cases": [
         {
           "case_id": "foreign_agreement_sole_coverage",
-          "consequence": "open",
-          "description": "Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c), headed for \"AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\" (an individual, not a minister alone), replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a person subject only to the partner country's laws meets both wordings. Publication 517 (2025) states the exception for ministers and points to Pub. 54's \"Bilateral Social Security (Totalization) Agreements\", the guide for citizens and resident aliens abroad. Date: section 415 has no effective-date clause and dates only the \"exclusively\" wording (\"Approved March 2, 2004.\"); the captures hold neither 42 U.S.C. 433 nor the text of 26 U.S.C. 1401(c), so they date neither the exemption nor any agreement. The condition can hold only while such an agreement is in effect, so the case sits in every row from 1968 and its condition carries the date. The captures also hold no title II provision that keeps these earnings out of self-employment income; clergy_religious_service's case foreign_agreement_sole_coverage rests on the same captures. It overrides territorial_resident and cnmi_noncitizen_resident: on either CNMI reading the agreement leaves the person subject only to the foreign country's laws. Review r6 M-9: this row's own 411(b) text says no agreement lifted the nonresident-alien exclusion before 1983-04-20, and the clergy rows read their agreement case from 1982; no capture holds 1401(c) or dates its agreement exemption, so before 1983-04-20 the case refuses rather than excluding a citizen abroad.",
-          "open_alternatives": [
-            {
-              "description": "An agreement in effect for the year exempts the income, as from 1983-04-20: noncovered.",
-              "name": "agreement_exemption_in_force"
-            },
-            {
-              "description": "No agreement exempted self-employment income before 1983-04-20, so the remaining cases decide (usually covered for a citizen).",
-              "name": "no_exemption_before_1983"
-            }
+          "consequence": "noncovered",
+          "description": "26 U.S.C. 1401(c): \"During any period in which there is in effect an agreement entered into pursuant to section 233 of the Social Security Act with any foreign country, the self-employment income of an individual shall be exempt\" (an individual, not a minister alone) to the extent the agreement subjects it \"exclusively to the laws applicable to the social security system of such foreign country\". Pub. L. 95-216 section 317(b)(1) added the subsection (\"Subsec. (c). Pub. L. 95\u2013216, \u00a7 317(b)(1) , added subsec. (c).\"), and section 317(a) added section 233 itself (42 U.S.C. 433, \"as added Pub. L. 95\u2013216, title III, \u00a7 317(a) , Dec. 20, 1977\"), whose (c)(1)(B)(i) has every agreement place self-employment in one system \"but not under both\". Neither captured page gives section 317 another date (the 1401 page's Effective Date of 1977 Amendment note, section 104, covers title I only), so the condition carries the limit the subsection states, an agreement under section 233 in effect for the period, and no worker meets it before December 20, 1977. Pub. L. 98-21 section 124(b) redesignated the subsection (d) and Pub. L. 101-508 made it (c) again; Pub. L. 108-203 section 415 replaced \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\", and a person subject only to the partner country's laws meets both wordings. Review r7 M-2 dates the exemption on these captures; the pre-1983 open cases it closes rested on Pub. L. 98-21 section 322(c), the date of 411(b)'s section 433 exception, not of 1401(c). Publication 517 (2025) states the exception for ministers and points to Pub. 54's \"Bilateral Social Security (Totalization) Agreements\", the guide for citizens and resident aliens abroad. It overrides territorial_resident and cnmi_noncitizen_resident: on either CNMI reading the agreement leaves the person subject only to the foreign country's laws.",
+          "overrides": [
+            "territorial_resident",
+            "cnmi_noncitizen_resident"
           ],
-          "open_reason": "AGREEMENT_EXEMPTION_BEFORE_1983_UNDATED: no CE1 capture holds 26 U.S.C. 1401(c) or 42 U.S.C. 433, or dates when a social security agreement first exempted self-employment income from SECA, so for taxable years in this row whether an agreement made the person subject only to another country's laws is not settled.",
           "precedence": 1,
           "when": {
-            "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
+            "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect"
           }
         },
         {
@@ -24580,6 +24721,62 @@
         }
       ],
       "citations": [
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1401(c)",
+          "quote": "During any period in which there is in effect an agreement entered into pursuant to section 233 of the Social Security Act with any foreign country, the self-employment income of an individual shall be exempt from the taxes imposed by this section to the extent that such self-employment income is subject under such agreement exclusively to the laws applicable to the social security system of such foreign country.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1977 amendment note, subsec. (c)",
+          "quote": "Subsec. (c). Pub. L. 95\u2013216, \u00a7 317(b)(1) , added subsec. (c).",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1983 amendment note, subsecs. (c), (d)",
+          "quote": "Subsecs. (c), (d). Pub. L. 98\u201321, \u00a7 124(b) , added subsec. (c) and redesignated former subsec. (c) as (d).",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1990 amendment note, subsecs. (c), (d)",
+          "quote": "Pub. L. 101\u2013508 redesignated subsec. (d) as (c) and struck out former subsec. (c) which provided a credit against self-employment taxes imposed by this section.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "2004 amendment note, subsec. (c)",
+          "quote": "2004\u2014Subsec. (c). Pub. L. 108\u2013203 substituted \u201cexclusively to the laws applicable to\u201d for \u201cto taxes or contributions for similar purposes under\u201d.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "Effective Date of 1977 Amendment note (title I only)",
+          "quote": "Pub. L. 95\u2013216, title I, \u00a7 104 , Dec. 20, 1977 , 91 Stat. 1514 , provided that: \u201cThe amendments made by this title [amending this section, sections 3101 and 3111 of this title, and sections 401, 415, and 430 of Title 42, The Public Health and Welfare] shall apply with respect to remuneration paid or received, and taxable years beginning, after 1977.\u201d",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "42 U.S.C. 433 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_42_433.html",
+          "location": "433(c)(1)(B)(i)",
+          "quote": "that employment or self- employment , or any service which is recognized as equivalent to employment or self- employment under this subchapter or the social security system of a foreign country which is a party to such agreement, shall, on or after the effective date of such agreement, result in a period of coverage under the system established under this subchapter or under the system established under the laws of such foreign country, but not under both",
+          "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68"
+        },
+        {
+          "authority": "42 U.S.C. 433 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_42_433.html",
+          "location": "source credit",
+          "quote": "(Aug. 14, 1935, ch. 531, title II, \u00a7 233, as added Pub. L. 95\u2013216, title III, \u00a7 317(a) , Dec. 20, 1977 , 91 Stat. 1538",
+          "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68"
+        },
         {
           "authority": "Public Law 108-203, Social Security Protection Act of 2004",
           "capture": "govinfo_plaw_108publ203.html",
@@ -24793,7 +24990,7 @@
           "Guam",
           "American Samoa"
         ],
-        "scope": "411(b)'s nonresident-alien exclusion and its exceptions, and the exclusion for an individual whom a social security agreement makes subject only to a foreign country's laws (26 U.S.C. 1401(c) as Pub. L. 108-203 section 415 amended it), for all self-employment income; other families decide what the net earnings are.",
+        "scope": "411(b)'s nonresident-alien exclusion and its exceptions, and the exclusion for an individual whom a social security agreement makes subject only to a foreign country's laws (26 U.S.C. 1401(c), added by Pub. L. 95-216 section 317(b)(1) on December 20, 1977 and reworded by Pub. L. 108-203 section 415), for all self-employment income; other families decide what the net earnings are.",
         "unread_trigger_facts": {
           "residence_period": "411(b)'s final sentence ('who is a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa') states no period of residence, so no case can carry one; part-year residents are left to the country_of_residence text",
           "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it; the row ends 1983-04-19 because Pub. L. 98-21 section 322(c) dates the section 433 exception to taxable years beginning on or after 1983-04-20"
@@ -24820,14 +25017,14 @@
         {
           "case_id": "foreign_agreement_sole_coverage",
           "consequence": "noncovered",
-          "description": "Pub. L. 108-203 section 415 amends the SECA exemption in 26 U.S.C. 1401(c), headed for \"AN INDIVIDUAL WHOSE EARNINGS ARE SUBJECT TO THE LAWS OF A TOTALIZATION AGREEMENT PARTNER\" (an individual, not a minister alone), replacing \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\"; a person subject only to the partner country's laws meets both wordings. Publication 517 (2025) states the exception for ministers and points to Pub. 54's \"Bilateral Social Security (Totalization) Agreements\", the guide for citizens and resident aliens abroad. Date: section 415 has no effective-date clause and dates only the \"exclusively\" wording (\"Approved March 2, 2004.\"); the captures hold neither 42 U.S.C. 433 nor the text of 26 U.S.C. 1401(c), so they date neither the exemption nor any agreement. The condition can hold only while such an agreement is in effect, so the case sits in every row from 1968 and its condition carries the date. The captures also hold no title II provision that keeps these earnings out of self-employment income; clergy_religious_service's case foreign_agreement_sole_coverage rests on the same captures. It overrides territorial_resident and cnmi_noncitizen_resident: on either CNMI reading the agreement leaves the person subject only to the foreign country's laws.",
+          "description": "26 U.S.C. 1401(c): \"During any period in which there is in effect an agreement entered into pursuant to section 233 of the Social Security Act with any foreign country, the self-employment income of an individual shall be exempt\" (an individual, not a minister alone) to the extent the agreement subjects it \"exclusively to the laws applicable to the social security system of such foreign country\". Pub. L. 95-216 section 317(b)(1) added the subsection (\"Subsec. (c). Pub. L. 95\u2013216, \u00a7 317(b)(1) , added subsec. (c).\"), and section 317(a) added section 233 itself (42 U.S.C. 433, \"as added Pub. L. 95\u2013216, title III, \u00a7 317(a) , Dec. 20, 1977\"), whose (c)(1)(B)(i) has every agreement place self-employment in one system \"but not under both\". Neither captured page gives section 317 another date (the 1401 page's Effective Date of 1977 Amendment note, section 104, covers title I only), so the condition carries the limit the subsection states, an agreement under section 233 in effect for the period, and no worker meets it before December 20, 1977. Pub. L. 98-21 section 124(b) redesignated the subsection (d) and Pub. L. 101-508 made it (c) again; Pub. L. 108-203 section 415 replaced \"to taxes or contributions for similar purposes under\" with \"exclusively to the laws applicable to\", and a person subject only to the partner country's laws meets both wordings. Review r7 M-2 dates the exemption on these captures; the pre-1983 open cases it closes rested on Pub. L. 98-21 section 322(c), the date of 411(b)'s section 433 exception, not of 1401(c). Publication 517 (2025) states the exception for ministers and points to Pub. 54's \"Bilateral Social Security (Totalization) Agreements\", the guide for citizens and resident aliens abroad. It overrides territorial_resident and cnmi_noncitizen_resident: on either CNMI reading the agreement leaves the person subject only to the foreign country's laws.",
           "overrides": [
             "territorial_resident",
             "cnmi_noncitizen_resident"
           ],
           "precedence": 1,
           "when": {
-            "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
+            "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect"
           }
         },
         {
@@ -24891,6 +25088,62 @@
         }
       ],
       "citations": [
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1401(c)",
+          "quote": "During any period in which there is in effect an agreement entered into pursuant to section 233 of the Social Security Act with any foreign country, the self-employment income of an individual shall be exempt from the taxes imposed by this section to the extent that such self-employment income is subject under such agreement exclusively to the laws applicable to the social security system of such foreign country.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1977 amendment note, subsec. (c)",
+          "quote": "Subsec. (c). Pub. L. 95\u2013216, \u00a7 317(b)(1) , added subsec. (c).",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1983 amendment note, subsecs. (c), (d)",
+          "quote": "Subsecs. (c), (d). Pub. L. 98\u201321, \u00a7 124(b) , added subsec. (c) and redesignated former subsec. (c) as (d).",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "1990 amendment note, subsecs. (c), (d)",
+          "quote": "Pub. L. 101\u2013508 redesignated subsec. (d) as (c) and struck out former subsec. (c) which provided a credit against self-employment taxes imposed by this section.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "2004 amendment note, subsec. (c)",
+          "quote": "2004\u2014Subsec. (c). Pub. L. 108\u2013203 substituted \u201cexclusively to the laws applicable to\u201d for \u201cto taxes or contributions for similar purposes under\u201d.",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "26 U.S.C. 1401 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_26_1401.html",
+          "location": "Effective Date of 1977 Amendment note (title I only)",
+          "quote": "Pub. L. 95\u2013216, title I, \u00a7 104 , Dec. 20, 1977 , 91 Stat. 1514 , provided that: \u201cThe amendments made by this title [amending this section, sections 3101 and 3111 of this title, and sections 401, 415, and 430 of Title 42, The Public Health and Welfare] shall apply with respect to remuneration paid or received, and taxable years beginning, after 1977.\u201d",
+          "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f"
+        },
+        {
+          "authority": "42 U.S.C. 433 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_42_433.html",
+          "location": "433(c)(1)(B)(i)",
+          "quote": "that employment or self- employment , or any service which is recognized as equivalent to employment or self- employment under this subchapter or the social security system of a foreign country which is a party to such agreement, shall, on or after the effective date of such agreement, result in a period of coverage under the system established under this subchapter or under the system established under the laws of such foreign country, but not under both",
+          "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68"
+        },
+        {
+          "authority": "42 U.S.C. 433 (LII capture 2026-11-03, text, source credit and notes)",
+          "capture": "ce1r7_lii_42_433.html",
+          "location": "source credit",
+          "quote": "(Aug. 14, 1935, ch. 531, title II, \u00a7 233, as added Pub. L. 95\u2013216, title III, \u00a7 317(a) , Dec. 20, 1977 , 91 Stat. 1538",
+          "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68"
+        },
         {
           "authority": "Public Law 108-203, Social Security Protection Act of 2004",
           "capture": "govinfo_plaw_108publ203.html",
@@ -25123,7 +25376,7 @@
           "Guam",
           "American Samoa"
         ],
-        "scope": "411(b)'s nonresident-alien exclusion and its exceptions, and the exclusion for an individual whom a social security agreement makes subject only to a foreign country's laws (26 U.S.C. 1401(c) as Pub. L. 108-203 section 415 amended it), for all self-employment income; other families decide what the net earnings are.",
+        "scope": "411(b)'s nonresident-alien exclusion and its exceptions, and the exclusion for an individual whom a social security agreement makes subject only to a foreign country's laws (26 U.S.C. 1401(c), added by Pub. L. 95-216 section 317(b)(1) on December 20, 1977 and reworded by Pub. L. 108-203 section 415), for all self-employment income; other families decide what the net earnings are.",
         "unread_trigger_facts": {
           "residence_period": "411(b)'s final sentence states no period of residence, so no case can carry one",
           "taxable_year_start": "the taxable-year axis lookup_date reads (effective_basis taxable_year_start); the row boundaries carry the dated amendments, so no case needs it; the row starts 1983-04-20 (section 322(c))"

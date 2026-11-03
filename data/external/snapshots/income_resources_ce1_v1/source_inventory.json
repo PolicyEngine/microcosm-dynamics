@@ -4758,5 +4758,23 @@
     "sha256": "4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4",
     "provenance": "Official CFR section XML, April 1, 1998 edition of 26 C.F.R. 31.3121(b)(7)-2, before T.D. 8794; its source note lists only T.D. 8354 (56 FR 29570, June 28, 1991) and 56 FR 40246 (Aug. 14, 1991). Word for word it differs from the 2025 edition only in (d)(2)(i)'s cash-out amount and in apostrophe characters.",
     "status": "captured"
+  },
+  {
+    "file": "ce1r7_lii_26_1401.html",
+    "url": "https://www.law.cornell.edu/uscode/text/26/1401",
+    "retrieved_at": "2026-11-03T09:45:43Z",
+    "bytes": 149436,
+    "sha256": "7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f",
+    "provenance": "Cornell LII page for 26 U.S.C. 1401 (current text, source credit, amendment and effective-date notes), HTTP 200, Last-Modified Thu, 23 Apr 2026 15:23:38 GMT: 1401(c)'s agreement exemption, which Pub. L. 95-216 section 317(b)(1) added (Dec. 20, 1977), Pub. L. 98-21 section 124(b) redesignated (d), Pub. L. 101-508 redesignated (c) again, and Pub. L. 108-203 section 415 reworded.",
+    "status": "captured"
+  },
+  {
+    "file": "ce1r7_lii_42_433.html",
+    "url": "https://www.law.cornell.edu/uscode/text/42/433",
+    "retrieved_at": "2026-11-03T09:47:19Z",
+    "bytes": 48313,
+    "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68",
+    "provenance": "Cornell LII page for 42 U.S.C. 433 (section 233 of the Social Security Act: current text, source credit and notes), HTTP 200, Last-Modified Fri, 11 Sep 2026 11:53:04 GMT: added by Pub. L. 95-216 section 317(a), Dec. 20, 1977; (c)(1)(B)(i) places each period of coverage in one system \"but not under both\".",
+    "status": "captured"
   }
 ]

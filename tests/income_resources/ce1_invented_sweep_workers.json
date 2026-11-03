@@ -13,6 +13,16 @@
   ],
   [
    "clergy_1973_1981",
+   "foreign_agreement_sole_coverage",
+   "clergy_or_religious_exemption"
+  ],
+  [
+   "clergy_1973_1981",
+   "foreign_agreement_sole_coverage",
+   "ministerial_service"
+  ],
+  [
+   "clergy_1973_1981",
    "pub_l_103_296_section_306_certificate",
    "clergy_or_religious_exemption"
   ],
@@ -30,6 +40,16 @@
    "clergy_1982_2026",
    "cnmi_noncitizen_resident_ministry",
    "clergy_or_religious_exemption"
+  ],
+  [
+   "clergy_1982_2026",
+   "foreign_agreement_sole_coverage",
+   "clergy_or_religious_exemption"
+  ],
+  [
+   "clergy_1982_2026",
+   "foreign_agreement_sole_coverage",
+   "ministerial_service"
   ],
   [
    "clergy_1982_2026",
@@ -298,6 +318,11 @@
   ],
   [
    "se_clergy_gross_concept_1973_1987",
+   "foreign_agreement_sole_coverage",
+   "clergy_or_religious_exemption"
+  ],
+  [
+   "se_clergy_gross_concept_1973_1987",
    "pub_l_103_296_section_306_certificate",
    "clergy_or_religious_exemption"
   ],
@@ -310,6 +335,21 @@
    "se_clergy_gross_concept_1973_1987",
    "pub_l_103_296_section_306_certificate",
    "place_of_work"
+  ],
+  [
+   "se_clergy_gross_concept_1987_2026",
+   "foreign_agreement_sole_coverage",
+   "clergy_or_religious_exemption"
+  ],
+  [
+   "se_nonresident_alien_1968_1983",
+   "foreign_agreement_sole_coverage",
+   "social_security_agreement_coverage"
+  ],
+  [
+   "se_nonresident_alien_1983_2026",
+   "foreign_agreement_sole_coverage",
+   "social_security_agreement_coverage"
   ],
   [
    "se_treaty_fishing_1968_2026",
@@ -1630,7 +1670,7 @@
    "facts": {
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": [
-     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20",
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect",
      "no 1402(e) exemption in effect and no applicable poverty vow"
     ]
    },
@@ -1643,7 +1683,7 @@
    "facts": {
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": [
-     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20",
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect",
      "no 1402(e) exemption in effect and no applicable poverty vow"
     ]
    },
@@ -1880,7 +1920,7 @@
    "rule_id": "se_clergy_gross_concept_1987_2026",
    "worker": "INVENTED: US-citizen minister in Germany whom the agreement makes subject only to German social security law, 2025",
    "facts": {
-    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20"
+    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect"
    },
    "expected": "deferred",
    "decides": "foreign_agreement_sole_coverage",
@@ -8328,7 +8368,7 @@
    "facts": {
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": [
-     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20",
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect",
      "no 1402(e) exemption in effect and no applicable poverty vow"
     ]
    },
@@ -8722,7 +8762,7 @@
    "rule_id": "se_clergy_gross_concept_1987_2026",
    "worker": "INVENTED: 2015: United States citizen pastor abroad whom a United States social security agreement makes subject only to the host country's laws: deferred to the clergy family.",
    "facts": {
-    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20"
+    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect"
    },
    "expected": "deferred",
    "decides": "foreign_agreement_sole_coverage",
@@ -8986,7 +9026,7 @@
     ],
     "clergy_or_religious_exemption": [
      "no 1402(e) exemption in effect and no applicable poverty vow",
-     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning on or after 1983-04-20"
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect"
     ]
    },
    "expected": "noncovered",
@@ -13816,7 +13856,7 @@
     "nonresident_alien_status": "nonresident alien individual for the taxable year",
     "taxable_year_start": "2001-01-01",
     "residence_period": "all of 2001",
-    "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country"
+    "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect"
    },
    "expected": "noncovered",
    "decides": "foreign_agreement_sole_coverage"
@@ -14056,7 +14096,7 @@
    "facts": {
     "citizenship": "a citizen of the United States",
     "country_of_residence": "a resident of Germany",
-    "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country",
+    "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect",
     "taxable_year_start": "2020-01-01",
     "residence_period": "all of 2020"
    },
@@ -14070,7 +14110,7 @@
     "citizenship": "not a citizen of the United States",
     "country_of_residence": "a resident of the Commonwealth of the Northern Mariana Islands",
     "nonresident_alien_status": "nonresident alien individual for the taxable year",
-    "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country",
+    "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect",
     "taxable_year_start": "2024-01-01",
     "residence_period": "all of 2024"
    },
@@ -14083,7 +14123,7 @@
    "facts": {
     "citizenship": "not a citizen of the United States",
     "country_of_residence": "a resident of the Commonwealth of Puerto Rico, the Virgin Islands, Guam, or American Samoa",
-    "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country",
+    "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect",
     "taxable_year_start": "2015-01-01",
     "residence_period": "all of 2015"
    },
@@ -14147,15 +14187,15 @@
   },
   {
    "rule_id": "se_nonresident_alien_1968_1983",
-   "worker": "INVENTED: Cora, a US citizen consultant living abroad, calendar 1980, whom a social security agreement makes subject only to the foreign country's laws (hypothetical: it assumes an agreement in force, which no capture dates). The agreement case decides from 1968 because its condition carries the date. Review r6 M-9: no capture dates the agreement exemption before 1983-04-20, so the case refuses.",
+   "worker": "INVENTED (review r7 M-2, reaches foreign_agreement_sole_coverage): Cora, a US citizen consultant living abroad, calendar 1980, whom a social security agreement under section 233, in effect for the year, makes subject only to the foreign country's laws (the captures date no agreement, so the fixture states the condition): 1401(c) has exempted such income since December 20, 1977, so the case excludes it.",
    "facts": {
     "citizenship": "a citizen of the United States",
     "country_of_residence": "a resident of a country with a social security agreement with the United States",
-    "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country",
+    "social_security_agreement_coverage": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect",
     "taxable_year_start": "1980-01-01",
     "residence_period": "all of 1980"
    },
-   "expected": "refuses",
+   "expected": "noncovered",
    "decides": "foreign_agreement_sole_coverage"
   },
   {
@@ -16862,52 +16902,52 @@
   },
   {
    "rule_id": "clergy_1982_2026",
-   "worker": "INVENTED (review r6 M-9): 1982: a United States citizen pastor of a congregation in Italy whom a United States agreement in effect for the year makes subject only to that country's social security laws: no capture dates the agreement exemption before 1983-04-20, so the case refuses.",
+   "worker": "INVENTED (review r7 M-2, reaches foreign_agreement_sole_coverage): 1982: a United States citizen pastor of a congregation in Italy whom a United States agreement under section 233, in effect for the year, makes subject only to that country's social security laws (the captures date no agreement, so the fixture states the condition): 1401(c) has exempted such income since December 20, 1977, so the ministry is noncovered.",
    "facts": {
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": [
-     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning before 1983-04-20",
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect",
      "no 1402(e) exemption in effect and no applicable poverty vow"
     ]
    },
-   "expected": "refuses",
-   "decides": "foreign_agreement_sole_coverage_before_1983"
+   "expected": "noncovered",
+   "decides": "foreign_agreement_sole_coverage"
   },
   {
    "rule_id": "clergy_1973_1981",
-   "worker": "INVENTED (review r6 M-9): 1980: a United States citizen pastor of a congregation in West Germany whom a United States agreement in effect for the year makes subject only to that country's social security laws: no capture dates the agreement exemption before 1983-04-20, so the case refuses.",
+   "worker": "INVENTED (review r7 M-2, reaches foreign_agreement_sole_coverage): 1980: a United States citizen pastor of a congregation in West Germany whom a United States agreement under section 233, in effect for the year, makes subject only to that country's social security laws (the captures date no agreement, so the fixture states the condition): 1401(c) has exempted such income since December 20, 1977, so the ministry is noncovered.",
    "facts": {
     "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
     "clergy_or_religious_exemption": [
-     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning before 1983-04-20",
+     "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect",
      "no 1402(e) exemption in effect and no applicable poverty vow"
     ]
    },
-   "expected": "refuses",
-   "decides": "foreign_agreement_sole_coverage_before_1983"
+   "expected": "noncovered",
+   "decides": "foreign_agreement_sole_coverage"
   },
   {
    "rule_id": "clergy_1982_2026",
-   "worker": "INVENTED (review r6 M-9, just misses foreign_agreement_sole_coverage_before_1983 on ministerial_service): 1982: the pastor's spouse, under the same agreement in Italy, who teaches at a secular school there: not ministry, so this family excludes nothing.",
+   "worker": "INVENTED (review r7 M-2, just misses foreign_agreement_sole_coverage on ministerial_service): 1982: the pastor's spouse, under the same agreement in Italy, who teaches at a secular school there: not ministry, so this family excludes nothing.",
    "facts": {
     "ministerial_service": [
      "not ministry, order duties or Christian Science practice",
      "teaching at a secular school"
     ],
-    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning before 1983-04-20"
+    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect"
    },
    "expected": "covered",
    "decides": "non_ministerial_service"
   },
   {
    "rule_id": "clergy_1973_1981",
-   "worker": "INVENTED (review r6 M-9, just misses foreign_agreement_sole_coverage_before_1983 on ministerial_service): 1980: the pastor's spouse, under the same agreement in West Germany, who teaches at a secular school there: not ministry, so this family excludes nothing.",
+   "worker": "INVENTED (review r7 M-2, just misses foreign_agreement_sole_coverage on ministerial_service): 1980: the pastor's spouse, under the same agreement in West Germany, who teaches at a secular school there: not ministry, so this family excludes nothing.",
    "facts": {
     "ministerial_service": [
      "not ministry, order duties or Christian Science practice",
      "teaching at a secular school"
     ],
-    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, for a taxable year beginning before 1983-04-20"
+    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect"
    },
    "expected": "covered",
    "decides": "non_ministerial_service"
@@ -17175,6 +17215,57 @@
      "filed no Pub. L. 103-296 section 306 certificate"
     ],
     "place_of_work": "this service performed in Canada at a time when no agreement between the United States and Canada pursuant to section 233 of the Social Security Act was in effect"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "clergy_1973_1981",
+   "worker": "INVENTED (review r7 M-2, just misses foreign_agreement_sole_coverage on clergy_or_religious_exemption): 1976: a United States citizen pastor of a congregation in Italy who also contributes to Italian social security; section 233 did not yet exist, so no agreement under it was in effect, the exemption cannot reach him, and the ministry is covered.",
+   "facts": {
+    "ministerial_service": "qualifying ministry, order duties, or service in the exercise of the profession of a Christian Science practitioner",
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "subject to the social security laws of a foreign country in a period when no agreement entered into pursuant to section 233 of the Social Security Act was in effect (before December 20, 1977, when Pub. L. 95-216 added section 233)"
+    ]
+   },
+   "expected": "covered",
+   "decides": "ministry_without_exemption_or_vow"
+  },
+  {
+   "rule_id": "se_nonresident_alien_1968_1983",
+   "worker": "INVENTED (review r7 M-2, just misses foreign_agreement_sole_coverage on social_security_agreement_coverage): Eli, a US citizen consultant living in Italy, calendar 1976, who also pays Italian social security contributions: no agreement under section 233 could be in effect before December 20, 1977, so no case holds and the covered residual applies.",
+   "facts": {
+    "citizenship": "a citizen of the United States",
+    "country_of_residence": "a resident of Italy",
+    "social_security_agreement_coverage": "subject to the social security laws of a foreign country in a period when no agreement entered into pursuant to section 233 of the Social Security Act was in effect (before December 20, 1977, when Pub. L. 95-216 added section 233)",
+    "taxable_year_start": "1976-01-01",
+    "residence_period": "all of 1976"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1973_1987",
+   "worker": "INVENTED (review r7 M-2, reaches foreign_agreement_sole_coverage): 1980: a United States citizen pastor in West Germany whom a United States agreement under section 233, in effect for the year, makes subject only to that country's social security laws: deferred to the clergy family.",
+   "facts": {
+    "clergy_or_religious_exemption": "subject only to the social security laws of a foreign country under the provisions of a social security agreement between the United States and that country, during a period in which that agreement, entered into pursuant to section 233 of the Social Security Act (added December 20, 1977), is in effect"
+   },
+   "expected": "deferred",
+   "decides": "foreign_agreement_sole_coverage",
+   "defers_to": [
+    "clergy_religious_service"
+   ]
+  },
+  {
+   "rule_id": "se_clergy_gross_concept_1973_1987",
+   "worker": "INVENTED (review r7 M-2, just misses foreign_agreement_sole_coverage on clergy_or_religious_exemption): 1976: a United States citizen pastor in Italy, with no 1402(e) exemption, who also contributes to Italian social security before any section 233 agreement could be in effect: his net earnings include the parsonage value.",
+   "facts": {
+    "clergy_or_religious_exemption": [
+     "no 1402(e) exemption in effect and no applicable poverty vow",
+     "subject to the social security laws of a foreign country in a period when no agreement entered into pursuant to section 233 of the Social Security Act was in effect (before December 20, 1977, when Pub. L. 95-216 added section 233)"
+    ],
+    "clergy_remuneration": "salary and parsonage for ministry in Italy"
    },
    "expected": "covered",
    "decides": "residual"
