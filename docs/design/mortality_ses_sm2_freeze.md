@@ -93,7 +93,7 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | S2-11 | 587 | **[open]** extraction and digitization of the 2022 gradient, its uncertainty, complete coverage | Frozen: vector extraction of Study 129 Figures 7–12, validated against Tables 7–12 at every table year, with a digitization half-width the validation sets; complete tables at every knot | §7.1–7.3 | frozen here |
 | S2-12 | 591 | **[open]** widening `CoefficientPath`: slope, origin, ages, caps; knot years and synchronization | Frozen: origin 2024, slopes from a frozen estimator on OACT's pre-pandemic annual figures, caps of 30 years and a 1.5 multiplier, race held flat; annual knots 2010–2024 with one synchronization rule | §7.4–7.5 | frozen here |
 | S2-13 | 602 | **[proposed]** `unclassified_rule="reference"` for SM3's overall denominator | Confirmed for SM3; `refuse` for conformance runs and for any projection until the frame carries the attributes | §8.3 | frozen here |
-| S2-14 | 606 | **[open: identification]** marginal contrasts do not determine mutually adjusted coefficients; freeze a joint route and its reference distribution | Five candidate routes and one unavailable route; primary JR-C; JR-A (plain addition, labeled), JR-B, JR-D and JR-E as sensitivities. NHIS targets compare as age-standardized hazard ratios on `R_ref(t)`'s single-age population, under named assumption M-H1 (§4, §4.5) | §4, §6 | frozen here |
+| S2-14 | 606 | **[open: identification]** marginal contrasts do not determine mutually adjusted coefficients; freeze a joint route and its reference distribution | Five candidate routes and one unavailable route; primary JR-C; JR-A (plain addition, labeled), JR-B, JR-D and JR-E as sensitivities. NHIS targets compare as age-standardized hazard ratios on `R_ref(t)`'s single-age population, under named assumption M-H1 (§4, §4.5). The ordered logit fits once per knot year and sex on that year's ACS, and again inside every replicate, with a frozen optimizer, convergence rule and tie rule (§6.2) | §4, §6 | frozen here |
 | S2-15 | 629 | **[open]** exact release dates of any earlier NHIS cohort used | Left open. The linked-mortality `.dat` files carry the listing date 26 April 2022; each NHIS year's release date settles from that year's survey description, which the fit job records. Nothing in SM2 depends on it, because SM2 claims no prospective origin | §3.4 | left open; settled by the fit job's per-year release ledger |
 | S2-16 | 641 | **[frozen tolerance; proposed operationalization]** e65 target from source ratios on one baseline, with a fixed reference population, marginalization and tail rule | Frozen; the 0.1-year limit stays | §9.2 | frozen here (operationalization); tolerance frozen, S0.1 §2.5 |
 | S2-17 | 649 | **[open]** whether the different source populations and baselines can satisfy the targets together | This record freezes the procedure: one joint calibration per knot on one reference population, and a named failure when it cannot reproduce every target. Whether it can is an outcome, so this record does not settle it | §6.3, §9 | left open; settled by the fit under §9's rule |
@@ -644,22 +644,61 @@ records which it does), with these attributes:
   rank people within sex and single age, and both rank by a quantity tied
   to the worker's benefit (OACT notes that ranking by AIME or by PIA is
   equivalent within a birth year, Study 129 p. 2, note 2).
-- **The dependence model.** On persons with positive Social Security
-  income aged 62–84, for each sex and age group `G ∈ {62–69, 70–79,
-  80–84}`, a weighted ordered logit
+- **The dependence model.** For each knot year `t` and sex `s`, on that
+  year's persons with positive Social Security income aged 62–84, for
+  each age group `G ∈ {62–69, 70–79, 80–84}`, a weighted ordered logit
   `P(Q̃ ≤ k | d, r, a) = expit(c_k(a) − λ_D,G[d] − λ_R,G[r])`,
   with `λ_D[high_school] = λ_R[white_non_hispanic] = 0` and cut points
-  by single age. Ages 85 and over use `G = 80–84`; ages below 62 use
-  `G = 62–69`.
+  by single age, every parameter indexed by `(s, t)`. Ages 85 and over
+  use `G = 80–84`; ages below 62 use `G = 62–69`.
+  - **One fit per knot year [frozen here].** `R_ref(t)`, `Q̃`, the income
+    amounts, the cut points and the replicate weights all belong to one
+    ACS year, and §6.3 calibrates one knot at a time. A fit per year keeps
+    each knot's inputs within one file, and a replicate refit then
+    re-estimates exactly what the point fit estimates. `λ` enters the
+    calibration as an input, not an unknown, so §6.3's system stays
+    square.
+  - **Weights and ties [frozen here].** The fit weights each record by
+    `PWGTP` and ranks by `SSP` as the file holds it: each 1-year file
+    carries a single `ADJINC` factor (data dictionaries for 2010–2019 and
+    2021–2024), so a year's ranking needs no adjustment. Records with
+    equal `SSP` at the same sex and single age form one block. The
+    construction splits the block's cumulative-weight interval at each
+    quintile boundary it spans, and every record in the block takes the
+    same fractional membership of each quintile, in proportion to the
+    overlap; record order inside a block changes nothing. A record enters
+    the likelihood once for each quintile it belongs to, weighted by
+    `PWGTP` times that fraction. Every dictionary read here marks `SSP`
+    as rounded, and the 2024 top-coded-values document lists it among the
+    variables top-coded at a state mean above a state threshold, so blocks
+    occur.
+  - **Optimizer [frozen here].** Newton–Raphson on the weighted
+    log-likelihood with analytic gradient and Hessian; each age's cut
+    points enter as `c_1(a)` and the logs of the gaps
+    `c_k+1(a) − c_k(a)`, so they stay ordered. The start is `λ = 0`
+    with cut points `logit(0.2)`, `logit(0.4)`, `logit(0.6)` and
+    `logit(0.8)` at every age. Each step halves until the log-likelihood
+    does not fall, at most 30 times, and the fit takes at most 100 steps.
+    It has converged when every parameter moves by less than
+    `1 × 10⁻⁸` and the largest gradient component, divided by the total
+    weight, falls below `1 × 10⁻¹⁰`. Anything else is
+    `SOURCE_UNAVAILABLE` (iv) (§10).
+  - **Replicates [frozen here].** Inside each ACS replicate refit (§9.3),
+    the replicate weight replaces `PWGTP` in every step above: `Q̃` and
+    its blocks, the ordered logit from the same start under the same
+    rules, the cut points and `P(d, r | s, a, t)`. A replicate whose
+    ordered logit fails stops the procedure, as the point fit's failure
+    does.
 - **The joint weights.** At sex `s`, age `a` and year `t`,
   `w(k, d, r) = P(d, r | s, a, t) × P(k | d, r)`: the first factor is the
-  ACS weighted share among all persons; the second comes from the ordered
-  logit with cut points `c_k(s, a, t)` recomputed so that, at ages 62–89,
-  every quintile holds exactly one fifth of the subpopulation with positive
-  Social Security income (OACT cuts its quintiles at fifths of the records
-  at each age, though their exposure shares can differ slightly, pp. 3–5),
-  and at other ages one fifth of the whole
-  population. Persons without Social Security income at 62–89 take
+  ACS weighted share among all persons; the second comes from year `t`'s
+  ordered logit for sex `s`, with cut points `c_k(s, a, t)` recomputed so
+  that, at ages 62–89, every quintile holds exactly one fifth of the
+  subpopulation with positive Social Security income (OACT cuts its
+  quintiles at fifths of the records at each age, though their exposure
+  shares can differ slightly, pp. 3–5), and at other ages one fifth of the
+  whole population. Each recomputed cut point solves its share equation
+  by bisection until the share lies within `1 × 10⁻¹²` of its target. Persons without Social Security income at 62–89 take
   `P(k | d, r)` from the same model. The fit
   evaluates OACT targets on the subpopulation with positive Social
   Security income (its own `P(d, r | s, a, t)`, the same `P(k | d, r)`);
@@ -1239,7 +1278,7 @@ tunes anything so that sources agree** (S0.1 §2.5, frozen).
 | Condition | Trigger for SM2 | What it stops | Fallback |
 |---|---|---|---|
 | `GRADIENT_SOURCES_INCONSISTENT` | Two comparable sources disagree beyond SM2's fit tolerance. "Comparable": the same SM category definitions and sex, overlapping ages, calendar windows that overlap at least half the shorter one, and populations that differ at most in institutional coverage. Assessed: (a) Study 129 against Study 124 at table years 1995–2015, bands 62–84; (b) NCHS life tables against NHIS–LMF for `hispanic` and `black_non_hispanic` at 25–84. Not assessed: OACT against Cristia (different years, ages and earnings measures), NCHS education against NHIS at 25–64 (their windows share two of NCHS's five years), and `other_non_hispanic` against the partial composite (different groups). Metric: the difference in temporary life expectancy over the pair's shared ages, each built by applying the source's ratios to the TR 2026 baseline of the year compared: for (a), from 62 to the top of the year's oldest band printed in both studies, per table year, sex and quintile (5 × 2 × 5 = 50 comparisons); for (b), from 25 to 85, per NCHS year 2010–2019, sex and group (10 × 2 × 2 = 40). Triggered when a comparison's simultaneous 95 percent bound, Bonferroni over these 90 comparisons, excludes ±0.1 year | Nothing about SM2's admission. OACT stays primary for earnings and NCHS for race; the other source stays a registered sensitivity; the fit's report publishes the disagreement. Pair (a) has no random-variation term (§9.3), so the fit reports a disagreement it finds and it does not trigger | None needed |
-| `SOURCE_UNAVAILABLE` | (i) The digitization fails validation, or the digitizer cannot read a figure; (ii) an NHIS or LMF file is missing or its hash differs; (iii) an ACS year is missing; (iv) the ordered logit does not converge; (v) any source file's hash differs from §13 or the fit job's manifest | (i) P-PRIMARY, and with it SM2's admission; (ii) admission of education and race; (iii) one missing year: nothing, the knot uses the nearest year, labeled; two or more: SM2's admission; (iv) JR-C, and with it SM2's admission; (v) the run | (i) P-TABLE, computed and published labeled, never substituted; the Q6 question goes to Max (§12). (ii) T-D1 for education at 65+, Cristia's conditional `college`/`some_college` contrast for the split, T-R2 for `other_non_hispanic` at 2019–2024 only (earlier knots then have no `other_non_hispanic` source and the report marks them unavailable); all labeled, none admitted. (iv) JR-B, labeled, not admitted |
+| `SOURCE_UNAVAILABLE` | (i) The digitization fails validation, or the digitizer cannot read a figure; (ii) an NHIS or LMF file is missing or its hash differs; (iii) an ACS year is missing; (iv) the ordered logit does not converge for some knot, sex or ACS replicate (§6.2); (v) any source file's hash differs from §13 or the fit job's manifest | (i) P-PRIMARY, and with it SM2's admission; (ii) admission of education and race; (iii) one missing year: nothing, the knot uses the nearest year, labeled; two or more: SM2's admission; (iv) JR-C, and with it SM2's admission; (v) the run | (i) P-TABLE, computed and published labeled, never substituted; the Q6 question goes to Max (§12). (ii) T-D1 for education at 65+, Cristia's conditional `college`/`some_college` contrast for the split, T-R2 for `other_non_hispanic` at 2019–2024 only (earlier knots then have no `other_non_hispanic` source and the report marks them unavailable); all labeled, none admitted. (iv) JR-B, labeled, not admitted |
 | `EXPOSURE_UNRESOLVED` | Any report calls a comparison with a source reported beside the fit out of sample or a holdout, or describes a later role as blind to these sources | That claim | None: every SM2 source is an exposed target (§1) |
 | `FRAME_ATTRIBUTE_MISSING` | A frame that would use SM2's coefficients lacks a dimension's column; the Microcosm frame lacks education (design §7.2) | Use of the coefficients on that frame; closed-cohort work continues, labeled | None. The reference population's missing lifetime earnings is a declared proxy (§6.2), not this condition |
 | `SMALL_CELL_DISCLOSURE` | A published aggregate from NHIS or ACS microdata rests on fewer than 100 unweighted persons, or a published death-based cell on fewer than 20 deaths (§11.5) | Publication of that artifact until the writer suppresses the cell and any complement that reveals it | Suppression |
@@ -1371,6 +1410,12 @@ publication rule, not a precision guarantee (S0.1 §2.5).
   constant, changes no coefficient.
 - Each calibrated table passes `RelativeRiskSpec` and SM1's cell
   conservation on the invented population.
+- `Q̃`'s quintiles hold exactly one fifth of the weight at every sex and
+  single age, ties included; permuting records, inside a tie block or
+  across the file, changes no membership; and the ordered logit, fitted to
+  invented records whose quintile weights equal the model's expected
+  shares under known `λ` and cut points, recovers them within
+  `1 × 10⁻⁶`, converging under §6.2's rule from §6.2's start.
 - When the invented population's attributes are independent, its
   quintiles hold one fifth each and nothing caps, the fitted and target
   e65 agree exactly; the fitted life tables satisfy `life_table.py`'s
