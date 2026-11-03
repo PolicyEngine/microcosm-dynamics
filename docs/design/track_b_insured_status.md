@@ -3124,6 +3124,10 @@ first on `test_no_filling_carries_the_start_and_the_status_together`, and
 `test_unknown_period_status_and_dli_bounds_contain_concrete_fillings` kills
 `date_tested_at_query`.
 
+A cloud session then ran all 70 at `7b5b126a`, through every insured status
+module. All 70 failed a named test, with no restricted open
+(`round_22_mutations`, PR #562 comment 6596641719).
+
 Against `f37f7f79`, 13 of round 22's 17 tests fail, as do
 `test_status_stress_a_young_prior_on_either_basis` and round 21's
 `test_each_basis_matches_every_placement`. The four that pass check the
