@@ -85,7 +85,7 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | S2-03 | 474 | **[open]** harmonization of earlier NHIS years | Rescoped to NHIS 2009–2018 sample adults. The 2009, 2016 and 2018 layouts carry `EDUC1`, `HISPAN_I`, `RACERPI2`, `AGE_P`, `SEX`, `SRVY_YR`, `INTV_QRT` and `HHX`/`FMX`/`FPX` with identical code lists; the design variables are `STRAT_P`/`PSU_P` in 2009 and `PSTRAT`/`PPSU` in 2016 and 2018. The fit job checks each intervening year's layout against these names before use | §3.4 | frozen here (window and variables); intervening layouts checked by the fit job |
 | S2-04 | 481 | **[open]** a three-dimension joint gradient conditional on lifetime earnings | Resolved by the joint route: joint marginal calibration on a public reference population, with the earnings–education–race dependence taken from a stated proxy. The dependence itself stays unidentified in public data, and §6.4 says so. Where the fit applies the proxy's dependence outside its estimation sample, the copy is named assumption M-J1, with sensitivity JR-C-IND (§6.5, §6.6) | §6 | frozen here (route); the dependence stays unidentified and named |
 | S2-05 | 511 | **[open mapping]** Cristia's odds ratios | Frozen: predicted probabilities on a named reference population, then ratios to `q3`'s probability. Cristia enters only as a sensitivity and a source reported beside the fit; no log odds ratio enters as a log relative risk | §4.4 | frozen here |
-| S2-06 | 520 | **[proposed]** CBO 41681 as context only | Confirmed. It supplies the reason the widening alternative leaves race and Hispanic origin flat (pp. 1–2) and no coefficient or target | §3.1, §7.4 | frozen here |
+| S2-06 | 520 | **[proposed]** CBO 41681 as context only | Confirmed. It supplies the reason the widening alternative leaves race and Hispanic origin flat (pp. 1–2), with p. 1's qualifier that the black–white gap held for men and narrowed for women, and no coefficient or target | §3.1, §7.4 | frozen here |
 | S2-07 | 538 | **[proposed schema]** dimensions, columns, categories, references and unclassified treatment | Confirmed against `mortality_ses/specification.py`; tightened to one unclassified string per dimension, a fixed category order, and a crosswalk per source. `R_ref`'s persons under 25 hold the reference categories by rule, labeled `reference_below_25` (§6.2, §8.1). The ACS crosswalk maps every `SCHL`, `HISP` and `RAC1P` code in the 2010–2019 and 2021–2024 dictionaries; 2020's codes stay open until the fit job's first step (§8.2). NHIS `HISPAN_I` 00–11 map to `hispanic`, following S0.1's frozen reading, with 10 and 11 unclassified in X-R1 | §8 | frozen here (2020's ACS codes: checked by the fit job first) |
 | S2-08 | 564 | **[proposed loader]** OACT contrasts `log(r_q) − log(r_q3)`, band expansion, a source-year matrix that says what happens before a band first appears | Confirmed; tightened with the band-backcast rule, the figure-year rule and two independent table transcriptions | §3.1, §4.1, §5 | frozen here |
 | S2-09 | 570 | **[open]** earnings ages below 62 and 90–120 | Frozen: the 62–64 coefficient holds down to age 25 and the age-25 value below; the 85–89 coefficient holds up to 120; four registered sensitivities. `R_ref` holds everyone under 25 at the reference categories, so the values below 25 reach no one in the fit (§6.2) | §5, §6.2 | frozen here |
@@ -480,7 +480,19 @@ coefficients act on.
 - **M-R5, bridged and single race (assumption).** 2010–2017 contrasts are
   bridged-race; 2018 onward are single-race; Hispanic origin does not
   change (NVSR 75(5) pp. 1–2, 54). SM's categories follow the single-race
-  definitions (§8.2), and every path labels the 2017–2018 break.
+  definitions (§8.2), and every path labels the 2017–2018 break. **A
+  possible 2023–2024 change (label).** In NVSR 75(5), the 2024 tables,
+  the notes under Tables 4 (p. 21), 5 (p. 23), 7 (p. 27), 8 (p. 29) and
+  9 (p. 31), that is Hispanic total and male and AIAN total, male and
+  female, read "Updated classification ratios were applied"; the note
+  does not appear under Table 6 (Hispanic female, p. 25), and NVSR 74(2)
+  and 74(6) carry no such note. The 2024 Hispanic tables may therefore
+  rest on a revised misclassification adjustment. P-PRIMARY holds the
+  2024 level after the last knot (Q6, §7.1), so every path labels a
+  possible 2023–2024 break for `hispanic`, and the AIAN-and-Asian
+  composite beside the fit carries the same label for 2024. The fit
+  reports the 2023–2024 change in the Hispanic contrasts beside the path
+  and adjusts nothing for it.
 - **M-R6, ratios to the total population.** For the e65 target only
   (§9.2), each group's `q` divides by the NCHS total-population `q` at the
   same age and year, and each group's open-interval `e100` divides by the
@@ -1034,7 +1046,7 @@ age and for both sexes, by
 | Earnings slope `g_E(s, B)` | For each sex and OACT band with at least ten annual points in 2005–2019: the least-squares slope, over those years, of `S(t) / S̄`, where `S(t) = L_E(q1)(t) − L_E(q5)(t)` from the annual figures and `S̄` is its mean over the same years. Bands with fewer points (80–84, five points; 85–89, none) take the mean of the 70–74 and 75–79 slopes for the same sex, each computed as above before the zero floor; the floor below then applies to the mean. Ages outside 62–89 take the nearest band's slope | Study 129 calls the gradient's trends "generally, slowly growing" (p. 10); 2005–2019 are the fifteen pre-pandemic years with at least three bands present, and the estimator leaves out the pandemic years because of p. 9 |
 | Negative slopes | Set to zero: no widening for that sex and band, which then equals P-PRIMARY | The alternative is a widening path; a fitted narrowing is not evidence for it |
 | Education slope `g_D(s)` | `g_E(s, 62–64)` | No national education series longer than five years exists (§3.2); 62–64 is the earnings band nearest NCHS's ages |
-| Race and Hispanic origin | `m(t) = 1`, held flat | CBO 41681 describes differences between black and white Americans narrowing over time (pp. 1–2); no source here supports a widening race path |
+| Race and Hispanic origin | `m(t) = 1`, held flat | CBO 41681 says the gaps between whites and blacks "have narrowed somewhat" (p. 2), with a qualifier on p. 1: for men the black–white gap "has been maintained", and black women's larger gains were "halving the gap"; no source here supports a widening race path |
 | Ages | Every age 0–120 (the tails follow §5's rules applied to the multiplied coefficients) | One rule for the whole table |
 | Caps | The multiplier stops growing after 30 years (2054) and never exceeds 1.5 | The source series spans 1995–2022, about 30 years; the alternative carries no trend further than the data it comes from |
 
