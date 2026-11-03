@@ -92,6 +92,11 @@
    "amount"
   ],
   [
+   "domestic_service_1994",
+   "domestic_farm_service_before_1995",
+   "domestic_service"
+  ],
+  [
    "election_work_1991_0702",
    "agreement_with_lower_threshold_member",
    "election_work"
@@ -318,6 +323,16 @@
   ],
   [
    "nonprofit_1968_1977",
+   "cooperative_521_small_remuneration",
+   "amount"
+  ],
+  [
+   "nonprofit_1968_1977",
+   "cooperative_521_small_remuneration",
+   "nonprofit_organization"
+  ],
+  [
+   "nonprofit_1968_1977",
    "deemed_waiver_k5_request",
    "nonprofit_organization"
   ],
@@ -328,12 +343,52 @@
   ],
   [
    "nonprofit_1978_1983",
+   "cooperative_521_small_remuneration",
+   "amount"
+  ],
+  [
+   "nonprofit_1978_1983",
+   "cooperative_521_small_remuneration",
+   "nonprofit_organization"
+  ],
+  [
+   "nonprofit_1978_1983",
    "section_105b_departed_employee_request",
    "nonprofit_coverage_waiver"
   ],
   [
    "nonprofit_1978_1983",
    "section_105b_departed_employee_request",
+   "nonprofit_organization"
+  ],
+  [
+   "nonprofit_1978_1983",
+   "section_401a_trust_small_remuneration",
+   "amount"
+  ],
+  [
+   "nonprofit_1978_1983",
+   "section_401a_trust_small_remuneration",
+   "nonprofit_organization"
+  ],
+  [
+   "nonprofit_1984_2026",
+   "cooperative_521_small_remuneration",
+   "amount"
+  ],
+  [
+   "nonprofit_1984_2026",
+   "cooperative_521_small_remuneration",
+   "nonprofit_organization"
+  ],
+  [
+   "nonprofit_1984_2026",
+   "section_401a_trust_small_remuneration",
+   "amount"
+  ],
+  [
+   "nonprofit_1984_2026",
+   "section_401a_trust_small_remuneration",
    "nonprofit_organization"
   ],
   [
@@ -405,6 +460,21 @@
    "se_nonresident_alien_1983_2026",
    "foreign_agreement_sole_coverage",
    "social_security_agreement_coverage"
+  ],
+  [
+   "se_rental_income_1996_2026",
+   "farm_arrangement_with_non_individual",
+   "material_participation"
+  ],
+  [
+   "se_rental_income_1996_2026",
+   "farm_arrangement_with_non_individual",
+   "rental_arrangement_requires_material_participation"
+  ],
+  [
+   "se_rental_income_1996_2026",
+   "farm_arrangement_with_non_individual",
+   "rental_income"
   ],
   [
    "se_treaty_fishing_1968_2026",
@@ -9797,17 +9867,17 @@
   },
   {
    "rule_id": "domestic_service_1994",
-   "worker": "INVENTED: Yara, a cook in a Kansas farm operator's private home on a farm operated for profit, paid $600 cash in 1994; the farm's 1994 labor payroll is $1,500. The 409 notes date Pub. L. 103-387's rewrite of 409(a)(6)(B), whose 1994-edition text includes \"domestic service described in section 410(f)(5)\", to remuneration paid after 1993 (domestic $1,000 test); POMS RS 01402.216 A and RS 01901.200 D.1 keep farm domestic employees agricultural until 1995. No capture holds section 2(a)(3) of the Act: the open case refuses (FARM_DOMESTIC_1994_DATE_UNSETTLED).",
+   "worker": "INVENTED (review r7 M-8(c), just misses domestic_farm_service_before_1995 on amount): Yara, a cook in a Kansas farm operator's private home on a farm operated for profit, paid $600 cash in 1994; the farm's 1994 labor payroll is $1,500. Both readings cover the pay: the agricultural $150 test is met, and on the 409 notes' reading the 1994 benefit-credit transition reaches $50 to $999.",
    "facts": {
     "domestic_service": "domestic service on a farm operated for profit",
     "cash_remuneration": "cash remuneration",
     "amount": [
      "$600 cash from one employer in 1994",
-     "cash remuneration from one employer in 1994 of less than $1,000"
+     "cash remuneration from one employer in 1994 of at least $50 but less than $1,000"
     ]
    },
-   "expected": "refuses",
-   "decides": "domestic_farm_service_before_1995"
+   "expected": "covered",
+   "decides": "benefit_credit_transition_1994"
   },
   {
    "rule_id": "domestic_service_1994",
@@ -9817,7 +9887,7 @@
     "cash_remuneration": "cash remuneration",
     "amount": [
      "cash remuneration from one employer in 1994 of at least $50 but less than $1,000",
-     "cash remuneration from one employer in 1994 of less than $1,000"
+     "cash remuneration from one employer in 1994 either of at least $50 but less than $150, from an employer whose 1994 expenditures for agricultural labor were less than $2,500, or of less than $50, from an employer whose 1994 expenditures for agricultural labor were $2,500 or more"
     ]
    },
    "expected": "refuses",
@@ -16838,12 +16908,14 @@
   },
   {
    "rule_id": "se_rental_income_1996_2026",
-   "worker": "INVENTED (review r6 M-13): 2005: a landowner rents cropland to a farming corporation that grows the crop: the statute's proviso names another individual, the CFR another person, so the case refuses.",
+   "worker": "INVENTED (review r6 M-13; review r7 M-8(d)): 2005: a landowner rents cropland to a farming corporation that grows the crop, under an arrangement providing for her material participation, and she materially participates: the statute's proviso names another individual, the CFR another person, so the case refuses.",
    "facts": {
     "rental_income": [
      "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions",
      "income of an owner or tenant of land under an arrangement for a corporation, partnership, trust or other person who is not an individual to produce agricultural or horticultural commodities on it"
-    ]
+    ],
+    "material_participation": true,
+    "rental_arrangement_requires_material_participation": true
    },
    "expected": "refuses",
    "decides": "farm_arrangement_with_non_individual"
@@ -16865,9 +16937,10 @@
   },
   {
    "rule_id": "nonprofit_1968_1977",
-   "worker": "INVENTED (review r6 M-8): 1972: an employee of a farmers' cooperative exempt under section 521: whether former 410(a)(10)'s small-remuneration test reached the cooperative before 1978 is open, so the case refuses.",
+   "worker": "INVENTED (review r6 M-8; review r7 M-8(a)): 1972: an employee of a farmers' cooperative exempt under section 521, paid $30 for a calendar quarter's service: whether former 410(a)(10)'s small-remuneration test reached the cooperative before 1978 is open, so the case refuses.",
    "facts": {
-    "nonprofit_organization": "employer is a farmers' cooperative exempt from income tax under section 521"
+    "nonprofit_organization": "employer is a farmers' cooperative exempt from income tax under section 521",
+    "amount": "remuneration for service performed in a calendar quarter in the organization's employ less than $50"
    },
    "expected": "refuses",
    "decides": "cooperative_521_small_remuneration"
@@ -16953,7 +17026,8 @@
    "rule_id": "nonprofit_1978_1983",
    "worker": "INVENTED (review r6 M-8): 1980: a clerk paid $80 in the year by a pension trust described in 401(a): 409 and 3121(a)(16) disagree on the $100 rule for such a trust, so the case refuses.",
    "facts": {
-    "nonprofit_organization": "employer is a trust described in 401(a) and exempt from income tax under 501(a)"
+    "nonprofit_organization": "employer is a trust described in 401(a) and exempt from income tax under 501(a)",
+    "amount": "remuneration paid by the organization to the employee in the calendar year less than $100"
    },
    "expected": "refuses",
    "decides": "section_401a_trust_small_remuneration"
@@ -16962,7 +17036,8 @@
    "rule_id": "nonprofit_1984_2026",
    "worker": "INVENTED (review r6 M-8): 1990: a clerk paid $80 in the year by a pension trust described in 401(a): 409 and 3121(a)(16) disagree on the $100 rule for such a trust, so the case refuses.",
    "facts": {
-    "nonprofit_organization": "employer is a trust described in 401(a) and exempt from income tax under 501(a)"
+    "nonprofit_organization": "employer is a trust described in 401(a) and exempt from income tax under 501(a)",
+    "amount": "remuneration paid by the organization to the employee in the calendar year less than $100"
    },
    "expected": "refuses",
    "decides": "section_401a_trust_small_remuneration"
@@ -17473,6 +17548,221 @@
    },
    "expected": "covered",
    "decides": "residual"
+  },
+  {
+   "rule_id": "nonprofit_1968_1977",
+   "worker": "INVENTED (review r7 M-8(a), just misses cooperative_521_small_remuneration on amount): 1972: the same cooperative's employee paid $60 for a calendar quarter's service: covered whether or not former 410(a)(10) reached the cooperative.",
+   "facts": {
+    "nonprofit_organization": "employer is a farmers' cooperative exempt from income tax under section 521",
+    "amount": "remuneration for service performed in a calendar quarter in the organization's employ of $50 or more"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "nonprofit_1968_1977",
+   "worker": "INVENTED (review r7 M-8(a), just misses cooperative_521_small_remuneration on nonprofit_organization): 1972: a feed store's clerk paid $30 for a calendar quarter's service: no exempt employer, so the residual sends the pay to the other families.",
+   "facts": {
+    "nonprofit_organization": "employer is a for-profit business, not exempt from income tax",
+    "amount": "remuneration for service performed in a calendar quarter in the organization's employ less than $50"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "nonprofit_1978_1983",
+   "worker": "INVENTED (review r7 M-8(b), just misses section_401a_trust_small_remuneration on amount): 1980: a clerk paid $250 in the year by a pension trust described in 401(a): both readings cover pay of $100 or more.",
+   "facts": {
+    "nonprofit_organization": "employer is a trust described in 401(a) and exempt from income tax under 501(a)",
+    "amount": "remuneration paid by the organization to the employee in the calendar year of $100 or more"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "nonprofit_1978_1983",
+   "worker": "INVENTED (review r7 M-8(b), just misses section_401a_trust_small_remuneration on nonprofit_organization): 1980: a clerk paid $80 in the year by a for-profit business: the residual sends the pay to the other families.",
+   "facts": {
+    "nonprofit_organization": "employer is a for-profit business, not exempt from income tax",
+    "amount": "remuneration paid by the organization to the employee in the calendar year less than $100"
+   },
+   "expected": "covered",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "nonprofit_1984_2026",
+   "worker": "INVENTED (review r7 M-8(b), just misses section_401a_trust_small_remuneration on amount): 1990: a clerk paid $250 in the year by a pension trust described in 401(a): both readings cover pay of $100 or more.",
+   "facts": {
+    "nonprofit_organization": "employer is a trust described in 401(a) and exempt from income tax under 501(a)",
+    "amount": "remuneration paid by the organization to the employee in the calendar year of $100 or more"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "nonprofit_1984_2026",
+   "worker": "INVENTED (review r7 M-8(b), just misses section_401a_trust_small_remuneration on nonprofit_organization): 1990: a clerk paid $80 in the year by a 501(c)(4) civic league: the residual's $100 annual test applies.",
+   "facts": {
+    "nonprofit_organization": "employer is a 501(c)(4) civic league exempt under 501(a), not an organization described in 501(c)(3)",
+    "amount": "remuneration paid by the organization to the employee in the calendar year less than $100"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "nonprofit_1978_1983",
+   "worker": "INVENTED (review r7 M-8(e), reaches cooperative_521_small_remuneration): 1980: a clerk paid $80 in the year by a farmers' cooperative exempt under section 521: 3121(a)(16) excludes the pay and 409(a)(14) names only 501 organizations, so the case refuses, ahead of the 3121(a)(16) class the cooperative also falls in.",
+   "facts": {
+    "nonprofit_organization": [
+     "employer is a farmers' cooperative exempt from income tax under section 521",
+     "employer is an organization exempt from income tax under 501(a) (other than one described in 401(a)) or under 521, and not one described in 501(c)(3)"
+    ],
+    "amount": "remuneration paid by the organization to the employee in the calendar year less than $100"
+   },
+   "expected": "refuses",
+   "decides": "cooperative_521_small_remuneration"
+  },
+  {
+   "rule_id": "nonprofit_1978_1983",
+   "worker": "INVENTED (review r7 M-8(e), just misses cooperative_521_small_remuneration on amount): 1980: the cooperative's clerk paid $250 in the year: both readings cover pay of $100 or more.",
+   "facts": {
+    "nonprofit_organization": [
+     "employer is a farmers' cooperative exempt from income tax under section 521",
+     "employer is an organization exempt from income tax under 501(a) (other than one described in 401(a)) or under 521, and not one described in 501(c)(3)"
+    ],
+    "amount": "remuneration paid by the organization to the employee in the calendar year of $100 or more"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "exempt_organization_small_remuneration"
+  },
+  {
+   "rule_id": "nonprofit_1978_1983",
+   "worker": "INVENTED (review r7 M-8(e), just misses cooperative_521_small_remuneration on nonprofit_organization): 1980: a civic league's clerk paid $80 in the year: 3121(a)(16)'s $100 test applies.",
+   "facts": {
+    "nonprofit_organization": [
+     "employer is a 501(c)(4) civic league exempt under 501(a), not an organization described in 501(c)(3)",
+     "employer is an organization exempt from income tax under 501(a) (other than one described in 401(a)) or under 521, and not one described in 501(c)(3)"
+    ],
+    "amount": "remuneration paid by the organization to the employee in the calendar year less than $100"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "exempt_organization_small_remuneration"
+  },
+  {
+   "rule_id": "nonprofit_1984_2026",
+   "worker": "INVENTED (review r7 M-8(e), reaches cooperative_521_small_remuneration): 1990: a clerk paid $80 in the year by a farmers' cooperative exempt under section 521: 3121(a)(16) excludes the pay and 409(a)(14) names only 501 organizations, so the case refuses.",
+   "facts": {
+    "nonprofit_organization": "employer is a farmers' cooperative exempt from income tax under section 521",
+    "amount": "remuneration paid by the organization to the employee in the calendar year less than $100"
+   },
+   "expected": "refuses",
+   "decides": "cooperative_521_small_remuneration"
+  },
+  {
+   "rule_id": "nonprofit_1984_2026",
+   "worker": "INVENTED (review r7 M-8(e), just misses cooperative_521_small_remuneration on amount): 1990: the cooperative's clerk paid $250 in the year: both readings cover pay of $100 or more.",
+   "facts": {
+    "nonprofit_organization": "employer is a farmers' cooperative exempt from income tax under section 521",
+    "amount": "remuneration paid by the organization to the employee in the calendar year of $100 or more"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "nonprofit_1984_2026",
+   "worker": "INVENTED (review r7 M-8(e), just misses cooperative_521_small_remuneration on nonprofit_organization): 1990: a civic league's clerk paid $80 in the year: the residual's $100 annual test applies.",
+   "facts": {
+    "nonprofit_organization": "employer is a 501(c)(4) civic league exempt under 501(a), not an organization described in 501(c)(3)",
+    "amount": "remuneration paid by the organization to the employee in the calendar year less than $100"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "domestic_service_1994",
+   "worker": "INVENTED (review r7 M-8(c), reaches domestic_farm_service_before_1995): Abe, a farm operator's housekeeper on a farm operated for profit, paid $40 cash in 1994 by a farm whose 1994 labor payroll is $3,000: the agricultural $2,500 test makes the pay wages, the 409 notes' reading excludes it (below the transition's $50), so the case refuses.",
+   "facts": {
+    "domestic_service": "domestic service on a farm operated for profit",
+    "cash_remuneration": "cash remuneration",
+    "amount": "cash remuneration from one employer in 1994 either of at least $50 but less than $150, from an employer whose 1994 expenditures for agricultural labor were less than $2,500, or of less than $50, from an employer whose 1994 expenditures for agricultural labor were $2,500 or more"
+   },
+   "expected": "refuses",
+   "decides": "domestic_farm_service_before_1995"
+  },
+  {
+   "rule_id": "domestic_service_1994",
+   "worker": "INVENTED (review r7 M-8(c), just misses domestic_farm_service_before_1995 on amount): Bea, a farm operator's cook on a farm operated for profit, paid $100 cash in 1994 by a farm whose 1994 labor payroll is $3,000: the $2,500 test and the transition both cover the pay.",
+   "facts": {
+    "domestic_service": "domestic service on a farm operated for profit",
+    "cash_remuneration": "cash remuneration",
+    "amount": "cash remuneration from one employer in 1994 of at least $50 but less than $1,000"
+   },
+   "expected": "covered",
+   "decides": "benefit_credit_transition_1994"
+  },
+  {
+   "rule_id": "domestic_service_1994",
+   "worker": "INVENTED (review r7 M-8(c), just misses domestic_farm_service_before_1995 on amount): Cal, a farm operator's gardener at his private home on a farm operated for profit, paid $30 cash in 1994 by a farm whose 1994 labor payroll is $1,500: excluded on both readings (neither agricultural test is met, and the pay is below the transition's $50 and the $1,000 test).",
+   "facts": {
+    "domestic_service": "domestic service on a farm operated for profit",
+    "cash_remuneration": "cash remuneration",
+    "amount": "cash remuneration from one employer in 1994 of less than $50, from an employer whose 1994 expenditures for agricultural labor were less than $2,500"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "domestic_service_1994",
+   "worker": "INVENTED (review r7 M-8(c), just misses domestic_farm_service_before_1995 on domestic_service): Dot, a nanny in a private home in town, paid $100 cash in 1994 by a family that pays no agricultural labor: domestic service in 1994 on any reading, so the transition applies.",
+   "facts": {
+    "domestic_service": "domestic service in a private home of the employer",
+    "cash_remuneration": "cash remuneration",
+    "amount": [
+     "cash remuneration from one employer in 1994 of at least $50 but less than $1,000",
+     "cash remuneration from one employer in 1994 either of at least $50 but less than $150, from an employer whose 1994 expenditures for agricultural labor were less than $2,500, or of less than $50, from an employer whose 1994 expenditures for agricultural labor were $2,500 or more"
+    ]
+   },
+   "expected": "covered",
+   "decides": "benefit_credit_transition_1994"
+  },
+  {
+   "rule_id": "se_rental_income_1996_2026",
+   "worker": "INVENTED (review r7 M-8(d), just misses farm_arrangement_with_non_individual on material_participation): 2005: the same corporate arrangement, but the landowner does not materially participate: both readings leave the payments rentals from real estate.",
+   "facts": {
+    "rental_income": [
+     "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions",
+     "income of an owner or tenant of land under an arrangement for a corporation, partnership, trust or other person who is not an individual to produce agricultural or horticultural commodities on it"
+    ],
+    "material_participation": false,
+    "rental_arrangement_requires_material_participation": true
+   },
+   "expected": "noncovered",
+   "decides": "real_estate_rentals"
+  },
+  {
+   "rule_id": "se_rental_income_1996_2026",
+   "worker": "INVENTED (review r7 M-8(d), just misses farm_arrangement_with_non_individual on rental_arrangement_requires_material_participation): 2005: the landowner works alongside the corporation's crew, but the arrangement does not provide for her participation: both readings leave the payments rentals.",
+   "facts": {
+    "rental_income": [
+     "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions",
+     "income of an owner or tenant of land under an arrangement for a corporation, partnership, trust or other person who is not an individual to produce agricultural or horticultural commodities on it"
+    ],
+    "material_participation": true,
+    "rental_arrangement_requires_material_participation": false
+   },
+   "expected": "noncovered",
+   "decides": "real_estate_rentals"
+  },
+  {
+   "rule_id": "se_rental_income_1996_2026",
+   "worker": "INVENTED (review r7 M-8(d), just misses farm_arrangement_with_non_individual on rental_income): 2005: a landowner who materially participates under her arrangement, but whose payments are cash rent for pasture with no arrangement for anyone to produce a crop: rentals from real estate.",
+   "facts": {
+    "rental_income": "rentals from real estate or from personal property leased with it, including crop shares, with the attributable deductions",
+    "material_participation": true,
+    "rental_arrangement_requires_material_participation": true
+   },
+   "expected": "noncovered",
+   "decides": "real_estate_rentals"
   }
  ]
 }

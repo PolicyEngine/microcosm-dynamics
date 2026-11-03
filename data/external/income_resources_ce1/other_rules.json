@@ -2340,6 +2340,13 @@
         "authority": "SSA POMS RS 01901.200",
         "location": "D.1 NOTE",
         "quote": "NOTE: Beginning January 1, 1995, domestic employees on farms operated for profit are no longer treated as agricultural employees. Instead they are subject to the new domestic threshold. (This is based on the enactment of P.L. 103-387 effective January 1, 1995 and reinforced with P.L. 108-203)."
+      },
+      {
+        "capture": "lii_42_409.html",
+        "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b",
+        "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+        "location": "409(a)(7)(B)",
+        "quote": "(B) Cash remuneration paid by an employer in any calendar year to an employee for agricultural labor unless\u2014 (i) the cash remuneration paid in such year by the employer to the employee for such labor is $150 or more, or (ii) the employer\u2019s expenditures for agricultural labor in such year equal or exceed $2,500,"
       }
     ],
     "trigger_facts": [
@@ -2397,10 +2404,10 @@
         "precedence": 1,
         "when": {
           "domestic_service": "domestic service on a farm operated for profit",
-          "amount": "cash remuneration from one employer in 1994 of less than $1,000"
+          "amount": "cash remuneration from one employer in 1994 either of at least $50 but less than $150, from an employer whose 1994 expenditures for agricultural labor were less than $2,500, or of less than $50, from an employer whose 1994 expenditures for agricultural labor were $2,500 or more"
         },
         "consequence": "open",
-        "description": "Ranked first, where the agricultural deferral stood. The 409 notes and POMS date the end of agricultural treatment of farm domestic pay a year apart, and the agricultural and domestic rules can give the same 1994 pay different outcomes. Both readings exclude noncash pay (noncash_remuneration here; the agricultural family for noncash farm pay) and cover cash pay of $1,000 or more, which meets both families' thresholds, so the case reads cash pay under $1,000 (review r6 M-2).",
+        "description": "Ranked first, where the agricultural deferral stood. The 409 notes and POMS date the end of agricultural treatment of farm domestic pay a year apart. On the notes' reading this row decides the pay: noncash pay is excluded, cash pay of $50 to $999 takes benefit_credit_transition_1994 (covered) and less fails the $1,000 test. On POMS's reading agricultural_service_1988 decides it: noncash pay is excluded, and cash pay is wages once the employer pays the employee $150 or more in the year or its expenditures for agricultural labor reach $2,500 (409(a)(7)(B)). The readings differ only for $50 to $149 from an employer spending less than $2,500 (covered, then excluded) and for less than $50 from one spending $2,500 or more (excluded, then covered), so the case reads those two cells (review r6 M-2; review r7 M-8(c): it had refused $150 to $999, which both readings cover).",
         "open_reason": "FARM_DOMESTIC_1994_DATE_UNSETTLED: Pub. L. 103-387 rewrote 409(a)(6)(B) to reach cash pay \"for domestic service in a private home of the employer (including domestic service described in section 410(f)(5) of this title)\" (42 U.S.C. 409, 1994 edition), and the 409 notes make the amendment \"applicable to remuneration paid after Dec. 31, 1993\". POMS RS 01402.216 A and RS 01901.200 D.1 say instead that \"Beginning January 1, 1995, domestic employees on farms operated for profit are no longer treated as agricultural employees\", RS 01901.200 citing \"the enactment of P.L. 103-387 effective January 1, 1995\". No CE1 capture holds section 2(a)(3) of the Act, so the rule for farm domestic pay in 1994 is unsettled and the case refuses.",
         "open_alternatives": [
           {

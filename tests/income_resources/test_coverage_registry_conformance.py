@@ -1469,8 +1469,10 @@ def test_open_readings_are_named_once_and_described_in_prose():
     # closes the three pre-1983 agreement cases (88), and closes the
     # 1973-1987 church annuity contributions on 411(a)'s start from gross
     # income (86), and splits the minor newspaper direct-seller case by
-    # 410(a)(14) arrangement (review r7 M-7; 88).
-    assert described == 88
+    # 410(a)(14) arrangement (review r7 M-7; 88), and opens a 521
+    # cooperative's small remuneration in the 1978 and 1984 rows (review r7
+    # M-8(e); 92).
+    assert described == 92
 
 
 READING_TEXT = {
@@ -2014,7 +2016,10 @@ def test_every_trigger_fact_is_read_by_a_case_or_named_with_its_reason():
             len(row["parameters"].get("unread_trigger_facts", {}))
             for row in rows
         )
-        == 369
+        # Review r7 M-8: the open cases of the three nonprofit rows now
+        # read the amount, and the rental row's non-individual case reads
+        # material participation (369 -> 365).
+        == 365
     )
 
 
@@ -5433,7 +5438,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 363
+    assert sum(len(row["cases"]) for row in rows) == 365
     deferred = [
         w for w in INVENTED_SWEEP_WORKERS if w["expected"] == "deferred"
     ]

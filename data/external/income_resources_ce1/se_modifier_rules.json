@@ -245,11 +245,12 @@
       }
     ],
     "trigger_facts": [
-      "trade_or_business",
-      "rental_income",
+      "material_participation",
       "real_estate_dealer_status",
+      "rental_arrangement_requires_material_participation",
+      "rental_income",
       "services_to_occupants",
-      "material_participation"
+      "trade_or_business"
     ],
     "consequence": "covered",
     "identification_class": "awaiting_ce2",
@@ -395,7 +396,6 @@
         }
       },
       "unread_trigger_facts": {
-        "material_participation": "self_employment_farm_rental_participation reads it after farm_rental_arrangement defers.",
         "trade_or_business": "The base definition reads it; the dealer limb is carried by real_estate_dealer_status; 404.1082(e)'s split of a non-real-estate business's income needs no extra case (the rental part meets real_estate_rentals, the rest the residual)."
       }
     },
@@ -452,10 +452,12 @@
         "case_id": "farm_arrangement_with_non_individual",
         "precedence": 5,
         "when": {
-          "rental_income": "income of an owner or tenant of land under an arrangement for a corporation, partnership, trust or other person who is not an individual to produce agricultural or horticultural commodities on it"
+          "rental_income": "income of an owner or tenant of land under an arrangement for a corporation, partnership, trust or other person who is not an individual to produce agricultural or horticultural commodities on it",
+          "material_participation": true,
+          "rental_arrangement_requires_material_participation": true
         },
         "consequence": "open",
-        "description": "411(a)(1)'s proviso reaches an arrangement \"between the owner or tenant and another individual\", while 20 CFR 404.1082(c), captured from its April 1, 1996 edition, speaks of another person (review r6 M-13). Ranked below farm_rental_arrangement and above real_estate_rentals, whose condition this payment also meets.",
+        "description": "411(a)(1)'s proviso reaches an arrangement \"between the owner or tenant and another individual\", while 20 CFR 404.1082(c), captured from its April 1, 1996 edition, speaks of another person (review r6 M-13). Ranked below farm_rental_arrangement and above real_estate_rentals, whose condition this payment also meets. The case reaches only an owner or tenant who materially participates under an arrangement that provides for it: otherwise the farm-rental participation family gives noncovered (no_actual_material_participation, arrangement_lacks_participation_term), as real_estate_rentals does, so both readings agree (review r7 M-8(d)).",
         "open_reason": "FARM_ARRANGEMENT_NON_INDIVIDUAL_UNSETTLED: the statute's farm-rental proviso names an arrangement with \"another individual\"; the 1996 and later CFR edition the row cites names another person. No capture says whether an arrangement with a corporation or other entity that produces the crop takes the rent out of 411(a)(1)'s exclusion, so the case refuses.",
         "open_alternatives": [
           {

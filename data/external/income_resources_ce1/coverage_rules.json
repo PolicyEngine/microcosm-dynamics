@@ -5517,7 +5517,7 @@
         {
           "case_id": "domestic_farm_service_before_1995",
           "consequence": "open",
-          "description": "Ranked first, where the agricultural deferral stood. The 409 notes and POMS date the end of agricultural treatment of farm domestic pay a year apart, and the agricultural and domestic rules can give the same 1994 pay different outcomes. Both readings exclude noncash pay (noncash_remuneration here; the agricultural family for noncash farm pay) and cover cash pay of $1,000 or more, which meets both families' thresholds, so the case reads cash pay under $1,000 (review r6 M-2).",
+          "description": "Ranked first, where the agricultural deferral stood. The 409 notes and POMS date the end of agricultural treatment of farm domestic pay a year apart. On the notes' reading this row decides the pay: noncash pay is excluded, cash pay of $50 to $999 takes benefit_credit_transition_1994 (covered) and less fails the $1,000 test. On POMS's reading agricultural_service_1988 decides it: noncash pay is excluded, and cash pay is wages once the employer pays the employee $150 or more in the year or its expenditures for agricultural labor reach $2,500 (409(a)(7)(B)). The readings differ only for $50 to $149 from an employer spending less than $2,500 (covered, then excluded) and for less than $50 from one spending $2,500 or more (excluded, then covered), so the case reads those two cells (review r6 M-2; review r7 M-8(c): it had refused $150 to $999, which both readings cover).",
           "open_alternatives": [
             {
               "description": "The 409 notes date the whole 1994 rewrite of 409(a)(6)(B), farm domestic parenthetical included, to remuneration paid after December 31, 1993: farm domestic pay in 1994 is domestic service in a private home of the employer, and this row's other cases and residual decide it as they decide other domestic pay in 1994.",
@@ -5531,7 +5531,7 @@
           "open_reason": "FARM_DOMESTIC_1994_DATE_UNSETTLED: Pub. L. 103-387 rewrote 409(a)(6)(B) to reach cash pay \"for domestic service in a private home of the employer (including domestic service described in section 410(f)(5) of this title)\" (42 U.S.C. 409, 1994 edition), and the 409 notes make the amendment \"applicable to remuneration paid after Dec. 31, 1993\". POMS RS 01402.216 A and RS 01901.200 D.1 say instead that \"Beginning January 1, 1995, domestic employees on farms operated for profit are no longer treated as agricultural employees\", RS 01901.200 citing \"the enactment of P.L. 103-387 effective January 1, 1995\". No CE1 capture holds section 2(a)(3) of the Act, so the rule for farm domestic pay in 1994 is unsettled and the case refuses.",
           "precedence": 1,
           "when": {
-            "amount": "cash remuneration from one employer in 1994 of less than $1,000",
+            "amount": "cash remuneration from one employer in 1994 either of at least $50 but less than $150, from an employer whose 1994 expenditures for agricultural labor were less than $2,500, or of less than $50, from an employer whose 1994 expenditures for agricultural labor were $2,500 or more",
             "domestic_service": "domestic service on a farm operated for profit"
           }
         },
@@ -5566,6 +5566,13 @@
           "authority": "42 USC 409, current code and amendment/effective-date notes captured 2026-10-24; later-edition text and historical notes, not contemporaneous pre-1994 section text",
           "capture": "lii_42_409.html",
           "location": "409(a)(6)(B); 1994 amendment and effective date notes",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+          "capture": "lii_42_409.html",
+          "location": "409(a)(7)(B)",
+          "quote": "(B) Cash remuneration paid by an employer in any calendar year to an employee for agricultural labor unless\u2014 (i) the cash remuneration paid in such year by the employer to the employee for such labor is $150 or more, or (ii) the employer\u2019s expenditures for agricultural labor in such year equal or exceed $2,500,",
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
         },
         {
@@ -14803,7 +14810,7 @@
         {
           "case_id": "cooperative_521_small_remuneration",
           "consequence": "open",
-          "description": "The 1978 row reads former 410(a)(10)'s small-remuneration test as reaching an organization exempt \"under 521\"; for 1968-1977 the 1977 note's parenthesis does not close, so its words do not say which side 521 was on (review r6 M-8: the case leaves the question open rather than choosing the covered residual).",
+          "description": "The 1978 row reads former 410(a)(10)'s small-remuneration test as reaching an organization exempt \"under 521\"; for 1968-1977 the 1977 note's parenthesis does not close, so its words do not say which side 521 was on (review r6 M-8: the case leaves the question open rather than choosing the covered residual). The case reads former 410(a)(10)'s amount, remuneration below $50 for a calendar quarter's service: at $50 or more both readings cover the pay, so the case does not reach it (review r7 M-8(a)).",
           "open_alternatives": [
             {
               "description": "Read 521 inside the test, as the 1978 row does: remuneration below the threshold is excluded (covered_above_threshold).",
@@ -14817,6 +14824,7 @@
           "open_reason": "COOPERATIVE_521_SMALL_REMUNERATION_UNSETTLED: no CE1 capture prints former 410(a)(10) as in force in 1968-1977, and the 1977 amendment note that records the 521 wording does not close its parenthesis, so whether a 521 farmers' cooperative's employees fell under the small-remuneration test before 1978 is not settled; the case refuses.",
           "precedence": 11,
           "when": {
+            "amount": "remuneration for service performed in a calendar quarter in the organization's employ less than $50",
             "nonprofit_organization": "employer is a farmers' cooperative exempt from income tax under section 521"
           }
         }
@@ -15109,7 +15117,6 @@
         },
         "threshold_id": "nonprofit_remuneration_quarter",
         "unread_trigger_facts": {
-          "amount": "The remuneration that the row's threshold (nonprofit_remuneration_quarter) compares; no case condition depends on the amount.",
           "month_or_exposure": "The service period the threshold aggregates over (the calendar quarter of former 410(a)(10)(A)); the cases state their own dates in their text (for example 'before July 1, 1977'), so none reads this fact.",
           "reporting_unit": "The aggregation unit of the threshold nonprofit_remuneration_quarter (same employer, employee and calendar quarter); no case condition depends on it."
         },
@@ -15134,7 +15141,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "No case holds, so the employer is neither an organization described in 501(c)(3) and exempt under 501(a) nor another organization exempt under 501(a) (other than one described in 401(a)): former 410(a)(8)(B) does not exclude the service and no case of this row applies its remuneration test; apply the other families (a 521 cooperative's employee reaches the open case cooperative_521_small_remuneration)."
+        "description": "No case holds, so the employer is neither an organization described in 501(c)(3) and exempt under 501(a) nor another organization exempt under 501(a) (other than one described in 401(a)): former 410(a)(8)(B) does not exclude the service and no case of this row applies its remuneration test; apply the other families (a 521 cooperative's employee paid less than $50 for a calendar quarter's service reaches the open case cooperative_521_small_remuneration; at $50 or more both of its readings cover the pay)."
       },
       "rule_id": "nonprofit_1968_1977",
       "trigger_facts": [
@@ -15231,10 +15238,31 @@
           }
         },
         {
+          "case_id": "cooperative_521_small_remuneration",
+          "consequence": "open",
+          "description": "3121(a)(16) excludes small remuneration paid by an organization exempt \"under section 521\", while the title II text, 409(a)(14) (409(p) as Pub. L. 95-216 added it; 409(a)(14)(A) in the 1994 edition), names only an organization \"exempt from income tax under section 501\". The 401(a) half of the same disagreement is the open case section_401a_trust_small_remuneration; review r7 M-8(e) opens this half, which the row had closed by following 3121(a)(16). The case reads the $100 amount both texts share: at $100 or more in the year both readings cover the pay, so the case does not reach it. Ranked above exempt_organization_small_remuneration, whose 3121(a)(16) class also names 521.",
+          "open_alternatives": [
+            {
+              "description": "409(a)(14) names only an organization exempt under section 501, so no $100 test reaches a 521 cooperative's pay, which is covered.",
+              "name": "section_409_wages_reading"
+            },
+            {
+              "description": "3121(a)(16) reaches an organization exempt under section 521: remuneration below $100 a year is excluded (covered_above_threshold).",
+              "name": "section_3121a16_reading"
+            }
+          ],
+          "open_reason": "COOPERATIVE_521_SMALL_REMUNERATION_FROM_1978_UNSETTLED: 3121(a)(16) names an organization exempt \"under section 521\" and the captured 409(a)(14) text names only one exempt \"under section 501\"; no capture reconciles them, so whether a 521 cooperative's remuneration below $100 a year is wages for title II is not settled and the case refuses.",
+          "precedence": 7,
+          "when": {
+            "amount": "remuneration paid by the organization to the employee in the calendar year less than $100",
+            "nonprofit_organization": "employer is a farmers' cooperative exempt from income tax under section 521"
+          }
+        },
+        {
           "case_id": "exempt_organization_small_remuneration",
           "consequence": "covered_above_threshold",
-          "description": "From 1978, 3121(a)(16) excludes \"remuneration paid by an organization exempt from income tax under section 501(a) (other than an organization described in section 401(a)) or under section 521 in any calendar year to an employee for service rendered in the employ of such organization, if the remuneration paid in such year by the organization to the employee for such service is less than $100\". It reaches exempt organizations beyond 501(c)(3), whose service former 410(a)(8)(B) does not exclude, so that service is covered above the $100 annual test (threshold nonprofit_remuneration_year), as the row's threshold concept states. The title II text, 409(a)(14) (409(p) as Pub. L. 95-216 added it), reads \"Remuneration paid by an organization exempt from income tax under section 501 of the Internal Revenue Code of 1986\" and names neither the 401(a) exception nor 521; the text follows 3121(a)(16).",
-          "precedence": 7,
+          "description": "From 1978, 3121(a)(16) excludes \"remuneration paid by an organization exempt from income tax under section 501(a) (other than an organization described in section 401(a)) or under section 521 in any calendar year to an employee for service rendered in the employ of such organization, if the remuneration paid in such year by the organization to the employee for such service is less than $100\". It reaches exempt organizations beyond 501(c)(3), whose service former 410(a)(8)(B) does not exclude, so that service is covered above the $100 annual test (threshold nonprofit_remuneration_year), as the row's threshold concept states. The title II text, 409(a)(14) (409(p) as Pub. L. 95-216 added it), reads \"Remuneration paid by an organization exempt from income tax under section 501 of the Internal Revenue Code of 1986\" and names neither the 401(a) exception nor 521. The case follows 3121(a)(16) for the other organizations; a 401(a) trust and a 521 cooperative paying less than $100 in the year reach the open cases section_401a_trust_small_remuneration and cooperative_521_small_remuneration (review r7 M-8(e)).",
+          "precedence": 8,
           "when": {
             "nonprofit_organization": "employer is an organization exempt from income tax under 501(a) (other than one described in 401(a)) or under 521, and not one described in 501(c)(3)"
           }
@@ -15242,7 +15270,7 @@
         {
           "case_id": "section_401a_trust_small_remuneration",
           "consequence": "open",
-          "description": "The Social Security Act's 409 and the Code's 3121(a)(16) state the $100 rule for exempt organizations differently: 3121(a)(16) carves out \"an organization described in section 401(a)\", while the 409 text the 1984 row quotes names any \"organization exempt from income tax under section 501\". Neither text changes at 1984, so both rows open the question instead of choosing (review r6 M-8).",
+          "description": "The Social Security Act's 409 and the Code's 3121(a)(16) state the $100 rule for exempt organizations differently: 3121(a)(16) carves out \"an organization described in section 401(a)\", while the 409 text the 1984 row quotes names any \"organization exempt from income tax under section 501\". Neither text changes at 1984, so both rows open the question instead of choosing (review r6 M-8). The case reads the $100 amount both texts share: at $100 or more in the year both readings cover the pay, so the case does not reach it (review r7 M-8(b)).",
           "open_alternatives": [
             {
               "description": "409(a)(14) (originally 409(p)) excludes from wages remuneration below $100 a year paid by an organization exempt under section 501, a 401(a) trust included: the $100 annual test applies (covered_above_threshold).",
@@ -15254,13 +15282,21 @@
             }
           ],
           "open_reason": "SECTION_401A_TRUST_SMALL_REMUNERATION_UNSETTLED: the captured 409 text and 3121(a)(16) disagree on whether a 401(a) trust's remuneration below $100 a year is excluded, and no capture reconciles them, so the case refuses.",
-          "precedence": 8,
+          "precedence": 9,
           "when": {
+            "amount": "remuneration paid by the organization to the employee in the calendar year less than $100",
             "nonprofit_organization": "employer is a trust described in 401(a) and exempt from income tax under 501(a)"
           }
         }
       ],
       "citations": [
+        {
+          "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+          "capture": "lii_42_409.html",
+          "location": "409(a)(14)",
+          "quote": "(14) Remuneration paid by an organization exempt from income tax under section 501 of the Internal Revenue Code of 1986 in any calendar year to an employee for service rendered in the employ of such organization, if the remuneration paid in such year by the organization to the employee for such service is less than $100;",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
         {
           "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
           "capture": "lii_42_409.html",
@@ -15387,6 +15423,13 @@
         {
           "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
           "capture": "uscode_119_120_26_3121.html",
+          "location": "3121(a)(16)",
+          "quote": "(16) remuneration paid by an organization exempt from income tax under section 501(a) (other than an organization described in section 401(a)) or under section 521 in any calendar year to an employee for service rendered in the employ of such organization, if the remuneration paid in such year by the organization to the employee for such service is less than $100;",
+          "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
+        },
+        {
+          "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+          "capture": "uscode_119_120_26_3121.html",
           "location": "3121(r), 1977 amendment and effective-date notes",
           "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
         },
@@ -15410,6 +15453,13 @@
           "location": "Pub. L. 86-778 section 105(b)(5)",
           "quote": "Paragraph (1) shall not apply to any service performed for the organization in a period for which a certificate filed pursuant to section 3121(k)(1) of such Code is not in effect.",
           "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
+        },
+        {
+          "authority": "42 USC 409, official 1994 United States Code edition",
+          "capture": "uscode_1994_42_409.html",
+          "location": "409(a)(14)(A)",
+          "quote": "(14)(A) Remuneration paid by an organization exempt from income tax under section 501 of the Internal Revenue Code of 1986 in any calendar year to an employee for service rendered in the employ of such organization",
+          "sha256": "260f3fe34bf11da3230021e1a1f558c925e2f0898b687d28ebcb3704b1220d27"
         },
         {
           "authority": "42 USC 409, official 1994 United States Code edition",
@@ -15542,7 +15592,6 @@
           "status": "resolved_by_primary_Code_text_and_amending_act_effective_date"
         },
         "unread_trigger_facts": {
-          "amount": "The remuneration that the row's threshold (nonprofit_remuneration_year) compares; no case condition depends on the amount.",
           "month_or_exposure": "The service period the threshold aggregates over (the calendar year of 409(p)/3121(a)(16)); no case reads this fact.",
           "reporting_unit": "The aggregation unit of the threshold nonprofit_remuneration_year (same employer, employee and calendar year); no case condition depends on it."
         },
@@ -15567,7 +15616,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "No case holds, so the employer is neither an organization described in 501(c)(3) and exempt under 501(a) nor another organization exempt under 501(a) (other than one described in 401(a)) or under 521: former 410(a)(8)(B) does not exclude the service and 3121(a)(16)'s $100 test does not reach it; apply the other families."
+        "description": "No case holds, so the employer is neither an organization described in 501(c)(3) and exempt under 501(a) nor another organization exempt under 501(a) (other than one described in 401(a)) or under 521: former 410(a)(8)(B) does not exclude the service and 3121(a)(16)'s $100 test does not reach it; apply the other families. A 401(a) trust's or 521 cooperative's employee paid $100 or more in the year also lands here: both readings of the open cases cover that pay."
       },
       "rule_id": "nonprofit_1978_1983",
       "trigger_facts": [
@@ -15629,7 +15678,7 @@
         {
           "case_id": "section_401a_trust_small_remuneration",
           "consequence": "open",
-          "description": "The Social Security Act's 409 and the Code's 3121(a)(16) state the $100 rule for exempt organizations differently: 3121(a)(16) carves out \"an organization described in section 401(a)\", while the 409 text the 1984 row quotes names any \"organization exempt from income tax under section 501\". Neither text changes at 1984, so both rows open the question instead of choosing (review r6 M-8).",
+          "description": "The Social Security Act's 409 and the Code's 3121(a)(16) state the $100 rule for exempt organizations differently: 3121(a)(16) carves out \"an organization described in section 401(a)\", while the 409 text the 1984 row quotes names any \"organization exempt from income tax under section 501\". Neither text changes at 1984, so both rows open the question instead of choosing (review r6 M-8). The case reads the $100 amount both texts share: at $100 or more in the year both readings cover the pay, so the case does not reach it (review r7 M-8(b)).",
           "open_alternatives": [
             {
               "description": "409(a)(14) (originally 409(p)) excludes from wages remuneration below $100 a year paid by an organization exempt under section 501, a 401(a) trust included: the $100 annual test applies (covered_above_threshold).",
@@ -15643,7 +15692,29 @@
           "open_reason": "SECTION_401A_TRUST_SMALL_REMUNERATION_UNSETTLED: the captured 409 text and 3121(a)(16) disagree on whether a 401(a) trust's remuneration below $100 a year is excluded, and no capture reconciles them, so the case refuses.",
           "precedence": 5,
           "when": {
+            "amount": "remuneration paid by the organization to the employee in the calendar year less than $100",
             "nonprofit_organization": "employer is a trust described in 401(a) and exempt from income tax under 501(a)"
+          }
+        },
+        {
+          "case_id": "cooperative_521_small_remuneration",
+          "consequence": "open",
+          "description": "3121(a)(16) excludes small remuneration paid by an organization exempt \"under section 521\", while the title II text, 409(a)(14) (409(p) as Pub. L. 95-216 added it; 409(a)(14)(A) in the 1994 edition), names only an organization \"exempt from income tax under section 501\". The 401(a) half of the same disagreement is the open case section_401a_trust_small_remuneration; review r7 M-8(e) opens this half, which the row had closed by following 3121(a)(16). The case reads the $100 amount both texts share: at $100 or more in the year both readings cover the pay, so the case does not reach it.",
+          "open_alternatives": [
+            {
+              "description": "409(a)(14) names only an organization exempt under section 501, so no $100 test reaches a 521 cooperative's pay, which is covered.",
+              "name": "section_409_wages_reading"
+            },
+            {
+              "description": "3121(a)(16) reaches an organization exempt under section 521: remuneration below $100 a year is excluded (covered_above_threshold).",
+              "name": "section_3121a16_reading"
+            }
+          ],
+          "open_reason": "COOPERATIVE_521_SMALL_REMUNERATION_FROM_1978_UNSETTLED: 3121(a)(16) names an organization exempt \"under section 521\" and the captured 409(a)(14) text names only one exempt \"under section 501\"; no capture reconciles them, so whether a 521 cooperative's remuneration below $100 a year is wages for title II is not settled and the case refuses.",
+          "precedence": 6,
+          "when": {
+            "amount": "remuneration paid by the organization to the employee in the calendar year less than $100",
+            "nonprofit_organization": "employer is a farmers' cooperative exempt from income tax under section 521"
           }
         }
       ],
@@ -15659,6 +15730,13 @@
           "capture": "lii_42_409.html",
           "location": "409(a)(14)",
           "quote": "Remuneration paid by an organization exempt from income tax under section 501 of the Internal Revenue Code of 1986 in any calendar year to an employee for service rendered in the employ of such organization, if the remuneration paid in such year by the organization to the employee for such service is less than $100",
+          "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
+        },
+        {
+          "authority": "42 U.S.C. 409 (LII capture 2026-10-24)",
+          "capture": "lii_42_409.html",
+          "location": "409(a)(14)",
+          "quote": "(14) Remuneration paid by an organization exempt from income tax under section 501 of the Internal Revenue Code of 1986 in any calendar year to an employee for service rendered in the employ of such organization, if the remuneration paid in such year by the organization to the employee for such service is less than $100;",
           "sha256": "d37ce452924c0d10f48af5b2c8cbb96d6692c529dc633a927092af90db69107b"
         },
         {
@@ -15728,10 +15806,24 @@
           "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
         },
         {
+          "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07)",
+          "capture": "uscode_119_120_26_3121.html",
+          "location": "3121(a)(16)",
+          "quote": "(16) remuneration paid by an organization exempt from income tax under section 501(a) (other than an organization described in section 401(a)) or under section 521 in any calendar year to an employee for service rendered in the employ of such organization, if the remuneration paid in such year by the organization to the employee for such service is less than $100;",
+          "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
+        },
+        {
           "authority": "26 U.S.C. 3121 (Office of Law Revision Counsel release 119-120, laws through 2026-10-07), later-edition text with historical notes",
           "capture": "uscode_119_120_26_3121.html",
           "location": "3121(a)(16), qualifying section 501(a)/521 organization and section 401(a) trust exception",
           "sha256": "b1dd2eb2a7bd33fb05465b8f44ff0092cc12b09c26e4ab504b1bc21f286d6405"
+        },
+        {
+          "authority": "42 USC 409, official 1994 United States Code edition",
+          "capture": "uscode_1994_42_409.html",
+          "location": "409(a)(14)(A)",
+          "quote": "(14)(A) Remuneration paid by an organization exempt from income tax under section 501 of the Internal Revenue Code of 1986 in any calendar year to an employee for service rendered in the employ of such organization",
+          "sha256": "260f3fe34bf11da3230021e1a1f558c925e2f0898b687d28ebcb3704b1220d27"
         }
       ],
       "consequence": "covered_above_threshold",
@@ -15865,7 +15957,6 @@
         },
         "threshold_id": "nonprofit_remuneration_year",
         "unread_trigger_facts": {
-          "amount": "The remuneration that the row's threshold (nonprofit_remuneration_year) compares; no case condition depends on the amount.",
           "month_or_exposure": "The service period the threshold aggregates over (the calendar year of 409(a)(14)/3121(a)(16)); no case reads this fact.",
           "reporting_unit": "The aggregation unit of the threshold nonprofit_remuneration_year (same employer, employee and calendar year); no case condition depends on it."
         }
@@ -15873,7 +15964,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered_above_threshold",
-        "description": "No case holds: the employer is an organization exempt from income tax under 501 or 521 and the service is employment for it, so mandatory nonprofit coverage applies once the annual remuneration threshold is met; apply the other families."
+        "description": "No case holds: the employer is an organization exempt from income tax under 501 or 521 and the service is employment for it, so mandatory nonprofit coverage applies once the annual remuneration threshold is met; apply the other families. A 401(a) trust's or 521 cooperative's employee paid less than $100 in the year reaches its open case first."
       },
       "rule_id": "nonprofit_1984_2026",
       "trigger_facts": [
@@ -28651,7 +28742,7 @@
         {
           "case_id": "farm_arrangement_with_non_individual",
           "consequence": "open",
-          "description": "411(a)(1)'s proviso reaches an arrangement \"between the owner or tenant and another individual\", while 20 CFR 404.1082(c), captured from its April 1, 1996 edition, speaks of another person (review r6 M-13). Ranked below farm_rental_arrangement and above real_estate_rentals, whose condition this payment also meets.",
+          "description": "411(a)(1)'s proviso reaches an arrangement \"between the owner or tenant and another individual\", while 20 CFR 404.1082(c), captured from its April 1, 1996 edition, speaks of another person (review r6 M-13). Ranked below farm_rental_arrangement and above real_estate_rentals, whose condition this payment also meets. The case reaches only an owner or tenant who materially participates under an arrangement that provides for it: otherwise the farm-rental participation family gives noncovered (no_actual_material_participation, arrangement_lacks_participation_term), as real_estate_rentals does, so both readings agree (review r7 M-8(d)).",
           "open_alternatives": [
             {
               "description": "Only an arrangement with an individual takes the proviso; the payments stay rentals from real estate that 411(a)(1) excludes (real_estate_rentals).",
@@ -28665,6 +28756,8 @@
           "open_reason": "FARM_ARRANGEMENT_NON_INDIVIDUAL_UNSETTLED: the statute's farm-rental proviso names an arrangement with \"another individual\"; the 1996 and later CFR edition the row cites names another person. No capture says whether an arrangement with a corporation or other entity that produces the crop takes the rent out of 411(a)(1)'s exclusion, so the case refuses.",
           "precedence": 5,
           "when": {
+            "material_participation": true,
+            "rental_arrangement_requires_material_participation": true,
             "rental_income": "income of an owner or tenant of land under an arrangement for a corporation, partnership, trust or other person who is not an individual to produce agricultural or horticultural commodities on it"
           }
         },
@@ -28874,7 +28967,6 @@
         "rental_income_and_attributable_deductions_excluded": true,
         "scope": "Income-definition modifier; does not exclude all earnings of a person receiving rents.",
         "unread_trigger_facts": {
-          "material_participation": "self_employment_farm_rental_participation reads it after farm_rental_arrangement defers.",
           "trade_or_business": "The base definition reads it; the dealer limb is carried by real_estate_dealer_status; 404.1082(e)'s split of a non-real-estate business's income needs no extra case (the rental part meets real_estate_rentals, the rest the residual)."
         }
       },
@@ -28887,6 +28979,7 @@
       "trigger_facts": [
         "material_participation",
         "real_estate_dealer_status",
+        "rental_arrangement_requires_material_participation",
         "rental_income",
         "services_to_occupants",
         "trade_or_business"
