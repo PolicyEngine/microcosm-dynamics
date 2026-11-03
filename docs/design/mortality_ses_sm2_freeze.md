@@ -95,7 +95,7 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | S2-13 | 602 | **[proposed]** `unclassified_rule="reference"` for SM3's overall denominator | Confirmed for SM3; `refuse` for conformance runs and for any projection until the frame carries the attributes. On `R_ref`, `refuse` applies after the under-25 rule and the ACS crosswalk, which map every code the dictionaries read list (§6.2, §8.2) | §8.3 | frozen here |
 | S2-14 | 606 | **[open: identification]** marginal contrasts do not determine mutually adjusted coefficients; freeze a joint route and its reference distribution | Five candidate routes and one unavailable route; primary JR-C; JR-A (plain addition, labeled), JR-B, JR-D and JR-E as sensitivities. NHIS targets compare as age-standardized hazard ratios on `R_ref(t)`'s single-age population, under named assumption M-H1 (§4, §4.5). The ordered logit fits once per knot year and sex on that year's ACS, and again inside every replicate, with a frozen optimizer, convergence rule and tie rule (§6.2). The ACS income item passes a frozen acceptance rule, and JR-C-W covers the proxy's weakness for women (§6.2, §6.5) | §4, §6 | frozen here |
 | S2-15 | 629 | **[open]** exact release dates of any earlier NHIS cohort used | Left open. The linked-mortality `.dat` files carry the listing date 26 April 2022; each NHIS year's release date settles from that year's survey description, which the fit job records. Nothing in SM2 depends on it, because SM2 claims no prospective origin | §3.4 | left open; settled by the fit job's per-year release ledger |
-| S2-16 | 641 | **[frozen tolerance; proposed operationalization]** e65 target from source ratios on one baseline, with a fixed reference population, marginalization and tail rule | Frozen; the 0.1-year limit stays | §9.2 | frozen here (operationalization); tolerance frozen, S0.1 §2.5 |
+| S2-16 | 641 | **[frozen tolerance; proposed operationalization]** e65 target from source ratios on one baseline, with a fixed reference population, marginalization and tail rule | Frozen; the 0.1-year limit stays. Corrected in fix round 1 to keep NCHS's age and closing conventions, which S0.1 requires (audit lines 647–648) and the first draft dropped: the race and Hispanic-origin targets close NCHS's "100 and older" interval as NCHS does, and the model side keeps the repository's closing, so a mismatch in the tail reaches the test. The earnings targets keep the fixed tail rule S0.1 asks of OACT (audit lines 643–646) | §9.2 | frozen here (operationalization); tolerance frozen, S0.1 §2.5 |
 | S2-17 | 649 | **[open]** whether the different source populations and baselines can satisfy the targets together | This record freezes the procedure: one joint calibration per knot on one reference population, and a named failure when it cannot reproduce every target. Whether it can is an outcome, so this record does not settle it | §6.3, §9 | left open; settled by the fit under §9's rule |
 | S2-18 | 659 | **[open until the loader plan is frozen]** the critical family's integer size and which joint-survey targets it holds | Frozen: **6,884** targets, itemized | §9.4 | frozen here |
 | S2-19 | 677 | **[proposed named procedure]** `SM2_SOURCE_RECONSTRUCTION_AND_CLUSTER_BOOTSTRAP` | Filled in step by step | §9 | frozen here |
@@ -1262,7 +1262,7 @@ failure stops the procedure (§10, `GATE_FAIL_OR_REGRESSION_FAIL`).
   constant-terminal-q closing rule that awaits ratification" (line 143;
   line 1146 repeats that §2.1 discloses it). So no sensitivity keeps that
   construction.
-- **The limit.** `|e65(q_F,g) − e65(q_T,g)| ≤ 0.1` year, **the design's
+- **The limit.** `|e65_F,g − e65_T,g| ≤ 0.1` year, **the design's
   limit, which stays at 0.1 year** (design §5.3), for every earnings
   quintile and every race and Hispanic-origin group, both sexes, at every
   knot. Education has no e65 target: NCHS stops at 64 and S0.1 applies the
@@ -1386,7 +1386,10 @@ e65 bounds and make passing easier, so this record applies S0.1's rule:
   reconstruction check. The
   e65 members compare two different constructions (the model on the
   reference population against the source's ratios on the baseline), so
-  they also test composition, capping and tails.
+  they also test composition, capping and tails. The race and
+  Hispanic-origin e65 members also test the model's tail against NCHS's:
+  their targets close the "100 and older" interval as NCHS does, while the
+  model keeps the repository's closing (§9.2).
 - **Not in the family.** The sensitivities of §5, §6.5 and §7.3, and the
   sources reported beside the fit.
 
@@ -1584,9 +1587,21 @@ publication rule, not a precision guarantee (S0.1 §2.5).
   shares under known `λ` and cut points, recovers them within
   `1 × 10⁻⁶`, converging under §6.2's rule from §6.2's start.
 - When the invented population's attributes are independent, its
-  quintiles hold one fifth each and nothing caps, the fitted and target
-  e65 agree exactly; the fitted life tables satisfy `life_table.py`'s
-  invariants.
+  quintiles hold one fifth each, nothing caps, and the invented source
+  tables come from the same coefficients on the same population, the
+  fitted and target e65 agree exactly for every earnings quintile. For a
+  race and Hispanic-origin group they then differ by the tail alone:
+  `e65_F,g − e65_T,g = l(100) / l(65) × (e100_F,g − e100_T,g)`, with
+  `e100_F,g = life_expectancy(q_F,g[0..120], 100)`, because NCHS's
+  equation 17 and `life_table.py`'s `Lx = lx − 0.5 dx` give the same
+  person-years at 65–99 (`life_table.py:13`; NVSR 75(5) p. 61). The two
+  agree exactly when the invented open-interval ratio `e100_g /
+  e100_total` also equals `e100_F,g / e100_base`. The fitted life tables
+  satisfy `life_table.py`'s invariants.
+- **NCHS-closing identity (M7):** with every invented NCHS ratio equal
+  to one (`ρ_g(a) = 1` at 65–99 and `e100_g = e100_total`), §9.2's race
+  target equals `life_expectancy(q_base(s, ·, t)[0..120], 65)` within
+  `1 × 10⁻¹²`.
 - **NHIS implied value under proportional hazards (M-H1):** when every
   category's hazard at each age of a band equals a fixed multiple of the
   reference category's, the age-standardized implied value of §4 equals
@@ -1613,6 +1628,13 @@ publication rule, not a precision guarantee (S0.1 §2.5).
 - The fit's normalization against SM1's `normalize_probabilities` called
   directly on the expanded rows.
 - `period_life_table` against `life_expectancy` for every fitted table.
+- §9.2's direct sum for a race and Hispanic-origin target,
+  `(Σ_{a=65..99} L(a) + l(100) × e100_T,g) / l(65)`, against
+  `life_expectancy` on ages 0–100 with the probability at 100 set to
+  `1 / (e100_T,g + 1/2)`. The constant-terminal-`q` closing gives
+  `e_w = (1 − q_w / 2) / q_w = 1 / q_w − 1/2` at the last age
+  (`life_table.py:25`, 170), so the recursion starts from `e100_T,g`; the
+  test draws `e100_T,g ≥ 1/2`, which keeps that probability in `(0, 1]`.
 - The NHIS Poisson estimator against a direct person-year rate ratio on
   synthetic data with one covariate.
 - The replicate-variance code against a hand formula on synthetic
