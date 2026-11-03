@@ -1960,7 +1960,9 @@ ratios). Each hash matched its folder's `files.sha256`.
 (the lines this record cites, and a search for its mentions of the
 closing rule, which found lines 143 and 1146); `src/populace_dynamics/data/life_table.py`
 (in full); `src/populace_dynamics/mortality_ses/specification.py` (a
-search for the columns it reads, lines 203–224).
+search for the columns it reads, lines 203–224); and `pyproject.toml`
+(lines 118–130, the pytest settings, read before the test run below, a
+file outside the brief's read list).
 
 **What showed despite masking.** A few one- and two-digit counts from
 Table I of NVSR 70(19) and 74(6); number words and one axis label in CBO
@@ -1974,4 +1976,8 @@ column headers displayed. None of them appears in this record.
 scratch folder that ran `life_table.py` on invented life tables to test
 §9.2's formulas (the direct sum against the seeded recursion, the
 identity with every ratio at one, and the tail term of §11.7). It ran
-nothing on real data and computed no outcome.
+nothing on real data and computed no outcome. It also ran
+`tests/mortality_ses` serially with `-p no:cacheprovider`: 116 passed.
+Those tests import repository modules beyond SM1's, though not
+`estimates/group_breakdown.py`, and the run displayed none of their
+content.
