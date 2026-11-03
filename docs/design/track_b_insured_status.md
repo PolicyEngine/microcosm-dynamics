@@ -2902,8 +2902,9 @@ drawn records, and that test also checks that each filling passing 404.130(b) or
 
 Refusing a prior no placement supports left 62 percent of
 `subsequent_declaration`'s draws refusing, so that generator now places the QCs
-its prior needs. It computes on 278 of 400 draws, with 11 refusing for want of
-support.
+its prior needs and keeps `declaration`'s limit of four partial years, because
+the oracle lists every placement. It computes on 285 of 400 draws, with 11
+refusing for want of support.
 `test_status_stress_candidate_order_changes_nothing` moved from seed 5000019,
 which now refuses, to 5000059.
 
@@ -2938,7 +2939,11 @@ this test and `remove_first_start_check` first on
 entries are the tests that pin this refusal,
 `test_placement_binds_a_prior_only_when_it_splits_them`, which calls `_prior_basis`
 directly, and `test_classification_oracle_prior_and_unknown_completions`, which
-checks only that a row and its weight survive.
+checks only that a row and its weight survive. Over the stress tests that expect a
+refusal, the log found ten of `test_status_stress_refuses_a_start_no_filling_supports`'s
+13 seeds refusing for want of support. That test now draws 13 seeds on which the
+oracle shows no filling with both the earliest start and the best status or date,
+and it pins the moving start's detail.
 
 These tests execute the invariants this round adds:
 

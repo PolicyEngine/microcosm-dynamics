@@ -42,22 +42,23 @@ from hypothesis import strategies as st
 from populace_dynamics.track_b import insured_status as rule
 from populace_dynamics.track_b.gross_benefits import InvalidFamilyInput
 
-# Seeds whose first start moved with placement. Round 14 answered each one
-# from a start and a status that no single filling supports.
+# Seeds whose first start moves with placement, where no filling carries both
+# the earliest start and the best status or date. Round 14 answered such a
+# record from a start and a result that no single filling supports.
 SPLIT_SEEDS = (
-    102037,
-    102202,
-    103045,
-    103702,
-    105793,
-    109597,
-    110777,
-    203310,
-    207027,
+    109307,
+    109493,
+    203503,
+    203620,
+    203761,
+    205457,
+    207461,
     207682,
-    209481,
-    209505,
+    208179,
+    210817,
     212010,
+    213380,
+    213897,
 )
 
 
@@ -477,6 +478,10 @@ def subsequent_declaration(seed):
         annual[year] = min(needed, 4)
         needed -= annual[year]
     annual = {y: n for y, n in annual.items() if n}
+    # The oracle lists every placement, so keep declaration's limit, and the
+    # years around the prior.
+    for credited in [y for y in sorted(annual) if annual[y] < 4][4:]:
+        annual[credited] = 4
     case.update(birth=birth, prior=((begins, ends),), special=True)
     case.update(annual=annual)
     return case
@@ -1167,6 +1172,7 @@ def test_status_stress_refuses_a_start_no_filling_supports(seed):
         error.value.reason
         is rule.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY
     )
+    assert error.value.detail.startswith("First insured start depends")
 
 
 @settings(max_examples=120, deadline=None, derandomize=True)
