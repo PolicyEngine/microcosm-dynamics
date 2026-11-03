@@ -90,9 +90,11 @@ Invariants (property tests in ``tests/income_resources``):
   the row's (a payment date on a service-date row) to the threshold it
   applies and the income years a consumer looks that threshold up for,
   ``{"threshold_id": ..., "income_years": [first, last]}``. The loader
-  refuses an entry that names no case of the row, an unknown threshold, or
-  a year in that range for which the threshold is neither published nor
-  computable by its indexing.
+  refuses an entry that names no case of the row, an unknown threshold,
+  years that are not two integer income years in 1968–2026 with first no
+  later than last, or a year in that range for which the threshold is
+  neither published nor computable by its indexing; each refusal is a
+  ``RegistryValidationError``.
 * A threshold declared monotone cannot decline across its published years.
   Only the optional-method limits carry this flag: their quarter-of-coverage
   inputs follow the statutory prior-year floor in 42 U.S.C. 413(d)(2).
