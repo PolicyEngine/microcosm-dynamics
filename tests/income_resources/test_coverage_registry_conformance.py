@@ -5456,8 +5456,8 @@ JUST_MISS_STATED_LIMITS = {
 # Review r6 M-1: conditions of multi-condition cases that no worker just
 # misses. Each such condition can be dropped without failing a test, so
 # the number is the PR's stated limit; it may fall, never rise.
-# Review r7: the round's just-miss workers bring it from 178 to 171.
-UNSEEN_CONDITION_LIMIT = 171
+# Review r7: the round's just-miss workers bring it from 178 to 169.
+UNSEEN_CONDITION_LIMIT = 169
 
 
 @pytest.mark.parametrize(

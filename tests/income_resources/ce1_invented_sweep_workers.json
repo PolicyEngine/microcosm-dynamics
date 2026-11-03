@@ -528,6 +528,11 @@
   ],
   [
    "se_units_1968_1983",
+   "church_at_least_400_without_ordinary_loss",
+   "church_employee_service"
+  ],
+  [
+   "se_units_1968_1983",
    "church_combined_below_100",
    "amount"
   ],
@@ -550,6 +555,11 @@
    "se_units_1984_1985",
    "church_at_least_100_with_ordinary_loss",
    "amount"
+  ],
+  [
+   "se_units_1984_1985",
+   "church_at_least_400_without_ordinary_loss",
+   "church_employee_service"
   ],
   [
    "se_units_1984_1985",
@@ -17862,6 +17872,29 @@
    },
    "expected": "covered",
    "decides": "first_hired_after_1983"
+  },
+  {
+   "rule_id": "se_units_1968_1983",
+   "worker": "INVENTED (review r7 'why this round differs', just misses church_at_least_400_without_ordinary_loss on church_employee_service): fiscal year beginning 1983-07-01; a cashier in an electing church's unrelated trade or business (section 513(a)) paid $500 for January-June 1984 service, who also has $450 of Schedule C profit and no loss. As #1307 reads it, 410(a)(8)(B) excepts unrelated-business service, so the $500 is wages, not church employee remuneration, and the church text is false of him; his $450 of other earnings meet the residual's $400 test.",
+   "facts": {
+    "church_employee_service": "remuneration for service in an electing church's unrelated trade or business (section 513(a))",
+    "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss",
+    "services_performed_date": "on or after 1984-01-01",
+    "taxable_year_start": "1983-07-01"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "residual"
+  },
+  {
+   "rule_id": "se_units_1984_1985",
+   "worker": "INVENTED (review r7 'why this round differs', just misses church_at_least_400_without_ordinary_loss on church_employee_service): 1985; a cashier in an electing church's unrelated trade or business (section 513(a)) paid $500 in wages, who also has $450 of Schedule C profit and no loss. As #1322 reads it, the unrelated-business pay is wages, not church employee remuneration, so the church text is false of him; his $450 of other earnings meet the residual's $400 test.",
+   "facts": {
+    "church_employee_service": "remuneration for service in an electing church's unrelated trade or business (section 513(a))",
+    "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss",
+    "taxable_year_start": "1985-01-01"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "residual"
   }
  ]
 }
