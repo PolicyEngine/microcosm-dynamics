@@ -50,9 +50,13 @@ Required outputs are annual QC ranges, favorable assigned-quarter witnesses,
 fully/currently/disability insurance, required counts and decision windows,
 DLI or a DLI range, unknown years, convention identifiers and the
 `decided_despite_unknowns` flag. Each unsupported configuration must return a
-named refusal retained in the shared evaluator denominator. Malformed input
-must fail before any coverage refusal. Output and refusal records must bind
-the rule revision and input declaration.
+named refusal retained in the shared evaluator denominator. A declaration that
+contradicts itself, such as a period that ends before it starts, fails before
+the rule runs. Otherwise an input error means every filling of the declaration
+is invalid; where the encoding can't show that, it refuses by name and keeps
+the row, so a listed prior that no completion supports refuses before the rule
+calls a later period impossible. Output and refusal records must bind the rule
+revision and input declaration.
 
 ## Pasteable review_finding
 
@@ -123,10 +127,13 @@ case inventory, preserving its coverage labels. In particular:
   handling and creditable endpoint quarters. Preserve any source-versus-rule
   discrepancy documented by the Python lane; do not make the compiler
   imitate an erratum to force parity.
-- Past 40 counted quarters a subsequent-special period has two readings:
-  half the whole period under 42 USC 423(c)(1)(B)(iii), and 20 of the last
-  40 quarters under 20 CFR 404.130(d)(2). Execute both, and refuse where
-  they differ. The Python rule logs this as
+- Past 40 counted quarters a subsequent-special period has three readings:
+  half the whole period after 21 under 42 USC 423(c)(1)(B)(iii), 20 of the
+  last 40 quarters under 20 CFR 404.130(d)(2) and RS 00301.147, and half the
+  whole period capped at 20 QCs, counted anywhere in it. Execute each, and
+  refuse by name where they differ. The Python rule computes on
+  404.130(d)(2), refuses by name where the uncapped half would insure, and
+  leaves the third parse to Max; it logs all three as
   `us:oasdi-insured-subsequent-special-long-period`, and d1920 holds the
   pattern.
 - Explicitly refuse unsupported deemed, alien, military/railroad, Medicare,

@@ -3654,4 +3654,5 @@ finding, original SSN evidence, or totalization agreement is implemented.
 This module supplies B6a's statutory insured-status predicate; it does not
 establish the empirical risk denominator or admit B6a forecasting. OP8(d)'s
 pre-entry convention remains Max's decision. No Axiom differential is
-claimed: the companion issue draft requests pinned413/414/423(c)(1) rules.
+claimed: the companion issue draft requests pinned 413, 414 and 423(c)(1)
+rules.
