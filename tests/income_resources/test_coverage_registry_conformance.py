@@ -5068,7 +5068,48 @@ ELECTION_MEMBER = (
     "for another entity count only as 31.3121(b)(7)-2(d)(4)(ii) and "
     "(e)(2)(v) allow"
 )
+NO_OASDI_AGREEMENT = (
+    "not covered for OASDI by any effective agreement/modification, "
+    "including a position that only a Medicare hospital insurance "
+    "modification under 418(v), redesignated 418(n), reaches"
+)
 REQUIRED_CONDITION_FAILURES = {
+    # Review r7 H-1 pins the entity-by-entity membership text in these
+    # covered cases too: a member of a qualified system the employing
+    # entity maintains reaches the member case's exclusion.
+    **{
+        (rule_id, case_id): (
+            "reaches",
+            {
+                "government_level": STATE_EMPLOYEE,
+                "public_retirement_system_participation": ELECTION_MEMBER,
+                "section_218_position": NO_OASDI_AGREEMENT,
+                **extra,
+            },
+            "noncovered",
+            via,
+        )
+        for rule_id, case_id, extra, via in (
+            (
+                "state_local_1991_2026",
+                "mandatory_nonmember_coverage",
+                {},
+                "qualified_system_member_without_agreement",
+            ),
+            *[
+                (
+                    rule_id,
+                    "outside_agreement_nonmember",
+                    {"election_work": ELECTION_WORKER},
+                    "outside_agreement_member",
+                )
+                for rule_id in (
+                    "election_work_1991_0702",
+                    "election_work_1995",
+                )
+            ],
+        )
+    },
     **{
         (rule_id, "vow_duties_with_3121r_election"): (
             "reaches",
@@ -5283,7 +5324,8 @@ def test_every_covered_required_condition_names_its_failure():
         if case["consequence"] in COVERED_CONSEQUENCES:
             covered.add((rule_id, case_id))
     assert set(REQUIRED_CONDITION_FAILURES) == covered
-    assert len(covered) == 22
+    # Review r7 H-1 adds the three covered membership cases (25).
+    assert len(covered) == 25
 
 
 @pytest.mark.parametrize(
