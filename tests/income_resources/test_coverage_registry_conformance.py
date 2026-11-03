@@ -4140,13 +4140,16 @@ NONPROFIT_NOT_IN_EFFECT = (
     "before the service; or the only certificate covers another "
     "3121(k)(1)(E) group"
 )
+# Review r7 M-9: the window is each quarter, after the organization
+# stopped paying, for which it paid no taxes (POMS RS 01901.540 D.8
+# forgives "the tax liability ... through 6/30/77").
 NONPROFIT_K4C_GAP = (
     "certificate deemed filed under 3121(k)(4) (the 1976 amendments' "
     "constructive filing), where the organization stopped paying the taxes "
     "before October 19, 1976, and the service falls before July 1, 1977, "
     "on or after the first day of the deemed certificate's applicable "
-    "period and after the last calendar quarter for which the organization "
-    "paid the taxes"
+    "period, in a calendar quarter, after the organization stopped paying "
+    "the taxes, for which it paid no taxes"
 )
 NONPROFIT_312C_REQUEST = (
     "the employee filed a request under Pub. L. 95-216 section 312(c) on or "

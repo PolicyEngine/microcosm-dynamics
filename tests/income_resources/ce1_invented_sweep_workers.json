@@ -333,6 +333,11 @@
   ],
   [
    "nonprofit_1968_1977",
+   "deemed_waiver_k4c_period",
+   "nonprofit_coverage_waiver"
+  ],
+  [
+   "nonprofit_1968_1977",
    "deemed_waiver_k5_request",
    "nonprofit_organization"
   ],
@@ -6480,7 +6485,7 @@
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": [
-     "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period and after the last calendar quarter for which the organization paid the taxes",
+     "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period, in a calendar quarter, after the organization stopped paying the taxes, for which it paid no taxes",
      "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
     ],
     "historical_fica_treatment": "the employee filed a request under Pub. L. 95-216 section 312(c) on or before April 15, 1980, with full payment of the employee taxes (or an installment arrangement under 3121(k)(8))"
@@ -6494,7 +6499,7 @@
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": [
-     "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period and after the last calendar quarter for which the organization paid the taxes",
+     "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period, in a calendar quarter, after the organization stopped paying the taxes, for which it paid no taxes",
      "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
     ],
     "historical_fica_treatment": "the employee filed a request under Pub. L. 95-216 section 312(c) on 1980-06-01, after April 15, 1980"
@@ -6519,7 +6524,7 @@
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": [
-     "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period and after the last calendar quarter for which the organization paid the taxes",
+     "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period, in a calendar quarter, after the organization stopped paying the taxes, for which it paid no taxes",
      "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
     ]
    },
@@ -17763,6 +17768,29 @@
    },
    "expected": "noncovered",
    "decides": "real_estate_rentals"
+  },
+  {
+   "rule_id": "nonprofit_1968_1977",
+   "worker": "INVENTED (review r7 M-9, reaches deemed_waiver_k4c_period): Lev, clerk in 1976 Q2 at a private 501(c)(3) college that never filed, paid FICA taxes 1973 Q3-1975 Q2, obtained no refund, stopped paying after 1975 Q2 and resumed in 1977 Q1. 1976 Q2 falls after the stop and its taxes went unpaid, so D.8's forgiveness through 6/30/77 reaches it; he made no 312(c) request.",
+   "facts": {
+    "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
+    "nonprofit_coverage_waiver": [
+     "certificate deemed filed under 3121(k)(4) (the 1976 amendments' constructive filing), where the organization stopped paying the taxes before October 19, 1976, and the service falls before July 1, 1977, on or after the first day of the deemed certificate's applicable period, in a calendar quarter, after the organization stopped paying the taxes, for which it paid no taxes",
+     "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
+    ]
+   },
+   "expected": "noncovered",
+   "decides": "deemed_waiver_k4c_period"
+  },
+  {
+   "rule_id": "nonprofit_1968_1977",
+   "worker": "INVENTED (review r7 M-9, just misses deemed_waiver_k4c_period on nonprofit_coverage_waiver): Mae, Lev's colleague, clerk in 1977 Q1, the quarter the college resumed paying the taxes: the quarter's taxes were paid, so no liability is forgiven and the deemed certificate covers her service.",
+   "facts": {
+    "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
+    "nonprofit_coverage_waiver": "certificate deemed filed under the 1976 amendments' constructive-filing provisions (no refund before 9/9/76), in effect for the service: the service falls on or after the first day of the first quarter for which the taxes were paid (RS 01901.540 C.2); taxes paid while the employer was waiting for an IRS ruling on its 501(c)(3) status do not count toward the constructive filing (RS 01901.540 D.8)"
+   },
+   "expected": "covered_above_threshold",
+   "decides": "deemed_waiver_all_employees"
   }
  ]
 }
