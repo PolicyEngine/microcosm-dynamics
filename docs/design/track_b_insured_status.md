@@ -2148,6 +2148,16 @@ The invariants added in this round are executed by these tests:
 - the DISABILITY refusal tracks the exact aggregate
   (`test_disability_refusal_tracks_the_exact_aggregate`).
 
+The oracle's `last_insured` scans down from the query quarter and stops at
+the first quarter that insures an onset, so it returns the latest one and
+skips the earlier quarters.
+`test_status_stress_last_insured_matches_a_full_scan` checks it against
+`full_scan_last_insured`, which tests every quarter from the first credit
+through the query. The test draws records from the base, entitlement-month,
+under-31 and subsequent-special generators. On two credit placements of
+each, it compares the scans with and without the declared periods, with and
+without the subsequent-special route, and under both readings.
+
 ## Round 16 diagnostics on the reported start
 
 Verification class: statutory conformance on invented declarations only.

@@ -41,7 +41,7 @@ listed prior alone limits the fillings.
 import calendar
 import random
 from datetime import date, timedelta
-from itertools import combinations, product
+from itertools import combinations, islice, product
 
 import pytest
 from hypothesis import assume, example, given, settings
@@ -170,7 +170,27 @@ def disability(
 
 
 def last_insured(birth, credits, at, periods, blind, special, reading):
-    """Latest quarter through the query that insures a potential onset."""
+    """Latest quarter through the query that insures a potential onset.
+
+    The scan runs down from the query and returns the first insured quarter
+    it meets.
+    """
+    return next(
+        (
+            candidate
+            for candidate in range(at, min(credits, default=at) - 1, -1)
+            if disability(
+                birth, credits, candidate, periods, blind, special, reading
+            )
+        ),
+        None,
+    )
+
+
+def full_scan_last_insured(
+    birth, credits, at, periods, blind, special, reading
+):
+    """``last_insured`` by checking every quarter, for the differential test."""
     return max(
         (
             candidate
@@ -1554,3 +1574,37 @@ def test_status_stress_every_history(seed, unknown_end, test):
     case = {**declaration(seed), "prior": ()}
     assume(sum(1 for _ in placements(case["annual"])) <= 96)
     check_every_history(case, unknown_end, test)
+
+
+@settings(max_examples=40, deadline=None, derandomize=True)
+@given(
+    seed=st.integers(0, 2**32 - 1),
+    make=st.sampled_from(
+        (
+            declaration,
+            with_entitlement,
+            under_31_declaration,
+            subsequent_declaration,
+        )
+    ),
+)
+def test_status_stress_last_insured_matches_a_full_scan(seed, make):
+    # The oracle's downward scan must date every filling as the full scan does.
+    case = make(seed)
+    current = case["prior"] + ((case["onset"], case["ending"]),)
+    for credits in islice(placements(case["annual"]), 2):
+        for periods in (current, ()):
+            for special in (False, True):
+                for reading in READINGS:
+                    args = (
+                        case["birth"],
+                        credits,
+                        quarter(case["month"]),
+                        periods,
+                        case["blind"],
+                        special,
+                        reading,
+                    )
+                    assert last_insured(*args) == full_scan_last_insured(
+                        *args
+                    ), (case, args)
