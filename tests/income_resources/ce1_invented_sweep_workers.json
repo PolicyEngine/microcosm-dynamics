@@ -377,6 +377,11 @@
    "amount"
   ],
   [
+   "se_units_1968_1983",
+   "church_employer_below_100",
+   "church_employee_service"
+  ],
+  [
    "se_units_1984_1985",
    "church_100_to_399_without_ordinary_loss",
    "amount"
@@ -395,6 +400,11 @@
    "se_units_1984_1985",
    "church_combined_below_100",
    "amount"
+  ],
+  [
+   "se_units_1984_1985",
+   "church_employer_below_100",
+   "church_employee_service"
   ],
   [
    "state_local_1991_2026",
@@ -15323,7 +15333,7 @@
    "rule_id": "se_units_1968_1983",
    "worker": "INVENTED: Fiscal year 1983-07-01 to 1984-06-30; a secretary employed by an electing church (non-ministerial, outside any unrelated trade or business) is paid $150 for January-June 1984 service, and has a $80 Schedule C loss. Combined $70: below $100, stop.",
    "facts": {
-    "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+    "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
     "amount": "combined earnings below $100",
     "services_performed_date": "on or after 1984-01-01",
     "taxable_year_start": "1983-07-01"
@@ -15335,7 +15345,7 @@
    "rule_id": "se_units_1968_1983",
    "worker": "INVENTED: Fiscal year beginning 1983-07-01; electing-church custodian (non-ministerial) paid $300 for January-June 1984 service; no other self-employment. Combined $300, no ordinary loss.",
    "facts": {
-    "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+    "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
     "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
     "services_performed_date": "on or after 1984-01-01",
     "taxable_year_start": "1983-07-01"
@@ -15347,7 +15357,7 @@
    "rule_id": "se_units_1968_1983",
    "worker": "INVENTED: Fiscal year beginning 1983-07-01; electing-church organist (non-ministerial) paid $250 for 1984 service, Schedule C loss $50. Combined $200 with a loss.",
    "facts": {
-    "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+    "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
     "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss",
     "services_performed_date": "on or after 1984-01-01",
     "taxable_year_start": "1983-07-01"
@@ -15359,7 +15369,7 @@
    "rule_id": "se_units_1968_1983",
    "worker": "INVENTED: Fiscal year beginning 1983-07-01; electing-church bookkeeper (non-ministerial) paid $500 for 1984 service plus $100 Schedule C profit. Combined $600, no loss.",
    "facts": {
-    "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+    "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
     "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss",
     "services_performed_date": "on or after 1984-01-01",
     "taxable_year_start": "1983-07-01"
@@ -15463,7 +15473,7 @@
    "rule_id": "se_units_1968_1983",
    "worker": "INVENTED: Fiscal year beginning 1983-07-01; an electing-church custodian (non-minister, outside any unrelated business) is paid $50 for 1983 service and $150 for 1984 service; no other self-employment. The $150 for service after 1983 passes the $100 gate; combined $150, no ordinary loss (N4 (a)).",
    "facts": {
-    "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+    "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
     "services_performed_date": [
      "before 1984-01-01",
      "on or after 1984-01-01"
@@ -15478,7 +15488,7 @@
    "rule_id": "se_units_1984_1985",
    "worker": "INVENTED: 1984; an electing-church secretary (non-ministerial) paid $150, with a $80 Schedule C loss. Combined $70.",
    "facts": {
-    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
+    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration in the taxable year",
     "amount": "combined earnings below $100",
     "taxable_year_start": "1984-01-01"
    },
@@ -15489,7 +15499,7 @@
    "rule_id": "se_units_1984_1985",
    "worker": "INVENTED: 1984; electing-church secretary paid $150 with a $40 Schedule C loss. Combined $110 with a loss: just misses church_combined_below_100.",
    "facts": {
-    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
+    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration in the taxable year",
     "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss",
     "taxable_year_start": "1984-01-01"
    },
@@ -15500,7 +15510,7 @@
    "rule_id": "se_units_1984_1985",
    "worker": "INVENTED: 1985; an electing-church custodian (non-ministerial) paid $300; no other self-employment. Instructions: line 13 = smaller of line 12a or 12c.",
    "facts": {
-    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
+    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration in the taxable year",
     "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
     "taxable_year_start": "1985-01-01"
    },
@@ -15511,7 +15521,7 @@
    "rule_id": "se_units_1984_1985",
    "worker": "INVENTED: 1985; electing-church custodian paid $399.99; no other self-employment. Still below $400.",
    "facts": {
-    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
+    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration in the taxable year",
     "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
     "taxable_year_start": "1985-01-01"
    },
@@ -15522,7 +15532,7 @@
    "rule_id": "se_units_1984_1985",
    "worker": "INVENTED: 1985; electing-church organist (non-ministerial) paid $250, partnership loss $50. Combined $200 with a loss.",
    "facts": {
-    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
+    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration in the taxable year",
     "amount": "combined earnings at least $100, with a Schedule C, Schedule F or partnership loss",
     "taxable_year_start": "1985-01-01"
    },
@@ -15533,7 +15543,7 @@
    "rule_id": "se_units_1984_1985",
    "worker": "INVENTED: 1984; electing-church bookkeeper paid $500, Schedule C profit $100. Combined $600, no loss.",
    "facts": {
-    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
+    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration in the taxable year",
     "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss",
     "taxable_year_start": "1984-01-01"
    },
@@ -15544,7 +15554,7 @@
    "rule_id": "se_units_1984_1985",
    "worker": "INVENTED: 1985; electing-church employee paid exactly $400, no other self-employment. Combined $400: just misses the $100-$399.99 case.",
    "facts": {
-    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
+    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration in the taxable year",
     "amount": "combined earnings at least $400, with no Schedule C, Schedule F or partnership loss",
     "taxable_year_start": "1985-01-01"
    },
@@ -15555,7 +15565,7 @@
    "rule_id": "se_units_1984_1985",
    "worker": "INVENTED: Fiscal year beginning 1985-07-01; electing-church custodian paid $300. The 1986 rules apply only to taxable years beginning after 1985-12-31, so this year stays under former 411(a)(13).",
    "facts": {
-    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
+    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration in the taxable year",
     "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
     "taxable_year_start": "1985-07-01"
    },
@@ -15575,13 +15585,13 @@
   },
   {
    "rule_id": "se_units_1984_1985",
-   "worker": "INVENTED: 1985; $60 from each of two electing churches. The gate is per employer; neither qualifies.",
+   "worker": "INVENTED (review r7 M-5, reaches church_employer_below_100): 1985; $60 from each of two electing churches, plus $5,000 of Schedule C profit, a separate item the residual decides. The gate is per employer: former 411(a)(13)(C) says pay from an employer paying less than $100 'shall not be included in self-employment income', so neither church's $60 counts toward the $400.",
    "facts": {
-    "church_employee_service": "electing-church remuneration from two employers each paying less than $100 in the taxable year",
+    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying less than $100 of such remuneration in the taxable year",
     "taxable_year_start": "1985-01-01"
    },
-   "expected": "covered_above_threshold",
-   "decides": "residual"
+   "expected": "noncovered",
+   "decides": "church_employer_below_100"
   },
   {
    "rule_id": "se_units_1984_1985",
@@ -16215,7 +16225,7 @@
    "rule_id": "se_units_1984_1985",
    "worker": "INVENTED (review r6 M-3): 1985: an ordained minister paid $350 as the part-time bookkeeper of an electing church that is not his congregation, with no other self-employment and no ordinary loss. Former 411(c)(2)(G) reaches \"service described in section 410(a)(8)(B)\", a service test, so his bookkeeping pay is church employee income.",
    "facts": {
-    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A)), from an employer paying at least $100 of such remuneration in the taxable year",
+    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration in the taxable year",
     "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss"
    },
    "expected": "covered",
@@ -17284,6 +17294,40 @@
    },
    "expected": "covered",
    "decides": "residual"
+  },
+  {
+   "rule_id": "se_units_1968_1983",
+   "worker": "INVENTED (review r7 M-5, reaches church_employer_below_100): fiscal year beginning 1983-07-01; a church secretary paid $80 by an electing church for January 1984 service, her only pay from that church, plus $2,000 of Schedule C profit, a separate item: former 411(a)(13)(C) keeps the $80 out of self-employment income.",
+   "facts": {
+    "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying less than $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+    "services_performed_date": "on or after 1984-01-01",
+    "taxable_year_start": "1983-07-01"
+   },
+   "expected": "noncovered",
+   "decides": "church_employer_below_100"
+  },
+  {
+   "rule_id": "se_units_1984_1985",
+   "worker": "INVENTED (review r7 M-5, just misses church_employer_below_100 on church_employee_service): 1985; an electing-church custodian (non-ministerial) paid exactly $100 by that church, with no other self-employment: the employer pays at least $100, so the gate holds and the $100 is the base.",
+   "facts": {
+    "church_employee_service": "remuneration for service in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration in the taxable year",
+    "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
+    "taxable_year_start": "1985-01-01"
+   },
+   "expected": "covered",
+   "decides": "church_100_to_399_without_ordinary_loss"
+  },
+  {
+   "rule_id": "se_units_1968_1983",
+   "worker": "INVENTED (review r7 M-5, just misses church_employer_below_100 on church_employee_service): fiscal year beginning 1983-07-01; an electing-church custodian (non-ministerial) paid exactly $100 for January-June 1984 service, with no other self-employment: the employer pays at least $100, so the gate holds.",
+   "facts": {
+    "church_employee_service": "remuneration for service performed on or after 1984-01-01 in the employ of an electing church or qualified church-controlled organization, other than service in an unrelated trade or business (section 513(a)), and other than service by a minister in the exercise of ministry or by a member of a religious order in the exercise of duties the order requires (410(a)(8)(A) service; for 1984-1985 the 1984 Schedule SE and 1985 Form 1040 instructions send a minister or a member of a religious order elsewhere), from an employer paying at least $100 of such remuneration (for service on or after 1984-01-01) in the taxable year",
+    "services_performed_date": "on or after 1984-01-01",
+    "amount": "combined earnings at least $100 and below $400, with no Schedule C, Schedule F or partnership loss",
+    "taxable_year_start": "1983-07-01"
+   },
+   "expected": "covered",
+   "decides": "church_100_to_399_without_ordinary_loss"
   }
  ]
 }

@@ -5387,7 +5387,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 360
+    assert sum(len(row["cases"]) for row in rows) == 362
     deferred = [
         w for w in INVENTED_SWEEP_WORKERS if w["expected"] == "deferred"
     ]
@@ -6604,13 +6604,20 @@ ELECTING_CHURCH_SERVICE = (
     "beginning of the 2-year period for which it was not furnished); outside "
     "an unrelated trade or business, and outside ministry or order duties"
 )
-# Review r6 low 3: the review's $80 comes from an employer paying less
-# than $100, so it meets no church case's employer gate.
+# Review r7 M-5: the review's $80 comes from an employer paying less
+# than $100, which former 411(a)(13)(C) keeps out of self-employment
+# income, so it meets the units row's church_employer_below_100 text.
 CHURCH_REMUNERATION_BELOW_GATE = (
-    "remuneration of $80 for service performed on or after 1984-01-01 in the "
-    "employ of an electing church, from an employer paying less than $100 of "
-    "such remuneration (for service on or after 1984-01-01) in the taxable "
-    "year"
+    "remuneration for service performed on or after 1984-01-01 in the "
+    "employ of an electing church or qualified church-controlled "
+    "organization, other than service in an unrelated trade or business "
+    "(section 513(a)), and other than service by a minister in the exercise "
+    "of ministry or by a member of a religious order in the exercise of "
+    "duties the order requires (410(a)(8)(A) service; for 1984-1985 the "
+    "1984 Schedule SE and 1985 Form 1040 instructions send a minister or a "
+    "member of a religious order elsewhere), from an employer paying less "
+    "than $100 of such remuneration (for service on or after 1984-01-01) in "
+    "the taxable year"
 )
 
 
@@ -6633,9 +6640,11 @@ def test_fiscal_year_church_service_after_1983_takes_the_1984_cases(
     year that began in 1983 reaches the 1968-1983 row, whose cases carry
     that date. Below the $100 employer gate the pay is excluded, so the
     review's $80 is noncovered; earlier service defers to nonprofit. In
-    the units row the $80 meets no church case, whose texts carry the
-    employer gate, so the residual's $400 floor applies (review r6 low 3:
-    round 5 said it reached church_combined_below_100)."""
+    the units row the $80 meets church_employer_below_100: former
+    411(a)(13)(C) says such pay "shall not be included in self-employment
+    income" (review r7 M-5; round 6's low 3 sent it to the residual's $400
+    floor, and round 5 to church_combined_below_100). Service before 1984
+    meets no church case, so the residual applies."""
     (rule,) = registry.lookup_date(
         "electing_church_employee_service", date(1983, 7, 1)
     )
@@ -6656,8 +6665,12 @@ def test_fiscal_year_church_service_after_1983_takes_the_1984_cases(
         "amount": "combined earnings below $100",
     }
     decided = units.resolve(cases_met(units, unit_facts))
-    assert "case_id" not in decided
-    assert decided["consequence"] == "covered_above_threshold"
+    if service_date == "on or after 1984-01-01":
+        assert decided["case_id"] == "church_employer_below_100"
+        assert decided["consequence"] == "noncovered"
+    else:
+        assert "case_id" not in decided
+        assert decided["consequence"] == "covered_above_threshold"
 
 
 @pytest.mark.parametrize(
