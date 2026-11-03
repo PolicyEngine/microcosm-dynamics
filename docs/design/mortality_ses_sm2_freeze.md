@@ -5,6 +5,10 @@ from `origin/master` `1808285925a069143047ae7e7bb2412012db0ad7` by the
 mortality, groups and financing lane's SM2 freeze job (Subfleet build,
 Claude Code, Opus 5.5).*
 
+*Revised 3 November 2026 by the same lane's fix round 1 (Subfleet build,
+Claude Code, Opus 5.5), which answers independent review r1 and changed
+only this file; §13.6 records what that round read and fetched.*
+
 ## 1. Status and authority
 
 **This record freezes SM2 under section 5.1 of the lane design**
@@ -42,18 +46,19 @@ those sources; nothing here feeds a blind role.
   coefficient, no contrast between categories, no life expectancy and no
   comparison between sources' gradients, and it prints no source table
   value. It names tables, pages, age bands, years and categories only.
-  Every number in it is a year, an age, a page, a count of table cells,
-  targets, PDF objects or drawing operators, a code from a codebook, a
-  tolerance the design or S0.1 sets, a rule or seed this record sets, or a
-  constant it derives from those (the Bonferroni critical value).
+  Every number in it is a year, an age, a page or line, a count of table
+  cells, targets, files, PDF objects or drawing operators, a file's byte
+  size or hash, a code from a codebook, a tolerance the design or S0.1
+  sets, a rule, constant or seed this record sets, or a constant it
+  derives from those (the Bonferroni critical values and the widening
+  they imply).
 - **Data.** Neither the freeze job nor its fix round opened a PSID, HRS,
   SIPP, NHIS or ACS microdata file, and neither computed anything on real
-  data. PSID use follows the project's data-access record. This record uses and compares no DYNASIM, Urban
-  Institute or PWBM material, which reaches these gates only through a
-  validation lane (S0.1 scope). CBO publication 49659 stays closed; its
-  methods count as
-  open until a validation lane supplies a bounded definitions-only
-  extract.
+  data. PSID use follows the project's data-access record. This record
+  uses and compares no DYNASIM, Urban Institute or PWBM material, which
+  reaches these gates only through a validation lane (S0.1 scope). CBO
+  publication 49659 stays closed; its methods count as open until a
+  validation lane supplies a bounded definitions-only extract.
 - **Markers.** **[frozen here]** marks a decision this record makes.
   **[frozen, S0.1 §x]** keeps a decision S0.1 already froze, with its
   pointer. **[open]** marks an item this record leaves unsettled and names
@@ -109,8 +114,11 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 **Counts.** Of the 25 rows, this record freezes 20 and leaves 5 open, each
 with what settles it (S2-15, S2-17, S2-21, S2-22, S2-24); none goes to Max.
 S2-24's open item keeps lifetime earnings inconclusive, and with it SM2's
-admission, until OACT's counts close it (§9.3). S2-03 carries a check the
-fit job performs. Section 12 holds two rules for cases outside this table.
+admission, until OACT's counts close it (§9.3); the same row leaves the
+public LMF's perturbation sensitivity open. S2-02, S2-03 and S2-07 carry
+checks the fit job performs (the NCHS education layouts, the intervening
+NHIS layouts and 2020's ACS codes), each with a failure outcome this
+record freezes. Section 12 holds two rules for cases outside this table.
 
 ## 3. Source-year matrix
 
@@ -1926,17 +1934,21 @@ cleared path, so it fetched nothing there.
 **Other files opened outside the repository.** The review r1 file; from
 the review's scratch folder, `m1_invented.py` and `schema_check.py`; the
 first job's brief, report and OACT counts check; in S0.1's source folder,
-`oact_study129.txt` (lines on pp. 2–9, masked), `nchs_nvsr75-05.txt`
-(pp. 1–2, the table notes and technical notes pp. 53–62, masked),
+`files.sha256` (the lines for the files below), `oact_study129.txt`
+(lines on pp. 2–9, masked), `nchs_nvsr75-05.txt` (pp. 1–2, the table
+notes and technical notes pp. 53–62, masked), `nchs_nvsr75-05.pdf`
+(the text of pp. 57 and 59, masked),
 `nchs_nvsr74-02.txt` (a search for classification ratios),
 `nchs_nvsr74-04.txt` (p. 132, masked),
 `nchs_lmf_public-use-linked-mortality-file-description.txt` (p. 1),
 `nchs_lmf_public-use-linked-mortality-files-data-dictionary.txt` (a
 search for a perturbation flag), `nhis2018_samadult_layout.pdf` (pp. 6–8),
+`nhis2018_personsx_layout.pdf` (p. 294, the `EDUC1` codes),
 `nhis2018_srvydesc.pdf` (converted to text in the round's scratch folder;
 search hits on pp. 8, 16, 70 and 82–94, and pp. 83, 92 and 93 read),
 `cbo_41681.txt` (pp. 1–2, masked),
-`cbo_wp2007-11_cristia.txt` (table titles) and
+`cbo_wp2007-11_cristia.txt` (table titles, and Table 2's layout with
+every digit masked) and
 `cbo_wp2007-11_cristia.pdf` (Tables 1, 2 and 4, PDF pp. 36, 37 and 39,
 every number masked); in the SM2 source folder, `files.sha256`,
 `nchs_us_life_tables_2019_nvsr70-19.txt` and
@@ -1945,7 +1957,8 @@ ratios). Each hash matched its folder's `files.sha256`.
 
 **Repository files.** This record; `docs/design/s0_1_source_audit.md`
 (lines 1–60 and 324–707); `docs/design/mortality_groups_financing.md`
-(the lines this record cites); `src/populace_dynamics/data/life_table.py`
+(the lines this record cites, and a search for its mentions of the
+closing rule, which found lines 143 and 1146); `src/populace_dynamics/data/life_table.py`
 (in full); `src/populace_dynamics/mortality_ses/specification.py` (a
 search for the columns it reads, lines 203–224).
 
@@ -1953,5 +1966,12 @@ search for the columns it reads, lines 203–224).
 Table I of NVSR 70(19) and 74(6); number words and one axis label in CBO
 41681's prose on pp. 1–2; in the ACS dictionaries, the `ADJINC` factors
 and the dollar bounds of the income items; and the TR 2026 example values
-in `life_table.py`'s docstring, which the round read in full. None of
-them appears in this record.
+in `life_table.py`'s docstring, which the round read in full; and one
+count in NVSR 75(5)'s prose on p. 2, which a search for the life-table
+column headers displayed. None of them appears in this record.
+
+**Code the round ran.** Edit scripts on this file, and one check in its
+scratch folder that ran `life_table.py` on invented life tables to test
+§9.2's formulas (the direct sum against the seeded recursion, the
+identity with every ratio at one, and the tail term of §11.7). It ran
+nothing on real data and computed no outcome.
