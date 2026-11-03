@@ -8,3 +8,5 @@
 2026-11-03T09:45:43Z 7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f 149436 ce1r7_lii_26_1401.html
 # URL https://www.law.cornell.edu/uscode/text/42/433
 2026-11-03T09:47:19Z 0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68 48313 ce1r7_lii_42_433.html
+# URL https://www.govinfo.gov/content/pkg/USCODE-1994-title10/html/USCODE-1994-title10-subtitleA-partIV-chap139-sec2360.htm
+2026-11-03T10:41:14Z c4ba5b5c30f88ef6845de468a77af72578d6a08feccf558569e4e8f8121844b0 2929 ce1r7_usc1994_10_2360.html

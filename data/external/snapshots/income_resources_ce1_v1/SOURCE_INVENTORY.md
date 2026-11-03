@@ -479,3 +479,4 @@ Three OCR derivatives that the round-1 retention check removed are restored, bec
 | ce1r7_cfr1998_26_31_3121b7_2.xml | https://www.govinfo.gov/content/pkg/CFR-1998-title26-vol14/xml/CFR-1998-title26-vol14-sec31-3121b7-2.xml | 2026-11-03T09:08:29Z | 62212 | `4032048e228dedb42ef9450c526cd26fd4af576786318bce9183afb3836121d4` |
 | ce1r7_lii_26_1401.html | https://www.law.cornell.edu/uscode/text/26/1401 | 2026-11-03T09:45:43Z | 149436 | `7f2b07efa4302158aadf98a4d572d4921e8bffa07e36c22e898418892fccd46f` |
 | ce1r7_lii_42_433.html | https://www.law.cornell.edu/uscode/text/42/433 | 2026-11-03T09:47:19Z | 48313 | `0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68` |
+| ce1r7_usc1994_10_2360.html | https://www.govinfo.gov/content/pkg/USCODE-1994-title10/html/USCODE-1994-title10-subtitleA-partIV-chap139-sec2360.htm | 2026-11-03T10:41:14Z | 2929 | `c4ba5b5c30f88ef6845de468a77af72578d6a08feccf558569e4e8f8121844b0` |

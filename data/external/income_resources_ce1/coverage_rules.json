@@ -9141,20 +9141,10 @@
           }
         },
         {
-          "case_id": "army_corps_2360_student_aide",
-          "consequence": "noncovered",
-          "description": "POMS RS 01901.340 C.5 (2024-06-14 edition): the services of students whom U.S. Army Corps of Engineers research and development laboratories engage as laboratory aides under 10 U.S.C. 2360 contracts \"are not covered for Social Security or CSRS purposes\". No capture holds or dates section 2360, but the case's condition names a 2360 contract, so it reaches only service under that authority once it exists; before then no service meets it and the cases below decide. Both readings the round-5 open case recorded give that same result, so the case is closed (review r6 M-2).",
-          "precedence": 2,
-          "when": {
-            "federal_service": "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment",
-            "government_level": "employee of the United States or of an instrumentality of the United States"
-          }
-        },
-        {
           "case_id": "federal_retirement_system_service",
           "consequence": "noncovered",
           "description": "410(a)(6)(A) as in effect in January 1983 reaches service in the employ of the United States or an instrumentality \"if such service is covered by a retirement system established by a law of the United States\"; a system that covers only other service of the same person does not meet it.",
-          "precedence": 3,
+          "precedence": 2,
           "when": {
             "federal_retirement_system": "covers this service, and was established by a law of the United States",
             "government_level": "employee of the United States or of an instrumentality of the United States"
@@ -9164,7 +9154,7 @@
           "case_id": "statutory_1410_instrumentality",
           "consequence": "noncovered",
           "description": "410(a)(5) as in effect in January 1983.",
-          "precedence": 4,
+          "precedence": 3,
           "when": {
             "federal_service": "instrumentality itself exempt by specific statutory reference to former IRC 1410",
             "government_level": "employee of the United States or of an instrumentality of the United States"
@@ -9174,7 +9164,7 @@
           "case_id": "president_congress_legislative",
           "consequence": "noncovered",
           "description": "410(a)(6)(C) as in effect in January 1983.",
-          "precedence": 5,
+          "precedence": 4,
           "when": {
             "government_level": "employee of the United States or of an instrumentality of the United States",
             "occupation": "President/Vice President/Congress/legislative employee"
@@ -9184,7 +9174,7 @@
           "case_id": "federal_penal_inmate",
           "consequence": "noncovered",
           "description": "Former 410(a)(6)(C)(iii) as in effect in January 1983 reaches service performed \"in a penal institution of the United States by an inmate thereof\"; an inmate's service performed outside the institution does not meet it.",
-          "precedence": 6,
+          "precedence": 5,
           "when": {
             "federal_service": "performed in a penal institution of the United States by an inmate thereof",
             "government_level": "employee of the United States or of an instrumentality of the United States"
@@ -9194,7 +9184,7 @@
           "case_id": "federal_hospital_student_employee",
           "consequence": "noncovered",
           "description": "Former 410(a)(6)(C)(iv) as in effect in January 1983.",
-          "precedence": 7,
+          "precedence": 6,
           "when": {
             "government_level": "employee of the United States or of an instrumentality of the United States",
             "occupation": "employee under 5 U.S.C. 5351(2) (interns, student nurses and other student employees of Federal hospitals) other than a medical or dental intern or resident in training"
@@ -9204,7 +9194,7 @@
           "case_id": "temporary_emergency_employee",
           "consequence": "noncovered",
           "description": "Former 410(a)(6)(C)(v) as in effect in January 1983.",
-          "precedence": 8,
+          "precedence": 7,
           "when": {
             "government_level": "employee of the United States or of an instrumentality of the United States",
             "occupation": "employee serving on a temporary basis in case of fire, storm, earthquake, flood or other similar emergency"
@@ -9214,7 +9204,7 @@
           "case_id": "other_federal_retirement_system",
           "consequence": "noncovered",
           "description": "Former 410(a)(6)(C)(vi) as in effect in January 1983.",
-          "precedence": 9,
+          "precedence": 8,
           "when": {
             "federal_retirement_system": "not subject to the Civil Service Retirement System because subject to another retirement system, other than the Tennessee Valley Authority's",
             "government_level": "employee of the United States or of an instrumentality of the United States"
@@ -9227,7 +9217,7 @@
           "overrides": [
             "exempt_1950_instrumentality_system"
           ],
-          "precedence": 10,
+          "precedence": 9,
           "when": {
             "federal_service": "performed in the employ of a Federal home loan bank after 1966-12-31 by an individual in the employ of a Federal home loan bank on 1973-01-01, where an amount equal to the 3101 and 3111 taxes on the services of all such individuals performed in the employ of Federal home loan banks after 1966-12-31 was paid under IRC 3122 by 1973-07-01, or by a later date provided in an agreement with the Secretary of the Treasury entered into before 1973-07-01"
           }
@@ -9236,7 +9226,7 @@
           "case_id": "exempt_1950_instrumentality_system",
           "consequence": "noncovered",
           "description": "410(a)(6)(B), except wholly owned corporations, designated banks, committees and nonappropriated-fund employees specified there.",
-          "precedence": 11,
+          "precedence": 10,
           "when": {
             "federal_service": "service for an instrumentality exempt from the former IRC 1410 tax on 1950-12-31 and covered by a retirement system the instrumentality established, other than service the January 1983 text of former 410(a)(6)(B)(i)-(v) excepts: wholly owned United States corporations; the listed Federal banks and credit associations, Federal Reserve Banks (Federal home loan banks only from 1973) and Federal Credit Unions; Production and Marketing Administration committees; and nonappropriated-fund exchange and welfare employees of the Defense Department and the Coast Guard",
             "government_level": "employee of the United States or of an instrumentality of the United States"
@@ -9340,13 +9330,6 @@
           "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c"
         },
         {
-          "authority": "POMS RS 01901.340 (2024-06-14)",
-          "capture": "poms_rs_01901340.html",
-          "location": "C.5, student employees with U.S. Army Engineers",
-          "quote": "Section 2360 of the Armed Forces Act (title 10) provides for the U.S. Army Corps of Engineers Research and Development Laboratories to contract for seasonal or part-time student employment to perform services as aides in their laboratories. The services of these students are not covered for Social Security or CSRS purposes.",
-          "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c"
-        },
-        {
           "authority": "42 U.S.C. 410, official United States Code 1994 edition label",
           "capture": "uscode_1994_42_410.html",
           "location": "1983 amendment note quoting former 410(a)(6)(A)",
@@ -9429,10 +9412,6 @@
         "condition_cases": {
           "coverage_default": {
             "cases": {
-              "army_corps_2360_student_aide": [
-                "federal_service",
-                "government_level"
-              ],
               "exempt_1950_instrumentality_system": [
                 "federal_service",
                 "government_level"
@@ -9480,9 +9459,6 @@
           },
           "scope": {
             "cases": {
-              "army_corps_2360_student_aide": [
-                "government_level"
-              ],
               "exempt_1950_instrumentality_system": [
                 "government_level"
               ],
@@ -9516,7 +9492,7 @@
           "enactment": "1972-10-30",
           "ordinary_coverage_start": "1973-01-01"
         },
-        "scope": "Former 410(a)(5) and (a)(6) as in effect in January 1983 reach only service \"in the employ of the United States\" or of an instrumentality of the United States, so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service. The Army Corps student aide case rests on POMS RS 01901.340, which addresses Federal civilian employment."
+        "scope": "Former 410(a)(5) and (a)(6) as in effect in January 1983 reach only service \"in the employ of the United States\" or of an instrumentality of the United States, so every case this row decides by an exclusion, or leaves open, names that level; a State, local, District of Columbia, tribal, foreign or private employer's worker reaches the residual, and the other families decide the service."
       },
       "rare_exclusion": null,
       "residual_default": {
@@ -9550,7 +9526,7 @@
         {
           "case_id": "army_corps_2360_student_aide",
           "consequence": "noncovered",
-          "description": "POMS RS 01901.340 C.5 (2024-06-14 edition): the services of students whom U.S. Army Corps of Engineers research and development laboratories engage as laboratory aides under 10 U.S.C. 2360 contracts \"are not covered for Social Security or CSRS purposes\". No capture holds or dates section 2360, but the case's condition names a 2360 contract, so it reaches only service under that authority once it exists; before then no service meets it and the cases below decide. Both readings the round-5 open case recorded give that same result, so the case is closed (review r6 M-2).",
+          "description": "POMS RS 01901.340 C.5, captured from its 2024-06-14 edition: \"Section 2360 of the Armed Forces Act (title 10) provides for the U.S. Army Corps of Engineers Research and Development Laboratories to contract for seasonal or part-time student employment to perform services as aides in their laboratories. The services of these students are not covered for Social Security or CSRS purposes.\" The closing rests on that passage alone, and the edition states no date from which it applies (review r7 low 6). 10 U.S.C. 2360, in the 1994 edition, was \"Added Pub. L. 97\u201386, title VI, \u00a7603(a), Dec. 1, 1981\", so the case, whose condition names a 2360 contract, reaches no service before December 1, 1981; federal_1968_1972 no longer carries it (review r7 low 5). Both readings the round-5 open case recorded give the same result, so the case is closed (review r6 M-2).",
           "precedence": 2,
           "when": {
             "federal_service": "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment",
@@ -9639,6 +9615,20 @@
         }
       ],
       "citations": [
+        {
+          "authority": "10 U.S.C. 2360, official 1994 United States Code edition (govinfo)",
+          "capture": "ce1r7_usc1994_10_2360.html",
+          "location": "2360(a)",
+          "quote": "the Secretary of Defense may procure by contract under the authority of this section the temporary or intermittent services of students at institutions of higher learning for the purpose of providing technical support at defense research and development laboratories. Such contracts may be made directly with such students or with nonprofit organizations employing such students.",
+          "sha256": "c4ba5b5c30f88ef6845de468a77af72578d6a08feccf558569e4e8f8121844b0"
+        },
+        {
+          "authority": "10 U.S.C. 2360, official 1994 United States Code edition (govinfo)",
+          "capture": "ce1r7_usc1994_10_2360.html",
+          "location": "source credit",
+          "quote": "(Added Pub. L. 97\u201386, title VI, \u00a7603(a), Dec. 1, 1981, 95 Stat. 1110.)",
+          "sha256": "c4ba5b5c30f88ef6845de468a77af72578d6a08feccf558569e4e8f8121844b0"
+        },
         {
           "authority": "42 U.S.C. 410 (LII capture 2026-10-21, text and historical amendment notes)",
           "capture": "lii_42_410.html",
@@ -9973,7 +9963,7 @@
         {
           "case_id": "army_corps_2360_student_aide",
           "consequence": "noncovered",
-          "description": "POMS RS 01901.340 C.5 (2024-06-14 edition): the services of students whom U.S. Army Corps of Engineers research and development laboratories engage as laboratory aides under 10 U.S.C. 2360 contracts \"are not covered for Social Security or CSRS purposes\". No capture holds or dates section 2360, but the case's condition names a 2360 contract, so it reaches only service under that authority once it exists; before then no service meets it and the cases below decide. Both readings the round-5 open case recorded give that same result, so the case is closed (review r6 M-2).",
+          "description": "POMS RS 01901.340 C.5, captured from its 2024-06-14 edition: \"Section 2360 of the Armed Forces Act (title 10) provides for the U.S. Army Corps of Engineers Research and Development Laboratories to contract for seasonal or part-time student employment to perform services as aides in their laboratories. The services of these students are not covered for Social Security or CSRS purposes.\" The closing rests on that passage alone, and the edition states no date from which it applies (review r7 low 6). 10 U.S.C. 2360, in the 1994 edition, was \"Added Pub. L. 97\u201386, title VI, \u00a7603(a), Dec. 1, 1981\", so the case, whose condition names a 2360 contract, reaches no service before December 1, 1981; federal_1968_1972 no longer carries it (review r7 low 5). Both readings the round-5 open case recorded give the same result, so the case is closed (review r6 M-2).",
           "overrides": [
             "first_hired_after_1983"
           ],
@@ -10093,6 +10083,20 @@
           "location": "Effective Date of 1988 Amendment note, Pub. L. 100-647 section 8015(c)(3): the 1988 amendments reach only service on or after November 10, 1988, after this row ends",
           "quote": "The amendments made by this subsection [amending this section and section 410 of Title 42] shall apply to any individual only upon the performance by such individual of service described in subparagraph (C), (D), (E), (F), (G), or (H) of section 210(a)(5) of the Social Security Act (42 U.S.C. 410(a)(5)) on or after the date of the enactment of this Act [Nov. 10, 1988].",
           "sha256": "17bef9602497afdf4c0792de0d89c81f417fee1a71e292f4e7dbc76d380903ab"
+        },
+        {
+          "authority": "10 U.S.C. 2360, official 1994 United States Code edition (govinfo)",
+          "capture": "ce1r7_usc1994_10_2360.html",
+          "location": "2360(a)",
+          "quote": "the Secretary of Defense may procure by contract under the authority of this section the temporary or intermittent services of students at institutions of higher learning for the purpose of providing technical support at defense research and development laboratories. Such contracts may be made directly with such students or with nonprofit organizations employing such students.",
+          "sha256": "c4ba5b5c30f88ef6845de468a77af72578d6a08feccf558569e4e8f8121844b0"
+        },
+        {
+          "authority": "10 U.S.C. 2360, official 1994 United States Code edition (govinfo)",
+          "capture": "ce1r7_usc1994_10_2360.html",
+          "location": "source credit",
+          "quote": "(Added Pub. L. 97\u201386, title VI, \u00a7603(a), Dec. 1, 1981, 95 Stat. 1110.)",
+          "sha256": "c4ba5b5c30f88ef6845de468a77af72578d6a08feccf558569e4e8f8121844b0"
         },
         {
           "authority": "Public Law 98-21, Social Security Amendments of 1983",
@@ -10518,7 +10522,7 @@
         {
           "case_id": "army_corps_2360_student_aide",
           "consequence": "noncovered",
-          "description": "POMS RS 01901.340 C.5 (2024-06-14 edition): the services of students whom U.S. Army Corps of Engineers research and development laboratories engage as laboratory aides under 10 U.S.C. 2360 contracts \"are not covered for Social Security or CSRS purposes\". No capture holds or dates section 2360, but the case's condition names a 2360 contract, so it reaches only service under that authority once it exists; before then no service meets it and the cases below decide. Both readings the round-5 open case recorded give that same result, so the case is closed (review r6 M-2).",
+          "description": "POMS RS 01901.340 C.5, captured from its 2024-06-14 edition: \"Section 2360 of the Armed Forces Act (title 10) provides for the U.S. Army Corps of Engineers Research and Development Laboratories to contract for seasonal or part-time student employment to perform services as aides in their laboratories. The services of these students are not covered for Social Security or CSRS purposes.\" The closing rests on that passage alone, and the edition states no date from which it applies (review r7 low 6). 10 U.S.C. 2360, in the 1994 edition, was \"Added Pub. L. 97\u201386, title VI, \u00a7603(a), Dec. 1, 1981\", so the case, whose condition names a 2360 contract, reaches no service before December 1, 1981; federal_1968_1972 no longer carries it (review r7 low 5). Both readings the round-5 open case recorded give the same result, so the case is closed (review r6 M-2).",
           "overrides": [
             "first_hired_after_1983"
           ],
@@ -10722,6 +10726,20 @@
           "capture": "ce1r1_usc2024_5_8331.html",
           "location": "Effective Date of 1986 Amendment; Public Law 99-335 section 702(a), effective January 1, 1987",
           "sha256": "e8ff0f00cf32737b94c7c83a618d872580568cb78e214b1516cae1566aacd9cc"
+        },
+        {
+          "authority": "10 U.S.C. 2360, official 1994 United States Code edition (govinfo)",
+          "capture": "ce1r7_usc1994_10_2360.html",
+          "location": "2360(a)",
+          "quote": "the Secretary of Defense may procure by contract under the authority of this section the temporary or intermittent services of students at institutions of higher learning for the purpose of providing technical support at defense research and development laboratories. Such contracts may be made directly with such students or with nonprofit organizations employing such students.",
+          "sha256": "c4ba5b5c30f88ef6845de468a77af72578d6a08feccf558569e4e8f8121844b0"
+        },
+        {
+          "authority": "10 U.S.C. 2360, official 1994 United States Code edition (govinfo)",
+          "capture": "ce1r7_usc1994_10_2360.html",
+          "location": "source credit",
+          "quote": "(Added Pub. L. 97\u201386, title VI, \u00a7603(a), Dec. 1, 1981, 95 Stat. 1110.)",
+          "sha256": "c4ba5b5c30f88ef6845de468a77af72578d6a08feccf558569e4e8f8121844b0"
         },
         {
           "authority": "Public Law 98-21, Social Security Amendments of 1983",

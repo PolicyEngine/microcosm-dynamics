@@ -5441,7 +5441,7 @@ def test_every_case_and_residual_decides_a_swept_worker():
             missing[row["rule_id"]] = sorted(gap)
     assert missing == {}
     assert len(rows) == 119
-    assert sum(len(row["cases"]) for row in rows) == 365
+    assert sum(len(row["cases"]) for row in rows) == 364
     deferred = [
         w for w in INVENTED_SWEEP_WORKERS if w["expected"] == "deferred"
     ]
@@ -5654,7 +5654,9 @@ def test_government_level_conditions_name_a_level_of_government():
     # Corps aide in three federal rows, the 1987 delay open case, and the
     # federal level on first_hired_after_1983 (both rows),
     # after_official_service_from_1988_11_10 and fers_or_fsps_election.
-    assert len(found) == 67
+    # Review r7 low 5 drops the army-corps case from federal_1968_1972,
+    # since 10 U.S.C. 2360 dates from December 1, 1981 (66).
+    assert len(found) == 66
 
 
 # Round 5: 410(a)(7) excludes "Service performed in the employ of a State,
@@ -6197,11 +6199,9 @@ FED_TEMPORARY_EMERGENCY_EMPLOYEE = (
 # Names the reproduction and delay tests use.
 FED_EMERGENCY_TEMPORARY_1968 = FED_TEMPORARY_EMERGENCY_EMPLOYEE
 FED_GRANDFATHERED_CONTINUOUS = FED_GRANDFATHERED_SERVICE
+# Review r7 low 5: 10 U.S.C. 2360 dates from December 1, 1981, so
+# federal_1968_1972 no longer carries the army-corps case.
 FEDERAL_CASE_FACTS = {
-    ("federal_1968_1972", "army_corps_2360_student_aide"): (
-        "noncovered",
-        {"federal_service": FED_ARMY_CORPS_2360_STUDENT_AIDE_SERVICE},
-    ),
     ("federal_1968_1972", "federal_retirement_system_service"): (
         "noncovered",
         {"federal_retirement_system": FED_RETIREMENT_SYSTEM},
@@ -6412,7 +6412,8 @@ def test_federal_exclusions_name_the_level_their_law_reaches(registry):
             assert case["when"].get("government_level") == FEDERAL_LEVEL, key
             assert "government_level" in ties[case["case_id"]], key
     assert sorted(limited) == sorted(FEDERAL_CASE_FACTS)
-    assert len(limited) == 36
+    # Review r7 low 5: no army-corps case before 10 U.S.C. 2360 (35).
+    assert len(limited) == 35
 
 
 FEDERAL_SERVICE_TEXT = re.compile(

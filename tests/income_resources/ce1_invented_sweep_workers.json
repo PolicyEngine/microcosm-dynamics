@@ -3416,17 +3416,6 @@
   },
   {
    "rule_id": "federal_1968_1972",
-   "worker": "INVENTED: 1970: engineering student whom a U.S. Army Corps of Engineers research and development laboratory engages as a summer aide in the laboratory; stated as fact, it engages him under a 10 U.S.C. 2360 contract for seasonal or part-time student employment, and the service is covered by no retirement system. POMS RS 01901.340 C.5 says the services of these students 'are not covered for Social Security or CSRS purposes'. Review r6 M-2: the case's condition names a 2360 contract, so both readings give noncovered and the case is closed.",
-   "facts": {
-    "government_level": "employee of the United States or of an instrumentality of the United States",
-    "federal_service": "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment",
-    "federal_retirement_system": "covered by no retirement system"
-   },
-   "expected": "noncovered",
-   "decides": "army_corps_2360_student_aide"
-  },
-  {
-   "rule_id": "federal_1968_1972",
    "worker": "INVENTED: 1970: engineering student whom a U.S. Army Corps of Engineers research and development laboratory hires as a summer aide on an ordinary temporary appointment, not under a 10 U.S.C. 2360 contract; covered by no retirement system. POMS C.5 speaks only of students engaged under section 2360 contracts, and no former 410(a)(5)-(6) exclusion reaches the service (POMS RS 01901.340 A: federal service 1951-1983 'is covered unless' excluded). Covered.",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States",
@@ -3448,7 +3437,7 @@
   },
   {
    "rule_id": "federal_1973_1983",
-   "worker": "INVENTED: 1979: engineering student whom a U.S. Army Corps of Engineers research and development laboratory engages as a part-time aide during the school year in the laboratory; stated as fact, it engages him under a 10 U.S.C. 2360 contract for seasonal or part-time student employment, and the service is covered by no retirement system. POMS RS 01901.340 C.5 says the services of these students 'are not covered for Social Security or CSRS purposes'. Review r6 M-2: the case's condition names a 2360 contract, so both readings give noncovered and the case is closed.",
+   "worker": "INVENTED (review r7 low 5 re-dates it from 1979): 1982: engineering student whom a U.S. Army Corps of Engineers research and development laboratory engages as a part-time aide during the school year in the laboratory; stated as fact, it engages him under a 10 U.S.C. 2360 contract for seasonal or part-time student employment (section 2360 dates from December 1, 1981), and the service is covered by no retirement system. POMS RS 01901.340 C.5 says the services of these students 'are not covered for Social Security or CSRS purposes'. Review r6 M-2: the case's condition names a 2360 contract, so both readings give noncovered and the case is closed.",
    "facts": {
     "government_level": "employee of the United States or of an instrumentality of the United States",
     "federal_service": "performed by a student as an aide in a U.S. Army Corps of Engineers research and development laboratory under a 10 U.S.C. 2360 contract for seasonal or part-time student employment",

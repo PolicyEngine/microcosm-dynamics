@@ -4776,5 +4776,14 @@
     "sha256": "0d7b65ddc63aa71455f335fae9bbae1ec6803ad8e141b8d1fb540a4ac9ba8e68",
     "provenance": "Cornell LII page for 42 U.S.C. 433 (section 233 of the Social Security Act: current text, source credit and notes), HTTP 200, Last-Modified Fri, 11 Sep 2026 11:53:04 GMT: added by Pub. L. 95-216 section 317(a), Dec. 20, 1977; (c)(1)(B)(i) places each period of coverage in one system \"but not under both\".",
     "status": "captured"
+  },
+  {
+    "file": "ce1r7_usc1994_10_2360.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-1994-title10/html/USCODE-1994-title10-subtitleA-partIV-chap139-sec2360.htm",
+    "retrieved_at": "2026-11-03T10:41:14Z",
+    "bytes": 2929,
+    "sha256": "c4ba5b5c30f88ef6845de468a77af72578d6a08feccf558569e4e8f8121844b0",
+    "provenance": "Official United States Code, 1994 edition (GPO govinfo HTML), 10 U.S.C. 2360, research and development laboratories: contracts for services of university students; source credit \"Added Pub. L. 97-86, title VI, section 603(a), Dec. 1, 1981, 95 Stat. 1110\". Dates the contracts POMS RS 01901.340 C.5 names. The 2011 edition, fetched at the same time, prints the same text and credit.",
+    "status": "captured"
   }
 ]
