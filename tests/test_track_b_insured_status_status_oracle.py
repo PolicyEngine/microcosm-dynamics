@@ -18,7 +18,9 @@ pre1956 alternate, death, continuing or unknown ending is claimed.
 Act 214(a), 223(c), 20 CFR 404.110(c), 404.130(a),(e),(f), 404.131,
 404.143(b), 404.146(d) and 404.321(a) supply the arithmetic. Annual QCs
 are assigned favorably (RS 00301.230). A lawful filling has its own first
-insured start; that start supplies the current period for FULLY and
+insured start, on the onset day or the first day of a later quarter, so
+the ``shared`` prior, which ends in the onset quarter, never blocks it
+(RS 00301.140 example 7). That start supplies the current period for FULLY and
 CURRENTLY. DISABILITY must qualify without using the period it establishes.
 Each returned status must equal the favorable Boolean over all lawful
 fillings. Each exact count, assignment and date last insured must be the best
@@ -42,7 +44,7 @@ from populace_dynamics.track_b.gross_benefits import InvalidFamilyInput
 @dataclass(frozen=True)
 class Declaration:
     blind: bool = False
-    prior: str = "overlap"
+    prior: str = "shared"
     prior_count: int = 2
     onset_count: int = 1
     query: str = "later"
@@ -76,7 +78,7 @@ class Declaration:
         if self.prior == "none":
             return ()
         end = date(1999, 12, 31)
-        if self.prior == "overlap":
+        if self.prior == "shared":
             end = date(2000, 1, 31)
         return ((date(1999, 1, 1), end),)
 
@@ -165,9 +167,7 @@ def favorable_statuses(case):
                 ),
                 None,
             )
-            if first is None or any(
-                quarter(a) <= first <= quarter(b) for a, b in case.periods
-            ):
+            if first is None:
                 continue
             lawful += 1
             starts.add(first)
@@ -292,7 +292,7 @@ def test_status_oracle_review_completion_has_favorable_fully_status():
 
 
 @pytest.mark.parametrize("blind", (False, True))
-@pytest.mark.parametrize("prior", ("none", "clear", "overlap"))
+@pytest.mark.parametrize("prior", ("none", "clear", "shared"))
 @pytest.mark.parametrize("query", ("after", "later", "claiming"))
 @pytest.mark.parametrize("prior_count", (2, 3))
 def test_status_oracle_completion_lattice(blind, prior, query, prior_count):
@@ -304,14 +304,14 @@ def test_status_oracle_completion_lattice(blind, prior, query, prior_count):
 @settings(max_examples=24, deadline=None, derandomize=True)
 @example(
     blind=False,
-    prior="overlap",
+    prior="shared",
     prior_count=2,
     onset_count=1,
     query="later",
 )
 @given(
     blind=st.booleans(),
-    prior=st.sampled_from(("none", "clear", "overlap")),
+    prior=st.sampled_from(("none", "clear", "shared")),
     prior_count=st.integers(2, 3),
     onset_count=st.integers(1, 2),
     query=st.sampled_from(("after", "later", "claiming")),

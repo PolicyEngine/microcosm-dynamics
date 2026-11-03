@@ -6,8 +6,9 @@ population, behavioral or forecast claim.
 Act 223(c)(1)(B)(iii) and 216(i)(3)(B)(iii) count "the quarters beginning
 after such individual attained age 21", with no cap. 404.130(d)(2) adds "up to
 a maximum of 20 QCs out of 40 calendar quarters". Past 40 counted quarters the
-Act takes half the whole period and the regulation takes 20 of the last 40, and
-the rule refuses by name wherever they differ (source conflict
+Act takes half the whole period and the regulation, read with the 40 counted
+quarters ending with the tested one, takes 20 of those, and the rule refuses by
+name wherever they differ (source conflict
 us:oasdi-insured-subsequent-special-long-period).
 
 Each period ending's favorable date last insured can rest on a placement that
@@ -286,7 +287,8 @@ def test_a_later_date_last_insured_can_turn_on_a_reading():
 def test_twenty_qcs_short_of_half_the_period_compute():
     # The 20th QC arrives in 1994, when half the 53 counted quarters is 26, and
     # the last 40 hold 10. Only a parse that drops "out of 40 calendar
-    # quarters" insures this record, and the rule takes no such parse. The 14
+    # quarters" insures this record, and the rule takes no such parse; the
+    # register lists it for Max (round 23). The 14
     # QCs through 1985 last meet half in 1988Q4, where 29 quarters reduce to 28.
     counts = {1981: 3, 1982: 3, 1984: 4, 1985: 4, 1993: 4, 1994: 2}
     result = _result(

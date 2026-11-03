@@ -270,22 +270,18 @@ def test_disability_exclusion_never_adds_qc(year, start, length, count):
     )
 
 
-def test_death_future_exit_and_disability_endpoint_exclusions():
+def test_death_future_and_disability_endpoint_exclusions():
     quarters = qc._year_quarters(2026)
     assert (
         qc._allowed_quarters(
-            2026,
-            through_quarter=quarters[2],
-            death_quarter=quarters[1],
-            coverage_end_quarter=quarters[3],
+            2026, through_quarter=quarters[2], death_quarter=quarters[1]
         )
         == quarters[:2]
     )
+    # A quarter not yet begun is barred. A coverage exit bars only later
+    # years, which the history leaves out (round 23).
     assert (
-        qc._allowed_quarters(
-            2026, through_quarter=quarters[3], coverage_end_quarter=quarters[0]
-        )
-        == quarters[:1]
+        qc._allowed_quarters(2026, through_quarter=quarters[0]) == quarters[:1]
     )
     assert qc._allowed_quarters(
         2026,

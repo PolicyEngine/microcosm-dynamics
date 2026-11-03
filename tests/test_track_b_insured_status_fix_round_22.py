@@ -194,6 +194,9 @@ def test_an_unknown_year_refuses():
 
 
 def test_a_current_period_after_that_prior_refuses():
+    # Disregarding the prior (404.130(f)), every placement insures the 2004Q1
+    # onset, so the prior's basis is what placement decides, and the detail
+    # names it (round 23).
     refused = _refusal(
         _young(
             disability_onset=date(2004, 1, 1),
@@ -205,7 +208,7 @@ def test_a_current_period_after_that_prior_refuses():
         MONTH,
     )
     assert refused.reason is ASSIGNMENT
-    assert refused.detail.startswith("First insured start depends")
+    assert refused.detail == LISTED_PRIOR
 
 
 def test_a_flagged_prior_there_computes():

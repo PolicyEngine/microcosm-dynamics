@@ -113,15 +113,17 @@ def _fixed_history(person, month, quarters, *, end=None):
     return years
 
 
-def _recent_oracle(
-    person, years, horizon, *, exit_month=None, prior_treatment=None
-):
+def _recent_oracle(person, years, horizon, *, prior_treatment=None):
     """Existence under 404.130(b)-(d), without implementation helpers.
 
-    Annual counts are assigned to every possible eligible set. Each prior
-    period is considered together with all the others, or all are ignored.
-    Credited endpoints remain in the clock; uncredited period quarters do
-    not. Candidate quarters inside any represented prior period are barred.
+    Annual counts are assigned to every possible eligible set: any begun
+    quarter of the year through death, outside a considered prior's
+    interior (RS00301.230 B, .240). Each prior period is considered
+    together with all the others, or all are ignored. Credited endpoints
+    remain in the clock; uncredited period quarters do not. A period ends
+    on a month's last day (404.321(b)-(c)), so a new one can begin in the
+    quarter a prior ended (RS00301.140 example 7); a prior that reaches
+    the onset day bars every candidate it covers.
     """
     first_candidate = _q(person.disability_onset)
     last_candidate = _q(horizon)
@@ -132,6 +134,7 @@ def _recent_oracle(
     for candidate in range(first_candidate, last_candidate + 1):
         if any(
             _q(period.start) <= candidate <= _q(period.end)
+            and period.end >= person.disability_onset
             for period in person.prior_disability_periods
         ):
             continue
@@ -147,12 +150,11 @@ def _recent_oracle(
                 last = min(
                     candidate,
                     _q(person.death_date) if person.death_date else candidate,
-                    _q(exit_month) if exit_month else candidate,
                 )
                 eligible = tuple(
                     quarter
                     for quarter in range(year * 4, year * 4 + 4)
-                    if _q(person.birth_date) <= quarter <= last
+                    if quarter <= last
                     and not any(
                         _q(period.start) < quarter < _q(period.end)
                         for period in periods
@@ -332,6 +334,11 @@ def test_special_recent_requirement_and_one_short(special, short):
     counts = {}
     for year in range(2021, 2005, -1):
         counts[year], total = min(total, 4), max(0, total - 4)
+    if prior:
+        # Eighteen QCs in the 36 quarters after age 21 begin the flagged
+        # prior on 404.130(c), short of 20 of 40 (404.130(d)(1)); a prior
+        # no completion supports would refuse by name first (round 23).
+        counts.update({2005: 4, 2006: 4, 2007: 4, 2008: 4, 2009: 2})
     years = history(person, month, counts)
     assert _recent_oracle(
         person, years, person.current_disability_period_end
@@ -356,7 +363,10 @@ def test_subsequent_special_recent_rule_can_pass_below_twenty_qcs(short):
         ),
     )
     month = date(2023, 1, 1)
-    counts = {year: 4 for year in range(2018, 2022)}
+    # Eight QCs in the 16 quarters after age 21 begin the flagged prior on
+    # 404.130(c), short of 20 of 40; a prior no completion supports would
+    # refuse by name first (round 23).
+    counts = {2013: 4, 2014: 4, 2020: 4, 2021: 4}
     counts[2021] -= short
     years = history(person, month, counts)
     # After the age-21 quarter, 44 elapsed quarters minus the 12-quarter
@@ -400,7 +410,7 @@ def test_recent_window_uses_all_prior_periods_or_disregards_all(disregard):
     _refusal(person, years, _reason(FULLY_ROUTES[0]), month)
 
 
-def test_candidate_inside_prior_period_does_not_supply_recent_witness():
+def test_an_onset_in_a_prior_end_quarter_can_supply_the_recent_witness():
     person = _person(
         birth=date(1910, 2, 2),
         onset=date(1970, 2, 15),
@@ -411,12 +421,19 @@ def test_candidate_inside_prior_period_does_not_supply_recent_witness():
         ),
     )
     month = date(1973, 1, 1)
-    # Disregard yields twenty at the overlapped onset quarter only. The
-    # first of those QCs ages out before the first usable candidate.
+    # Disregard yields twenty at the onset quarter only, where the prior
+    # ended a month before the onset; its first QC ages out a quarter
+    # later. 404.321 lets the period begin in that shared quarter.
     credited = {1960 * 4 + 1, *range(1965 * 4, 1969 * 4 + 3)}
     years = _fixed_history(person, month, credited)
-    assert not _recent_oracle(person, years, date(1970, 10, 1))
-    _invalid(person, years, month)
+    assert _recent_oracle(person, years, person.disability_onset)
+    assert _recent_oracle(
+        person, years, person.disability_onset, prior_treatment=False
+    )
+    assert not _recent_oracle(
+        person, years, person.disability_onset, prior_treatment=True
+    )
+    _refusal(person, years, _reason(FULLY_ROUTES[0]), month)
 
 
 @pytest.mark.parametrize("condition", FULLY_ROUTES)

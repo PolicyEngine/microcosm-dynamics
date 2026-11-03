@@ -10,9 +10,12 @@ retain the exact transmittal and page date. The staging log was removed
 only after all original byte counts and hashes were verified. The source
 tests recompute every retained capture's hash and verify a specific rule
 or documentary-purpose quote from every capture. The example registry at
-`../insured_status_examples.yaml` checks every published figure against
-its source and distinguishes computations, refusals, errata and unavailable
-attachments.
+`../insured_status_examples.yaml` distinguishes computations, refusals,
+errata and unavailable attachments. The source tests check that each of
+its quotes appears in the capture and that each entry the rule executes
+names an existing test; that test asserts the figures it computes. The
+`expected` and `implemented` fields record the source's and the rule's
+figures for review, and no test reads them.
 
 The capture formats follow the gross-benefit manifest, with one addition:
 
@@ -63,18 +66,24 @@ OACT agree on all 49 shared years, including POMS's joint 2010-2011 row.
 RS 00301.800 links to two GIF images and one PDF of its exhibit. The PDF's
 text is captured as `pdf_text`, and all three bodies are pinned by hash.
 Every exhibit row is compared, as is every row of CFR 404.115's cohort
-chart. The PDF's footnote misprints the male age-65 cohort as "born before
-1/2/31"; the GIF rendering, the exhibit's own table and 20 CFR 404.132(b)
-say January 2, 1913. RS 00301.149 only points to the SSA-1164 worksheet;
-no worksheet reproduction is claimed.
+chart. The PDF's footnote 2 gives age 65 to "men born before 1/2/31".
+20 CFR 404.110(b)(2)(iv) gives it only to a man who became 62 before 1973,
+born before January 2, 1911, and (iii) ends the count before 1975 for one
+born from then through January 1, 1913. (ii) covers the rest of 1913, and
+together they give the exhibit's merged 1910-1913 row. The January 2, 1913
+date in 20 CFR 404.132(b) belongs to the disability prerequisite's 1975
+cap. The GIF renderings are pinned by hash only, and their text is not
+captured. RS 00301.149 only points to the SSA-1164 worksheet; no worksheet
+reproduction is claimed.
 
 RS 00301.340's short-year example states $10,900 of self-employment
 income but allocates $3,600 to each of three quarters, totaling $10,800.
 There are two readings. Taking the amount literally as already covered
 SEI gives $10,900 / 3 per quarter. An unstated contribution-base ceiling
 could explain the printed allocation if $10,900 instead means net
-earnings before the ceiling: RS 00301.345 and Act 213(a)(2)(B)(iii) identify
-$10,800 for a taxable year beginning in 1973, and $10,800 / 3 = $3,600.
+earnings before the ceiling: RS 00301.345 B.2.g gives $10,800 for a taxable
+year beginning in 1973, its example C.1 counts only $8,100 of $10,600 of net
+earnings as SEI beside $2,700 of wages, and $10,800 / 3 = $3,600.
 The tests execute both readings. The capture does not state that ceiling
 step, so this is an unresolved source assumption rather than a proven
 arithmetic erratum. Both readings give three QCs; the allocated earnings

@@ -194,15 +194,22 @@ examples:
     second_required: 9
     insured: true
   coverage: source_rule_divergence
-  note: Published 18-quarter/9-QC requirement excludes both qualifying endpoint
-    quarters; statutory endpoint counting yields 20/10. Both answers insure the
-    record. Kept side by side for review.
+  note: The printed 18 quarters exclude both endpoint quarters of the prior
+    period. 404.130(f) counts an endpoint quarter that is a QC, and on the
+    printed placement only 1981Q1 is one, so 19 quarters reduce to 18 and 9
+    QCs, the printed requirement. The rule also assigns a 1982 QC to the 1982Q4
+    endpoint, giving 20/10. RS 00301.140 assigns a post-1977 QC to any quarter
+    of its year if insured status would be met, and both placements insure, so
+    the printed figures are placement-dependent intermediate counts, not an
+    erratum. The
+    first onset's 14 quarters and 7 QCs reproduce; the first record holds 9 QCs
+    there, of which the example says Joseph requires and has 7.
   implemented:
     elapsed_quarters: 20
     required_qcs: 10
     available_qcs: 16
     insured: true
-  test_node: tests/test_track_b_insured_status.py::test_joseph_subsequent_poms_140_example_6_endpoint_erratum
+  test_node: tests/test_track_b_insured_status.py::test_joseph_subsequent_poms_140_example_6_endpoint_placement
 - id: poms_140_jane
   source: poms_rs_00301_140
   quotes:
@@ -285,6 +292,9 @@ examples:
     insured: true
   coverage: computed
   test_node: tests/test_track_b_insured_status.py::test_subsequent_over31_poms_147_examples
+  note: The source says Mary had 8 QC's in the first onset's 16 quarters, but
+    its own pattern holds 9 there (1971Q3-Q4, 1972Q1-Q3, 1973Q1 and Q4,
+    1974Q3-Q4). The requirement of 8 and the insured disposition reproduce.
 - id: poms_147_john
   source: poms_rs_00301_147
   quotes:
@@ -329,8 +339,11 @@ examples:
     observed_qcs: 8
     insured: false
   coverage: source_rule_divergence
-  note: Published 33/16/8 treats 1978 annual QC as fixed Q1. Favorable reassignment
-    to PPD endpoint1978Q4 yields34/17/9; both deny insured status.
+  note: Published 33/16/8 keeps the 1978 QC in 1978Q1, outside the prior
+    period's 1978Q4 endpoint. Assigning it to that endpoint gives 34/17/9.
+    RS 00301.140 assigns a post-1977 QC to any quarter of its year if insured
+    status would be met, and neither placement insures, so the printed figures
+    are placement-dependent intermediate counts, not an erratum.
   test_node: tests/test_track_b_insured_status.py::test_subsequent_over31_poms_147_examples
   implemented:
     elapsed_quarters: 34
@@ -579,7 +592,7 @@ examples:
   coverage: source_ambiguity
   note: The capture labels10900 as SEI but prints3600 for each of3 quarters. Literal
     already-covered SEI gives10900/3. An unstated10800 ceiling for TYbeginning1973,
-    from RS00301.345 and Act213(a)(2)(B)(iii), explains3600 each if10900 meant net
+    from RS00301.345 B.2.g and its example C.1, explains3600 each if10900 meant net
     earnings before the ceiling. Both readings are executed; neither an arithmetic
     erratum nor the omitted ceiling is established by the capture. Both yield3QCs
     and differ by100 in allocated earnings. Private helper consumes already-covered
@@ -743,8 +756,12 @@ examples:
   test_node: tests/test_track_b_insured_status.py::test_fully_requirement_differential_poms_rs_00301_800_exhibit
   note: Text extracted from the exhibit PDF (pdftotext), with the PDF and both
     GIF renderings pinned in served_bodies. Every row is checked by birth cohort,
-    by the January 1 footnote and by year of death. The PDF's footnote misprints
-    the male age-65 cohort as 1/2/31; the GIF and 20 CFR 404.132(b) say 1913.
+    by the January 1 footnote and by year of death. The PDF's footnote 2 gives
+    age 65 to men born before 1/2/31; 404.110(b)(2)(iv) gives it only to a man
+    who reached 62 before 1973, and (iii) ends the count before 1975 for one
+    born from January 2, 1911 through January 1, 1913. (ii) covers the rest of
+    1913, and together they give the merged 1910-1913 row. The GIF text is not
+    captured.
 - id: poms_102_1_lucinda
   source: poms_rs_00301_102
   quotes:

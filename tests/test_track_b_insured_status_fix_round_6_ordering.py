@@ -16,7 +16,7 @@ from populace_dynamics.track_b import insured_status as i
 from populace_dynamics.track_b.gross_benefits import count_family_outcomes
 from tests.test_track_b_insured_status import declared, history
 from tests.test_track_b_insured_status_fix_round_4_routes import (
-    _prior_overlap_unknown_earnings_case,
+    _shared_quarter_unknown_earnings_case,
 )
 from tests.test_track_b_insured_status_fix_round_5_possibility import (
     _classification,
@@ -196,8 +196,8 @@ def test_deferred_refusals_keep_original_sorted_year_priority(reverse):
     assert row.unsupported.detail == "1937_earnings_allocation_unsupported"
 
 
-def test_unresolved_overlap_keeps_original_deferred_refusal():
-    person, years, month = _prior_overlap_unknown_earnings_case()
+def test_many_unknown_years_keep_original_deferred_refusal():
+    person, years, month = _shared_quarter_unknown_earnings_case()
     person = replace(
         person,
         current_disability_period_end=date(1972, 12, 31),
@@ -213,7 +213,7 @@ def test_unresolved_overlap_keeps_original_deferred_refusal():
 
 @settings(max_examples=4, deadline=None)
 @given(fixed_first=st.booleans(), reverse=st.booleans())
-def test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle(
+def test_deferred_quarter_fillings_survive_a_shared_onset_quarter(
     fixed_first, reverse
 ):
     person = i.Person(
@@ -245,9 +245,12 @@ def test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle(
         },
     )
     # The supplied prior has the captured alternate's 20 total QCs and
-    # all six continuous 1951 Q1--1952 Q2 credits. For the current onset,
-    # Removing prior-period gaps opens the alternate for 0000 too. All
-    # eight Q1-uncredited fillings remain possible; credited Q1 overlaps.
+    # all six continuous 1951 Q1--1952 Q2 credits. Removing prior-period
+    # gaps opens the alternate for the current onset under 0000 too. A
+    # credited 1954Q1 starts the period on the onset day, in the quarter the
+    # prior ended in January (RS 00301.140 example 7), so every filling
+    # keeps a row, each with a named pre1956 refusal. Round 6 rejected the
+    # eight Q1-credited fillings as overlapping the prior's last quarter.
     flags = [
         flags
         for flags in product((False, True), repeat=4)
@@ -261,7 +264,7 @@ def test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle(
         )
         for f in flags
     ]
-    assert valid == ([False] * 8 if fixed_first else [True] * 8 + [False] * 8)
+    assert valid == [True] * len(flags)
     years[1954] = i.CoverageYear(
         OBSERVED,
         agricultural_wages=Fraction(100),
@@ -270,15 +273,12 @@ def test_deferred_quarter_fillings_keep_fixed_minimum_and_valid_middle(
     )
     if reverse:
         years = dict(reversed(tuple(years.items())))
-    if any(valid):
-        row = _evaluate(person, years, month)
-        assert (
-            row.unsupported.reason
-            is i.InsuredUnsupportedReason.PRE1955_AGRICULTURE
-        )
-        assert count_family_outcomes((row,)).weight == Fraction(3, 2)
-    else:
-        _no_row(person, years, month)
+    row = _evaluate(person, years, month)
+    assert (
+        row.unsupported.reason
+        is i.InsuredUnsupportedReason.PRE1955_AGRICULTURE
+    )
+    assert count_family_outcomes((row,)).weight == Fraction(3, 2)
 
 
 @pytest.mark.parametrize("year,values,reason", EARLY)

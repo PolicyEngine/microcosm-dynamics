@@ -80,7 +80,7 @@ def _declared_end_unknown_earnings_case(*, first=2, ending=date(2022, 3, 31)):
     return person, years, month
 
 
-def _prior_overlap_unknown_earnings_case(*, missing_year=1971):
+def _shared_quarter_unknown_earnings_case(*, missing_year=1971):
     person = i.Person(
         date(1910, 2, 2),
         sex=i.Sex.FEMALE,
@@ -194,11 +194,14 @@ def test_possible_unknown_earnings_filling_prevents_declared_end_input_error(
     )
 
 
-def test_unknown_earnings_can_avoid_derived_prior_quarter_overlap():
-    person, years, month = _prior_overlap_unknown_earnings_case()
+def test_unknown_onset_year_earnings_decide_the_current_start():
+    person, years, month = _shared_quarter_unknown_earnings_case()
     with pytest.raises(i.InsuredConfigurationUnsupported) as error:
         i.insured_status(person, years, month, test=i.InsuredTest.FULLY)
     assert error.value.reason is i.InsuredUnsupportedReason.UNKNOWN_EARNINGS
+    assert error.value.detail == (
+        "Unknown earnings decide established current period start"
+    )
     _retained_row(
         person,
         years,
@@ -211,36 +214,31 @@ def test_unknown_earnings_can_avoid_derived_prior_quarter_overlap():
 @settings(max_examples=4, deadline=None)
 @example(missing_year=1971)
 @given(missing_year=st.integers(1968, 1971))
-def test_possible_lower_earnings_filling_prevents_upper_overlap_input_error(
-    missing_year,
-):
-    """An invalid upper-credit period cannot disprove every completion.
+def test_every_onset_year_filling_starts_a_valid_period(missing_year):
+    """Each 1972 filling starts the period, and the UNKNOWN year moves it.
 
     The declared prior start meets the captured pre1956 alternate test.
-    Zero 1972 QCs yields an insured new start in 1973Q1. More 1972 QCs
-    move that start into the prior ending quarter, which the interface's
-    nonoverlapping-quarter representation rejects for that completion.
+    Zero 1972 QCs start the new period in 1973Q1. Any 1972 QC insures the
+    onset quarter, which the prior left in January, so the period starts
+    on the onset day (20 CFR 404.321(a)); a period may begin in the quarter
+    a prior ended (RS 00301.140 example 7). Round 4 rejected those fillings
+    as overlapping the prior's last quarter.
     """
-    person, years, month = _prior_overlap_unknown_earnings_case(
+    person, years, month = _shared_quarter_unknown_earnings_case(
         missing_year=missing_year
     )
-    concrete_validity = []
+    starts = []
     for count in range(5):
         concrete = dict(years)
         concrete[1972] = i.CoverageYear(
             OBSERVED, qc_quarters=tuple(n < count for n in range(4))
         )
-        try:
-            result = i.insured_status(
-                person, concrete, month, test=i.InsuredTest.FULLY
-            )
-        except i.InvalidFamilyInput:
-            concrete_validity.append(False)
-        else:
-            concrete_validity.append(True)
-            assert result.fully.insured
-            assert result.current_disability_period_start == date(1973, 1, 1)
-    assert concrete_validity == [True, False, False, False, False]
+        result = i.insured_status(
+            person, concrete, month, test=i.InsuredTest.FULLY
+        )
+        assert result.fully.insured
+        starts.append(result.current_disability_period_start)
+    assert starts == [date(1973, 1, 1)] + [date(1972, 2, 15)] * 4
     _retained_row(
         person,
         years,

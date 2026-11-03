@@ -3,6 +3,10 @@
 Invented declarations only; no population, behavioral, or forecast claim.
 Rows and exact weight survive every named refusal. Tests named ``unchanged``
 pin existing rejection or refusal behavior rather than a new defect.
+Round 23: 404.321(b)-(c) end a period on a month's last day, so a new period
+can begin in the quarter a prior ended (RS00301.140 example 7). The records
+whose onset shares 2000Q1 (or 1962Q1, 1985Q1) with a prior's last quarter
+now compute from the onset day or refuse by a declared route's name.
 """
 
 from dataclasses import replace
@@ -252,6 +256,45 @@ def test_unchanged_unflagged_disregard_control_is_fully_insured():
     assert row.result.fully.insured
 
 
+def _decision(decision):
+    if decision is None:
+        return None
+    return (
+        decision.insured,
+        decision.qc_count_lower,
+        decision.qc_count_upper,
+        decision.required,
+        decision.qualifying_quarter,
+    )
+
+
+def _dli(result):
+    return result.dli.lower, result.dli.upper, result.dli.right_censored
+
+
+# Considering the prior (404.130(f)), 2000Q1's QC and 1999Q1's join 1990's
+# and 1995-1998's: 19 of 40 at 2000Q1. Disregarding it counts both 1999
+# QCs: 20 of 40. Placement can begin the period in 2000Q1, Q2 or Q3, each
+# with the same statuses and a last insured quarter of 2003Q4, and a 2002
+# start loses FULLY (the status oracle's per-start search), so the earliest
+# start, the onset day, stands (us:oasdi-insured-one-filling-first-start).
+PLACEMENT = {
+    "ordinary-query": (
+        (True, 20, 20, 20, date(2006, 1, 1)),
+        (False, 0, 0, 6, None),
+        (True, 20, 20, 20, date(2000, 1, 1)),
+        date(2003, 12, 31),
+    ),
+    "claiming-age": (
+        (True, 36, 36, 36, date(2022, 1, 1)),
+        (False, 0, 0, 6, None),
+        (True, 20, 20, 20, date(2000, 1, 1)),
+        date(2011, 12, 31),
+    ),
+}
+PLACEMENT["coverage-end"] = PLACEMENT["ordinary-query"]
+
+
 @pytest.mark.parametrize("test", tuple(i.InsuredTest))
 @pytest.mark.parametrize(
     "month,coverage_end,claiming",
@@ -262,7 +305,7 @@ def test_unchanged_unflagged_disregard_control_is_fully_insured():
     ),
     ids=("ordinary-query", "coverage-end", "claiming-age"),
 )
-def test_first_successful_placement_cannot_settle_status(
+def test_one_onset_year_qc_starts_the_period_on_the_onset_day(
     test, month, coverage_end, claiming
 ):
     person, years, month = _placement_history(
@@ -270,28 +313,64 @@ def test_first_successful_placement_cannot_settle_status(
         coverage_end=coverage_end,
         claiming=claiming,
     )
-    _refusal(
-        person,
-        years,
-        month,
-        i.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
-        test=test,
-        coverage_end=coverage_end,
+    row = _row(person, years, month, test=test, coverage_end=coverage_end)
+    result = row.result
+    assert result.current_disability_period_start == date(2000, 2, 15)
+    variant = "claiming-age" if claiming else "ordinary-query"
+    fully, currently, disability, dli = PLACEMENT[variant]
+    every = test is i.InsuredTest.ALL
+    assert _decision(result.fully) == (
+        fully if every or test is i.InsuredTest.FULLY else None
     )
+    assert _decision(result.currently) == (
+        currently if every or test is i.InsuredTest.CURRENTLY else None
+    )
+    if every or test is i.InsuredTest.DISABILITY:
+        assert _decision(result.disability) == disability
+        assert _dli(result) == (dli, dli, False)
+    else:
+        assert result.disability is None
 
 
-def test_round_thirteen_annual_start_needs_named_refusal():
+@pytest.mark.parametrize("test", tuple(i.InsuredTest))
+def test_two_onset_year_qcs_leave_the_start_to_placement(test):
+    """Two 2000 QCs can begin the period in 2000Q1 or later. A 2000Q1 start
+    keeps disability insured status through 2004Q4, and a 2000Q2 start keeps
+    it through the 2006Q1 query (``favorable_statuses`` in the status
+    oracle), so DISABILITY refuses by name while FULLY and CURRENTLY stand
+    on either start."""
+    person, years, month = _placement_history()
+    years[2000] = replace(years[2000], qc_count=2)
+    row = _row(person, years, month, test=test)
+    if test in (i.InsuredTest.ALL, i.InsuredTest.DISABILITY):
+        assert row.result is None
+        assert (
+            row.unsupported.reason
+            is i.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY
+        )
+        return
+    assert row.result.current_disability_period_start == date(2000, 2, 15)
+    if test is i.InsuredTest.FULLY:
+        assert _decision(row.result.fully) == PLACEMENT["ordinary-query"][0]
+    else:
+        assert _decision(row.result.currently) == (False, 0, 0, 6, None)
+
+
+def test_round_thirteen_annual_start_computes_in_the_shared_quarter():
     person, years, month = _placement_history(
         month=date(2001, 1, 1),
         round_thirteen=True,
     )
-    _refusal(
-        person,
-        years,
-        month,
-        i.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY,
-        test=i.InsuredTest.DISABILITY,
+    row = _row(person, years, month, test=i.InsuredTest.DISABILITY)
+    assert row.result.current_disability_period_start == date(2000, 2, 15)
+    assert _decision(row.result.disability) == (
+        True,
+        20,
+        20,
+        20,
+        date(2000, 1, 1),
     )
+    assert _dli(row.result) == (date(2001, 3, 31), date(2001, 3, 31), True)
 
 
 def _invalid(person, years, month, *, match="no possible insured", **kwargs):
@@ -304,16 +383,18 @@ def _invalid(person, years, month, *, match="no possible insured", **kwargs):
 
 
 @pytest.mark.parametrize("flag", FULLY_FLAGS)
-def test_unchanged_ordinary_overlap_cannot_be_delayed_by_a_flag(flag):
-    """Ordinary insurance at onset in every placement fixes the start."""
+def test_ordinary_insurance_in_a_shared_onset_quarter_keeps_flag_refusal(
+    flag,
+):
+    """Ordinary insurance at the onset, in a quarter a prior ended, begins
+    the period there, and the flag refuses by its name."""
     person = _person(conditions=(flag,))
     month = date(2006, 1, 1)
     years = history(person, month, {year: 4 for year in range(1985, 2001)})
-    _invalid(person, years, month)
+    _refusal(person, years, month, i.InsuredUnsupportedReason[flag.name])
 
 
-@pytest.mark.parametrize("flag", FULLY_FLAGS)
-def test_unchanged_1962_ordinary_overlap_fixes_start(flag):
+def _shared_1962(flag):
     person = _person(
         birth=date(1910, 2, 2),
         disability_onset=date(1962, 2, 15),
@@ -321,30 +402,44 @@ def test_unchanged_1962_ordinary_overlap_fixes_start(flag):
         prior_disability_periods=(
             i.DisabilityPeriod(date(1960, 1, 1), date(1962, 1, 31)),
         ),
-        conditions=(flag,),
+        conditions=(() if flag is None else (flag,)),
     )
     month = date(1968, 1, 1)
     years = history(person, month)
-    credited = {*range(1957 * 4, 1961 * 4 + 3), 1962 * 4}
+    # 1955-1956 give the prior 21 of 40 at its 1960Q1 start (404.130(b)).
+    credited = {*range(1955 * 4, 1961 * 4 + 3), 1962 * 4}
     for year in years:
         years[year] = i.CoverageYear(
             OBSERVED,
             qc_quarters=tuple(year * 4 + q in credited for q in range(4)),
         )
-    _invalid(person, years, month)
+    return person, years, month
+
+
+@pytest.mark.parametrize("flag", (None, *FULLY_FLAGS))
+def test_1962_ordinary_insurance_in_a_shared_quarter_fixes_start(flag):
+    person, years, month = _shared_1962(flag)
+    if flag is not None:
+        _refusal(person, years, month, i.InsuredUnsupportedReason[flag.name])
+        return
+    row = _row(person, years, month, test=i.InsuredTest.DISABILITY)
+    assert row.result.current_disability_period_start == date(1962, 2, 15)
+    assert row.result.disability.insured
+    assert row.result.disability.qualifying_quarter == date(1962, 1, 1)
 
 
 @pytest.mark.parametrize("flag", FULLY_FLAGS)
-@pytest.mark.parametrize("overlap", (False, True))
-def test_blind_flagged_zero_qcs_keep_named_refusal(flag, overlap):
-    """The clear-onset case is unchanged; an overlap admits a free flag start."""
+@pytest.mark.parametrize("shared", (False, True))
+def test_blind_flagged_zero_qcs_keep_named_refusal(flag, shared):
+    """A prior ending before the onset quarter or inside it keeps the flag's
+    named refusal."""
     person = _person(
         statutory_blindness=True,
         conditions=(flag,),
         prior_disability_periods=(
             i.DisabilityPeriod(
                 date(1999, 1, 1),
-                date(2000, 1, 31) if overlap else date(1999, 12, 31),
+                date(2000, 1, 31) if shared else date(1999, 12, 31),
             ),
         ),
     )
@@ -357,12 +452,20 @@ def test_blind_flagged_zero_qcs_keep_named_refusal(flag, overlap):
     )
 
 
-@pytest.mark.parametrize("flag", FULLY_FLAGS)
-def test_unchanged_blind_ordinary_fully_insured_overlap_is_invalid(flag):
-    person = _person(statutory_blindness=True, conditions=(flag,))
+@pytest.mark.parametrize("flag", (None, *FULLY_FLAGS))
+def test_blind_fully_insured_onset_in_a_shared_quarter_starts_there(flag):
+    person = _person(
+        statutory_blindness=True,
+        conditions=(() if flag is None else (flag,)),
+    )
     month = date(2006, 1, 1)
     years = history(person, month, {year: 4 for year in range(1985, 2001)})
-    _invalid(person, years, month)
+    if flag is not None:
+        _refusal(person, years, month, i.InsuredUnsupportedReason[flag.name])
+        return
+    row = _row(person, years, month, test=i.InsuredTest.DISABILITY)
+    assert row.result.current_disability_period_start == date(2000, 2, 15)
+    assert row.result.disability.insured
 
 
 @pytest.mark.parametrize("total", (5, 6))
@@ -378,19 +481,31 @@ def test_unchanged_unknown_prior_needs_a_possible_fully_insured_start(total):
     _invalid(person, history(person, month, {1998: 4, 1999: total - 4}), month)
 
 
-def test_unchanged_no_placement_can_clear_the_prior_overlap():
+def test_a_shared_onset_quarter_is_a_valid_start():
+    """Every placement insures 2000Q1, which the prior ended in a month
+    before the onset, so the period begins on the onset day."""
     person = _person()
     month = date(2006, 1, 1)
     years = history(person, month, {year: 4 for year in range(1985, 2001)})
-    _invalid(person, years, month)
+    row = _row(person, years, month, test=i.InsuredTest.ALL)
+    assert row.result.current_disability_period_start == date(2000, 2, 15)
+    assert _decision(row.result.disability) == (
+        True,
+        40,
+        40,
+        20,
+        date(2000, 1, 1),
+    )
+    assert row.result.fully.insured
 
 
 @pytest.mark.parametrize("flag", (None, *FULLY_FLAGS))
-def test_one_treatment_overlaps_and_the_other_leaves_a_clear_start(flag):
+def test_the_treatment_that_insures_the_shared_quarter_fixes_the_start(flag):
     # Move four old QCs into the used-prior recent window, keeping the
-    # lifetime count unchanged. Use now insures the overlapping Q1:
-    # 20 recent and 29/27 fully. Disregard still has only 33/34 fully
-    # in Q1, first becoming insured in the clear Q2 with 34/34.
+    # lifetime count unchanged. Use now insures the shared Q1: 20 recent
+    # and 29/27 fully. Disregard still has only 33/34 fully in Q1, first
+    # becoming insured in Q2 with 34/34. The prior ended a month before
+    # the onset, so Q1 begins the period on the onset day.
     person, years, month = _flag_history(flag)
     years[1951] = i.CoverageYear(
         OBSERVED, qc_quarters=(False, False, False, False)
@@ -401,16 +516,25 @@ def test_one_treatment_overlaps_and_the_other_leaves_a_clear_start(flag):
     years[1975] = i.CoverageYear(
         OBSERVED, qc_quarters=(True, True, True, True)
     )
-    _refusal(
-        person,
-        years,
-        month,
-        (
-            i.InsuredUnsupportedReason[flag.name]
-            if flag
-            else i.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY
-        ),
-        weight=FLAG_WEIGHT,
+    if flag:
+        _refusal(
+            person,
+            years,
+            month,
+            i.InsuredUnsupportedReason[flag.name],
+            weight=FLAG_WEIGHT,
+        )
+        return
+    row = _row(
+        person, years, month, test=i.InsuredTest.ALL, weight=FLAG_WEIGHT
+    )
+    assert row.result.current_disability_period_start == date(1985, 2, 15)
+    assert _decision(row.result.disability) == (
+        True,
+        20,
+        20,
+        20,
+        date(1985, 1, 1),
     )
 
 
@@ -482,21 +606,21 @@ def test_fully_route_flag_only_relaxes_deterministic_lattice():
 
 
 @PROPERTY
-@example(old=2, onset=1, blind=False, overlap=True, historical=True)
-@example(old=2, onset=1, blind=False, overlap=True, historical=False)
+@example(old=2, onset=1, blind=False, shared=True, historical=True)
+@example(old=2, onset=1, blind=False, shared=True, historical=False)
 @given(
     old=st.integers(0, 4),
     onset=st.integers(0, 4),
     blind=st.booleans(),
-    overlap=st.booleans(),
+    shared=st.booleans(),
     historical=st.booleans(),
 )
 def test_fully_route_flag_only_relaxes_generated_declarations(
-    old, onset, blind, overlap, historical
+    old, onset, blind, shared, historical
 ):
     if historical:
         person, years, month = _flag_history(
-            None, month=date(1986, 1, 1) if overlap else date(1985, 12, 1)
+            None, month=date(1986, 1, 1) if shared else date(1985, 12, 1)
         )
         _assert_flags_only_relax(person, years, month)
         return
@@ -505,7 +629,7 @@ def test_fully_route_flag_only_relaxes_generated_declarations(
         prior_disability_periods=(
             i.DisabilityPeriod(
                 date(1999, 1, 1),
-                date(2000, 1, 31) if overlap else date(1999, 12, 31),
+                date(2000, 1, 31) if shared else date(1999, 12, 31),
             ),
         ),
     )

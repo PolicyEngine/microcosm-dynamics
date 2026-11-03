@@ -18,7 +18,7 @@ from populace_dynamics.track_b.gross_benefits import count_family_outcomes
 from tests.test_track_b_insured_status import declared, history
 from tests.test_track_b_insured_status_fix_round_4_routes import (
     _pre1956_case,
-    _prior_overlap_unknown_earnings_case,
+    _shared_quarter_unknown_earnings_case,
     _short_period_case,
 )
 
@@ -167,11 +167,11 @@ def test_unknown_declaration_exactly_matches_all_concrete_qc_fillings(
     ),
     prior_ends_in_onset_quarter=st.booleans(),
 )
-def test_overlap_declaration_exactly_matches_every_quarter_filling(
+def test_shared_quarter_declaration_exactly_matches_every_quarter_filling(
     missing_year, ending, prior_ends_in_onset_quarter
 ):
-    """A single filling must satisfy the fixed end and derived overlap."""
-    person, years, month = _prior_overlap_unknown_earnings_case(
+    """One filling must insure a start that the fixed end allows."""
+    person, years, month = _shared_quarter_unknown_earnings_case(
         missing_year=missing_year
     )
     prior = person.prior_disability_periods[0]
@@ -186,26 +186,43 @@ def test_overlap_declaration_exactly_matches_every_quarter_filling(
     assert len(_assert_exact_classification(person, years, month)) == 16
 
 
-def test_different_fillings_cannot_separately_satisfy_end_and_overlap():
-    person, years, month = _prior_overlap_unknown_earnings_case()
+def test_an_april_end_needs_the_onset_quarter_insured():
+    """Only a 1972Q1 QC insures a quarter before the February recovery.
+
+    The April 1972 end puts recovery in February (404.321(b)), so the
+    period needs an insured quarter that begins by then, 1972Q1. That is
+    the quarter the prior ended in January, which the period may share
+    (RS 00301.140 example 7), and only a 1972Q1 QC insures it. The masks
+    run Q1 first, so the last eight fillings credit Q1. Round 5 rejected
+    every filling, because a 1972Q1 start overlapped the prior's last
+    quarter.
+    """
+    person, years, month = _shared_quarter_unknown_earnings_case()
     person = replace(
         person,
         current_disability_period_end=date(1972, 4, 30),
         current_disability_period_end_provenance=OBSERVED,
     )
     valid = _assert_exact_classification(person, years, month)
-    assert valid == [False] * 16
+    assert valid == [False] * 8 + [True] * 8
 
 
-def test_later_quarter_filling_can_clear_overlap_before_fixed_end():
-    person, years, month = _prior_overlap_unknown_earnings_case()
+def test_any_1972_qc_starts_a_period_before_a_december_end():
+    """A December 1972 end puts recovery in October (404.321(b)).
+
+    A QC in any 1972 quarter insures a quarter that begins by then, so
+    only the all-zero filling fails. Round 5 also rejected the eight
+    fillings with a 1972Q1 QC, which start the period on the onset day in
+    the quarter the prior ended.
+    """
+    person, years, month = _shared_quarter_unknown_earnings_case()
     person = replace(
         person,
         current_disability_period_end=date(1972, 12, 31),
         current_disability_period_end_provenance=OBSERVED,
     )
     valid = _assert_exact_classification(person, years, month)
-    assert valid == [False] + [True] * 7 + [False] * 8
+    assert valid == [False] + [True] * 15
 
 
 @pytest.mark.parametrize("condition", [None, *i.CoverageCondition])
@@ -369,8 +386,13 @@ def test_exact_classification_keeps_short_dib_entitled_prior_filling():
     assert _classification(person, years, month) == any(concrete)
 
 
-def test_large_unresolved_overlap_has_explicit_complexity_refusal():
-    person, years, month = _prior_overlap_unknown_earnings_case()
+def test_many_unknown_years_keep_one_earnings_refusal_row():
+    """Seven UNKNOWN years keep the earnings refusal and one row.
+
+    Round 5 refused this record as more than 4096 overlap fillings. A
+    period may share the quarter a prior ended, so no such search runs.
+    """
+    person, years, month = _shared_quarter_unknown_earnings_case()
     person = replace(
         person,
         current_disability_period_end=date(1972, 12, 31),
@@ -386,10 +408,11 @@ def test_large_unresolved_overlap_has_explicit_complexity_refusal():
         ),
     )
     assert (
-        row.unsupported.reason
-        is i.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY
+        row.unsupported.reason is i.InsuredUnsupportedReason.UNKNOWN_EARNINGS
     )
-    assert "overlap fillings" in row.unsupported.detail
+    assert row.unsupported.detail == (
+        "Unknown earnings decide a valid established current period"
+    )
     assert count_family_outcomes((row,)).rows == 1
 
 

@@ -238,6 +238,14 @@ def test_independent_date_oracle_classifies_covered_quarters_both_directions(
             covered.month,
             calendar.monthrange(covered.year, covered.month)[1],
         )
+        if covered >= fra_month_start:
+            # A period ends by the month before FRA (404.321(b)), so a
+            # later declared end has no lawful filling (round 23).
+            with pytest.raises(
+                i.InvalidFamilyInput, match="statutory FRA end"
+            ):
+                _case(fra_month=fra_month, end=covered)
+            covered = fra_month_start - timedelta(days=1)
     if mode == "unknown":
         covered = date(1955, 7, 15)
     else:

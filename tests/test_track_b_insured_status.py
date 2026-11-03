@@ -271,10 +271,12 @@ def _rs00301_800_exhibit_rows():
 def test_fully_requirement_differential_poms_rs_00301_800_exhibit():
     """Every row of the RS 00301.800 exhibit, by birth cohort and death year.
 
-    Men born before January 2, 1913 use age 65 and women age 62; from 1914
-    one row serves both. Footnote 1: a January 1 birth takes the prior
-    year's row. The death-year column is checked for a worker who attained
-    21 before 1951 (born July 1, 1929) and dies that year.
+    A man born before January 2, 1911 counts to age 65, one born from then
+    through January 1, 1913 to 1975 (404.110(b)(2)(iii)-(iv)), and a woman
+    to 62; from 1914 one row serves both. Footnote 1: a January 1 birth
+    takes the prior year's row. The death-year column is checked for a
+    worker who attained 21 before 1951 (born July 1, 1929) and dies that
+    year. The age below only picks a query month after the count ends.
     """
     tested = 0
     for men, women, event, required in _rs00301_800_exhibit_rows():
@@ -824,7 +826,10 @@ def test_property_disability_period_exclusion_never_adds_qcs(
     )
 
 
-def test_unknown_upper_bound_respects_exit_quarter():
+def test_unknown_exit_year_keeps_every_quarter_of_its_year():
+    """RS00301.230 B places an annual QC in any quarter of its year, and
+    RS00301.240 bars no quarter for an exit, so the exit bars later years
+    only and an UNKNOWN exit year can reach four QCs."""
     person = i.Person(
         date(2000, 2, 2),
         prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
@@ -843,7 +848,7 @@ def test_unknown_upper_bound_respects_exit_quarter():
         coverage_end_month=exit_month,
         test=i.InsuredTest.FULLY,
     )
-    assert result.qcs_by_year[2026] == (0, 2)
+    assert result.qcs_by_year[2026] == (0, 4)
     assert result.fully.insured
 
 
@@ -865,7 +870,7 @@ def test_special_insured_quarter_before_31_boundary():
     assert not attainment_quarter.disability.insured
 
 
-def test_joseph_subsequent_poms_140_example_6_endpoint_erratum():
+def test_joseph_subsequent_poms_140_example_6_endpoint_placement():
     person = i.Person(
         date(1956, 9, 16),
         disability_onset=date(1984, 2, 14),
@@ -886,8 +891,11 @@ def test_joseph_subsequent_poms_140_example_6_endpoint_erratum():
         {1978: 2, 1979: 3, 1980: 4, 1981: 1, 1982: 2, 1983: 4, 1984: 1},
     )
     assert result.disability.insured
-    # The capture says 18 elapsed / 9 needed. Under .240 and 404.130(f),
-    # its credited first/last quarters remain: 26 total - 6 interior =20.
+    # The capture says 18 elapsed / 9 needed, excluding both endpoint
+    # quarters. Under .240 and 404.130(f) an endpoint quarter counts where it
+    # is a QC. The printed placement credits only 1981Q1, so 19 reduce to the
+    # printed 18 and 9; assigning a 1982 QC to 1982Q4 credits both, so the
+    # 26 quarters less 6 interior ones leave 20 and 10. Both insure.
     source_elapsed, source_required = 18, 9
     assert len(result.disability.window) == source_elapsed + 2 == 20
     assert result.disability.required == source_required + 1 == 10
@@ -1181,7 +1189,7 @@ def test_guinness_lis_poms_120_freeze_protects_onset_status():
     ids=[
         "mary-brown-example-1",
         "john-jones-example-2",
-        "frank-smith-example-3-moveable-qc-erratum",
+        "frank-smith-example-3-moveable-qc-placement",
     ],
 )
 def test_subsequent_over31_poms_147_examples(
@@ -1214,8 +1222,9 @@ def test_subsequent_over31_poms_147_examples(
     assert len(result.disability.window) == elapsed
     assert result.disability.rule == "subsequent_special"
     if birth == date(1945, 7, 14):
-        # Source freezes 1978 CNNN in Q1. .230 permits moving it to Q4,
-        # the last PPD quarter; .240 then retains it in both counts.
+        # Source keeps 1978 CNNN in Q1. .230 permits moving it to Q4, the
+        # last PPD quarter, and .240 then retains it in both counts; neither
+        # placement insures.
         source_elapsed, source_required, source_available = 33, 16, 8
         assert elapsed == source_elapsed + 1
         assert required == source_required + 1

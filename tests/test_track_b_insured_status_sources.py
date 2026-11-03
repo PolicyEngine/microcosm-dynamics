@@ -693,19 +693,28 @@ def test_rs00301_800_exhibit_text_pins_every_linked_attachment():
     assert case["coverage"] == "table_differential"
 
 
-def test_rs00301_800_pdf_footnote_misprints_the_1913_male_age_65_cohort():
-    """The PDF's footnote says 1/2/31; its GIF rendering and the CFR say 1913.
+def test_rs00301_800_pdf_footnote_misdates_the_male_age_65_cohort():
+    """The PDF's footnote 2 says 1/2/31; 404.110(b)(2) puts the line at 1911.
 
-    The image rendering (G-RS_00301.800-2.gif, pinned in served_bodies)
-    prints "born before 1/2/13", and the exhibit's own table splits its male
-    and female columns at 1913. 20 CFR 404.132(b) ties the male rule to men
-    born before January 2, 1913. The implementation follows the CFR.
+    404.110(b)(2)(iv) counts to age 65 only for a man who became 62 before
+    1973, born before January 2, 1911, and (iii) counts to 1975 for one born
+    from then through January 1, 1913. (ii) covers the rest of 1913, and
+    together they give the exhibit's merged 1910-1913 row of 24 QCs. The
+    January 2, 1913 date in 20 CFR 404.132(b) belongs to the disability
+    prerequisite's 1975 cap. The GIF renderings are pinned by hash only;
+    their text is not captured, so no reading of them is claimed. The
+    implementation follows 404.110(b)(2).
     """
     assert (
         "The determining age for men born before 1/2/31 is age 65."
         in source_text("poms_rs_00301_800_exhibit")
     )
     assert "1910-1913 1913 1975 24" in source_text("poms_rs_00301_800_exhibit")
+    assert (
+        "(iii) The year 1975, if you are a man who became age 62 in 1973 or "
+        "1974; or (iv) The year you became age 65, if you are a man who "
+        "became age 62 before 1973."
+    ) in source_text("ecfr_20cfr404_subpart_b")
     assert "If you are a man born before January 2, 1913" in source_text(
         "ecfr_20cfr404_subpart_b"
     )

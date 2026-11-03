@@ -145,23 +145,47 @@ def test_review_recent_credit_shortfall_cannot_be_cured_by_deeming(
     )
 
 
+def _shared_quarter_person(**kwargs):
+    """404.321(b)-(c) end a period on a month's last day, so a new period
+    can begin in the quarter a prior ended (RS00301.140 example 7)."""
+    person = _person(
+        onset=date(2022, 2, 15),
+        prior_disability_periods=(
+            i.DisabilityPeriod(date(2021, 1, 1), date(2022, 1, 31)),
+        ),
+        **kwargs,
+    )
+    return replace(person, current_disability_period_end=date(2022, 2, 28))
+
+
+def test_a_prior_ending_in_the_onset_quarter_leaves_a_valid_start():
+    person = _shared_quarter_person()
+    month = date(2023, 1, 1)
+    result = i.insured_status(
+        person, history(person, month, _counts(28)), month
+    )
+    assert result.current_disability_period_start == date(2022, 2, 15)
+    assert result.disability.insured
+    assert result.disability.qualifying_quarter == date(2022, 1, 1)
+
+
 @pytest.mark.parametrize("condition", list(i.CoverageCondition))
 @pytest.mark.parametrize("foreign", [False, True])
-def test_fixed_overlap_precedes_every_flag_and_foreign_route(
+def test_a_prior_ending_in_the_onset_quarter_keeps_every_route_refusal(
     condition, foreign
 ):
-    person = _person(
-        conditions=(condition,),
-        prior_disability_periods=(
-            i.DisabilityPeriod(date(2021, 1, 1), date(2022, 1, 14)),
-        ),
-    )
-    person = replace(person, current_disability_period_end=date(2022, 1, 31))
+    """The shared-quarter record is valid, so each route refuses by name."""
+    person = _shared_quarter_person(conditions=(condition,))
     month = date(2023, 1, 1)
-    _assert_invalid(
+    _assert_refusal(
         person,
-        history(person, month, _counts(20)),
+        history(person, month, _counts(28)),
         month,
+        (
+            i.InsuredUnsupportedReason.TOTALIZATION
+            if foreign
+            else _reason(condition)
+        ),
         totalization_credits=("canada",) if foreign else (),
     )
 

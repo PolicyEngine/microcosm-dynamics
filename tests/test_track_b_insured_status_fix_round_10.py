@@ -319,7 +319,15 @@ def test_continuous_alternate_clock_requires_each_of_twenty_qcs(deleted):
     flags = list(years[year].qc_quarters)
     flags[quarter] = False
     years[year] = i.CoverageYear(OBSERVED, qc_quarters=tuple(flags))
-    _assert_invalid(lambda: _row(person, years, month))
+    # The listed prior began on the same clock in 1952Q3, so without the
+    # QC no completion supports it either. A prior no completion supports
+    # shows the record omits facts, and its named refusal keeps the row
+    # before the current period's input error (round 23).
+    row = _row(person, years, month)
+    _assert_row(row, i.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY)
+    assert row.unsupported.detail == (
+        "No annual placement supports a listed prior's first insured quarter"
+    )
 
 
 @settings(max_examples=24, deadline=None)
@@ -373,11 +381,14 @@ def test_plain_date_oracle_applies_two_month_offset_in_both_directions(
         ending_month,
         calendar.monthrange(ending_year, ending_month)[1],
     )
-    if mode == "continuity":
-        end = min(
-            end,
-            date.fromordinal(date(1960, fra_month, 1).toordinal() - 1),
-        )
+    fra_end = date.fromordinal(date(1960, fra_month, 1).toordinal() - 1)
+    if mode == "declared" and end > fra_end:
+        # A period ends by the month before FRA (404.321(b)), so a later
+        # declared end has no lawful filling (round 23).
+        with pytest.raises(i.InvalidFamilyInput, match="statutory FRA end"):
+            _alternate_case(fra_month=fra_month, end=end)
+    if mode != "unknown":
+        end = min(end, fra_end)
     onset = date(1955, 7, 15)
     index = end.year * 12 + end.month - 1 - 2
     guaranteed = max(

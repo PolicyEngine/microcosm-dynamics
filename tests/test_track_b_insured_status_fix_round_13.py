@@ -4,6 +4,9 @@ Invented declarations only; no population, behavioral, or forecast claim.
 The zero-credit blind and credit-adding cases, six-credit boundary,
 clear alternate candidate, credited endpoint, and undeclared-period cases
 pin unchanged behavior. The other cases expose the round-thirteen defects.
+Round 23: 404.321(b)-(c) end a period on a month's last day, so a new
+period can begin in the quarter a prior ended (RS00301.140 example 7); the
+shared-quarter cases now refuse by the route's name or compute.
 """
 
 from dataclasses import replace
@@ -131,10 +134,15 @@ def test_review_unknown_prior_cannot_remove_six_qc_floor(coverage_end):
 @pytest.mark.parametrize(
     "end", [date(1956, 3, 31), date(1956, 12, 31), date(1959, 12, 31)]
 )
-def test_review_alternate_start_must_clear_same_prior_overlap(
+def test_an_alternate_start_can_share_the_quarter_a_prior_ended(
     coverage_end, end
 ):
-    """Sol's second case and its two longer-period controls."""
+    """Sol's second case and its two longer-period controls.
+
+    The prior ends 1955-11-30, a month before the onset, so the period can
+    begin in 1955Q4, where RS00301.480 may begin it; the rule refuses by
+    that route's name.
+    """
     person, years, month = _alternate(
         onset=date(1955, 12, 15), prior_end=date(1955, 11, 30), end=end
     )
@@ -144,7 +152,13 @@ def test_review_alternate_start_must_clear_same_prior_overlap(
             for year, row in years.items()
             if year <= coverage_end.year
         }
-    _invalid(person, years, month, coverage_end_month=coverage_end)
+    _refusal(
+        person,
+        years,
+        month,
+        i.InsuredUnsupportedReason.DISABILITY_BEFORE_1956,
+        coverage_end_month=coverage_end,
+    )
 
 
 @pytest.mark.parametrize("condition", FULLY_ROUTES)
@@ -230,7 +244,8 @@ def test_foreign_and_credit_adding_routes_precede_floor(condition):
 def test_alternate_uses_one_clear_candidate_after_prior_ending_quarter(
     endpoint,
 ):
-    """Unchanged: onset Q3 overlaps, but the sole clear Q4 may start."""
+    """A prior ending 1955-08-31 shares 1955Q3 with the onset, so 1955Q3
+    and 1955Q4 may each start the period on the alternate."""
     person, years, month = _alternate(
         onset=date(1955, 9, 15),
         prior_end=date(1955, 8, 31),
@@ -244,19 +259,33 @@ def test_alternate_uses_one_clear_candidate_after_prior_ending_quarter(
     )
 
 
+@pytest.mark.parametrize(
+    "test",
+    [i.InsuredTest.ALL, i.InsuredTest.CURRENTLY, i.InsuredTest.DISABILITY],
+)
 @pytest.mark.parametrize("end", [date(1956, 3, 31), date(1959, 12, 31)])
-def test_post1955_clear_start_cannot_replace_overlapped_alternate(end):
+def test_every_test_refuses_a_shared_quarter_alternate_by_name(end, test):
+    """No post-1955 start replaces the 1955Q4 alternate for any test."""
     person, years, month = _alternate(
         onset=date(1955, 12, 15), prior_end=date(1955, 11, 30), end=end
     )
-    _invalid(person, years, month)
+    row = i.evaluate_insured_status(
+        "round-thirteen-shared-alternate",
+        WEIGHT,
+        lambda: i.insured_status(person, years, month, test=test),
+    )
+    assert row.result is None
+    assert (
+        row.unsupported.reason
+        is i.InsuredUnsupportedReason.DISABILITY_BEFORE_1956
+    )
 
 
 @pytest.mark.parametrize(
     "established", [False, None], ids=["false", "unknown"]
 )
 def test_unestablished_alternate_keeps_prior_treatment(established):
-    """Unchanged: candidate nonoverlap belongs to established periods."""
+    """Unestablished or UNKNOWN establishment keeps the named refusal."""
     person, years, month = _alternate(
         onset=date(1955, 12, 15), prior_end=date(1955, 11, 30)
     )
@@ -286,8 +315,12 @@ def test_unestablished_alternate_keeps_prior_treatment(established):
     assert counts.weight == counts.unsupported_weight == WEIGHT
 
 
-def test_disability_witness_uses_the_legal_annual_start_filling():
-    """An unresolved annual start retains its row through a named refusal."""
+def test_disability_witness_counts_the_quarter_a_prior_ended():
+    """The prior ends a month before the onset, so 2000Q1 can begin the
+    period (404.321(b)-(c)). Disregarding the prior (404.130(f)) leaves
+    1999's three QCs and 2000's one in the window: 20 of 40 at 2000Q1. Past
+    blindness can begin the prior with a 1999Q1 QC on that same filling.
+    """
     person = _person(
         disability_onset=date(2000, 2, 15),
         conditions=(),
@@ -302,18 +335,16 @@ def test_disability_witness_uses_the_legal_annual_start_filling():
         month,
         {1995: 4, 1996: 4, 1997: 4, 1998: 4, 1999: 3, 2000: 1},
     )
-    row = i.evaluate_insured_status(
-        "round-thirteen-disability-start-filling",
-        WEIGHT,
-        lambda: i.insured_status(
-            person, years, month, test=i.InsuredTest.DISABILITY
-        ),
+    result = i.insured_status(
+        person, years, month, test=i.InsuredTest.DISABILITY
     )
-    assert row.result is None
+    assert result.current_disability_period_start == date(2000, 2, 15)
+    decision = result.disability
+    assert decision.insured
+    assert decision.rule == "disability_20_of_40"
     assert (
-        row.unsupported.reason
-        is i.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY
-    )
-    counts = count_family_outcomes((row,))
-    assert counts.rows == counts.unsupported_rows == 1
-    assert counts.weight == counts.unsupported_weight == WEIGHT
+        decision.qc_count_lower,
+        decision.qc_count_upper,
+        decision.required,
+    ) == (20, 20, 20)
+    assert decision.qualifying_quarter == date(2000, 1, 1)

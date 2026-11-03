@@ -220,12 +220,19 @@ def test_excluding_alternate_preserves_possible_nonempty_prior_history():
         assert row.result.fully.insured
 
 
-def _immutable_overlap_case():
+def _shared_end_quarter_case(prior_end=date(1977, 1, 31)):
+    # Fully insured in 1973Q1 (12 QCs for 11 elapsed years) and short of
+    # 20 of 40, the prior rests on past blindness (404.130(e), from January
+    # 1973 under RS 00301.150 A). The April end puts recovery in February
+    # (404.321(b)), so only 1977Q1, the quarter the prior ended in January,
+    # can start the period (RS 00301.140 example 7). There 20 of 40 needs
+    # the prior disregarded (404.130(f)) and every 1974-1977Q1 quarter
+    # credited, which UNKNOWN 1974-1977 leaves open.
     person = i.Person(
         date(1940, 2, 2),
         disability_onset=date(1977, 2, 15),
         prior_disability_periods=(
-            i.DisabilityPeriod(date(1970, 1, 1), date(1977, 1, 31)),
+            i.DisabilityPeriod(date(1973, 1, 1), prior_end),
         ),
         prior_disability_periods_provenance=OBSERVED,
         current_disability_period_established=True,
@@ -236,13 +243,50 @@ def _immutable_overlap_case():
         sspa211_provenance=OBSERVED,
     )
     month = date(1978, 1, 1)
-    years = history(person, month, {1968: 4, 1969: 4})
+    years = history(person, month, {1966: 4, 1967: 4, 1968: 4})
     years.update({year: i.CoverageYear(UNKNOWN) for year in range(1974, 1978)})
     return person, years, month
 
 
-def test_fixed_same_quarter_overlap_precedes_large_filling_refusal():
-    _assert_invalid_without_row(*_immutable_overlap_case())
+def _filled(years, counts):
+    return {
+        **years,
+        **{
+            year: i.CoverageYear(
+                OBSERVED, qc_quarters=tuple(n < count for n in range(4))
+            )
+            for year, count in zip(range(1974, 1978), counts, strict=True)
+        },
+    }
+
+
+def _assert_earnings_refusal_row(person, years, month):
+    row = _row(person, years, month)
+    assert (
+        row.unsupported.reason is i.InsuredUnsupportedReason.UNKNOWN_EARNINGS
+    )
+    assert row.unsupported.detail == (
+        "Unknown earnings decide a valid established current period"
+    )
+    assert count_family_outcomes((row,)).rows == 1
+
+
+def test_a_shared_end_quarter_leaves_validity_to_unknown_credits():
+    """Round 6 rejected this record: its only start overlapped the prior.
+
+    A period may now begin in the quarter a prior ended, so the credits
+    decide validity. Every 1974-1977Q1 quarter credited starts the period
+    on the onset day; one fewer leaves no insured quarter by February.
+    """
+    person, years, month = _shared_end_quarter_case()
+    _assert_earnings_refusal_row(person, years, month)
+    result = i.insured_status(
+        person, _filled(years, (4, 4, 4, 1)), month, test=i.InsuredTest.FULLY
+    )
+    assert result.fully.insured
+    assert result.current_disability_period_start == date(1977, 2, 15)
+    for counts in ((0, 0, 0, 0), (4, 4, 4, 0), (3, 4, 4, 1)):
+        _assert_invalid_without_row(person, _filled(years, counts), month)
 
 
 @settings(max_examples=12, deadline=None)
@@ -250,10 +294,11 @@ def test_fixed_same_quarter_overlap_precedes_large_filling_refusal():
     ending_month=st.sampled_from([4, 5]),
     extra_unknown=st.sampled_from([None, 1973, 1978]),
 )
-def test_immutable_overlap_is_independent_of_credit_uncertainty(
+def test_shared_end_quarter_validity_stays_with_unknown_credits(
     ending_month, extra_unknown
 ):
-    person, years, month = _immutable_overlap_case()
+    """A May end (recovery in March) still leaves only 1977Q1 to start."""
+    person, years, month = _shared_end_quarter_case()
     person = replace(
         person,
         current_disability_period_end=date(
@@ -262,33 +307,25 @@ def test_immutable_overlap_is_independent_of_credit_uncertainty(
     )
     if extra_unknown is not None:
         years[extra_unknown] = i.CoverageYear(UNKNOWN)
-    _assert_invalid_without_row(person, years, month)
+    _assert_earnings_refusal_row(person, years, month)
 
 
-def test_large_overlap_neighbour_keeps_valid_filling():
-    person, years, month = _immutable_overlap_case()
-    person = replace(
-        person,
-        prior_disability_periods=(
-            i.DisabilityPeriod(date(1970, 1, 1), date(1976, 12, 31)),
-        ),
-    )
-    row = _row(person, years, month)
-    assert (
-        row.unsupported.reason is i.InsuredUnsupportedReason.UNKNOWN_EARNINGS
-    )
-    concrete = dict(years)
-    concrete.update(
-        {
-            year: i.CoverageYear(OBSERVED, qc_quarters=(True,) * 4)
-            for year in range(1974, 1978)
-        }
-    )
+@pytest.mark.parametrize("prior_end", [date(1977, 1, 31), date(1976, 12, 31)])
+def test_a_prior_ending_in_the_onset_quarter_classifies_like_one_before(
+    prior_end,
+):
+    """A January end constrains the start no more than a December one.
+
+    Round 6 kept only the December end valid. Under the disregard that
+    insures 1977Q1, the two records count the same quarters.
+    """
+    person, years, month = _shared_end_quarter_case(prior_end)
+    _assert_earnings_refusal_row(person, years, month)
     result = i.insured_status(
-        person, concrete, month, test=i.InsuredTest.FULLY
+        person, _filled(years, (4, 4, 4, 4)), month, test=i.InsuredTest.FULLY
     )
-    assert result.fully.insured
     assert result.current_disability_period_start == date(1977, 2, 15)
+    _assert_invalid_without_row(person, _filled(years, (4, 4, 4, 0)), month)
 
 
 @pytest.mark.parametrize("twentieth_quarter", [2, 3])

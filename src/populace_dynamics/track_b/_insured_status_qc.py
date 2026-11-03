@@ -183,19 +183,18 @@ def _allowed_quarters(
     *,
     through_quarter: int,
     death_quarter: int | None = None,
-    coverage_end_quarter: int | None = None,
     disability_periods: tuple[tuple[int, int], ...] = (),
 ) -> tuple[int, ...]:
-    """404.146: begun, not after death/exit, outside disability interiors.
+    """404.146: begun, not after death, outside disability interiors.
 
     Disability endpoints themselves remain eligible. A caller that elects
     not to take a period into consideration under 404.146(d)(2) omits it.
-    Coverage-end is the explicit entrant/emigrant contract, not an additional
-    statutory disability exclusion.
+    A coverage exit bars only later years, which the history leaves out, so
+    it bars no quarter of its own year here.
     """
     last = min(
         value
-        for value in (through_quarter, death_quarter, coverage_end_quarter)
+        for value in (through_quarter, death_quarter)
         if value is not None
     )
     # Source conflict us:oasdi-insured-disability-period-endpoint-quarters
@@ -289,6 +288,10 @@ def _pre1978_taxable_qcs(
     fifth calendar quarter; otherwise SEI is allocated to at most four.
     Wage QCs themselves are supplied separately by their actual quarters.
     """
+    # RS 00301.345 B.2 sets $7,800 for a taxable year ending before 1972 and
+    # $9,000 for one beginning in 1972, so a fiscal year from 1971 into 1972
+    # fits neither, and this helper takes 1972's $9,000 there. Only tests
+    # call it: public calls refuse fiscal taxable years.
     limit_year = start.year if start.year >= 1972 else end.year
     if self_employment + wages >= _annual_wage_limit(limit_year):
         return tuple(range(_date_quarter(start), _date_quarter(end) + 1))

@@ -7,9 +7,10 @@ production quarter, assignment, clock, requirement, witness or period helper.
 
 Space: women born 1940-1979, aged 31-58 at onset, onset from 1992, where Rule
 I (20/40) or blindness applies. Endings, queries, annual totals with at most
-four partial years, no prior, a clear prior or an overlapping prior, and
-blindness in a quarter of cases all vary by seed. A second generator adds a
-DIB entitlement month, which ends a CURRENTLY window before the onset. A third
+four partial years, no prior, a prior ending before the onset quarter or
+one ending in it, and blindness in a quarter of cases all vary by seed. A
+second generator adds a DIB entitlement month, which ends a CURRENTLY window
+before the onset. A third
 draws ages 22-30 at onset, where 404.130(c) applies. A fourth declares a
 special-insured prior before age 31 and an onset after it, where 404.130(d)
 applies, and a fifth adds an unflagged prior between them. A declared prior
@@ -23,7 +24,11 @@ UNKNOWN facts appear only in ``check_unknown_ending`` and
 
 Every annual placement and both all-prior treatments are enumerated. A lawful
 filling has its own first insured start (404.321(a)), and that start supplies
-the current period for FULLY, CURRENTLY and the date last insured. Each
+the current period for FULLY, CURRENTLY and the date last insured. The start
+falls on the onset day or a later quarter's first day, after every prior's
+last day, so it may share the quarter a prior ended (RS 00301.140 example 7).
+A current period begun before age 31 without 404.130(b) opens 404.130(d)
+after it, as a flagged prior does (404.130(d)(1)). Each
 returned status must equal the favorable Boolean over lawful fillings
 (RS 00301.230), and a true status must hold on a filling whose first start is
 the reported start. Each exact count, assignment and date last insured must
@@ -239,10 +244,27 @@ def lawful_fillings(case, reading=LAST_40, *, keep=None, dated=True):
                 ),
                 None,
             )
-            if first is None or any(
-                quarter(a) <= first <= quarter(b) for a, b in prior
-            ):
+            if first is None:
                 continue
+            # This start began on 404.130(c) alone where 404.130(b) failed
+            # under both treatments, so 404.130(d) follows it.
+            own_special = (
+                not blind
+                and first
+                < quarter(date(birth.year + 31, birth.month, birth.day))
+                and not any(
+                    disability(
+                        birth,
+                        credits,
+                        first,
+                        treatment,
+                        False,
+                        reading=reading,
+                        paragraph_c=False,
+                    )
+                    for treatment in ((prior, ()) if prior else ((),))
+                )
+            )
             year, q = divmod(first, 4)
             start = (
                 onset if first == quarter(onset) else date(year, 3 * q + 1, 1)
@@ -278,7 +300,7 @@ def lawful_fillings(case, reading=LAST_40, *, keep=None, dated=True):
                                     at,
                                     periods,
                                     blind,
-                                    special,
+                                    special or own_special,
                                     reading,
                                 ),
                             ),

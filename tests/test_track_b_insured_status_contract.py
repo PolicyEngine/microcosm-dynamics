@@ -60,8 +60,10 @@ def test_currently_insured_uses_death_quarter_after_death():
     "field", ["rib_entitlement_month", "dib_entitlement_month"]
 )
 def test_currently_insured_preserves_actual_entitlement_event(field):
+    # RIB entitlement needs age 62 (Act 202(a)(2)), which a holder born in
+    # January 1958 reaches in 2020.
     person = i.Person(
-        date(1960, 1, 2),
+        date(1958, 1, 2),
         **{field: date(2020, 12, 1)},
         prior_disability_periods_provenance=i.EarningsProvenance.OBSERVED,
         current_disability_period_established=False,
