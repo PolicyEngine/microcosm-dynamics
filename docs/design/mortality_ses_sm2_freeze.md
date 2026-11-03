@@ -103,13 +103,14 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | S2-21 | 353 | Unmarked: CBO 49659's "safely bounded definitions remain open" | Left open as the brief requires; SM2 uses no part of 49659 | §3.1 | left open; settled by a validation lane's definitions-only extract |
 | S2-22 | 523 | Unmarked: "CBO 49659's mixed-source methods remain open pending a safely bounded definitions-only extract" | Same item as S2-21 | §3.1 | left open; as S2-21 |
 | S2-23 | 588 | Unmarked: "A 2020 table-only path is a proposed registered sensitivity" | Confirmed as sensitivity P-TABLE; it cannot become primary without amending Q6 | §7.3 | frozen here |
-| S2-24 | 669 | Unmarked: a source that does not publish the uncertainty a target needs leaves that item "open or inconclusive" | Applied: OACT publishes no deaths or exposures, so OACT's random-variation component stays open, with the consequences §9.3 states | §9.3 | left open; settled by OACT exposure or death counts by sex × band × quintile × year |
+| S2-24 | 669 | Unmarked: a source that does not publish the uncertainty a target needs leaves that item "open or inconclusive" | Applied: OACT publishes no deaths or exposures, so OACT's random-variation component stays open, and every OACT e65 member stays inconclusive (or fails, if its point residual lies outside ±0.1 year) until the component closes. That keeps lifetime earnings, and with it SM2 as a whole, from admission. A Poisson approximation from `R_ref`'s recipients is reported beside, labeled as likely understating the variation, and changes no verdict | §9.3, §9.5, §10 | left open; settled by OACT exposure or death counts by sex × band × quintile × year |
 | S2-25 | 698 | Unmarked: "`SOURCE_UNAVAILABLE` / open identification applies to the complete modern three-dimension joint source and missing source-age mappings" | Each trigger and fallback stated | §10 | frozen here |
 
 **Counts.** Of the 25 rows, this record freezes 20 and leaves 5 open, each
 with what settles it (S2-15, S2-17, S2-21, S2-22, S2-24); none goes to Max.
-S2-03 carries a check the fit job performs. Section 12 holds two rules for
-cases outside this table.
+S2-24's open item keeps lifetime earnings inconclusive, and with it SM2's
+admission, until OACT's counts close it (§9.3). S2-03 carries a check the
+fit job performs. Section 12 holds two rules for cases outside this table.
 
 ## 3. Source-year matrix
 
@@ -1038,21 +1039,50 @@ combined.
 | Component | Source | How the engine draws or computes it |
 |---|---|---|
 | U1, rounding and digitization | Every printed value; every digitized RMR | Uniform within the printing interval of §9.1, independently for each printed cell; uniform within `±δ_dig` for each digitized value |
-| U2, random mortality variation | NCHS education | Poisson on the printed death counts, combined with the ACS term as in Formula 9 (NVSR 74(4) p. 132) |
+| U2, random mortality variation | NCHS education | Poisson on the printed death counts: the `1/D` term of Formula 9 (NVSR 74(4) p. 132) and nothing else. Formula 9's ACS term `(SE(P)/P)²` enters through U3's replicate refits, so the ACS variance counts once |
 | | NCHS life tables | Poisson with expected deaths `q_x × P_x`, where `P_x` is the group's population at age `x` in `R_ref(t)`. The life-table reports print no death counts, so this is a registered approximation, used at the Medicare-supplemented ages too |
-| | OACT | **[open]** Study 129 prints rates and RMRs but no deaths or exposures (Tables 1–12), so the source cannot supply this component (row S2-24). It settles when OACT's exposure or death counts by sex × band × quintile × year are available |
+| | OACT | **[open]** Study 129 prints rates and RMRs but no deaths or exposures (Tables 1–12), so the source cannot supply this component (row S2-24). It settles when OACT's exposure or death counts by sex × band × quintile × year are available. Until then every OACT e65 member is inconclusive or fails (below) |
 | U3, survey sampling | ACS (reference population and NCHS education denominators) | One refit per ACS replicate, with the variance formula that each year's PUMS documentation gives and the fit job records. NCHS's denominators move with the same replicate: each category's share within sex and band is re-tabulated from that replicate and scaled to NCHS's printed total. The fit job also reports the ratio of its replicate standard errors to NCHS's printed ones (Table VIII, I–19) |
 | | NHIS–LMF | Rao–Wu rescaled bootstrap: PSUs resampled with replacement within strata, separately for each design period: the 2009 layout's `STRAT_P`/`PSU_P` and the 2016 and 2018 layouts' `PSTRAT`/`PPSU`, with the periods' strata kept distinct; the fit job reads which names each intervening year uses. Resampling whole PSUs keeps every family and every person's whole history together, once the fit job confirms from each year's survey description that families nest within PSUs |
 | U4, linkage and perturbation sensitivity | NHIS–LMF | Discrete alternative fits, not draws: NHIS weights replaced by the original sample-adult weight with ineligible persons dropped; `HISPAN_I` 11 coded `hispanic` (X-R1). The fit reports each alternative's conformance; neither gates |
 
-**What OACT's open U2 means.** Every Monte Carlo draw refits the model to
-that draw's targets (§9.4), so a source's random variation moves target
-and fit together and reaches a residual only through capping, composition
-and tails. OACT targets' conformance verdict therefore stands on U1 and
-U3. Two things do not: the lifetime-earnings coefficient intervals that
-SM2 hands to SM3 and SM4, which carry the label "OACT random variation not
-included", and the Study 129 versus Study 124 comparison, which the fit
-reports but which cannot trigger `GRADIENT_SOURCES_INCONSISTENT` (§10).
+**What OACT's open U2 means [frozen here].** S0.1 keeps a target whose
+source does not publish the uncertainty it needs "open or inconclusive",
+and it lets no complete-count rate count as free of uncertainty (audit
+lines 661–669). Every Monte Carlo draw refits the model to that draw's
+targets (§9.4), so a source's random variation moves target and fit
+together, but it still reaches an e65 residual through capping,
+composition and tails. Leaving OACT's term out would narrow the earnings
+e65 bounds and make passing easier, so this record applies S0.1's rule:
+
+- **Every OACT e65 member is inconclusive while the component stays
+  open.** The 150 members of e65 by earnings quintile (§9.4) cannot pass:
+  one whose point residual lies inside ±0.1 year is inconclusive, and one
+  whose point residual lies outside fails (§9.5). The component closes
+  only when OACT's deaths or exposure by sex × band × quintile × year
+  reach the project, through a recorded amendment (§11.1).
+- **What that stops.** Under §9.5 an inconclusive member makes lifetime
+  earnings inconclusive, and `WEAK_POWER_OR_VACUITY` blocks that
+  dimension's admission (§10). SM2 passes as a whole only when all three
+  dimensions pass, so **SM2 cannot earn admission while this item stays
+  open**. The fit still runs every step and publishes every member's
+  residual and bound, and each dimension's status, so education and race
+  and Hispanic origin carry verdicts of their own.
+- **The OACT contrast members keep their verdicts.** Each draw refits to
+  its own targets, so a contrast member checks the reconstruction (§9.4);
+  OACT's random variation does not enter its residual.
+- **A Poisson sensitivity, reported and never a verdict.** Beside each
+  OACT e65 member, the fit reports a bound with an added Poisson term:
+  at each single age of a band, expected deaths equal the target's
+  probability times one fifth of that age's Social Security recipients of
+  that sex in `R_ref(t)`. It carries the label "likely understates OACT's
+  random variation", because `R_ref`'s recipients include beneficiaries
+  that OACT's population leaves out (M-E4), which overstates exposure. It
+  changes no verdict.
+- **Two labels stay.** The lifetime-earnings coefficient intervals that
+  SM2 hands to SM3 and SM4 carry "OACT random variation not included",
+  and the Study 129 versus Study 124 comparison, which the fit reports,
+  cannot trigger `GRADIENT_SOURCES_INCONSISTENT` (§10).
 
 **The engine.**
 
@@ -1134,7 +1164,10 @@ and OACT contrasts: lifetime earnings; education contrasts: education;
 race contrasts, race e65 and `other_non_hispanic`: race and Hispanic
 origin). **A bound too wide to judge never passes.** The record publishes
 each dimension's status; SM2 passes as a whole only when all three pass,
-because SM1 needs all three.
+because SM1 needs all three. While OACT's random-variation component
+stays open, every e65 member by earnings quintile is inconclusive or
+fails whatever its computed bound (§9.3), so lifetime earnings cannot
+pass, and neither can SM2 as a whole.
 
 ### 9.6 Invariants (design §6)
 
@@ -1173,7 +1206,7 @@ tunes anything so that sources agree** (S0.1 §2.5, frozen).
 | `SMALL_CELL_DISCLOSURE` | A published aggregate from NHIS or ACS microdata rests on fewer than 100 unweighted persons, or a published death-based cell on fewer than 20 deaths (§11.5) | Publication of that artifact until the writer suppresses the cell and any complement that reveals it | Suppression |
 | `CELL_CONSERVATION_BROKEN` | SM1's cell log on `R_ref` at any knot shows an infeasible cell, or a feasible cell that does not conserve deaths | SM2's admission | None |
 | `GATE_FAIL_OR_REGRESSION_FAIL` | A tier A check fails; a family member's point residual lies outside `±τ`; a knot's calibration fails to converge or converges to two solutions (§6.3); an invariant fails; an SM1 test regresses | SM2's admission and everything resting on it: SM3's registration on these coefficients and SM4's use of them. The fit publishes the result with no seed selection and no tolerance relief; a new attempt needs a new registered version and enters the lane's attempt ledger (design §8) | None |
-| `WEAK_POWER_OR_VACUITY` | A family member is inconclusive (§9.5); or a report presents the contrast members' pass, which reproduces inputs by construction, as evidence that the gradients are right | The affected dimension's admission; the claim | None. SM2 makes no 0.90-power claim (S0.1 §2.5) |
+| `WEAK_POWER_OR_VACUITY` | A family member is inconclusive (§9.5), which includes every OACT e65 member while OACT's random-variation component stays open (§9.3); or a report presents the contrast members' pass, which reproduces inputs by construction, as evidence that the gradients are right | The affected dimension's admission, and with it SM2's admission as a whole (§9.5); the claim | None. SM2 makes no 0.90-power claim (S0.1 §2.5). The fit still publishes every residual, bound and dimension status |
 
 ## 11. Build plan
 
