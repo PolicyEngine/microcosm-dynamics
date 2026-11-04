@@ -152,13 +152,25 @@ only: it ignores whitespace runs of any kind, no-break and thin spaces
 included, and any run of periods and whitespace after the last word, and
 refuses any other difference. It accepts every footer the check before
 review r1b's fix accepted (review r2, finding 1). Before any arithmetic,
-`decimal_count_mismatches` compares each decimal count the arithmetic
-uses with the decimals its value writes, trailing zeros included: OACT's
-`decimals` for the two cost rates, PWBM's `stored_decimals` for the two
-2030 cost rates and MINT's `html_decimals` for each band's cell. The
+`decimal_count_mismatches` compares each of the fourteen decimal counts
+the arithmetic uses with the decimals its value writes, trailing zeros
+included: OACT's `decimals` for the two cost rates, PWBM's
+`stored_decimals` for the two 2030 cost rates, and, in each of the five
+MINT bands' cells, `html_decimals` and reading L's `xlsx_decimals_pct`
+(review r3, finding 1). Reading S takes no recorded count. The
 comparison refuses on any mismatch and names cells and fields, never
-values (finding 4). Reading S normalizes the stored double at 50
-significant digits, whatever the caller's decimal context (finding 3).
+values (review r2, finding 4). Both Decimal blocks in `mint_interval`
+(reading S's normalization, and each reading's quantization and interval
+arithmetic) run in a copy of `MINT_CONTEXT`, which sets every field to
+the default context's value at 50 digits: half-even rounding, `Emin`
+-999999, `Emax` 999999, capitals 1, clamp 0, no flags, and traps on
+`InvalidOperation`, `DivisionByZero` and `Overflow`. Neither reading's
+result depends on the caller's decimal context: a property test varies
+the caller's precision, rounding, exponent limits, capitals, clamping,
+flags and traps, and every field of `DefaultContext` (review r2, finding
+3; review r3, finding 2). This covers `mint_interval` only; the script's
+other Decimal operations still use the caller's context, with 50-digit
+precision where they set one.
 No acceptance threshold, pass band or verdict is computed.
 
 ## Disclosures for the second registration comment
@@ -239,7 +251,11 @@ the population run, together with the registered commit and exact command.
     half-even rounding are checked against the HTML precision, and the
     matching modes are reported. If either mode matches and the stored
     value has more decimals, the XLSX branch applies; otherwise HTML
-    applies. Literal reading L is a sensitivity only. The sealed record
+    applies. MINT readings S and L use 50-digit quantization; a stored
+    value requiring more than 50 digits at the HTML precision can raise
+    InvalidOperation before the HTML fallback. This has zero effect on
+    the committed invented fixtures and the cleared pinned inputs.
+    Literal reading L is a sensitivity only. The sealed record
     supplies median type, start-date interpretation, timing and flags;
     the build never substitutes constants for them. Unknown fields are
     reported as unknown. The v1 schema defines no numeric split extension:

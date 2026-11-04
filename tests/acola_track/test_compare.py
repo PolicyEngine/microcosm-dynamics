@@ -529,25 +529,144 @@ ROUNDINGS = (
 )
 
 
+DECIMAL_SIGNALS = (
+    decimal.Clamped,
+    decimal.DivisionByZero,
+    decimal.FloatOperation,
+    decimal.Inexact,
+    decimal.InvalidOperation,
+    decimal.Overflow,
+    decimal.Rounded,
+    decimal.Subnormal,
+    decimal.Underflow,
+)
+CONTEXT_FIELDS = ("prec", "rounding", "Emin", "Emax", "capitals", "clamp")
+
+
+def standard_context(precision=28):
+    """The default decimal context's fields, written out (review r3, 2)."""
+    return decimal.Context(
+        prec=precision,
+        rounding=decimal.ROUND_HALF_EVEN,
+        Emin=-999999,
+        Emax=999999,
+        capitals=1,
+        clamp=0,
+        flags=[],
+        traps=[
+            decimal.InvalidOperation,
+            decimal.DivisionByZero,
+            decimal.Overflow,
+        ],
+    )
+
+
+@st.composite
+def invented_decimal_contexts(draw):
+    """Decimal contexts with every field drawn; small exponent limits often."""
+    return decimal.Context(
+        prec=draw(st.integers(1, 99)),
+        rounding=draw(st.sampled_from(ROUNDINGS)),
+        Emin=draw(
+            st.one_of(st.integers(-60, 0), st.integers(decimal.MIN_EMIN, 0))
+        ),
+        Emax=draw(
+            st.one_of(st.integers(0, 60), st.integers(0, decimal.MAX_EMAX))
+        ),
+        capitals=draw(st.integers(0, 1)),
+        clamp=draw(st.integers(0, 1)),
+        flags=draw(st.lists(st.sampled_from(DECIMAL_SIGNALS), unique=True)),
+        traps=draw(st.lists(st.sampled_from(DECIMAL_SIGNALS), unique=True)),
+    )
+
+
+def copy_context_fields(target, source):
+    """Give ``target`` every field of ``source``, flags and traps included."""
+    for field in CONTEXT_FIELDS:
+        setattr(target, field, getattr(source, field))
+    for signal in DECIMAL_SIGNALS:
+        target.flags[signal] = source.flags[signal]
+        target.traps[signal] = source.traps[signal]
+
+
+def load_compare(name):
+    """Load the comparison script afresh, under the current contexts."""
+    spec = importlib.util.spec_from_file_location(
+        name, ROOT / "scripts" / "compare_acola.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_mint_context_is_the_default_context_at_fifty_digits():
+    """Review r3 finding 2: every field of the MINT context is set.
+
+    Each value is the one the default context gives, at PRECISION digits,
+    so no output at the default context changes. ``standard_context``
+    writes those values out, and here they match ``DefaultContext``.
+    """
+    assert repr(standard_context()) == repr(decimal.DefaultContext)
+    assert repr(compare.MINT_CONTEXT) == repr(
+        standard_context(compare.PRECISION)
+    )
+
+
+def test_mint_readings_ignore_ambient_exponent_limits_and_clamping():
+    """Review r3 finding 2's reproduction: an ambient Emax of 0, clamped.
+
+    INVENTED cells. Before this fix, that context made reading S count 49
+    decimals in both cells, so each fell back to HTML. ``invented_cell()``
+    keeps its default-context count of 2 and point -7.32, and the review's
+    minimized cell keeps its count of 1 and XLSX point 0.1.
+    """
+    minimized = {
+        "html_value": "0",
+        "html_decimals": 0,
+        "xlsx_raw": "0.1",
+        "xlsx_number_format": "0",
+    }
+    cells = (invented_cell(), minimized)
+    expected = [compare.mint_interval(cell) for cell in cells]
+    with localcontext() as context:
+        context.Emax = 0
+        context.clamp = 1
+        got = [compare.mint_interval(cell) for cell in cells]
+    assert [result["stored_decimals_pct"] for result in got] == [2, 1]
+    assert [result["value"]["point"] for result in got] == [
+        D("-7.32"),
+        D("0.1"),
+    ]
+    assert [result["branch"] for result in got] == ["xlsx", "xlsx"]
+    assert repr(got) == repr(expected)
+
+
 @given(
     text=invented_shortest_decimals(),
     percent=st.booleans(),
     html_places=st.integers(0, 6),
-    precision=st.integers(1, 28),
-    rounding=st.sampled_from(ROUNDINGS),
+    ambient=invented_decimal_contexts(),
+    default=invented_decimal_contexts(),
 )
 @settings(max_examples=200, deadline=None)
-def test_reading_s_does_not_depend_on_the_ambient_decimal_context(
-    text, percent, html_places, precision, rounding
+def test_mint_readings_do_not_depend_on_the_ambient_decimal_context(
+    text, percent, html_places, ambient, default
 ):
-    """Property: reading S gives one result under any ambient context.
+    """Property: readings S and L give one result under any context.
 
-    INVENTED stored doubles, as in the shortest-string property. Under
-    an ambient precision from 1 to 28 digits and any rounding mode, the
-    stored value, its count, the branch and the interval equal their
-    values at the default context.
+    INVENTED stored doubles and literal pairs, as in the shortest-string
+    property. Review r2 finding 3 varied the ambient precision and
+    rounding; review r3 finding 2 showed that exponent limits and clamping
+    still reached both of ``mint_interval``'s Decimal blocks. Here every
+    field of the ambient context varies: precision, rounding, exponent
+    limits, capitals, clamping, flags and traps. Every field of
+    ``DefaultContext`` varies too, and a copy of the script loaded afresh
+    under it is called as well. Each reading's result equals its result
+    at the standard context, the default context's fields. A ``finally``
+    restores both contexts.
     """
     value = D(text)
+    places = max(0, -value.as_tuple().exponent)
     stored = value.scaleb(2) if percent else value
     with localcontext() as context:
         context.prec = compare.PRECISION
@@ -559,13 +678,25 @@ def test_reading_s_does_not_depend_on_the_ambient_decimal_context(
         html_decimals=html_places,
         xlsx_raw=text,
         xlsx_number_format="0.0%" if percent else "0.00",
+        xlsx_value_pct=format(stored, "f"),
+        xlsx_decimals_pct=max(0, places - 2) if percent else places,
     )
-    expected = compare.mint_interval(cell)
-    with localcontext() as context:
-        context.prec = precision
-        context.rounding = rounding
-        got = compare.mint_interval(cell)
-    assert repr(got) == repr(expected)
+    with localcontext(standard_context()):
+        expected = [compare.mint_interval(cell, reading) for reading in "SL"]
+    saved, saved_default = decimal.getcontext(), decimal.DefaultContext.copy()
+    try:
+        decimal.setcontext(ambient)
+        copy_context_fields(decimal.DefaultContext, default)
+        fresh = load_compare("_compare_acola_fresh")
+        got = [
+            module.mint_interval(cell, reading)
+            for module in (compare, fresh)
+            for reading in "SL"
+        ]
+    finally:
+        decimal.setcontext(saved)
+        copy_context_fields(decimal.DefaultContext, saved_default)
+    assert repr(got) == repr(expected * 2)
 
 
 def test_interval_subtraction_and_null_propagation():
@@ -1031,6 +1162,10 @@ DECIMAL_COUNT_CELLS = {
     "pwbm_baseline": ("pwbm.row_2030.Baseline cost rate", "stored_decimals"),
     "pwbm_reform": ("pwbm.row_2030.A1 cost rate", "stored_decimals"),
     "mint": ("mint5.table1.rows.70-79.median_diff_pct", "html_decimals"),
+    "mint_xlsx": (
+        "mint5.table1.rows.70-79.median_diff_pct",
+        "xlsx_decimals_pct",
+    ),
 }
 
 
@@ -1049,7 +1184,10 @@ def write_value(record, field, value, count):
         record["pwbm"]["stored_decimals"][key] = count
     else:
         cell = record["mint5"]["table1"]["rows"]["70-79"]["median_diff_pct"]
-        cell.update(html_value=value, html_decimals=count)
+        if field == "mint_xlsx":
+            cell.update(xlsx_value_pct=value, xlsx_decimals_pct=count)
+        else:
+            cell.update(html_value=value, html_decimals=count)
     return record
 
 
@@ -1103,6 +1241,7 @@ def test_wrong_decimal_count_refuses_naming_the_cell_only(field, value, count):
     assert str(value) not in str(error.value)
 
 
+@pytest.mark.parametrize("field", ["mint", "mint_xlsx"])
 @pytest.mark.parametrize(
     "value,count",
     [
@@ -1117,18 +1256,19 @@ def test_wrong_decimal_count_refuses_naming_the_cell_only(field, value, count):
         (12.3, 1),
     ],
 )
-def test_unreadable_count_or_value_never_matches(value, count):
+def test_unreadable_count_or_value_never_matches(field, value, count):
     """INVENTED unreadable entries are mismatches, never guesses.
 
-    Each of these but the last already refused before the check, when the
-    conversion parsed it; the check now names its cell first. The last is
-    a float: it has lost its written digits, so it never matches.
-    ``_load`` yields none, since it reads each JSON number as an int or a
-    Decimal; only a record built in memory can hold one.
+    Both MINT counts are covered: HTML, and reading L's (review r3,
+    finding 1). Each of these but the last already refused before the
+    check, when the conversion parsed it; the check now names its cell
+    first. The last is a float: it has lost its written digits, so it
+    never matches. ``_load`` yields none, since it reads each JSON number
+    as an int or a Decimal; only a record built in memory can hold one.
     """
-    record = write_value(invented_comparator(), "mint", value, count)
+    record = write_value(invented_comparator(), field, value, count)
     assert compare.decimal_count_mismatches(record) == [
-        DECIMAL_COUNT_CELLS["mint"]
+        DECIMAL_COUNT_CELLS[field]
     ]
 
 
@@ -1173,12 +1313,139 @@ def test_value_written_with_n_decimals_matches_only_a_count_of_n(
             compare.build_comparison(invented_artifact(), record)
 
 
+def minimized_literal_cell(count):
+    """Review r3 finding 1's minimized INVENTED cell, with a given count."""
+    return {
+        "html_value": "0",
+        "html_decimals": 0,
+        "xlsx_value_pct": "0.1",
+        "xlsx_decimals_pct": count,
+    }
+
+
+@pytest.mark.parametrize("band", compare.BANDS)
+def test_reading_l_count_unlike_its_value_refuses_in_a_whole_record(band):
+    """Review r3 finding 1: reading L's count is checked in every band.
+
+    INVENTED whole record holding the review's minimized cell: "0.1" with
+    a count of 0. That record passed, and reading L gave the HTML point 0;
+    a count of 2 passed too, with an interval ten times too narrow. Both
+    now refuse, naming the cell and field and no value. The corrected
+    count of 1 passes, and reading L gives the XLSX point 0.1 with a
+    half-unit of 0.05.
+    """
+    cell = f"mint5.table1.rows.{band}.median_diff_pct"
+    for count in (0, 2):
+        record = invented_comparator()
+        record["mint5"]["table1"]["rows"][band]["median_diff_pct"] = (
+            minimized_literal_cell(count)
+        )
+        assert compare.decimal_count_mismatches(record) == [
+            (cell, "xlsx_decimals_pct")
+        ]
+        with pytest.raises(ValueError, match="decimal counts") as error:
+            compare.build_comparison(invented_artifact(), record)
+        assert f"{cell} (xlsx_decimals_pct)" in str(error.value)
+        assert "0.1" not in str(error.value)
+    record = invented_comparator()
+    record["mint5"]["table1"]["rows"][band]["median_diff_pct"] = (
+        minimized_literal_cell(1)
+    )
+    result = compare.build_comparison(invented_artifact(), record)
+    literal = result["mint5"]["rows"]["M0"]["bands"][band][
+        "sensitivity_reading_L"
+    ]
+    assert literal["branch"] == "xlsx"
+    assert literal["value"] == compare._interval(
+        D("0.1"), D("0.05"), D("0.15")
+    )
+
+
+@given(
+    band=st.sampled_from(compare.BANDS),
+    whole=st.integers(0, 10**9),
+    fraction=st.text(st.sampled_from("0123456789"), max_size=12),
+    negative=st.booleans(),
+    form=st.sampled_from(("string", "decimal", "json")),
+    other=st.integers(0, 20),
+    null=st.sampled_from((None, "value", "count", "both", "cell")),
+)
+@settings(max_examples=300, deadline=None)
+def test_reading_l_count_matches_only_its_written_decimals_in_every_band(
+    band, whole, fraction, negative, form, other, null
+):
+    """Property (review r3, finding 1): reading L's count, in every band.
+
+    INVENTED literal values with n written decimals, trailing zeros
+    included, written as a string, as a Decimal, or as a JSON number read
+    the way ``_load`` reads one. In each of the five bands the value
+    passes with a count of n and refuses with any other count, naming
+    only its cell and field. A missing value, count or cell is not
+    checked, as before: the record passes, and reading L falls back to
+    HTML, or is undefined when the cell is missing.
+    """
+    text = ("-" if negative else "") + str(whole)
+    if fraction:
+        text += "." + fraction
+    value = {
+        "string": text,
+        "decimal": D(text),
+        "json": json.loads(text, parse_float=D),
+    }[form]
+    cell = f"mint5.table1.rows.{band}.median_diff_pct"
+
+    def record_with(count):
+        record = invented_comparator()
+        row = record["mint5"]["table1"]["rows"][band]
+        if null == "cell":
+            row["median_diff_pct"] = None
+        else:
+            row["median_diff_pct"].update(
+                xlsx_value_pct=None if null in ("value", "both") else value,
+                xlsx_decimals_pct=None if null in ("count", "both") else count,
+            )
+        return record
+
+    if null is not None:
+        record = record_with(other)
+        assert compare.decimal_count_mismatches(record) == []
+        result = compare.build_comparison(invented_artifact(), record)
+        literal = result["mint5"]["rows"]["M0"]["bands"][band][
+            "sensitivity_reading_L"
+        ]
+        if null == "cell":
+            assert literal["branch"] is None
+            assert literal["value"]["point"] is None
+        else:
+            assert literal["branch"] == "html"
+            assert literal["missing_xlsx"] is True
+        return
+    written = len(fraction)
+    record = record_with(written)
+    assert compare.decimal_count_mismatches(record) == []
+    compare.build_comparison(invented_artifact(), record)
+    record = record_with(other)
+    if other == written:
+        assert compare.decimal_count_mismatches(record) == []
+    else:
+        assert compare.decimal_count_mismatches(record) == [
+            (cell, "xlsx_decimals_pct")
+        ]
+        with pytest.raises(ValueError, match="decimal counts") as error:
+            compare.build_comparison(invented_artifact(), record)
+        assert str(error.value) == (
+            "decimal counts differ from the values as written at: "
+            f"{cell} (xlsx_decimals_pct)"
+        )
+
+
 def test_decimal_count_check_names_every_counted_cell_and_needs_no_other():
-    """It reads only the comparator record and covers nine counts.
+    """It reads only the comparator record and covers fourteen counts.
 
     INVENTED record with every counted value given one extra trailing
-    zero: both OACT cost rates, both PWBM cost rates and the five MINT
-    bands. Income-rate columns and memo cells carry no count it checks.
+    zero: both OACT cost rates, both PWBM cost rates, and the HTML and
+    reading L values of the five MINT bands (review r3, finding 1).
+    Income-rate columns and memo cells carry no count it checks.
     """
     assert compare.decimal_count_mismatches({}) == []
     record = invented_comparator()
@@ -1187,9 +1454,9 @@ def test_decimal_count_check_names_every_counted_cell_and_needs_no_other():
     for key in ("Baseline cost rate", "A1 cost rate"):
         record["pwbm"]["row_2030"][key] += "0"
     for band in compare.BANDS:
-        record["mint5"]["table1"]["rows"][band]["median_diff_pct"][
-            "html_value"
-        ] += "0"
+        cell = record["mint5"]["table1"]["rows"][band]["median_diff_pct"]
+        cell["html_value"] += "0"
+        cell["xlsx_value_pct"] += "0"
     record["oact"]["columns"][2]["decimals"] = 9
     record["pwbm"]["stored_decimals"]["A1 income rate"] = 9
     assert compare.decimal_count_mismatches(record) == [
@@ -1198,8 +1465,9 @@ def test_decimal_count_check_names_every_counted_cell_and_needs_no_other():
         ("pwbm.row_2030.Baseline cost rate", "stored_decimals"),
         ("pwbm.row_2030.A1 cost rate", "stored_decimals"),
         *(
-            (f"mint5.table1.rows.{band}.median_diff_pct", "html_decimals")
+            (f"mint5.table1.rows.{band}.median_diff_pct", field)
             for band in compare.BANDS
+            for field in ("html_decimals", "xlsx_decimals_pct")
         ),
     ]
 
@@ -1332,14 +1600,18 @@ def test_conversion_fixtures_whose_counts_differ_from_their_values_refuse(
         compare.build_comparison(invented_artifact(), record)
 
 
+@pytest.mark.parametrize(
+    "field,value,count", [("mint", "-7.30", 1), ("mint_xlsx", "-7.3200", 2)]
+)
 def test_decimal_count_check_follows_seal_and_sidecar_and_precedes_arithmetic(
-    tmp_path, monkeypatch
+    tmp_path, monkeypatch, field, value, count
 ):
     """The check runs after the seal and sidecar checks, before any sum.
 
-    INVENTED inputs: a sealed record whose MINT 70-79 count is wrong.
+    INVENTED inputs: a sealed record whose MINT 70-79 HTML count, or
+    reading L count (review r3, finding 1), is wrong.
     """
-    record = write_value(invented_comparator(), "mint", "-7.30", 1)
+    record = write_value(invented_comparator(), field, value, count)
     artifact, record_path, seal = write_inputs(tmp_path, comparator=record)
     for name in ("oact_comparison", "pwbm_comparison", "mint_interval"):
         monkeypatch.setattr(

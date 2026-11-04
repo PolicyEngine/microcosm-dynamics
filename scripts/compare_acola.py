@@ -14,10 +14,33 @@ import itertools
 import json
 import math
 import re
-from decimal import ROUND_HALF_EVEN, ROUND_HALF_UP, Decimal, localcontext
+from decimal import (
+    ROUND_HALF_EVEN,
+    ROUND_HALF_UP,
+    Context,
+    Decimal,
+    DivisionByZero,
+    InvalidOperation,
+    Overflow,
+    localcontext,
+)
 from pathlib import Path
 
 PRECISION = 50
+# mint_interval's two Decimal blocks run in a copy of this context, never in
+# the caller's. Every field is set, so neither the caller's context nor a
+# changed DefaultContext reaches them; each value is the one the default
+# context gives, at PRECISION digits (review r3, finding 2).
+MINT_CONTEXT = Context(
+    prec=PRECISION,
+    rounding=ROUND_HALF_EVEN,
+    Emin=-999999,
+    Emax=999999,
+    capitals=1,
+    clamp=0,
+    flags=[],
+    traps=[InvalidOperation, DivisionByZero, Overflow],
+)
 BANDS = ("Total", "62-69", "70-79", "80-89", "90+")
 MINT_STATISTICS = (
     "median_individual_pct_change",
@@ -229,10 +252,10 @@ def mint_interval(cell, reading="S"):
             # integral double with a non-significant ".0". normalize()
             # drops it, so the count is that of the shortest decimal
             # string that denotes the double (review r1b, finding 1).
-            # normalize() and scaleb() round to the context's precision,
-            # so both run at PRECISION, not the caller's (review r2, 3).
-            with localcontext() as context:
-                context.prec = PRECISION
+            # normalize() and scaleb() depend on the context's precision,
+            # exponent limits and clamping, so both run in MINT_CONTEXT,
+            # not the caller's context (review r2, 3; review r3, 2).
+            with localcontext(MINT_CONTEXT):
                 stored = Decimal(repr(double)).normalize()
                 if _percent_format(number_format):
                     stored = stored.scaleb(2)
@@ -242,8 +265,7 @@ def mint_interval(cell, reading="S"):
         stored_decimals = _decimals(cell.get("xlsx_decimals_pct"))
     else:
         raise ValueError("MINT reading must be S or L")
-    with localcontext() as context:
-        context.prec = PRECISION
+    with localcontext(MINT_CONTEXT):
         quantum = Decimal(1).scaleb(-html_decimals)
         modes = (
             []
@@ -434,17 +456,20 @@ def _written_decimals(value):
 def decimal_count_mismatches(comparator):
     """Locate each decimal count that differs from its value as written.
 
-    It checks every count the comparison computes with: ``decimals`` of
-    OACT's two cost-rate columns, PWBM's ``stored_decimals`` of its two
-    2030 cost rates, and ``html_decimals`` of each MINT band's
-    ``median_diff_pct`` cell. A count matches when it equals the decimals
-    its value writes, trailing zeros included (:func:`_written_decimals`).
-    A count that is not a nonnegative integer, or a value that writes no
-    finite number, never matches. A float value never matches either:
-    load records with :func:`_load`, which yields none. A missing value
-    or count is not checked; the conversion reports it as undefined.
-    Returns ``(cell, field)`` locators, never a value, and needs nothing
-    but the comparator record (review r2, finding 4).
+    It checks all fourteen counts the comparison computes with:
+    ``decimals`` of OACT's two cost-rate columns, PWBM's
+    ``stored_decimals`` of its two 2030 cost rates, and, in each of the
+    five MINT bands' ``median_diff_pct`` cells, ``html_decimals`` and
+    reading L's ``xlsx_decimals_pct`` (review r3, finding 1). Reading S
+    takes no recorded count; it counts the decimals of the stored double.
+    A count matches when it equals the decimals its value writes, trailing
+    zeros included (:func:`_written_decimals`). A count that is not a
+    nonnegative integer, or a value that writes no finite number, never
+    matches. A float value never matches either: load records with
+    :func:`_load`, which yields none. A missing value or count is not
+    checked; the conversion reports it as undefined. Returns
+    ``(cell, field)`` locators, never a value, and needs nothing but the
+    comparator record (review r2, finding 4).
     """
     mismatches = []
 
@@ -487,11 +512,18 @@ def decimal_count_mismatches(comparator):
     bands = (mint.get("table1") or {}).get("rows") or {}
     for band in BANDS:
         cell = (bands.get(band) or {}).get("median_diff_pct") or {}
+        locator = f"mint5.table1.rows.{band}.median_diff_pct"
         check(
-            f"mint5.table1.rows.{band}.median_diff_pct",
+            locator,
             "html_decimals",
             cell.get("html_value"),
             cell.get("html_decimals"),
+        )
+        check(
+            locator,
+            "xlsx_decimals_pct",
+            cell.get("xlsx_value_pct"),
+            cell.get("xlsx_decimals_pct"),
         )
     return mismatches
 
