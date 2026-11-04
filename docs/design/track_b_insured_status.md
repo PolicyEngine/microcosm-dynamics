@@ -2164,6 +2164,10 @@ through the query. The test draws records from the base, entitlement-month,
 under-31 and subsequent-special generators. On two credit placements of
 each, it compares the scans with and without the declared periods, with and
 without the subsequent-special route, and under both readings.
+A cloud session ran the test on two mutations of the scan at `f32d8812`, and
+both failed it (PR #562 comment 6618201683). `upward_first` scans up from
+the first credit and returns the earliest quarter that insures an onset, and
+`skip_query` starts one quarter below the query.
 
 ## Round 16 diagnostics on the reported start
 
@@ -3665,6 +3669,10 @@ blindness begin a prior before 1973, `blind_basis_1972` lets it begin one in
 `nit25` undo each low's check. `first_onset_short` and `first_onset_odd` move
 404.130(c)'s 12-quarter floor or round its half up. Each of the 37 fails round
 23's module.
+
+A cloud session then ran all 107 at `f32d8812`, through every insured status
+module. All 107 failed a named test, with no restricted open
+(`round_23_mutations`, PR #562 comment 6618201683).
 
 Six local mutations of the note check each fail its read guard before the check
 opens a file outside this note and the insured status modules: a recursive
