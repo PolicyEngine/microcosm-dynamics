@@ -5365,7 +5365,7 @@
   },
   {
    "rule_id": "state_local_1968_1983",
-   "worker": "INVENTED: District of Columbia government clerk covered by the Civil Service Retirement System, 1975. 410(a)(7) excludes him (410(h) makes D.C. a State; 410(a)(7)(D) lifts the exclusion only for service not covered by a U.S. retirement system), but the family's scope sends D.C. to state_local_territories_history_open, which refuses. This row's residual says covered and 'so 410(a)(7) does not exclude it', which is wrong for him (NOTE, scope carve).",
+   "worker": "INVENTED: District of Columbia government clerk covered by the Civil Service Retirement System, 1975. 410(a)(7) excludes this clerk (410(h) makes D.C. a State; 410(a)(7)(D) lifts the exclusion only for service not covered by a U.S. retirement system), but the family's scope sends D.C. to state_local_territories_history_open, which refuses. This row's residual says 'so this family's cases do not exclude it' and leaves a District clerk under the Civil Service Retirement System to other families.",
    "facts": {
     "section_218_position": "not covered"
    },
@@ -6843,7 +6843,7 @@
   },
   {
    "rule_id": "nonprofit_1968_1977",
-   "worker": "INVENTED: Gil, hired 1972-06 by Flo's agency (after the 1972-01-01 effective date), left 1973-12-31 before the 1974-08-20 filing; taxes paid on time; 105(b) request in 1976. Covered on either reading of the open case (C.4 covers him; on the request-date reading 105(b) does). The registry refuses. M-6.",
+   "worker": "INVENTED: Gil, hired 1972-06 by Flo's agency (after the 1972-01-01 effective date), left 1973-12-31 before the 1974-08-20 filing; taxes paid on time; 105(b) request in 1976. Covered on either reading of the open case (C.4 covers Gil; on the request-date reading 105(b) does). The registry decides section_105b_departed_employee_request, which covers the pay above the threshold.",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
@@ -10347,7 +10347,7 @@
   },
   {
    "rule_id": "family_service_1968",
-   "worker": "INVENTED: Ada, hired in 1980 by a partnership whose only partners are her son and her daughter to keep a lake cottage the partners hold for their own use, not in the partnership's business. POMS RS 01901.250 E applies the family exclusion where it applies \"because of the relationship of the employee to each partner\". She states the parent text (employment by her son and daughter jointly); the text, unlike the child and spouse texts, does not say so (NOTE).",
+   "worker": "INVENTED: Ada, hired in 1980 by a partnership whose only partners are her son and her daughter to keep a lake cottage the partners hold for their own use, not in the partnership's business. POMS RS 01901.250 E applies the family exclusion where it applies \"because of the relationship of the employee to each partner\". She states the parent text (employment by her son and daughter jointly); the text, unlike the child and spouse texts, does not say so.",
    "facts": {
     "family_service": "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home; this includes a stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter in such service",
     "incorporation": "partnership of the employee's son and daughter"
@@ -10539,7 +10539,7 @@
   },
   {
    "rule_id": "family_service_1988",
-   "worker": "INVENTED: Kira, hired in 2016 by a partnership whose only partners are her two daughters to keep a cottage the partners hold for their own use, not in the partnership's business (POMS RS 01901.250 E). She states the parent text (employment by her daughters jointly); the text does not say so (NOTE).",
+   "worker": "INVENTED: Kira, hired in 2016 by a partnership whose only partners are her two daughters to keep a cottage the partners hold for their own use, not in the partnership's business (POMS RS 01901.250 E). She states the parent text (employment by her daughters jointly); the text does not say so.",
    "facts": {
     "family_service": "parent employed by a son or daughter in service not in the course of the employer's trade or business, or in domestic service in the employer's private home; this includes a stepparent employed by a stepson or stepdaughter in such service, also after the natural parent's death, and an adoptive or foster parent employed by an adopted or foster son or daughter in such service",
     "incorporation": "partnership of the employee's two daughters"
@@ -13556,7 +13556,7 @@
   },
   {
    "rule_id": "se_material_participation_1974_2026",
-   "worker": "INVENTED: Len, calendar 1996, investment farm tract, rent received in June 1996, after 1996-04-01; no participation. His taxable year began 1996-01-01, before 1996-04-01, so this family's open case still holds and the row refuses, while se_rental_income_1996_2026 (split by date, not taxable year) treats a June 1996 rental as settled (NOTE).",
+   "worker": "INVENTED: Len, calendar 1996, investment farm tract, rent received in June 1996, after 1996-04-01; no participation. His taxable year began 1996-01-01, before 1996-04-01, so this family's open case still holds and the row refuses, while se_rental_income_1996_2026 (split by date, not taxable year) treats a June 1996 rental as settled.",
    "facts": {
     "real_estate_dealer_status": "rentals a real estate dealer receives from real estate the dealer holds for investment or speculation",
     "taxable_year_start": "taxable year beginning before 1996-04-01",
