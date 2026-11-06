@@ -178,6 +178,7 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/engine/entrant_domains.py"),
     # OP1 wraps the sealed loop through an explicit opt-in package.
     Path("src/populace_dynamics/open_population/__init__.py"),
+    Path("src/populace_dynamics/open_population/newborn.py"),
     Path("src/populace_dynamics/open_population/errors.py"),
     Path("src/populace_dynamics/open_population/events.py"),
     Path("src/populace_dynamics/open_population/exits.py"),

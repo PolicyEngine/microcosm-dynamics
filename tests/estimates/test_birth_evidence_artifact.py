@@ -101,6 +101,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/engine/entrant_schedule.py"),
         Path("src/populace_dynamics/engine/entrant_domains.py"),
         Path("src/populace_dynamics/open_population/__init__.py"),
+        Path("src/populace_dynamics/open_population/newborn.py"),
         Path("src/populace_dynamics/open_population/errors.py"),
         Path("src/populace_dynamics/open_population/events.py"),
         Path("src/populace_dynamics/open_population/exits.py"),
