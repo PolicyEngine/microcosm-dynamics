@@ -8,6 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 RECORDS_PATH = ROOT / "docs/design/open_population_op0_1_records.json"
+AUDIT_PATH = ROOT / "docs/design/open_population_op0_1.md"
 SCHEMA = "open_population_op0_record.v1"
 RECORD_IDS = {
     "gate_birth",
@@ -36,7 +37,7 @@ REQUIRED_ELEMENTS = {
     "registry_snapshot",
 }
 REGISTRY_PATH = "docs/design/track_b_holdout_registry.json"
-REGISTRY_COMMIT = "daf02425"
+REGISTRY_COMMIT = "4f99edfb"
 REGISTRY_SHA256 = (
     "084b8d50ba3c0fe7cf9bd70e3c7c700c" "60ae682644ead99cca2bb116bfb2ef88"
 )
@@ -58,6 +59,20 @@ MANIFEST_STATUSES = {"available", "not_available", "validation_only"}
 # hold one out as an unused observation.
 CODE_PRINTED_NATALITY_YEARS = {2023, 2024}
 NATALITY_SOURCES = {"nchs"}
+# Design section 5.2: the coordinator's ruling that J takes no unit from
+# these. A pick from any other source still waits for J's candidate years.
+RULING_SOURCES = {
+    "acs",
+    "cbo",
+    "census2020",
+    "census2023",
+    "cps_fertility",
+    "nchs",
+    "popest",
+}
+OACT_ROW = "Track B J (OACT V.A1 and V.A2)"
+PSID_ROW = "Track B J (PSID panel)"
+PSID_RECORDS = {"gate_birth", "gate_pop", "demographic_horizon"}
 POWER_FIELDS = {
     "name",
     "operating_characteristic",
@@ -222,3 +237,60 @@ def test_code_printed_natality_years_are_exposed_not_held_out():
         first, _, last = str(entry["years"]).partition("–")
         excluded.update(range(int(first), int(last or first) + 1))
     assert CODE_PRINTED_NATALITY_YEARS <= excluded
+
+
+def test_every_held_out_year_comes_from_a_source_the_ruling_names():
+    """A pick from any other source still waits for J (design 5.2)."""
+    document = load_records()
+    ruling = document["registry_ruling"]
+    assert set(ruling["source_ids"]) == RULING_SOURCES
+    assert RULING_SOURCES <= document["source_catalog"].keys()
+    years = [
+        year
+        for record in document["records"]
+        for year in record["holdout_partition"]["held_out_years"]
+    ]
+    assert years
+    for year in years:
+        assert year["source"] in RULING_SOURCES, year
+
+
+def test_each_oact_or_psid_use_carries_its_row():
+    """The ruling asks each side of a shared use to name the other."""
+    for record in load_records()["records"]:
+        rows = {row["with"] for row in record["holdout_partition"]["overlaps"]}
+        sources = {source["source_id"] for source in record["access"]}
+        assert (OACT_ROW in rows) == ("oact" in sources), record["id"]
+        assert (PSID_ROW in rows) == (record["id"] in PSID_RECORDS), record[
+            "id"
+        ]
+
+
+def test_the_audit_states_the_registry_lines_as_its_companion_does():
+    """Each record's own section states what its JSON states."""
+    audit = AUDIT_PATH.read_text(encoding="utf-8")
+    document = load_records()
+    snapshot = document["registry_snapshot"]
+    assert (
+        f"`{snapshot['commit']}:{snapshot['path']}`, "
+        f"SHA-256 `{snapshot['sha256']}`" in audit
+    )
+    starts = sorted(
+        (audit.index(f"**`{record['id']}` — draft.**"), record["id"])
+        for record in document["records"]
+    )
+    ends = [start for start, _ in starts[1:]] + [len(audit)]
+    sections = {
+        name: audit[s:e] for (s, name), e in zip(starts, ends, strict=True)
+    }
+    for record in document["records"]:
+        section = sections[record["id"]]
+        partition = record["holdout_partition"]
+        rule = f"Registry rule: {partition['registry_rule']}\n"
+        assert rule in section, record["id"]
+        for row in partition["overlaps"]:
+            line = (
+                f"- with: {row['with']}; years: {row['years']}; "
+                f"reason: {row['reason']}\n"
+            )
+            assert line in section, (record["id"], row["with"])
