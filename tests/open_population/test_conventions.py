@@ -184,10 +184,25 @@ def test_a_complete_year_totals_its_components_and_scales(amounts, factor):
         )
 
 
+def test_a_total_rounds_the_exact_sum_once():
+    """Just past a tie, the exact sum rounds up where a running total stops."""
+    controls = _controls(
+        {(2030, "a"): 1.0, (2030, "b"): 2.0**-53, (2030, "c"): 2.0**-120}
+    )
+    assert controls.total(2030) == 1.0 + 2.0**-52
+
+
 @pytest.mark.parametrize("share", (-0.1, 1.1, math.nan, math.inf, True, "1"))
 def test_exit_share_lies_in_the_unit_interval(share):
     with pytest.raises(ValueError):
         ExitTimingConvention(share, INVENTED)
+
+
+@pytest.mark.parametrize("share", (1, np.float32(0.5), np.float64(0.25)))
+def test_exit_share_reads_as_a_plain_float(share):
+    convention = ExitTimingConvention(share, INVENTED)
+    assert type(convention.entry_year_exit_share) is float
+    assert convention.entry_year_exit_share == float(share)
 
 
 def test_exit_convention_needs_a_source():
@@ -234,6 +249,18 @@ def test_entry_year_probability_stays_bounded_and_monotone(
     # One unit of rounding is all the composed exp and log functions can lose.
     assert results[0] <= results[1] + 1e-15
     assert results[1] <= more.entry_year_probability([high])[0] + 1e-15
+
+
+def test_a_platform_rounding_high_cannot_lift_a_result_past_the_annual(
+    monkeypatch,
+):
+    """The annual figure caps the result, whatever ``expm1`` rounds to."""
+    exact = np.expm1
+    monkeypatch.setattr(
+        np, "expm1", lambda value: np.nextafter(exact(value), -np.inf)
+    )
+    convention = ExitTimingConvention(1 - 2.0**-53, INVENTED)
+    assert convention.entry_year_probability([0.7])[0] == 0.7
 
 
 def test_a_certain_exit_stays_certain_at_any_positive_share():
