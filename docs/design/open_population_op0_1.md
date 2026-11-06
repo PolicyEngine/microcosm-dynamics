@@ -1,6 +1,6 @@
 # Open population OP0.1 source, exposure, access and power audit
 
-**Status: draft records, not frozen; held-out years pending the shared registry and Track B’s J. A blinded feasibility and power review comes before any registration. Registrations go to issue #42 only through the coordinator on Max’s go.**
+**Status: draft records, not frozen; held-out years pending the shared registry, under the coordinator’s ruling on J’s sources. A blinded feasibility and power review comes before any registration. Registrations go to issue #42 only through the coordinator on Max’s go.**
 
 Audit date: 2026-10-24. This is a documentation and exposure audit, not a population estimate, power result or gate registration. It reads no microdata and computes no real-data statistic. Proposed choices and unestablished inputs block freeze; they do not become defaults by appearing here. PSID use follows the project's data-access record.
 
@@ -8,9 +8,11 @@ Audit date: 2026-10-24. This is a documentation and exposure audit, not a popula
 
 The approved revision-12 design is `5c82dbd9:docs/design/open_population.md`, SHA-256 `964356ad282e86bc1b128b93ec226b38fc3bb9bd6fe8a84162179bd608600154`; its §10 records Max’s revision-11 approval and ruling d1922. Its §3.1, §3.2, §4 and §5.2–§5.4 define these records. Track B design revision 3, §5.1–§5.2 and §7, supplies the audit and power protocol (read 2026-10-24).
 
-The permitted registry snapshot is `daf02425:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`. Its mutation evidence is `daf02425:docs/design/track_b_holdout_registry_mutations.json`, SHA-256 `0be8a0c8be8eb7d014587d7bbb58a2b980374a334ccaedf5cd0e25d588fbfa1f`. These are draft PR #560 bytes, not a merged snapshot.
+The permitted registry snapshot is `4f99edfb:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`. Its mutation evidence is `4f99edfb:docs/design/track_b_holdout_registry_mutations.json`, SHA-256 `686fefd587bcd80e4d563af9574d1b80817d86363b5898b471e12c9d44f360e9`. PR #560 merged the registry, which holds the same bytes this audit first cited from `daf02425`. The mutation evidence has moved since then (`daf02425`, SHA-256 `0be8a0c8be8eb7d014587d7bbb58a2b980374a334ccaedf5cd0e25d588fbfa1f`).
 
-Only H001–H005 historical uses appear; J has no candidate entry and `complete` is false. The source vocabulary has no ACS PUMS, NCHS natality, Census count/estimate/projection, OACT demographic or CBO projection source yet. Absence does not clear a year. The coordinator must add reviewed source/family definitions, reserve J first, review underlying-data overlaps, append OP candidate entries before freeze, and cite the merged registry by commit and byte hash. Scopes never narrow same-source overlapping years; unresolved relations need symmetric named disclosure; disjoint same-family relations need substantive citations (`daf02425:src/populace_dynamics/track_b/holdout_registry.py:8–44,76–159,396–410,756–804,1033–1078,1105–1171`). This lane edits neither the registry nor Track B code.
+Only H001–H005 historical uses appear; J has no candidate entry and `complete` is false. The source vocabulary has no ACS PUMS, NCHS natality, Census count/estimate/projection, OACT demographic or CBO projection source yet. Absence does not clear a year. The coordinator’s registry PR adds reviewed source/family definitions, and the coordinator reviews underlying-data overlaps at each freeze. This lane appends each OP candidate entry at the step before its freeze, and the record then cites the merged registry by commit and byte hash. Scopes never narrow same-source overlapping years; unresolved relations need symmetric named disclosure; disjoint same-family relations need substantive citations (`daf02425:src/populace_dynamics/track_b/holdout_registry.py:8–44,76–159,396–410,756–804,1033–1078,1105–1171`). This lane edits no Track B code, and it edits the registry only to append those entries.
+
+**The coordinator’s ruling on J’s sources (6 November 2026).** J takes no unit from ACS PUMS; NCHS natality; Census counts, estimates and projections, the 2020 Demographic Analysis coverage tables among them; CBO projections; or the June 2012 and June 2014 files of the CPS June Fertility Supplement. Every held-out year in these records comes from one of those sources, so no record here waits for J’s candidate entry. J first still binds every source the ruling doesn’t name. Revision 15 of the design states the ruling in §5.2, with what it leaves in place, its OACT and PSID wording and the order at a freeze, and the JSON companion’s `registry_ruling` field holds the same. Until the coordinator’s registry PR lands, these records cite `coordinator-note-lane-20261106d.md` (SHA-256 `83211e761bc0e0c795de681c245f81e471ac1a0aa00d79278c035e6dc3a0ec5a`), `coordinator-note-lane-20261106c.md` (SHA-256 `9b9da627facf15eedd73c98140fdb8070792621b98da686baba9d945078bc493`) and `coordinator/track-b-note-20261106b.md` (SHA-256 `4e8153e1d1421961b9be79e1b65f28060ba736e9c66e7c463df7c053aa58a6d9`), all outside the repository. Note d corrects the other two on OACT’s V.A1 and V.A2, which these records hold as controls.
 
 ## Reading the records
 
@@ -60,7 +62,7 @@ Date mapping:
 
 | Source | Tentative year | Status | Reason |
 | --- | --- | --- | --- |
-| nchs | 2015 | pending_registry | Candidate only: outside committed annual ASFR range. Do not read until source/estimand exposure, J and registry review clear it. |
+| nchs | 2015 | pending_registry | Candidate only: outside committed annual ASFR range. Do not read until source/estimand exposure and registry review clear it. |
 
 Fit years:
 
@@ -69,16 +71,17 @@ Fit years:
 Overlaps:
 
 - with: gate_pop; years: [2015]; reason: Its 2013→2020 path contains births in this year; disclose shared demographic trajectory and natality source use. Different outcome sources do not prove independence.
-- with: Track B J; years: []; reason: No J candidates recorded; coordinator must check underlying data/family relation.
+- with: Track B J; years: []; reason: J takes no unit from NCHS natality, ACS PUMS, Census estimates or the CPS June files under the coordinator's ruling. This record's freeze request names NCHS 2015, and the coordinator answers with any B3 or B4 row that overlaps it.
+- with: Track B J (PSID panel); years: []; reason: The fertility kernel this record consumes fits on the PSID panel (`models/family_transitions/components/fertility.py`, through `data/transitions.py` and `data/births.py`). OP holds out no PSID year, so both records name the panel, and it isn't a held-out conflict. B0.2's exposure inventory lists the fit, and if J's candidate shares PSID units with that panel, J's registration excludes them or discloses the overlap.
 
-Registry rule: J first; no year is cleared by absence from this incomplete registry.
+Registry rule: J takes no unit from this record's held-out sources under the coordinator's ruling, and J first still binds any source the ruling doesn't name. Absence from the registry clears no year, and no pick freezes until the coordinator's registry PR lands and the pick sits in the registry.
 
 Excluded years:
 
 - years: 2016–2024; reason: Age-group ASFRs exposed; regression only.
 - years: 2020–2022; reason: Shock-window diagnostics, not admission cells.
 
-Registry: `daf02425:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`; J candidates absent; recheck merged commit/hash before freeze.
+Registry: `4f99edfb:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`; J candidates absent; recheck merged commit/hash before freeze.
 
 ### Cells, tolerance and uncertainty
 
@@ -215,10 +218,11 @@ Fit years:
 Overlaps:
 
 - with: OP5 / gate_pop / gate_birth; years: [2013]; reason: OP3 training donors share ACS 2013 with OP5 start; candidate uncertainty must couple shared construction rather than assume independent samples.
-- with: Track B J; years: []; reason: No J candidates; do not reserve before J.
-- with: OP4 Census 2023 emigration assumptions; years: [2014]; reason: Census methodology combines rates based on ACS 2011–2015, including 2014. If those rates enter entry survival/exposure adjustment, disclose upstream holdout overlap; coordinator must resolve independent status before freeze.
+- with: Track B J; years: []; reason: J takes no unit from ACS PUMS under the coordinator's ruling. This record's freeze request names ACS 2014, and the coordinator answers with any B3 or B4 row that overlaps it.
+- with: OP4 Census 2023 emigration assumptions; years: [2014]; reason: Census methodology combines rates based on ACS 2011–2015, including 2014. If those rates enter entry survival/exposure adjustment, disclose upstream holdout overlap; this goes to Max as a holdout pattern, through the coordinator, before freeze.
+- with: Track B J (OACT V.A1 and V.A2); years: []; reason: OP0.1 reserves no OACT unit. If J's author uses V.A1 or V.A2, each side's registration names the other: the earlier record carries a pointer, and the later one names the use. If J holds out a unit from a series OP uses as a control, J's registration says it doesn't test that margin independently.
 
-Registry rule: J first; no year cleared by absence from incomplete registry.
+Registry rule: J takes no unit from this record's held-out sources under the coordinator's ruling, and J first still binds any source the ruling doesn't name. Absence from the registry clears no year, and no pick freezes until the coordinator's registry PR lands and the pick sits in the registry.
 
 Excluded sources:
 
@@ -226,7 +230,7 @@ Excluded sources:
 
 Selection rule: No 2014 read for fit, pooling, tuning, packet choice or floors before lock.
 
-Registry: `daf02425:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`; J candidates absent; recheck merged commit/hash before freeze.
+Registry: `4f99edfb:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`; J candidates absent; recheck merged commit/hash before freeze.
 
 ### Cells, tolerance and uncertainty
 
@@ -346,9 +350,10 @@ Fit years:
 Overlaps:
 
 - with: gate_pop / gate_entrant_earn (OP0.2); years: [2019]; reason: Shared ACS 2019 cohort stocks; if used here, both registrations must disclose, and exit diagnostic cannot be counted as independent of Census assumption construction.
-- with: Track B J; years: []; reason: Unrecorded; coordinator must review all source/family overlaps.
+- with: Track B J; years: []; reason: J takes no unit from ACS PUMS or Census projections under the coordinator's ruling. This record holds out no year, and the coordinator's registry PR carries the source and family definitions.
+- with: Track B J (OACT V.A1 and V.A2); years: []; reason: OP0.1 reserves no OACT unit. If J's author uses V.A1 or V.A2, each side's registration names the other: the earlier record carries a pointer, and the later one names the use. If J holds out a unit from a series OP uses as a control, J's registration says it doesn't test that margin independently.
 
-Registry rule: J first; no year cleared by absence from incomplete registry.
+Registry rule: This record holds out no year. J first still binds any source the coordinator's ruling doesn't name, and absence from the registry clears no year.
 
 Diagnostic years:
 
@@ -360,7 +365,7 @@ Diagnostic years:
 
 Finding: No admissible holdout established; EMIGRATION_UNIDENTIFIED. Diagnostic years are not claimed held out.
 
-Registry: `daf02425:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`; J candidates absent; recheck merged commit/hash before freeze.
+Registry: `4f99edfb:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`; J candidates absent; recheck merged commit/hash before freeze.
 
 ### Cells, tolerance and uncertainty
 
@@ -472,10 +477,11 @@ Fit years:
 Overlaps:
 
 - with: gate_birth / gate_imm / emigration_check / gate_pop; years: []; reason: Manifest controls may enter candidate arms; they cannot independently validate those same margins. All scientific gate runs remain unaligned.
+- with: Track B J (OACT V.A1 and V.A2); years: []; reason: OP0.1 reserves no OACT unit. If J's author uses V.A1 or V.A2, each side's registration names the other: the earlier record carries a pointer, and the later one names the use. If J holds out a unit from a series OP uses as a control, J's registration says it doesn't test that margin independently.
 
-Registry rule: J first; no year cleared by absence from incomplete registry.
+Registry rule: This record holds out no year. J first still binds any source the coordinator's ruling doesn't name, and absence from the registry clears no year.
 
-Registry: `daf02425:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`; J candidates absent; recheck merged commit/hash before freeze.
+Registry: `4f99edfb:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`; J candidates absent; recheck merged commit/hash before freeze.
 
 ### Cells, tolerance and uncertainty
 
@@ -615,13 +621,15 @@ Overlaps:
 - with: gate_imm; years: [2013]; reason: Shared start/donor fit; gate_imm's 2014 score remains separately fenced.
 - with: emigration_check; years: [2019]; reason: Shared ACS 2019 cohort stocks; Census 2023 assumptions also use 2015–2019; diagnostic not independent.
 - with: gate_entrant_earn (OP0.2); years: [2019]; reason: Same ACS annual file and arrival cohorts; both registrations must disclose and limit independence claims.
-- with: Track B J; years: []; reason: J absent; choice and source-family relations await coordinator.
+- with: Track B J; years: []; reason: J takes no unit from ACS PUMS, Census counts or estimates or the 2020 Demographic Analysis coverage tables under the coordinator's ruling. This record's freeze request names Census 2020 and ACS 2019, and the coordinator answers with any B3 or B4 row that overlaps them.
+- with: Track B J (OACT V.A1 and V.A2); years: []; reason: OP0.1 reserves no OACT unit. If J's author uses V.A1 or V.A2, each side's registration names the other: the earlier record carries a pointer, and the later one names the use. If J holds out a unit from a series OP uses as a control, J's registration says it doesn't test that margin independently.
+- with: Track B J (PSID panel); years: []; reason: The fertility kernel this record consumes fits on the PSID panel (`models/family_transitions/components/fertility.py`, through `data/transitions.py` and `data/births.py`). OP holds out no PSID year, so both records name the panel, and it isn't a held-out conflict. B0.2's exposure inventory lists the fit, and if J's candidate shares PSID units with that panel, J's registration excludes them or discloses the overlap.
 
-Registry rule: J first; no year cleared by absence from incomplete registry.
+Registry rule: J takes no unit from this record's held-out sources under the coordinator's ruling, and J first still binds any source the ruling doesn't name. Absence from the registry clears no year, and no pick freezes until the coordinator's registry PR lands and the pick sits in the registry.
 
 Exposure disposition: Recommend regression label on exposed 2020 facts and conservative unresolved exposure label on unestablished cells; do not claim pristine 2019/2020 holdouts.
 
-Registry: `daf02425:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`; J candidates absent; recheck merged commit/hash before freeze.
+Registry: `4f99edfb:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`; J candidates absent; recheck merged commit/hash before freeze.
 
 ### Cells, tolerance and uncertainty
 
@@ -743,10 +751,12 @@ Fit years:
 Overlaps:
 
 - with: gate_birth / gate_pop / OP0.2; years: []; reason: Shares demographic laws/controls and near-term admissions; report-only long-horizon agreement cannot rescue failed/unresolved gates.
+- with: Track B J (OACT V.A1 and V.A2); years: []; reason: OP0.1 reserves no OACT unit. If J's author uses V.A1 or V.A2, each side's registration names the other: the earlier record carries a pointer, and the later one names the use. If J holds out a unit from a series OP uses as a control, J's registration says it doesn't test that margin independently.
+- with: Track B J (PSID panel); years: []; reason: The fertility kernel this record consumes fits on the PSID panel (`models/family_transitions/components/fertility.py`, through `data/transitions.py` and `data/births.py`). OP holds out no PSID year, so both records name the panel, and it isn't a held-out conflict. B0.2's exposure inventory lists the fit, and if J's candidate shares PSID units with that panel, J's registration excludes them or discloses the overlap.
 
-Registry rule: No empirical future holdout reserved; any future retrospective test must follow J-first coordinator registry procedure.
+Registry rule: No empirical future holdout reserved; any future retrospective test follows the registry's order, with J first for any source the coordinator's ruling doesn't name.
 
-Registry: `daf02425:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`; J candidates absent; recheck merged commit/hash before freeze.
+Registry: `4f99edfb:docs/design/track_b_holdout_registry.json`, SHA-256 `084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88`; J candidates absent; recheck merged commit/hash before freeze.
 
 ### Cells, tolerance and uncertainty
 
@@ -929,7 +939,7 @@ Evidence: `src/populace_dynamics/baselines/fertility.py:169-174`; `src/populace_
 
 | Candidate | Evidence for repository nonuse | Remaining limit |
 | --- | --- | --- |
-| 2015 age-group natality | Outside fetcher annual 2016–2024 range and committed JSON keys; no second natality reader established. | Coordinator confirms external/other-lane nonuse and J-first registry review. |
+| 2015 age-group natality | Outside fetcher annual 2016–2024 range and committed JSON keys; no second natality reader established. | Coordinator confirms external/other-lane nonuse and registry review. |
 | Share male | SEX/IMP_SEX absent from committed ASFR extraction and its consumers. | Pin sex ratio on disjoint data; otherwise the validation estimand is consumed. |
 | Mother’s nativity | MBSTATE_REC absent from ASFR selection; public 2015 codebook documents it. | Bridge birthplace to ACS nativity; territories/citizenship-abroad differ. |
 | Observed single maternal age | MAGER absent from committed grouped extraction; baseline single-age shape is interpolation, not these observations. | Confirm outcome nonuse; derived 2024 shape remains exposed; freeze endpoint/denominator bridge. |
@@ -972,7 +982,7 @@ Read dates refer to documentation/catalogs. **No linked data file was downloaded
 | gate_pop arms | proposal_for_Max_or_coordinator | Review feasibility of a primary fitted-law arm with genuinely 2013-vintage assumptions; realized aggregate-control arm separate and conditional on those controls. Freeze arm choice/vintages before outcomes; if only realized arm feasible, narrow admission to composition. | 5c82dbd9:docs/design/open_population.md:164,358 |
 | Mortality ownership | settled_by_approved_ruling_d1922 | Mortality lane SM owns death alignment; record OACT q as its target. OP6 consumes mortality and selects no deaths. | 5c82dbd9:docs/design/open_population.md:424-435 |
 
-- Reserve J candidates first and add reviewed source/family vocabulary; resolve all underlying-data overlaps and merged hash at freeze.
+- Add reviewed source/family vocabulary and the ruling on J's sources in the registry PR; name the B3 and B4 rows that overlap each held-out year at its freeze; resolve all underlying-data overlaps and merged hash at freeze.
 - Ratify source-class numerical allowances, critical cells, zero-cell rule, pooling ladders and >=0.90 operating-characteristic alternatives after blinded feasibility review.
 - Choose entry-year exit/timing, OP5 reference/GQ/date bridges and gate_pop arms; no provisional choice freezes itself.
 - Confirm unused NCHS 2015/sex/nativity/observed-single-age targets and exact birth sex-ratio fitting partition; resolve ACS 2014/2019 upstream dependencies.
@@ -1001,6 +1011,6 @@ These incidents are disclosed without their values. No claim of completely unexp
 
 ## Verification and handoff
 
-The documentation-only unit test validates six complete draft records, pending held-out years, registry commit/hash, target manifests and unrun named power procedures; after review it also checks that OACT's death probabilities are `validation_only` and that no natality year whose value the code prints is held out. It imports no model code and reads only `docs/design/`. Run `.venv/bin/python -m pytest -q -m unit tests/open_population/test_op0_1_records.py`; Black 79 and Ruff apply to that test. Tier count files remain untouched as instructed; their repository-wide policy count is deliberately deferred to the coordinator.
+The documentation-only unit test validates six complete draft records, pending held-out years, registry commit/hash, target manifests and unrun named power procedures; after review it also checks that OACT's death probabilities are `validation_only` and that no natality year whose value the code prints is held out. For the coordinator’s ruling on J’s sources it checks that every held-out year comes from a source the ruling names, that each record using OACT or the PSID panel carries its row, and that this audit states each record’s registry rule and overlaps as the JSON does. It imports no model code and reads only `docs/design/`. Run `.venv/bin/python -m pytest -q -m unit tests/open_population/test_op0_1_records.py`; Black 79 and Ruff apply to that test. Tier count files remain untouched as instructed; their repository-wide policy count is deliberately deferred to the coordinator.
 
 See [the report](open_population_op0_1_report.md) for commit IDs, test results and the official-page ledger.
