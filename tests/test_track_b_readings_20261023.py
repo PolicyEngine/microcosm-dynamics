@@ -12,7 +12,9 @@ note. Notes: G, R2 and R3 name their ``READINGS`` the same way, and none
 has an opening, as ``_openings`` reads them, whose ``_letters`` start
 with ``JUDGMENT``. Quotes: each new statutory excerpt appears in its
 capture as ``source_text`` normalizes it, with each run of whitespace in
-the capture read as one space.
+the capture read as one space. Reads: those checks list and open only the
+Track B package, the notes named ``track_b_*.md`` and the statute captures,
+and a guard test patches ``Path`` to fail on anything else.
 """
 
 import html
@@ -268,3 +270,84 @@ STATUTE_QUOTES = (
 @pytest.mark.parametrize("quote", STATUTE_QUOTES)
 def test_new_statutory_excerpts_are_quoted_verbatim(quote):
     assert quote in " ".join(source_text("lii_usc_402_415").split())
+
+
+def test_the_checks_list_and_open_only_track_b_paths(monkeypatch):
+    # So that a blind role can run this module without reaching a restricted
+    # file, these checks may list only the package and the notes named
+    # track_b_*.md, and open only those files and the statute captures. The
+    # guard checks each Path listing and open before it runs, and it spells
+    # out its paths so that a change to the constants above fails it.
+    package = (ROOT / "src/populace_dynamics/track_b").resolve()
+    design = (ROOT / "docs/design").resolve()
+    captures = (ROOT / "tests/data/track_b/gross_benefit_sources").resolve()
+    listings = {(package, "*"), (package, "**/*"), (design, "track_b_*.md")}
+    path_open, glob, rglob = Path.open, Path.glob, Path.rglob
+    opened = []
+
+    def checked_open(path, *args, **kwargs):
+        resolved = path.resolve()
+        assert (
+            resolved.is_relative_to(package)
+            or resolved.is_relative_to(captures)
+            or (resolved.parent == design and resolved.match("track_b_*.md"))
+        ), resolved
+        opened.append(resolved)
+        return path_open(path, *args, **kwargs)
+
+    def checked(listing):
+        def checked_listing(path, pattern, *args, **kwargs):
+            assert (path.resolve(), pattern) in listings, (path, pattern)
+            return listing(path, pattern, *args, **kwargs)
+
+        return checked_listing
+
+    def unchecked(path, *args, **kwargs):
+        raise AssertionError(f"listing of {path}")
+
+    monkeypatch.setattr(Path, "open", checked_open)
+    monkeypatch.setattr(Path, "glob", checked(glob))
+    monkeypatch.setattr(Path, "rglob", checked(rglob))
+    monkeypatch.setattr(Path, "iterdir", unchecked)
+    monkeypatch.setattr(Path, "walk", unchecked, raising=False)
+    for reach in (
+        lambda: (ROOT / "pyproject.toml").open(),
+        lambda: (design / "other.md").open(),
+        lambda: design.glob("*.md"),
+        lambda: design.rglob("track_b_*.md"),
+        lambda: package.parent.rglob("*"),
+        lambda: package.iterdir(),
+        lambda: package.walk(),
+    ):
+        with pytest.raises(AssertionError):
+            reach()
+
+    def reads(check, *arguments):
+        opened.clear()
+        check(*arguments)
+        return set(opened)
+
+    notes = {path.resolve() for path in NOTES.values()}
+    assert package / "gross_benefits.py" in reads(
+        test_markers_and_logged_readings_match_in_both_directions
+    )
+    assert notes <= reads(
+        test_every_marker_names_a_reading_documented_in_a_design_note
+    )
+    assert notes == set().union(
+        *(
+            reads(
+                test_each_note_names_its_readings_and_opens_no_judgment_item,
+                note,
+            )
+            for note in NOTES
+        )
+    )
+    source_text.cache_clear()
+    assert {captures} == {
+        path.parent
+        for path in reads(
+            test_new_statutory_excerpts_are_quoted_verbatim,
+            STATUTE_QUOTES[0],
+        )
+    }

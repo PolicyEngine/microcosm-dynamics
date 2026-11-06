@@ -3339,6 +3339,14 @@ matched the pinned 402 SHA-256 byte for byte.
   one space. Before that, the capture helper reads zero-width spaces
   (U+200B) and non-breaking spaces as spaces, and U+2019 as a straight
   apostrophe.
+- **Reads.** So that a blind role can run this module without reaching a
+  restricted file, `test_the_checks_list_and_open_only_track_b_paths`
+  runs the other checks with `Path.open` and `Path`'s listings patched.
+  The checks may list only the Track B package and
+  `docs/design/track_b_*.md`, and open only those files and the captures
+  under `tests/data/track_b/gross_benefit_sources/`. The guard patches
+  nothing else, so a direct `open()` or `os` listing would pass it. The
+  module and the capture helper use neither.
 
 The invented conformance lattice stays the same; only the
 `parent_benefit` witness moved to two parents in the band.
