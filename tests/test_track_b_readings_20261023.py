@@ -281,8 +281,8 @@ def test_the_checks_list_and_open_only_track_b_paths(monkeypatch):
     package = (ROOT / "src/populace_dynamics/track_b").resolve()
     design = (ROOT / "docs/design").resolve()
     captures = (ROOT / "tests/data/track_b/gross_benefit_sources").resolve()
-    listings = {(package, "*"), (package, "**/*"), (design, "track_b_*.md")}
     path_open, glob, rglob = Path.open, Path.glob, Path.rglob
+    walk = getattr(Path, "walk", None)  # New in Python 3.12.
     opened = []
 
     def checked_open(path, *args, **kwargs):
@@ -295,21 +295,31 @@ def test_the_checks_list_and_open_only_track_b_paths(monkeypatch):
         opened.append(resolved)
         return path_open(path, *args, **kwargs)
 
-    def checked(listing):
+    def checked(listing, allowed):
         def checked_listing(path, pattern, *args, **kwargs):
-            assert (path.resolve(), pattern) in listings, (path, pattern)
+            assert (path.resolve(), str(pattern)) in allowed, (path, pattern)
             return listing(path, pattern, *args, **kwargs)
 
         return checked_listing
+
+    def checked_walk(path, *args, **kwargs):
+        # On Python 3.12, rglob walks the folder it lists.
+        assert path.resolve() == package, path
+        return walk(path, *args, **kwargs)
 
     def unchecked(path, *args, **kwargs):
         raise AssertionError(f"listing of {path}")
 
     monkeypatch.setattr(Path, "open", checked_open)
-    monkeypatch.setattr(Path, "glob", checked(glob))
-    monkeypatch.setattr(Path, "rglob", checked(rglob))
+    # From Python 3.13, rglob calls glob with "**/" before its pattern.
+    monkeypatch.setattr(
+        Path,
+        "glob",
+        checked(glob, {(design, "track_b_*.md"), (package, "**/*")}),
+    )
+    monkeypatch.setattr(Path, "rglob", checked(rglob, {(package, "*")}))
     monkeypatch.setattr(Path, "iterdir", unchecked)
-    monkeypatch.setattr(Path, "walk", unchecked, raising=False)
+    monkeypatch.setattr(Path, "walk", checked_walk, raising=False)
     for reach in (
         lambda: (ROOT / "pyproject.toml").open(),
         lambda: (design / "other.md").open(),
@@ -317,7 +327,8 @@ def test_the_checks_list_and_open_only_track_b_paths(monkeypatch):
         lambda: design.rglob("track_b_*.md"),
         lambda: package.parent.rglob("*"),
         lambda: package.iterdir(),
-        lambda: package.walk(),
+        lambda: design.walk(),
+        lambda: package.parent.walk(),
     ):
         with pytest.raises(AssertionError):
             reach()
