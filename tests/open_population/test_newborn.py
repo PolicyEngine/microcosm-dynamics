@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import fields, replace
+from fractions import Fraction
 from functools import partial
 
 import numpy as np
@@ -13,6 +14,7 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 from pandas.testing import assert_frame_equal
 
+from populace_dynamics.cola_track_a.adapters import widowhood_marital_step
 from populace_dynamics.engine.accounting import PopulationEventKind
 from populace_dynamics.engine.loop import (
     MaritalStepResult,
@@ -25,7 +27,9 @@ from populace_dynamics.engine.rng import (
     ProjectionRNGRegistry,
 )
 from populace_dynamics.engine.steps import (
+    AgeSexMortalityModel,
     advance_age,
+    apply_mortality,
     materialize_maternal_births,
 )
 from populace_dynamics.open_population.conventions import (
@@ -222,6 +226,13 @@ def test_sex_ratio_requires_a_convention_source(source):
         SexRatioPin(0.37, source)
 
 
+@pytest.mark.parametrize("share", [Fraction(3, 8), np.float32(0.375)])
+def test_sex_ratio_stores_an_exact_float(share):
+    pin = SexRatioPin(share, _source())
+    assert type(pin.share_male) is float
+    assert pin.share_male == 0.375
+
+
 @pytest.mark.parametrize("status", list(ConventionStatus))
 def test_each_source_status_can_be_supplied_but_only_frozen_can_be_required(
     status,
@@ -249,6 +260,9 @@ def test_pin_is_required_at_both_entry_points():
         )
     with pytest.raises(TypeError):
         NewbornPacketStep(None)
+    for births in (_births(), pd.DataFrame()):
+        with pytest.raises(TypeError):
+            _append(births=births, sex_ratio=None)
 
 
 @settings(max_examples=10, deadline=None, derandomize=True)
@@ -261,6 +275,22 @@ def test_every_admissible_invented_share_remains_an_explicit_input(share):
     pin = SexRatioPin(share, _source())
     assert pin.share_male == share
     assert NewbornPacketStep(pin).sex_ratio is pin
+
+
+@pytest.mark.parametrize("kind", ["column", "duplicate"])
+def test_parent_reader_needs_a_roster_with_unique_identifiers(kind):
+    frame = _frame()
+    if kind == "column":
+        frame = frame.drop(columns=["person_id"])
+    else:
+        frame.loc[1, "person_id"] = 11
+    with pytest.raises(NewbornPacketRefused, match="NEWBORN_PACKET_REFUSED"):
+        read_second_parents(frame, [11], _marital())
+
+
+def test_parent_reader_refuses_a_mother_off_the_roster():
+    with pytest.raises(NewbornPacketRefused, match="NEWBORN_PACKET_REFUSED"):
+        read_second_parents(_frame(), [999], _marital())
 
 
 def test_parent_reader_missing_row_and_empty_state_are_unknown():
@@ -297,17 +327,63 @@ def test_parent_reader_uses_the_authoritative_spouse_or_partner_of_any_sex(
     _assert_parent(result, 11, link=44)
 
 
-@pytest.mark.parametrize("kind", ["duplicate", "conflict", "self"])
+@pytest.mark.parametrize(
+    "kind", ["duplicate", "dated_duplicate", "conflict", "self"]
+)
 def test_parent_reader_refuses_ambiguous_or_self_parent_state(kind):
     state = pd.DataFrame({"person_id": [11], "spouse_person_id": [44]})
-    if kind == "duplicate":
+    if kind in {"duplicate", "dated_duplicate"}:
         state = pd.concat([state, state], ignore_index=True)
+        if kind == "dated_duplicate":
+            state["year"] = YEAR
     elif kind == "conflict":
         state["partner_person_id"] = 55
     else:
         state["spouse_person_id"] = 11
     with pytest.raises(NewbornPacketRefused, match="NEWBORN_PACKET_REFUSED"):
         read_second_parents(_frame(), [11], _marital(state=state))
+
+
+def test_parent_reader_counts_only_the_birth_year_of_a_dated_state():
+    state = pd.DataFrame(
+        {
+            "person_id": [11, 11, 22],
+            "year": [YEAR - 1, YEAR, YEAR - 1],
+            "spouse_person_id": pd.Series([55, 44, 55], dtype="Int64"),
+        }
+    )
+    result = read_second_parents(_frame(), [11, 22], _marital(state=state))
+    _assert_parent(result, 11, link=44)
+    _assert_parent(result, 22, reason=UNLINKED_PARTNER_UNKNOWN)
+
+
+def test_parent_reader_fits_the_sealed_live_roster_marital_state():
+    """Read the state ``cola_track_a/adapters.py:83–123`` hands fertility."""
+    frame = _frame()
+    frame["marital_status"] = [
+        "married",
+        "married",
+        "married",
+        "married",
+        "never_married",
+    ]
+    frame["spouse_person_id"] = pd.Series(
+        [44, 999, 888, 11, pd.NA], dtype="Int64"
+    )
+    frame["widowhood_year"] = pd.Series([pd.NA] * 5, dtype="Int64")
+    frame["late_spouse_person_id"] = pd.Series([pd.NA] * 5, dtype="Int64")
+    frame["widowed_in_projection"] = False
+    marital = widowhood_marital_step(
+        frame,
+        _context(),
+        np.random.default_rng(0),
+        roster_ids=frozenset({*PERSONS, 999}),
+    )
+    result = read_second_parents(frame, [11, 22, 33, 55], marital)
+    _assert_parent(result, 11, link=44)
+    _assert_parent(result, 22, reason=UNLINKED_UNPARTNERED)
+    _assert_parent(result, 33, reason=UNLINKED_PARTNER_OUTSIDE_ROSTER)
+    _assert_parent(result, 55, reason=UNLINKED_UNPARTNERED)
 
 
 def test_parent_reader_links_on_roster_and_marks_an_off_roster_link():
@@ -498,6 +574,47 @@ def test_existing_object_boolean_packet_columns_become_nullable_without_value_ch
     for column in columns:
         assert str(actual[column].dtype) == "boolean"
         assert actual.iloc[-1][column] == (column != FOREIGN_BORN_COLUMN)
+
+
+def test_packet_leaves_its_inputs_unchanged():
+    frame, births = _frame(), _births()
+    frame_before, births_before = frame.copy(), births.copy()
+    _append(frame, births)
+    assert_frame_equal(frame, frame_before)
+    assert_frame_equal(births, births_before)
+
+
+def test_plain_integer_and_boolean_columns_stay_exact_beside_a_child():
+    large = 2**53 + 101
+    known = ("person_id", "year", "age", "birth_year", "household_id")
+    frame = _frame()
+    for column in known:
+        frame[column] = frame[column].astype("int64")
+    frame["invented_count"] = np.arange(large, large + 5, dtype=np.int64)
+    frame["invented_flag"] = [True, False, True, False, True]
+    actual = _append(frame, _births([11]))
+    child = actual.iloc[-1]
+    assert actual["person_id"].tolist() == [*PERSONS, 100]
+    for column in (*known, "invented_count"):
+        assert str(actual[column].dtype) == "Int64", column
+    counts = actual["invented_count"].iloc[:5].tolist()
+    assert counts == list(range(large, large + 5))
+    assert pd.isna(child["invented_count"])
+    assert str(actual["invented_flag"].dtype) == "boolean"
+    flags = actual["invented_flag"].iloc[:5].tolist()
+    assert flags == frame["invented_flag"].tolist()
+    assert pd.isna(child["invented_flag"])
+
+
+def test_known_integer_columns_convert_whole_floats_and_refuse_fractions():
+    frame = _frame()
+    frame["age"] = frame["age"].astype("float64")
+    whole = _append(frame, _births([11]))
+    assert str(whole["age"].dtype) == "Int64"
+    assert whole["age"].iloc[:5].tolist() == _frame()["age"].tolist()
+    frame.loc[3, "age"] = 29.5
+    with pytest.raises(NewbornPacketRefused, match="NEWBORN_PACKET_REFUSED"):
+        _append(frame, _births([11]))
 
 
 @settings(max_examples=8, deadline=None, derandomize=True)
@@ -747,7 +864,7 @@ def test_parent_reader_requires_identifiers_on_nonempty_authoritative_state():
         )
 
 
-@pytest.mark.parametrize("value", [0, -1, pd.NA, 1.5, "invalid"])
+@pytest.mark.parametrize("value", [0, -1, pd.NA, 1.5, "invalid", 2**70])
 def test_birth_order_must_be_a_positive_integer_count(value):
     births = _births([11])
     births["birth_order"] = [value]
@@ -768,6 +885,13 @@ def test_mother_and_year_fields_require_exact_integer_values(column, value):
     births = _births([11])
     births[column] = [value]
     with pytest.raises(NewbornPacketRefused):
+        _append(births=births)
+
+
+def test_a_birth_without_a_mother_is_refused_as_such():
+    births = _births([11])
+    births["parent_person_id"] = pd.Series([pd.NA], dtype="Int64")
+    with pytest.raises(NewbornPacketRefused, match="a birth needs a mother"):
         _append(births=births)
 
 
@@ -799,6 +923,10 @@ def test_packet_step_requires_a_callable_parent_reader():
         {11: (pd.NA, "invented_reason")},
         {11: (11, pd.NA)},
         {11: (999, pd.NA)},
+        None,
+        {11: 44},
+        {11: (44,)},
+        {11: (44, pd.NA, pd.NA)},
     ],
 )
 def test_custom_parent_reader_cannot_bypass_packet_parent_guards(result):
@@ -838,6 +966,38 @@ def test_missing_or_colliding_ids_and_streams_use_the_named_refusal(missing):
         _append(births=_births([11]), context=context)
 
 
+@pytest.mark.parametrize("problem", ["registry", "ordinal", "overlap"])
+def test_id_and_stream_refusals_leave_the_allocator_untouched(problem):
+    start = 11 if problem == "overlap" else 100
+    context = _context(start=start)
+    if problem == "registry":
+        context = replace(context, rng_registry=None)
+    elif problem == "ordinal":
+        context = replace(context, person_ordinals={})
+    with pytest.raises(IdOrStreamCollision, match="ID_OR_STREAM_COLLISION"):
+        _append(births=_births([11]), context=context)
+    assert context.synthetic_id_allocator.next_id == start
+
+
+def test_callable_step_uses_its_injected_parent_reader():
+    def reader(frame, mothers, marital):
+        return {
+            mother: (pd.NA, UNLINKED_PARTNER_OUTSIDE_ROSTER)
+            for mother in mothers
+        }
+
+    births = _births([11])
+    step = NewbornPacketStep(_pin(), second_parents=reader)
+    actual = step(
+        _frame(), _context(), _marital(births), np.random.default_rng(5)
+    )
+    child = _children(actual).iloc[0]
+    assert pd.isna(child[SECOND_PARENT_COLUMN])
+    assert (
+        child[SECOND_PARENT_UNLINKED_COLUMN] == UNLINKED_PARTNER_OUTSIDE_ROSTER
+    )
+
+
 def test_callable_step_reads_marital_births_and_supports_materializer_partial():
     births = _births([22])
     marital = _marital(births)
@@ -849,6 +1009,33 @@ def test_callable_step_reads_marital_births_and_supports_materializer_partial():
     )
     assert_frame_equal(actual, expected)
     assert _children(actual)["parent_person_id"].tolist() == [22]
+
+
+def test_packet_rows_pass_through_the_sealed_mortality_and_aging_steps():
+    """A later year's steps read the packet's nullable columns."""
+    bands = ((0, 0), (1, 120))
+    model = AgeSexMortalityModel(
+        bands,
+        {
+            (AgeSexMortalityModel.band_label(*band), sex): float(band[0] == 0)
+            for band in bands
+            for sex in ("female", "male")
+        },
+    )
+    packet = _append()
+    ordinals = {
+        person: index for index, person in enumerate(packet["person_id"])
+    }
+    later = replace(
+        _context(), period_index=2, year=YEAR + 1, person_ordinals=ordinals
+    )
+    survivors = apply_mortality(
+        packet, later, np.random.default_rng(1), model=model
+    )
+    assert survivors["person_id"].tolist() == sorted(PERSONS)
+    aged = advance_age(packet, later, np.random.default_rng(2))
+    assert aged["age"].tolist() == [28, 32, 36, 30, 35, 1, 1, 1]
+    assert set(aged["year"]) == {YEAR + 1}
 
 
 def _gate_modules(seen):

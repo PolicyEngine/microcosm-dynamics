@@ -89,8 +89,10 @@ def read_second_parents(
     """Read links or registered reasons from authoritative state (§5.4).
 
     Return ``mother_id: (link, reason)``, with exactly one nonmissing value.
-    The supplied state is the year's snapshot; duplicate mother rows refuse
-    rather than selecting a state or reconstructing a link from the roster.
+    A state with a ``year`` column counts only the mother's roster year; a
+    state without one is that year's snapshot. Two rows for her in that year
+    refuse rather than selecting a state or reconstructing a link from the
+    roster. ``cola_track_a/adapters.py:83–123`` hands over this shape.
     """
     if "person_id" not in frame or frame["person_id"].duplicated().any():
         raise NewbornPacketRefused("the roster needs unique person IDs")
@@ -107,6 +109,8 @@ def read_second_parents(
             if not state.empty
             else state
         )
+        if "year" in state and "year" in roster:
+            rows = rows.loc[rows["year"].eq(roster.loc[mother, "year"])]
         if len(rows) > 1:
             raise NewbornPacketRefused("a mother has duplicate marital rows")
         if rows.empty:
