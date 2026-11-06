@@ -152,7 +152,7 @@ def test_unknown_period_dli_capped_before_query_is_not_right_censored():
     assert not result.dli.right_censored
 
 
-def test_established_current_period_refuses_unobserved_future_dli_only():
+def test_established_current_period_ranges_an_unobserved_future_dli():
     person = i.Person(
         date(2000, 2, 2),
         disability_onset=date(2022, 1, 15),
@@ -163,23 +163,37 @@ def test_established_current_period_refuses_unobserved_future_dli_only():
         sspa211_provenance=i.EarningsProvenance.OBSERVED,
     )
     month = date(2022, 10, 1)
-    years = history(person, month, {2021: 4, 2022: 2})
-    with pytest.raises(i.InsuredConfigurationUnsupported) as error:
-        i.insured_status(
+
+    def result(annual, test):
+        return i.insured_status(
             person,
-            years,
+            history(person, month, annual),
             month,
             coverage_end_month=month,
-            test=i.InsuredTest.DISABILITY,
+            test=test,
         )
-    assert error.value.reason is i.InsuredUnsupportedReason.CURRENT_PERIOD_DLI
-    fully = i.insured_status(
-        person,
-        years,
-        month,
-        coverage_end_month=month,
-        test=i.InsuredTest.FULLY,
+
+    # Six QCs fill the 12 quarters ending 2022Q2, so the period begins there.
+    # With the period set aside (404.130(f)), the 15 elapsed quarters through
+    # 2024Q4 hold seven QCs and the next quarter needs eight, so no ending's
+    # date falls below 2024Q4. An ending at retirement age holds it at 2066Q4.
+    ranged = result({2021: 4, 2022: 4}, i.InsuredTest.DISABILITY)
+    assert ranged.current_disability_period_start == date(2022, 4, 1)
+    assert ranged.disability.insured
+    assert (
+        ranged.dli.lower,
+        ranged.dli.upper,
+        ranged.dli.right_censored,
+    ) == (date(2024, 12, 31), date(2066, 12, 31), False)
+    # 2022's two QCs can sit later, where they move the start and the date, so
+    # no filling with the reported start reaches every ending's date.
+    annual = {2021: 4, 2022: 2}
+    with pytest.raises(i.InsuredConfigurationUnsupported) as error:
+        result(annual, i.InsuredTest.DISABILITY)
+    assert (
+        error.value.reason is i.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY
     )
+    fully = result(annual, i.InsuredTest.FULLY)
     assert fully.fully.insured
     assert fully.dli is None
 
