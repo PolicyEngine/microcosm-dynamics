@@ -609,9 +609,12 @@ def test_plain_integer_and_boolean_columns_stay_exact_beside_a_child():
 def test_known_integer_columns_convert_whole_floats_and_refuse_fractions():
     frame = _frame()
     frame["age"] = frame["age"].astype("float64")
+    frame["household_id"] = frame["household_id"].astype("float64")
     whole = _append(frame, _births([11]))
     assert str(whole["age"].dtype) == "Int64"
     assert whole["age"].iloc[:5].tolist() == _frame()["age"].tolist()
+    assert str(whole["household_id"].dtype) == "Int64"
+    assert whole["household_id"].tolist() == [101, 102, 103, 101, 102, 101]
     frame.loc[3, "age"] = 29.5
     with pytest.raises(NewbornPacketRefused, match="NEWBORN_PACKET_REFUSED"):
         _append(frame, _births([11]))
@@ -838,6 +841,14 @@ def test_mother_must_be_explicitly_female(value):
     frame = _frame()
     frame.loc[0, "sex"] = value
     with pytest.raises(NewbornPacketRefused):
+        _append(frame, _births([11]))
+
+
+def test_mother_with_a_missing_nullable_sex_is_refused():
+    frame = _frame()
+    frame["sex"] = frame["sex"].astype("string")
+    frame.loc[0, "sex"] = pd.NA
+    with pytest.raises(NewbornPacketRefused, match="must have sex female"):
         _append(frame, _births([11]))
 
 
