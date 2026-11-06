@@ -301,6 +301,11 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/income_resources/coverage_rules.py"),
         Path("src/populace_dynamics/data/sipp_income.py"),
         Path("src/populace_dynamics/data/sipp_income_registry.py"),
+        Path("src/populace_dynamics/income_resources/contribution_limits.py"),
+        Path("src/populace_dynamics/income_resources/early_distribution.py"),
+        Path("src/populace_dynamics/income_resources/pension_cola.py"),
+        Path("src/populace_dynamics/income_resources/retirement_resources.py"),
+        Path("src/populace_dynamics/income_resources/retirement_rules.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -636,6 +641,20 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "the opt-in SIPP income readers became reachable from the "
         "birth-evidence reducer: "
         f"{sorted(sipp_income_modules & reachable)}"
+    )
+    income_resources_modules = {
+        "populace_dynamics.income_resources",
+        "populace_dynamics.income_resources.contribution_limits",
+        "populace_dynamics.income_resources.early_distribution",
+        "populace_dynamics.income_resources.pension_cola",
+        "populace_dynamics.income_resources.retirement_resources",
+        "populace_dynamics.income_resources.retirement_rules",
+    }
+    assert income_resources_modules.issubset(module_paths)
+    assert income_resources_modules.isdisjoint(reachable), (
+        "the opt-in income-and-resources modules became reachable from "
+        "the birth-evidence reducer: "
+        f"{sorted(income_resources_modules & reachable)}"
     )
     assert graph_exclusions.isdisjoint(reachable), (
         "opt-in graph modules became reachable from the birth-evidence "
