@@ -324,6 +324,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # nothing in the historical projection imports it.
     Path("src/populace_dynamics/track_b/gross_benefits.py"),
     Path("src/populace_dynamics/track_b/_provenance.py"),
+    # Insured status and QC accounting are opt-in statutory references.
+    Path("src/populace_dynamics/track_b/insured_status.py"),
+    Path("src/populace_dynamics/track_b/_insured_status_qc.py"),
     # R2 statutory payment mechanics also stay outside birth evidence.
     Path("src/populace_dynamics/track_b/ret_grace.py"),
     Path("src/populace_dynamics/track_b/ret_ledger.py"),
