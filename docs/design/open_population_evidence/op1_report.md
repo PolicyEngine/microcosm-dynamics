@@ -932,15 +932,26 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     cannot always tell which one a hint picks at run time, as in
     `"exec(S)" if flag else "int"`. So a string Python keeps as data there,
     such as a `Literal` value, `Annotated` metadata or a list item, gives
-    the hit its code would give. The pieces the folder builds a string from
-    are not strings Python evaluates, and the scan skips them. It follows
-    each text once in a hint, as `typing` evaluates a forward reference
-    once, and it does not follow a string at a sixth level. The scan never
-    asks whether Python evaluates the annotation, so a local variable's
-    hint, which Python never runs, gives the same hit. Where a sixth level,
-    or a code call on text the folder cannot read, sits in a literal inside
-    an annotation, the scan walks no node that holds it, so the annotation
-    itself reports `dynamic-code`, whatever the module binds.
+    the hit its code would give. The scan also reads the pieces the folder
+    builds a string from. The folder takes `str` to mean the builtin, and a
+    module can bind that name to `eval`, so `(str("exec(S)"), "int")[1]`
+    can run a piece the folder's value leaves out. Reading every piece
+    gives a false hit where `str` keeps its meaning, as on a slice of a
+    literal, and the scan accepts that hit. A text that starts with `*`
+    counts as the `(*x,)[0]` that `typing` compiles from it. The walk
+    follows each distinct text once in a hint, which bounds its work.
+    `typing` guards a text only along one recursive path and evaluates it
+    again in a sibling position, so this guard rests on another argument:
+    the walk's first visit found what the text holds, or marked the hint.
+    The walk does not follow a string at a sixth level unless it has
+    followed that text before. A hit at a sixth level therefore depends on
+    the order: the walk reads a tuple's last item first, so a copy of the
+    text there hides the sixth level, having already read what it holds.
+    The scan never asks whether Python evaluates the annotation, so a local
+    variable's hint, which Python never runs, gives the same hit. Where a
+    sixth level, or a code call on text the folder cannot read, sits in a
+    literal inside an annotation, the scan walks no node that holds it, so
+    the annotation itself reports `dynamic-code`, whatever the module binds.
   - `member-introspection`: a dunder read on, or an introspection call
     such as `inspect.getmodule` or `getattr` on, a member of a module
     through which a class can be reached.
@@ -989,7 +1000,19 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   text as long as that literal before the folder refuses the result.
   Across a module, the values the folder keeps weigh at most 1 MiB in
   characters and items, the weight of 16 texts at the limit; past that the
-  scan stops with an error naming the module, so it never skips one.
+  scan stops with an error naming the module, so it never skips one. The
+  walk through a module's hints spends from a second budget of the same
+  size, because most of what it reads Python never runs. All of a module's
+  hints share that budget, those inside what a hint runs included, since a
+  fresh budget for each nested hint would multiply the work at every level.
+  A hint the walk cannot finish reports `dynamic-code` in place of all the
+  walk found, and so does each later hint that holds an expression, because
+  the budget stays spent. The scan goes on and the module's other checks
+  still report. Those hits are an intended over-approximation: such a hint
+  may run no code at all. A suite a hint runs joins the module's code, so
+  the values the checks fold from it count against the module's budget.
+  Past that budget the scan stops with the error, as it does for the same
+  suite in a statement.
   - `test_folder_refuses_results_past_its_limits` checks
     19 expressions past those limits: the folder gives
     no value, and holds under 1 MiB while refusing.
@@ -1006,6 +1029,31 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     `test_scan_stops_at_the_folder_budget_naming_only_the_path`, a module
     of twelve built 64 KiB texts scans clean, one of twenty stops with the
     error, and one of twenty 64 KiB literals scans clean.
+  - `test_scan_reports_a_hint_past_the_walk_budget` puts a short hint, whose
+    100 texts each spell a 4,000-character text, in all four annotation
+    places beside an ordinary check. Pruned and unpruned, the hint reports
+    `dynamic-code` and the check reports `isinstance`.
+    `test_scan_reports_a_hint_past_the_walk_budget_whatever_the_module_binds`
+    gives the same hint in a module that binds nothing tracked, and in a
+    statement's suite.
+    `test_scan_keeps_a_hint_within_the_walk_budget_off_the_module_budget`
+    gives a longer hint, of 70 texts, that fits the budget and scans clean.
+    `test_scan_shares_the_walk_budget_across_a_module` gives two hints that
+    each fit and together spend it: the second reports, and so does a
+    working check in a third.
+    `test_scan_bounds_hints_inside_what_a_hint_runs` gives hints that each
+    run a suite of 2, 4, 8 or 20 more such hints, and expects `dynamic-code`
+    in under 4,000 parses.
+    `test_a_hint_past_the_walk_budget_marks_only_itself` checks that the
+    failed walk leaves one mark, on the hint, and none on the tree it
+    dropped.
+    `test_a_failure_inside_what_a_hint_runs_goes_to_the_outermost_hint` gives
+    a hint that runs a suite whose own hint holds a text too deep for the
+    parser, before a working check: the outermost hint alone reports, and the
+    check reports through that hit.
+    `test_scan_stops_at_the_budget_on_a_suite_a_hint_runs` gives one
+    suite past the budget in a statement and in a hint, and expects the error
+    both ways.
   - `test_folder_runs_each_listed_method_and_builtin` calls each of the
     26 methods and 10 builtins the folder runs (`format` both ways) and
     compares the result with Python's.
@@ -1040,8 +1088,16 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   an annotation's strings recurses once per level, so it never goes past a
   sixth level. Without that bound, a 1002-level chain of string hints, each
   spelling the next, ended in a `RecursionError` that the folder absorbed,
-  and the scan gave no hit. A hint that spells itself, read once, can no
-  longer run the folder past its budget either.
+  and the scan gave no hit. A hint that spells itself takes one reading, so
+  it stays within the walk's budget. On this host Python's parser raises
+  `MemoryError` on a deep text, such as 10,000 unary operators, and
+  `RecursionError` on a very long chain, such as 100,000 additions. A text
+  that only the walk reads reports `dynamic-code`, as past the budget, in
+  `test_scan_reports_a_hint_text_too_deep_for_the_parser`. A code call and
+  the hint checks parse what they read, as they did at the base, so there
+  the error stops the scan, in
+  `test_scan_stops_at_a_text_too_deep_for_the_parser`. Python cannot compile
+  those texts either.
 - **Cost.** Right after parsing, each literal container of constants is
   replaced by `None` unless a string in it holds either class's or
   module's name in any case, a probe name, or a name a read of a trusted
@@ -1114,23 +1170,35 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     function's hint at the first and sixth levels.
     `test_pruning_keeps_each_hint_whole` puts a working check's literal
     under a lambda's default in each of the four annotation places.
-  - `test_scan_reads_each_string_in_a_hint_as_code` gives 21 cases, each
+  - `test_scan_reads_each_string_in_a_hint_as_code` gives 34 cases, each
     read the way it runs, pruned and unpruned:
     - Working checks in a string in `List`, in `dict` and in a
-      `Callable`'s arguments, and in a string that a conditional, an `and`
-      or a tuple index picks at run time.
+      `Callable`'s arguments, in a string that a conditional, an `and` or a
+      tuple index picks at run time, in a string that starts with `*`, in
+      one with `*` only in a comment, and in a keyword argument.
+    - A working check whose text differs from a `Literal` value only in
+      case, so the guard must keep the two apart.
+    - Six working checks in a piece of a folded string: `str` or `repr`
+      bound to `eval`, `str` or another name bound to `exec`, and `str`
+      bound in literal code or through `globals()`.
     - The level boundary. Four strings around an `exec` give `isinstance`
       and five give `dynamic-code`, as do a string hint around four and
       five `exec` calls. Five strings around a name give nothing, and six
       give `dynamic-code`.
+    - The order at a sixth level. Six strings around a name give
+      `dynamic-code` before a copy of the name's text and nothing after
+      one, a copy with spaces around it included.
     - String-hint chains that each spell the next level, 6, 50 and 1002
       levels deep, all reported as `dynamic-code`.
-    - Three strings Python keeps as data, pinned as intended false hits: a
-      `Literal` value, `Annotated` metadata and a list item.
-    - Two pieces the scan skips, of a folded and of a spelled literal.
+    - Five strings Python keeps as data, pinned as intended false hits: a
+      `Literal` value, `Annotated` metadata, a list item and the pieces of
+      a folded and of a spelled literal.
     - One intended miss: a hint that names a variable bound to code
       text (limit class 1).
 
+    `test_scan_reads_a_piece_when_builtins_itself_is_rebound` binds
+    `builtins.str` to `eval`, which no list of a module's own bindings would
+    see, and expects the piece's check.
     `test_scan_follows_a_hint_text_once` gives a hint that spells itself,
     with and without 600 characters of padding, and expects only the
     module's own check. `test_scan_reads_a_text_again_in_another_hint`
@@ -1170,7 +1238,12 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
      direct instance built elsewhere. So is a hint whose value is text the
      folder cannot read, such as a name bound to a string, a call's result
      or a literal expression past the folder's limits, which
-     `typing.get_type_hints` evaluates as a forward reference.
+     `typing.get_type_hints` evaluates as a forward reference. So is a
+     callee the scan knows only by its name. After `run = exec`, `run(code)`
+     is no code call to the scan, and after `str = lambda _: code`,
+     `exec(str('pass'))` reads as `exec('pass')`. Each runs a working check
+     and gives no hit, in a statement or in a hint, and
+     `test_scan_reads_a_callee_by_its_name` pins all four misses.
   2. **Introspection of run-time values.** The annotations, docstring,
      source or members of an object that arrives at run time, such as a
      function passed in. Among the readers of run-time annotations in
@@ -1581,11 +1654,19 @@ Six invariants hold for the fixes:
   code calls and further strings.
 - On the real tree the scan gives exactly the pinned hit.
 
-Review scanfix-r1's guard and bound add two more:
+Reviews scanfix-r1 and scanfix-r2 add three more:
 - The walk through a hint's strings follows at most five levels and each
-  text once, so it ends on every source.
+  distinct text once, and all of a module's hints spend from one budget. Each
+  level parses no more text than the level above it holds, plus what that
+  budget lets the folder build, so the walk ends on every source within a
+  fixed multiple of the module's text and the budget. The walk itself never
+  stops the scan: past its budget, or on a text the parser refuses, the
+  outermost hint reports `dynamic-code`.
 - A string at a sixth level reports `dynamic-code`, whatever the module
-  binds.
+  binds, unless the walk has already followed that text in this hint. In
+  that case its first visit found what the text holds, or marked the hint.
+- The walk reads every string in a hint, the pieces of a folded string
+  included, so no binding of a name the folder runs hides a literal from it.
 
 ### Review scanfix-r1
 
@@ -1603,8 +1684,8 @@ findings, and what changed:
    string hints ended in a `RecursionError` that `_apply` absorbed, so the
    scan gave no hit. **Fix:** the walk now puts a string at a sixth level
    in `unexpanded` instead of following it, and each hint has a guard that
-   follows each text once, as `typing`'s recursive guard does. Both
-   sources are now tests, with the chain at 6, 50 and 1002 levels.
+   follows each text once. Both sources are now tests, with the chain at 6,
+   50 and 1002 levels.
 2. **Minor: data strings in a hint read as code.** A `Literal` value,
    `Annotated` metadata, a list item, a `str` call's argument and a piece
    of an `exec` literal each gave `isinstance`, though Python keeps them as
@@ -1619,7 +1700,8 @@ findings, and what changed:
    runs, and a walk over typing's places alone would miss all three
    silently. The `dynamic-code` bullet now states the over-approximation,
    invariant 5 says what the scan does with such a literal, and three
-   cases pin it as intended.
+   cases pin it as intended. Review scanfix-r2 found a working check that
+   the skip lost, so `7a830f39` is the last revision that skips pieces.
 3. **Minor: no test had a coroutine's return hint**, and two mutants that
    drop it survived. **Fix:** `_FORCED_HINTS` gains an async return place,
    which the level, mix and pruning tests all use, and the sweep carries
@@ -1633,6 +1715,75 @@ findings, and what changed:
    with an `annotation-read` on its line, and that the hint adds only
    `annotation-read`. §6 names both substitutions.
 6. **Nit: the mix test ran only the pruned scan.** **Fix:** it runs both.
+
+### Review scanfix-r2
+
+Review scanfix-r2, a delta review on a Codex lane, read the follow-up at
+`7a830f39` and returned REVISE. It marked scanfix-r1's findings 3 to 6
+fixed, and it did not read `module_path` again. It ran 176 working mixes of
+strings and `eval` at levels four to seven, and each kept the boundary at
+five levels in both modes. Its four findings, the two mutants it added that
+survived, and what changed:
+
+1. **Major: skipping a folded subtree lost a working check.** The folder
+   takes `str` to mean the builtin. After `str = eval`, the hint
+   `(str("exec(...)"), "int")[1]` folds to `"int"`, Python runs the piece,
+   and the skip left that piece unread. `f8d64f8b` reported the check, and
+   `7a830f39` and the base gave no hit. The review proposed that the folder
+   refuse any name the module rebinds. **Fix, by another route:** the walk
+   reads every string in a hint again, pieces included, and the folder stays
+   as it was. A list of bindings would miss `builtins.str = eval`, and it
+   would need its own rules for `globals()['str'] = eval`,
+   `exec('str = eval')` and a star import. It would also change what the
+   folder gives every other check in such a module. Reading every string catches
+   each of these with less code, and it costs a false hit on a piece, which
+   fails loudly. The two piece cases that `50e7e61c` moved to no hit go back
+   to `isinstance`, now pinned as false hits, and six working cases and
+   `test_scan_reads_a_piece_when_builtins_itself_is_rebound` pin the
+   checks. This reverses the part of scanfix-r1's finding 2 that skipped
+   pieces. The false hits that finding reported stand, as stated.
+2. **Major: a wide hint stopped the scan.** A 6,429-character source of 100
+   distinct texts, each spelling a 4,000-character text, ran the walk past
+   the module's budget. The base scanned it clean, and `f8d64f8b` and
+   `7a830f39` stopped with the error. A second source, of 70 texts under
+   three layers of `replace`, did the same. **Fix, in part as proposed:** the
+   walk now spends from a budget of its own, and a hint past it reports
+   `dynamic-code` while the module's checks go on. The folder bullet states
+   the over-approximation, and both sources are now tests, the first beside
+   an ordinary check and alone. The review proposed one budget per hint. A
+   first version of the fix did that, and a probe showed its cost: a hint
+   inside what a hint runs got a fresh budget, so a suite of six such hints,
+   628 characters of source, took 46,659 parses, and the count grows with
+   the fifth power of the hints. So all of a module's hints share one
+   budget, a failure inside what a hint runs goes to the outermost hint, and
+   a test pins the parse count. Two neighbours of this fix needed a decision.
+   The `except` also takes the parser's `MemoryError` and `RecursionError`,
+   because at `7a830f39` the walk raised them on a second-level text past
+   the hint checks' 64 parts, where the base gave no hit. And a suite a hint
+   runs still counts against the module's budget, as the same suite in a
+   statement does, because the checks read that code and skipping it would
+   hide it. On that source this branch stops with the error where the base
+   gave no hit, and a test pins it.
+3. **Minor: the sixth-level invariant omitted the guard.** `(six strings
+   around "int", "int")` gives no hit, because the walk reads the tuple's
+   last item first, and the reverse order gives `dynamic-code`. No working
+   check goes missing, since the first visit read the text. **Fix:** the
+   invariant and the bullet now state the exception, and three cases pin
+   the order.
+4. **Nit: `typing`'s guard works along one recursive path.** `typing` ran a
+   sibling copy of one text twice, so the analogy claimed too much. **Fix:**
+   the bullet and the docstring now give the scan's own argument.
+5. **Two mutants survived:** guard keys that fold case, and a walk that
+   skips keyword-argument children. **Fix:** a case for each, and both join
+   the sweep below.
+
+The main session found two more while answering these:
+- A string that starts with `*` ran its check and gave no hit at the base
+  and at every revision since. `typing` compiles `*x` as `(*x,)[0]`, and the
+  parser refuses the bare form in expression mode. `_spelled` now reads it
+  the way `typing` does, so the hint checks read it too.
+- A callee the scan knows only by name gave no hit at the base and at every
+  revision since. Limit class 1 now states it, with four pinned misses.
 
 ### Commands and results
 
@@ -2020,3 +2171,14 @@ reads that spanned master's changes used `--name-only`, `--stat` or
 inputs. The fixes for review scanfix-r1 followed the same rules, after the
 main session read the coordinator's sixth pending entry, which closes paths
 that this branch's tree does not yet hold.
+
+The fixes for review scanfix-r2 followed the same rules, after the main
+session read the coordinator's seventh pending entry, which closes further
+paths and opens none. They hold one departure, which review scanfix-r2's
+report named. The real-tree figures helper printed one count about
+`baselines/asfr.py` alone, its scan hits. The rule on that file bars any
+figure about it alone. The line reached the main session's displays at
+`35ba6e5c` and `50e7e61c`, and review scanfix-r2 read it in the helper's
+output. It printed no source line, rate or table content, and this report
+does not repeat it. The helper no longer prints that line, and the main
+session removed it from its own saved outputs.
