@@ -6817,7 +6817,7 @@
   },
   {
    "rule_id": "nonprofit_1968_1977",
-   "worker": "INVENTED: Ed, hired 1960 by a 501(c)(3) hospital whose certificate was filed 1968 Q1; he did not sign the Form SS-15a. The hospital filed a supplemental list naming him in 1971 Q2, more than 24 months after 1968 Q1, so not a permitted amendment (1958 (k)(1) note; C.6 NOTE). Service 1972. The law leaves him excluded; the case-1 text, which states no 24-month limit, covers him, and the nonconcurring text is false because a list names him.",
+   "worker": "INVENTED: Ed, hired 1960 by a 501(c)(3) hospital whose certificate was filed 1968 Q1; he did not sign the Form SS-15a. The hospital filed a supplemental list naming him in 1971 Q2, more than 24 months after 1968 Q1, so not a permitted amendment (1958 (k)(1) note; C.6 NOTE). Service 1972. The law leaves him excluded. The list came after the twenty-fourth month, so the registry decides waiver_nonconcurring_existing_employee, which excludes the service.",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
@@ -6828,7 +6828,7 @@
   },
   {
    "rule_id": "nonprofit_1968_1977",
-   "worker": "INVENTED: Flo, hired 1970-03 by a 501(c)(3) agency whose certificate was filed 1974-08-20 (Q3) effective 1972-01-01; she left 1973-12-31, before the filing, so she could not sign. The agency paid FICA taxes on her 1972-1973 pay before the due date of its 1974 Q2 return; she filed a section 105(b) request in 1976. Pub. L. 86-778 section 105(b) (as amended 1965) deems that remuneration wages; case 6 calls her excluded on every source. M-6.",
+   "worker": "INVENTED: Flo, hired 1970-03 by a 501(c)(3) agency whose certificate was filed 1974-08-20 (Q3) effective 1972-01-01; she left 1973-12-31, before the filing, so she could not sign. The agency paid FICA taxes on her 1972-1973 pay before the due date of its 1974 Q2 return; she filed a section 105(b) request in 1976. Pub. L. 86-778 section 105(b) (as amended 1965) deems that remuneration wages; the registry decides section_105b_departed_employee_request, which covers the pay above the threshold.",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
@@ -6843,7 +6843,7 @@
   },
   {
    "rule_id": "nonprofit_1968_1977",
-   "worker": "INVENTED: Gil, hired 1972-06 by Flo's agency (after the 1972-01-01 effective date), left 1973-12-31 before the 1974-08-20 filing; taxes paid on time; 105(b) request in 1976. Covered on either reading of the open case (C.4 covers Gil; on the request-date reading 105(b) does). The registry decides section_105b_departed_employee_request, which covers the pay above the threshold.",
+   "worker": "INVENTED: Gil, hired 1972-06 by Flo's agency (after the 1972-01-01 effective date), left 1973-12-31 before the 1974-08-20 filing; taxes paid on time; 105(b) request in 1976. Covered on either reading of waiver_retroactive_period_hire_unlisted (C.4 covers Gil; on the request-date reading 105(b) does). The registry decides section_105b_departed_employee_request, which covers the pay above the threshold.",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
@@ -7030,7 +7030,7 @@
   },
   {
    "rule_id": "nonprofit_1978_1983",
-   "worker": "INVENTED: Xia, hired 1975 by a 501(c)(3) hospital whose certificate was filed 1978 Q1; not on the Form SS-15a; named on a supplemental list filed 1981 Q1, after the 24th month following 1978 Q1. Service 1982. Law: excluded; registry: case 1.",
+   "worker": "INVENTED: Xia, hired 1975 by a 501(c)(3) hospital whose certificate was filed 1978 Q1; not on the Form SS-15a; named on a supplemental list filed 1981 Q1, after the 24th month following 1978 Q1. Service 1982. Law: excluded; the registry decides waiver_nonconcurring_existing_employee, which excludes the service.",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
@@ -7041,7 +7041,7 @@
   },
   {
    "rule_id": "nonprofit_1978_1983",
-   "worker": "INVENTED: Yuri, hired 1978 by a 501(c)(3) agency whose certificate was filed 1983-02-15 effective 1980-01-01; he left 1982-06-30, before the filing. The agency paid FICA taxes on his 1980-1982 pay on time; he filed a section 105(b) request in 1983-09. The row has no historical_fica_treatment fact. M-6.",
+   "worker": "INVENTED: Yuri, hired 1978 by a 501(c)(3) agency whose certificate was filed 1983-02-15 effective 1980-01-01; he left 1982-06-30, before the filing. The agency paid FICA taxes on his 1980-1982 pay on time; he filed a section 105(b) request in 1983-09. The registry decides section_105b_departed_employee_request, which covers the pay above the threshold.",
    "facts": {
     "nonprofit_organization": "employer is an organization described in 501(c)(3) and exempt under 501(a), whose service former 410(a)(8)(B) excluded",
     "nonprofit_coverage_waiver": "actual waiver certificate (Form SS-15) in effect for the service: the service falls on or after the certificate's effective date (RS 01901.540 C.3) and before any termination took effect (C.5), and the certificate covers the employee's group where the organization divided its employees under 3121(k)(1)(E)",
@@ -7338,7 +7338,7 @@
   },
   {
    "rule_id": "electing_church_1984_1985",
-   "worker": "INVENTED: Xena, lay organist at a church that existed on 9/30/84 but filed its Form 8274 only in 1985-03, after the 3121(w)(2) deadline (RS 01901.660 A.2: by 10/31/84), so no valid election is in effect. 1985. Law: not 410(a)(8)(B) service. The case text 'electing church' does not state that the election must be valid and in effect for the service.",
+   "worker": "INVENTED: Xena, lay organist at a church that existed on 9/30/84 but filed its Form 8274 only in 1985-03, after the 3121(w)(2) deadline (RS 01901.660 A.2: by 10/31/84), so no valid election is in effect. 1985. Law: not 410(a)(8)(B) service. The case text requires an election in effect for the service and made in time, so the residual decides.",
    "facts": {
     "church_employee_service": "service for a church that filed its Form 8274 after the 3121(w)(2) deadline, so no election is in effect",
     "taxable_year_start": "1985-01-01"
@@ -7408,7 +7408,7 @@
   },
   {
    "rule_id": "electing_church_1986_2026",
-   "worker": "INVENTED: Eben, lay secretary of a church whose 1984 election the Secretary revoked in 1997 under 3121(w)(2) for failure to furnish 6051 information for 1995 and 1996; the revocation applies retroactively to 1995-01-01. Service 1995, when the church was operating as an electing church. Law: no election in effect for the service, so not 410(a)(8)(B) service. The case text 'electing church' does not carry 'has in effect' or the retroactive revocation.",
+   "worker": "INVENTED: Eben, lay secretary of a church whose 1984 election the Secretary revoked in 1997 under 3121(w)(2) for failure to furnish 6051 information for 1995 and 1996; the revocation applies retroactively to 1995-01-01. Service 1995, when the church was operating as an electing church. Law: no election in effect for the service, so not 410(a)(8)(B) service. The case text requires an election not revoked for the service's period, so the residual decides.",
    "facts": {
     "church_employee_service": "service for a church whose 3121(w) election the Secretary revoked under 3121(w)(2), retroactively to the beginning of a 2-year period that includes the service",
     "taxable_year_start": "1995-01-01"
@@ -11769,7 +11769,7 @@
   },
   {
    "rule_id": "nonresident_alien_service_1968",
-   "worker": "INVENTED: F-1 student, nonresident alien, granted DHS economic-hardship employment authorization in 2010 and working off campus at a grocery store. POMS C.1.a lists hardship employment among the DHS-authorized work and says authorized F-1 work is not covered, so the admission-purpose text is true of it. Excluded (see NOTE N-FJ-1 on wording).",
+   "worker": "INVENTED: F-1 student, nonresident alien, granted DHS economic-hardship employment authorization in 2010 and working off campus at a grocery store. POMS C.1.a lists hardship employment among the DHS-authorized work and says authorized F-1 work is not covered, so the admission-purpose text is true of it. Excluded.",
    "facts": {
     "nonresident_alien_status": "nonresident alien",
     "statutory_student_service": "authorized service performed to carry out the purpose of the F or J admission",
@@ -12089,7 +12089,7 @@
   },
   {
    "rule_id": "statutory_homeworker_service_1968",
-   "worker": "INVENTED: JUST MISSES (410(j)(3)(C) materials): home seamstress in 1972 who buys her own fabric and sells finished dresses made to a boutique's specifications; the goods are not furnished by the boutique and returned, so she is not in the (C) group. Deferred (see NOTE N-HW-1).",
+   "worker": "INVENTED: JUST MISSES (410(j)(3)(C) materials): home seamstress in 1972 who buys her own fabric and sells finished dresses made to a boutique's specifications; the goods are not furnished by the boutique and returned, so she is not in the (C) group. Deferred.",
    "facts": {},
    "expected": "deferred",
    "decides": "residual",
@@ -12147,7 +12147,7 @@
   },
   {
    "rule_id": "statutory_homeworker_service_1978",
-   "worker": "INVENTED: JUST MISSES (410(j)(3)(C) materials): home seamstress in 1995 who buys her own fabric and sells finished dresses made to a boutique's specifications; the goods are not furnished by the boutique and returned, so she is not in the (C) group. Deferred (see NOTE N-HW-1).",
+   "worker": "INVENTED: JUST MISSES (410(j)(3)(C) materials): home seamstress in 1995 who buys her own fabric and sells finished dresses made to a boutique's specifications; the goods are not furnished by the boutique and returned, so she is not in the (C) group. Deferred.",
    "facts": {},
    "expected": "deferred",
    "decides": "residual",
@@ -12223,7 +12223,7 @@
   },
   {
    "rule_id": "student_nurse_service_1968",
-   "worker": "INVENTED: JUST MISSES (capacity): nursing student in an approved school who works weekends in 2018 as a hospital admissions clerk, not as a student nurse; 410(a)(13) reaches 'Service performed as a student nurse'. Occupation text false; covered (see NOTE N-SN-1).",
+   "worker": "INVENTED: JUST MISSES (capacity): nursing student in an approved school who works weekends in 2018 as a hospital admissions clerk, not as a student nurse; 410(a)(13) reaches 'Service performed as a student nurse'. Occupation text false; covered.",
    "facts": {
     "employer_school_nexus": "nurses' training school chartered or approved under State law",
     "enrollment": "enrolled and regularly attending classes in a nurses' training school"
@@ -12377,7 +12377,7 @@
   },
   {
    "rule_id": "student_service_1973",
-   "worker": "INVENTED: JUST MISSES case 3 by date (registry ruling): full-time undergraduate with a long-term part-time job that makes her eligible for the university's retirement plan (fails C.2.b), working on August 14, 2024. The registry does not project C.2 before 2024-08-15 (current_poms_student_criteria.date_axis), so the statutory case excludes; see NOTE N-ST-2.",
+   "worker": "INVENTED: JUST MISSES case 3 by date (registry ruling): full-time undergraduate with a long-term part-time job that makes her eligible for the university's retirement plan (fails C.2.b), working on August 14, 2024. The registry does not project C.2 before 2024-08-15 (current_poms_student_criteria.date_axis), so the statutory case excludes.",
    "facts": {
     "employer_school_nexus": "employer is the school, college or university where the student is enrolled, or a 509(a)(3) organization that is organized, and at all times thereafter is operated, exclusively for the benefit of, to perform the functions of, or to carry out the purposes of it, and is operated, supervised or controlled by or in connection with it",
     "enrollment": "enrolled and regularly attending classes",

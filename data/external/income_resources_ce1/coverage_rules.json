@@ -14829,7 +14829,7 @@
         {
           "case_id": "cooperative_521_small_remuneration",
           "consequence": "open",
-          "description": "From 1978, 3121(a)(16) names an organization exempt \"under section 521\" while 409(a)(14) names only one \"exempt from income tax under section 501\", and the 1978 row leaves the question open; for 1968-1977 the 1977 note's parenthesis does not close, so its words do not say which side 521 was on (review r6 M-8: the case leaves the question open rather than choosing the covered residual). The case reads former 410(a)(10)'s amount, remuneration below $50 for a calendar quarter's service: at $50 or more both readings cover the pay, so the case does not reach it (review r7 M-8(a)).",
+          "description": "From 1978, the small-remuneration test in 3121(a)(16) names an organization exempt \"under section 521\" while the one in 409(a)(14) (409(p) as Pub. L. 95-216 added it) names only one \"exempt from income tax under section 501\", and the 1978 row leaves open whether the test reaches a 521 cooperative; for 1968-1977 the 1977 note's parenthesis does not close, so its words do not say which side 521 was on (review r6 M-8: the case leaves the question open rather than choosing the covered residual). The case reads former 410(a)(10)'s amount, remuneration below $50 for a calendar quarter's service: at $50 or more both readings cover the pay, so the case does not reach it (review r7 M-8(a)).",
           "open_alternatives": [
             {
               "description": "Read 521 inside the test, as 3121(a)(16) does from 1978: remuneration below the threshold is excluded (covered_above_threshold).",
@@ -15488,7 +15488,7 @@
         }
       ],
       "consequence": "covered",
-      "description": "Before mandatory coverage, service for a 501(c)(3) organization is covered only while an actual or deemed waiver certificate is in effect for it, and under an actual certificate only for employees it reaches; the separate small-remuneration test applies, to it and to service for other organizations exempt under 501(a) or 521.",
+      "description": "Before mandatory coverage, service for a 501(c)(3) organization is covered only while an actual or deemed waiver certificate is in effect for it, and under an actual certificate only for employees it reaches; the separate small-remuneration test applies, to it and to service for other organizations exempt under 501(a); below $100 a year, the row leaves open whether the test reaches a 401(a) trust or a 521 cooperative.",
       "effective_end": "1983-12-31",
       "effective_start": "1978-01-01",
       "family": "nonprofit_service",
@@ -15594,7 +15594,7 @@
           "amount_cents": 10000,
           "comparison": "at_least",
           "concept": "remuneration for service to qualifying 501(a)/521 organization, excluding 401(a) trusts",
-          "source": "409(a)(14), originally 409(p); Public Law 95-216 section 351 after 1977."
+          "source": "3121(a)(16) and 409(a)(14), originally 409(p); Public Law 95-216 sections 351 and 356 after 1977."
         },
         "threshold_id": "nonprofit_remuneration_year",
         "threshold_source_disagreement_resolution": {
@@ -15635,7 +15635,7 @@
       "rare_exclusion": null,
       "residual_default": {
         "consequence": "covered",
-        "description": "No case holds, so the employer is neither an organization described in 501(c)(3) and exempt under 501(a) nor another organization exempt under 501(a) (other than one described in 401(a)) or under 521: former 410(a)(8)(B) does not exclude the service and 3121(a)(16)'s $100 test does not reach it; apply the other families. A 401(a) trust's or 521 cooperative's employee paid $100 or more in the year also lands here: both readings of the open cases cover that pay."
+        "description": "No case holds, so the employer is neither an organization described in 501(c)(3) and exempt under 501(a) nor another organization exempt under 501(a) (other than one described in 401(a)) or under 521: former 410(a)(8)(B) does not exclude the service and 3121(a)(16)'s $100 test does not reach it; apply the other families. A 401(a) trust's employee paid $100 or more in the year also lands here, and a 521 cooperative's takes exempt_organization_small_remuneration: both readings of the open cases cover that pay."
       },
       "rule_id": "nonprofit_1978_1983",
       "trigger_facts": [
@@ -32358,7 +32358,7 @@
           "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
           "capture": "lii_42_410.html",
           "location": "Effective Date of 1983 Amendment, section 321(b)",
-          "quote": "Amendment by section 321(b) of Pub. L. 98\u201321 applicable to agreements entered into after Apr. 20, 1983",
+          "quote": "Amendment by section 321(b) of Pub. L. 98\u201321 applicable to agreements entered into after Apr. 20, 1983 , except that at the election of any American employer such amendment shall also apply to any agreement entered into on or before Apr. 20, 1983 , see section 321(f) of Pub. L. 98\u201321",
           "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32"
         },
         {
