@@ -186,6 +186,7 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/open_population/harness.py"),
     Path("src/populace_dynamics/open_population/gates.py"),
     Path("src/populace_dynamics/open_population/streams.py"),
+    Path("src/populace_dynamics/open_population/conventions.py"),
     # The opt-in accounting-history validator is likewise unreachable.
     Path("src/populace_dynamics/engine/accounting_history.py"),
     # The opt-in identity transport is not imported by the historical reducer.
