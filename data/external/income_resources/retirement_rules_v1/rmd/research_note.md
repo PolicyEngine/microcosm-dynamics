@@ -55,7 +55,7 @@ obligation. The 2020 waiver of certain unpaid first-2019 payments is a
 payment-timing rule outside this function, rather than a change to the
 2019 obligation.
 
-Roth IRAs have no owner lifetime RMD (IRC 408A(c)(5), also captured by
+Roth IRAs have no owner lifetime RMD (IRC 408A(c)(4), also captured by
 the early-distribution sublayer). SECURE 2.0 §325 exempts designated Roth
 employer accounts from 2024. Its effective-date exception preserves
 pre-2024 distribution-year obligations even when payable during 2024.
