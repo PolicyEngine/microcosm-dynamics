@@ -297,6 +297,8 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/income_resources/ssi/runner.py"),
         # CE1 coverage rules are opt-in; the historical projection imports none.
         Path("src/populace_dynamics/income_resources/coverage_rules.py"),
+        Path("src/populace_dynamics/data/sipp_income.py"),
+        Path("src/populace_dynamics/data/sipp_income_registry.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -620,6 +622,16 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert coverage_rule_modules.isdisjoint(reachable), (
         "the opt-in CE1 coverage rules became reachable from the "
         f"birth-evidence reducer: {sorted(coverage_rule_modules & reachable)}"
+    )
+    sipp_income_modules = {
+        "populace_dynamics.data.sipp_income",
+        "populace_dynamics.data.sipp_income_registry",
+    }
+    assert sipp_income_modules.issubset(module_paths)
+    assert sipp_income_modules.isdisjoint(reachable), (
+        "the opt-in SIPP income readers became reachable from the "
+        "birth-evidence reducer: "
+        f"{sorted(sipp_income_modules & reachable)}"
     )
     assert graph_exclusions.isdisjoint(reachable), (
         "opt-in graph modules became reachable from the birth-evidence "
