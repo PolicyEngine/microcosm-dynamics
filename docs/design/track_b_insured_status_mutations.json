@@ -16686,5 +16686,35 @@
     "tests/test_track_b_insured_status_status_stress.py": "882e3b1f0a1c91fd126d8ba85da50fd7672b475b13b81eb48e132d470cd27bed"
   },
   "round_24_replay": "Write round_24_runner_source to scratch/review/run_round24_named.py. For each round_24_mutations record, write name/source_sha256/changes to its spec_path, then execute its exact command at d30e4426. Mutations apply only in memory.",
-  "round_24_final_source_sha256": "7d2d202b02bfcc14ee4d988cb35bef8706bf28de7af494fd6bad2f674ca80c89"
+  "round_24_final_source_sha256": "7d2d202b02bfcc14ee4d988cb35bef8706bf28de7af494fd6bad2f674ca80c89",
+  "round_25_mutations": [
+    {
+      "changes": [
+        {
+          "before": "                window, required = elapsed, max(6, len(elapsed) // 2)\n            return len(set(window) & assigned) >= required\n",
+          "after": "                window, required = elapsed[-40:], max(6, min(40, len(elapsed)) // 2)\n            return len(set(window) & assigned) >= required\n"
+        }
+      ],
+      "command": "env POPULACE_DYNAMICS_PSID_DIR=/nonexistent/trackb-round24 POPULACE_DYNAMICS_EPUF_DIR=/nonexistent/trackb-round24 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 TRACKB_ROUND24_MUTATION=scratch/review/round25-mutation-proof_keeps_last_40.json HYPOTHESIS_STORAGE_DIRECTORY=scratch/review/hyp25/proof_keeps_last_40 python scratch/review/run_round24_named.py -p no:xdist -p no:cacheprovider -q -x --tb=line -rf tests/test_track_b_insured_status_fix_round_17.py::test_unknown_prior_history_keeps_its_row_on_the_whole_period",
+      "exit_code": 1,
+      "failing_test_nodes": [
+        "tests/test_track_b_insured_status_fix_round_17.py::test_unknown_prior_history_keeps_its_row_on_the_whole_period"
+      ],
+      "log": "scratch/review/round25-mutation-proof_keeps_last_40.log",
+      "name": "proof_keeps_last_40",
+      "open_audit": {
+        "os.system": 0,
+        "restricted_opens": 0,
+        "subprocess.Popen": 0
+      },
+      "source_sha256": "7d2d202b02bfcc14ee4d988cb35bef8706bf28de7af494fd6bad2f674ca80c89",
+      "spec_path": "scratch/review/round25-mutation-proof_keeps_last_40.json"
+    }
+  ],
+  "round_25_note": "proof_keeps_last_40 fails the named test with the July onset. At 4ab97297, with the August onset, the same cap, written as (elapsed[-40:], 20) past 40 quarters, passed all 1,997 cases in the 41 insured test modules. A later round's list takes round 24's 135 mutations and this one.",
+  "round_25_test_sha256": {
+    "tests/test_track_b_insured_status_fix_round_17.py": "c6fa611f7ba7b031c97dc09c7fc937853d5f949d5449bfd1921d9c9b29dd1065"
+  },
+  "round_25_replay": "Write round_24_runner_source to scratch/review/run_round24_named.py. Write the round_25_mutations record's name/source_sha256/changes to its spec_path, then execute its exact command. Mutations apply only in memory.",
+  "round_25_final_source_sha256": "7d2d202b02bfcc14ee4d988cb35bef8706bf28de7af494fd6bad2f674ca80c89"
 }

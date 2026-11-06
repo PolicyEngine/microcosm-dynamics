@@ -3954,6 +3954,30 @@ These tests execute the invariants this round adds:
   (`test_a_middle_completion_past_the_boundary_cap_refuses`,
   `test_the_boundary_guard_refuses_only_past_4096`).
 
+## Round 25 the whole-period proof keeps its test
+
+Verification class: statutory conformance on invented declarations only. This
+correction admits no population, behavioral, payment, or forecast claim.
+
+Since round 23, `_unknown_prior_joint_shortfall` drops an uncredited onset
+quarter from its clock when a prior can end in that quarter.
+`test_unknown_prior_history_keeps_its_row_on_the_whole_period` had an August
+1975 onset, so a prior could end in July. Its clock then held 41 quarters at
+1975Q3 with 20 QCs in the last 40, and the proof's own 40-quarter test kept the
+row on either reading. This test caught round 17's `proof_keeps_last_40`, and
+round 23's list didn't carry that mutation, so no run showed the loss. At
+`4ab97297`, that mutation's cap passes all 1,997 cases in the 41 insured test
+modules.
+
+The test now has a July onset. A prior can end in an onset's quarter only in an
+earlier month of that quarter, and July opens 1975Q3, so the clock keeps that
+quarter and holds 42 quarters. The 21 QCs meet half of them and 19 sit in the
+last 40. With the regulation's cap in `special_recent`, the rule raises
+`InvalidFamilyInput` on this record, and `proof_keeps_last_40` fails this test
+again. `insured_status.py` doesn't change. `round_25_mutations` in
+`track_b_insured_status_mutations.json` holds that run, and a later list takes
+round 24's 135 mutations and this one.
+
 ## Not in scope
 
 No real data, population evaluation, baseline claiming hazard, behavioral
