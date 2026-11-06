@@ -2120,6 +2120,71 @@ scanfix-r1's fixes:
 All 49 fail a test, and the module came back byte for byte. None ran
 against the real tree.
 
+After review scanfix-r2, the main session ran the same commands on the host
+at `181f40ca` from 12:36 to 13:19 UTC on 6 November, against base
+`6413d842`. The next commit changes only this report. Each process ran
+under the load-check audit hook. The first steps started only at a
+one-minute load under 100, and the rest under 130, the mark the coordinator
+set that day:
+- `tests/open_population`: **812 passed and 1 strict xfail** in 169.14 s.
+  The 118 tests this follow-up adds all sit in `test_stream_injection.py`.
+- The other four modules: 104 passed in 5.55 s.
+- The two Track B holdout-registry modules: 230 passed and 2 skipped. The
+  required command plus those two modules, in one process: **1,146 passed,
+  2 skipped and 1 strict xfail**.
+- Peak RSS was 1.33 GB.
+- The slowest tests took 46.67 s (the real-tree scan), 13.56 s (a long
+  chain) and 12.09 s (the census).
+- Nothing opened a file under a bar, the pattern line named only
+  `baselines/asfr.py`, and a call-count hook on the one-process run counted
+  no call to either barred function.
+- `--collect-only -m unit tests/open_population` collects all 813. Black,
+  Ruff and `git diff --check 6413d842` are clean, `git diff --stat
+  6413d842` lists this report and `test_stream_injection.py`, and the
+  sealed-path `git diff --quiet` exits 0.
+- On the real tree the scan gives exactly the pinned hit, the census pin
+  holds, every module's folded values weigh under 16,384, the heaviest memo
+  outside `baselines/asfr.py` weighs 10,433, the heaviest walk outside it
+  weighs 1,241, and pruning keeps 934,121 of 2,007,909 nodes. Through
+  `repository_sources()` the scans at `6413d842`, `f8d64f8b`, `7a830f39`
+  and `181f40ca` give the same single hit on all 302 modules.
+- Against `7a830f39`, pruned and unpruned, the scans give the same hits on
+  all 178 sources of the base corpus. Of the 617 sources this follow-up
+  adds, 23 differ in both modes, each as intended:
+  - A string that starts with `*` now gives `isinstance`.
+  - Six pieces that a rebound name runs (`str` or `repr` bound to `eval`,
+    `str` or another name bound to `exec`, `str` bound in literal code and
+    through `globals`) now give `isinstance`.
+  - The pieces of a folded and of a spelled literal go back to `isinstance`.
+  - Six wide sources (four annotation places, nothing bound, in a
+    statement) and three branching ones now report `dynamic-code` instead
+    of `ScanError`, and the four annotation places also keep their
+    `isinstance`.
+  - `builtins` rebound now gives `isinstance`.
+  - Four sources too deep for the parser now give `dynamic-code` instead of
+    `MemoryError` or `RecursionError`.
+- The new scan's pruned and unpruned hits agree on all 795 sources.
+
+Sixty-six mutants ran against the deterministic scan tests, after an
+unmutated control (546 passed, 2 deselected), under a memory cap with
+Hypothesis's explain phase off. They repeat the sweep above, with its two
+piece mutants reversed, and add seventeen for review scanfix-r2's fixes:
+- a walk that spends the module's budget, a fresh budget for each hint, a
+  nested hint keeping its own failure, and a walk's walk on another budget;
+- a budget that stops the scan, and each parser error that stops it;
+- a failure keeping the walk's marks, a failure marking nothing, and marks
+  dropped on success;
+- guard keys that fold case or keep the raw text, and skipped keyword
+  children;
+- no star form, and a star at any place;
+- a parser error caught in the statement path or in `_spelled`.
+
+Sixty-five fail a test. The survivor, a nested hint keeping its own failure,
+showed that no test pinned where a failure inside what a hint runs goes.
+`test_a_failure_inside_what_a_hint_runs_goes_to_the_outermost_hint` now
+kills it at the committed module (control 548 passed, 2 deselected). The
+module came back byte for byte each time. None ran against the real tree.
+
 ### Restricted-files statement
 
 The build read `RESTRICTED-FILES.md` at its pinned hash and the
@@ -2182,3 +2247,7 @@ figure about it alone. The line reached the main session's displays at
 output. It printed no source line, rate or table content, and this report
 does not repeat it. The helper no longer prints that line, and the main
 session removed it from its own saved outputs.
+
+The main session read the coordinator's eighth, ninth and tenth pending
+entries on 6 November. They close further paths, and none of those paths
+sits in this branch's tree.
