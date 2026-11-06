@@ -1,0 +1,106 @@
+[
+  {
+    "file": "ce1c_usc2023_42_410.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap7-subchapII-sec410.htm",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 139768,
+    "sha256": "8b91b3143d3831d60b07df482c542ff44750f907444fa38a3d32b40eda40cea2",
+    "provenance": "United States Code, 2023 edition, section 410 and editorial amendment/effective-date notes."
+  },
+  {
+    "file": "ce1c_usc2023_42_411.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap7-subchapII-sec411.htm",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 78804,
+    "sha256": "59d9f7f54e7f6300766143087a91b556916e3f92c9760a547dc67d065fde29e1",
+    "provenance": "United States Code, 2023 edition, section 411 and editorial amendment/effective-date notes."
+  },
+  {
+    "file": "ce1c_usc2024_26_3121.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleC-chap21-subchapC-sec3121.htm",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 282259,
+    "sha256": "17bef9602497afdf4c0792de0d89c81f417fee1a71e292f4e7dbc76d380903ab",
+    "provenance": "United States Code, 2024 edition, section 3121 and fishing amendment/effective-date notes."
+  },
+  {
+    "file": "ce1c_usc2024_26_3508.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleC-chap25-sec3508.htm",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 7419,
+    "sha256": "f248abc5a35357f534c71d20cf055350af6143b6449e78a3e4206adcfb3aedc0",
+    "provenance": "United States Code, 2024 edition, section 3508 and effective-date notes."
+  },
+  {
+    "file": "ce1c_usc2024_26_1.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleA-chap1-subchapA-partI-sec1.htm",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 276756,
+    "sha256": "725cb94c9ca65ec6258643eda0c5c9c551efdb11dfc1ed3fac103c31d7c5ab7a",
+    "provenance": "United States Code, 2024 edition, section 1; Tax Reform Act of 1986 section 151(d) and 1988 corrections applicability notes."
+  },
+  {
+    "file": "ce1c_plaw104_188.html",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-104publ188/html/PLAW-104publ188.htm",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 637962,
+    "sha256": "7243e95f2e782f0249b1f0d4c2d6638c4ce3d5120c4ef93db9678d74adab95db",
+    "provenance": "Official act HTML; sections 1116 and 1118, 110 Stat. 1762-1764."
+  },
+  {
+    "file": "ce1c_plaw113_295.html",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-113publ295/html/PLAW-113publ295.htm",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 230166,
+    "sha256": "b4adf62c8774ef8b064f086f10264d77b1d5f0425889919067c3c325c2f6718d",
+    "provenance": "Official act HTML; section 221(a)(99)(C)(ii) and 221(b), 128 Stat. 4052,4055."
+  },
+  {
+    "file": "ce1c_plaw115_243.html",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-115publ243/html/PLAW-115publ243.htm",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 6088,
+    "sha256": "c2a2f7911a90bae08bf275f788fdaee5a905031aa93ce57fe6161cff156a23a5",
+    "provenance": "Official act HTML; Tribal Social Security Fairness Act of 2018, section 2."
+  },
+  {
+    "file": "ce1c_cfr2024_20_404_1017.xml",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1017.xml",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 2054,
+    "sha256": "41b51eaac204c8b616ed09b2956c11c60f37bdff8da806564be867ab8838658d",
+    "provenance": "Official CFR section XML, April 1, 2024 edition; sharefarmer wage exclusion and self-employment treatment."
+  },
+  {
+    "file": "ce1c_cfr2024_20_404_1031.xml",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1031.xml",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 2059,
+    "sha256": "f808068af55a669085dd0ec4f9159271fe7e54b219a9b804645460e9cb18ca8f",
+    "provenance": "Official CFR section XML, April 1, 2024 edition; older fishing cash-pay language retained as a named source disagreement."
+  },
+  {
+    "file": "ce1c_cfr2024_20_404_1035.xml",
+    "url": "https://www.govinfo.gov/content/pkg/CFR-2024-title20-vol2/xml/CFR-2024-title20-vol2-sec404-1035.xml",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 1706,
+    "sha256": "c65772e3961f9339197539354f7f1d8f1921b1f0cde1d35bc2ee7b7fdbc311be",
+    "provenance": "Official CFR section XML, April 1, 2024 edition; unrevised communist-organization exclusion retained as a named source disagreement."
+  },
+  {
+    "file": "ce1c_poms_rs_01901700.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301901700",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 64891,
+    "sha256": "b638339d938cbf5187ae86251debb7ee4fb13fd5b66b6ea893fab2db5d24e9df",
+    "provenance": "POMS RS 01901.700, revision September 8, 2026; Revenue Ruling 59-354 background, agreements and posted-earns credit distinction."
+  },
+  {
+    "file": "ce1c_poms_rs_01802232.html",
+    "url": "https://secure.ssa.gov/poms.nsf/lnx/0301802232",
+    "retrieved_at": "2026-10-25T02:04:52Z",
+    "bytes": 24119,
+    "sha256": "7869d2fd505951090e99709f2de4a9e252bd9bacebd21fffea53e46333a6d2ae",
+    "provenance": "POMS RS 01802.232, revision June 16, 1997; conditional direct-seller treatment."
+  }
+]

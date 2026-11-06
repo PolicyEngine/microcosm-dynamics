@@ -459,6 +459,13 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/income_resources/ssi/pinning.py"),
     Path("src/populace_dynamics/income_resources/ssi/records.py"),
     Path("src/populace_dynamics/income_resources/ssi/runner.py"),
+    # CE1 coverage rules are opt-in; the historical projection imports none.
+    Path("src/populace_dynamics/income_resources/coverage_rules.py"),
+    # The opt-in SIPP income, asset, pension and SSI readers (D2) and their
+    # registry are source readers; nothing in the historical projection
+    # imports them.
+    Path("src/populace_dynamics/data/sipp_income.py"),
+    Path("src/populace_dynamics/data/sipp_income_registry.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

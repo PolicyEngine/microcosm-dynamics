@@ -1,0 +1,5 @@
+# CE1 round-1 self-employment primary-source captures.
+# URL: https://www.law.cornell.edu/uscode/text/26/761
+2026-10-25T18:55:30.981408Z 4dca1c604de8d06f0c4a469a9f66f1014c266f743840600108012c3332b156d5 50713 lii_26_761_r1.html
+# URL: https://www.govinfo.gov/content/pkg/CFR-1996-title20-vol2/html/CFR-1996-title20-vol2-sec404-1082.htm
+2026-10-25T19:45:53.218891Z d94d2fffaad7794d984209fb5ab005b41886ccda8efdcfe35d711073905d0c26 11046 cfr_1996_20_4041082_r1.txt
