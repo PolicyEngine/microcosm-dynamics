@@ -185,12 +185,15 @@ def test_an_age_62_fully_request_keeps_its_row(exit_month, last):
 def test_unknown_prior_history_keeps_its_row_on_the_whole_period():
     # Fixed QCs sit in 1965Q2, 1965Q3, 1967Q1 to Q3 and 1971Q3 to 1975Q2. The
     # joint proof's clock drops uncredited quarters after the first possible
-    # prior, which leaves 42 quarters at 1975Q3. The 21 QCs meet half of those
-    # and only 19 sit in the last 40, so the proof must not reject the row.
+    # prior. No prior can end in 1975Q3 before a July onset, so the clock keeps
+    # that quarter and holds 42 at 1975Q3. The 21 QCs meet half of those and
+    # only 19 sit in the last 40, so the proof must not reject the row. A prior
+    # can end in July before an August onset, which leaves 41 quarters with 20
+    # QCs in the last 40, and that record keeps its row on either reading.
     person = i.Person(
         date(1944, 2, 2),
         sex=i.Sex.FEMALE,
-        disability_onset=date(1975, 8, 15),
+        disability_onset=date(1975, 7, 15),
         current_disability_period_established=True,
         current_disability_period_provenance=OBSERVED,
         current_disability_period_end=date(1976, 6, 30),
