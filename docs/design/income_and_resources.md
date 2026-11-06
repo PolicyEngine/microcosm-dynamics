@@ -404,7 +404,7 @@ This lane edits nothing under `src/populace_dynamics/track_b/`. It hands outputs
 - **J, joint validation.** J tests "joint earnings–claiming–DI states, payment and recipient denominators, and survivor pathways" on estimands frozen at B0.2 and ratified before B3 registers (Track B §3.4, §5.2). On current schedules SSI-G and SSI9 cannot pass before J's record is ratified (B3's window is 14 December to 17 January; `parity-forecast-20261021.md:65`), so J excludes SSI. C1's arm (b), C2 and C3 list SSI-inclusive cells in their B7 scope matrix as unsupported unless a separately registered joint Social Security–SSI gate passes.
 - **B7.** Track B's scope matrix requires each target's "required non-Social-Security income" (§3.4). A B7 target that needs pensions, asset income or SSI is blocked until WP-G and SSI-G pass, until SSI9 for actual SSI receipt, until SSI7 for SSI under 65, and, for joint Social Security–SSI cells, until a joint gate passes (see J).
 - **B4.** SSI7 needs B4's DI outcomes. WP's widowhood rule uses B4's endogenous widowhood once admitted; before that, WP-G runs on realized support.
-- **B0.2.** IR0 reuses B0.2's protocol and record format (PR #554) if B0.2's is frozen. Whether IR0's records sit inside B0.2's or beside it is the coordinator's call.
+- **B0.2.** IR0 reuses the protocol and record format of B0.2's version 1, frozen on 2026-10-27 (`docs/design/track_b_b0_2_protocol.md`, #584). Whether IR0's records sit inside B0.2's or beside it is the coordinator's call.
 - **Insured status.** SSI7 uses the rules lane's insured-status rule, which starts after #530 merges (`parity-forecast-20261021.md:49`).
 
 ### 8.2 PolicyEngine-US, policyengine.py and Axiom
