@@ -1,0 +1,17 @@
+[
+  {
+    "file": "ce1r1_usc2024_5_8331.html",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title5/html/USCODE-2024-title5-partIII-subpartG-chap83-subchapIII-sec8331.htm",
+    "retrieved_at": "2026-10-25T19:46:26Z",
+    "bytes": 229944,
+    "sha256": "e8ff0f00cf32737b94c7c83a618d872580568cb78e214b1516cae1566aacd9cc",
+    "status": "captured",
+    "provenance": "Official United States Code 2024 edition section granule; FERS Act notes for effective-date verification."
+  },
+  {
+    "url": "https://www.ssa.gov/OP_Home/rulings/oasi/33/SSR95-03-oasi-33.html",
+    "status": "SOURCE_BLOCKED",
+    "attempt_date": "2026-10-25",
+    "reason": "HTTP 403 on plain request; stopped without circumvention. Existing pinned POMS RS 01402.020 A, D and F supplies the cash-equivalence rule."
+  }
+]

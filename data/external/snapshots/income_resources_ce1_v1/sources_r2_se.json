@@ -1,0 +1,56 @@
+[
+  {
+    "file": "govinfo_statute101_pg1330_extract.pdf",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-101/pdf/STATUTE-101-Pg1330.pdf",
+    "retrieved_at": "2026-10-26T07:22:15Z",
+    "bytes": 968516,
+    "sha256": "b1f5bc5fcbaa0791d3f1f033b00e85d7d35930c594738a3bc3e0b7ef9f0ac9d1",
+    "provenance": {
+      "extracted_from": {
+        "file": "govinfo_statute101_pg1330.pdf",
+        "bytes": 76350791,
+        "sha256": "d6db9b3e2cf96a864a10ac36a816ad3cdfcf2322a72452b19cef86c94563f759",
+        "pages": 473
+      },
+      "original_pdf_pages": [
+        1,
+        284,
+        295,
+        296,
+        297,
+        473
+      ],
+      "kept": "first page; title IX table of contents (101 Stat. 1330-283); Part 2 of subtitle A of title IX, sections 9021-9023 (101 Stat. 1330-294 to 1330-296); approval date (101 Stat. 1330-472)",
+      "method": "qpdf --deterministic-id --empty --pages govinfo_statute101_pg1330.pdf 1,284,295,296,297,473 -- govinfo_statute101_pg1330_extract.pdf (qpdf version 12.4.2)",
+      "note": "Public Law 100-203, Omnibus Budget Reconciliation Act of 1987. Original captured by plain request in review round 2; the HTML rendition was unavailable in round 1.",
+      "signature_status": "original_signature_invalidated_by_page_extraction",
+      "original_retrieval": "Re-fetch the authentic original from the recorded URL and verify its recorded SHA-256; availability does not depend on a commit surviving merge."
+    },
+    "status": "captured"
+  },
+  {
+    "file": "govinfo_statute101_pg1330_extract.pdf.txt",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-101/pdf/STATUTE-101-Pg1330.pdf",
+    "retrieved_at": "2026-10-26T07:22:15Z",
+    "bytes": 7368,
+    "sha256": "1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3",
+    "provenance": {
+      "derived_from": "govinfo_statute101_pg1330_extract.pdf",
+      "source_sha256": "b1f5bc5fcbaa0791d3f1f033b00e85d7d35930c594738a3bc3e0b7ef9f0ac9d1",
+      "method": "pdftotext -f 4 -l 5 -layout",
+      "pdf_pages": [
+        4,
+        5
+      ],
+      "original_pdf_pages": [
+        296,
+        297
+      ],
+      "printed_pages": [
+        "1330-295",
+        "1330-296"
+      ]
+    },
+    "status": "captured"
+  }
+]

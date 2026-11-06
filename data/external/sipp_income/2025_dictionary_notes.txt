@@ -1,0 +1,305 @@
+2025 SIPP Data Dictionary
+       U.S. Census Bureau
+           July 2026
+
+
+
+
+               1
+Contents
+Notes                                                                                           6
+  Universes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     6
+  Status Flag Values . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      6
+  A note about weeks and XWKA(i) variables in select Labor Force Recodes . . . .                6
+
+Adult and Child Well Being                                                                      7
+  Adult Well-Being . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      8
+  Child Well-Being . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     19
+  Food Security . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    32
+  Well-Being Recodes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     39
+
+Assets                                                                                          58
+  Annuities and Trusts . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      59
+  Assets at Financial Institutions . . . . . . . . . . . . . . . . . . . . . . . . . . . .      77
+  Assets Recodes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     170
+  Bonds . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    250
+  Business as a Job or Investment . . . . . . . . . . . . . . . . . . . . . . . . . . . .      297
+  Educational Savings Accounts . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       339
+  Life Insurance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   354
+  Miscellaneous . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    363
+  Mortgage, Rent, and Utilities . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      365
+  Other Financial Investments . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      379
+  Other Real Estate . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      390
+  Primary Residence . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      414
+  Recreational Vehicles . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    448
+  Rental Property . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    496
+  Retirement Accounts . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      548
+  Stocks and Mutual Funds . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .        612
+  Vehicles . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   665
+
+Child and Dependent Care                                                                   698
+  Child and Dependent Care . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 699
+  Child and Dependent Care Recodes . . . . . . . . . . . . . . . . . . . . . . . . . . 703
+  Child Care . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 718
+  Child Care Assistance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 746
+
+Demographics                                                                                748
+  Age . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 749
+  Demographics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 754
+  Demographics Recodes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 756
+  Educational Attainment . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 886
+  Hispanic Origin . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 888
+  Household Relationship . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 891
+
+
+                                                2
+   Language Spoken . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       894
+   Marital Status . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      897
+   Military Service . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    900
+   Nativity and Citizenship . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      912
+   Parent Relationship . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     918
+   Race . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    923
+   Sex . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   926
+
+Disability                                                                                    928
+   Adult Disability . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 929
+   Child Disability . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 937
+   Disability . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 941
+   Disability Recodes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 949
+
+Education Enrollment                                                                         968
+  Certification or License . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 969
+  Education Enrollment . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 976
+  Education Recodes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 988
+
+Fertility History                                                                            992
+   Biological Children . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 993
+   Fertility Recodes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1016
+   Parent Screener . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1022
+   Parental Leave . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1025
+
+Health Care                                                                                 1052
+  Amount Paid . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1053
+  Dental Visits . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1068
+  Health . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1074
+  Health Care Expenses . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1079
+  Health Insurance and Expenses . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1086
+  Hospital Stay . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1088
+  Medical Visits . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1098
+  Prescription Drugs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1105
+  Uninsured Care . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1108
+
+Health Insurance                                                                            1121
+  Health Insurance Recodes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1122
+  Medicaid . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1144
+  Medicare . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1153
+  Military Health Insurance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1163
+  Other Health Coverage . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1176
+  Private Health Insurance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1181
+
+Housing Coverage                                                                            1224
+  Coverage . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1225
+
+                                                3
+   Public Housing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1230
+
+ID Variables                                                                                 1235
+   ID Variables . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1236
+
+Labor Force                                                                             1251
+  Commuting and Work Schedule . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1252
+  Employment and Labor . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1574
+  Employment and Labor Force . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1578
+  Employment and Labor Force Recodes . . . . . . . . . . . . . . . . . . . . . . . . 2463
+  Type of Extra Payments . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2632
+  Unemployment . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2713
+
+Marital History                                                                            2772
+  Marital History . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2773
+
+Other Health Coverage                                                                    2795
+  Other Health Coverage . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2796
+
+Parents’ Nativity and Mortality                                                            2801
+  Parents’ Mortality . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2802
+  Parents’ Nativity . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2809
+
+Poverty and Income                                                                      2814
+  Poverty and Income . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2815
+
+Programs                                                                                   2839
+  Annual Program Income Sources . . . . . . . . . . . . . . . . . . . . . . . . . . . 2840
+  Child Support Paid . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2842
+  Child Support Received . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2848
+  Disability Income . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2862
+  Energy Assistance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2908
+  Food Assistance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2914
+  Food Stamps . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2924
+  General Assistance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2932
+  In-kind support paid . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2934
+  In-kind support received . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2937
+  Medicare Deduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2940
+  Misc. Income Sources . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2949
+  Other Assistance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2958
+  Paid Assistance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2967
+  Programs Recodes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2984
+  Reduced Price School Meals . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3011
+  Retirement . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3018
+  Retirement Income . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3042
+  Social Security - Child . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3063
+
+                                               4
+   Social Security - Self . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    3073
+   Social Security - Self Amounts . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      3082
+   SSI . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   3085
+   Survivor Benefits . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     3095
+   TANF . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      3151
+   Tax Returns . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     3161
+   Training Assistance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     3167
+   Transportation Assistance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       3174
+   Unemployment Compensation . . . . . . . . . . . . . . . . . . . . . . . . . . . . .           3183
+   VA Benefits . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     3197
+   VA Benefits Amount . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .        3211
+   WIC . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     3222
+   Workers’ Compensation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         3230
+
+Residences                                                                                  3235
+  Residence Recodes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3236
+  Residences . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3241
+
+Survey Weights                                                                             3254
+   Survey Weights . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3255
+
+Type 2 People                                                                              3259
+  Type 2 People . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3260
+
+Unsecured Debt                                                                            3314
+  Credit Card Debt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3315
+  Educational Debt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3325
+  Medical Debt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3335
+  Other Debt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3345
+
+
+
+
+                                                5
+Notes
+Universes
+For internal SIPP data, values of “Not in Universe” are generally '.N' for numeric-type
+variables and 'N' for character-type variables.
+
+Status Flag Values
+   0. Not in universe
+   1. In universe; as reported
+   2. Statistical imputation (hot deck)
+   3. Logical imputation
+   4. Model-based imputation
+   5. Cold deck
+   6. Imputed from a range
+   7. Combination of 1 and 2/3/5/6
+   8. Combination of 2/3/5/6
+   9. Can be determined from the allocation flags for the components of this recode
+
+A note about weeks and XWKA(i) variables in select Labor Force
+Recodes
+Many labor force recodes describe values for certain weeks of the year (ex. RWKESR1,
+RJB1_WKSUM1, etc.). These recodes refer to weeks (Sunday through Saturday) that
+contain 4+ days in the reference month, starting with the first 4+ day week. This is very
+similar to what was done in older SIPP panels. Variables XWKA1-XWKA5 are used to
+set universes for these recodes. These variables indicate the week number of the reference
+year for each week in the reference month containing 4+ days, and are consistent across
+all records. For example, the first calendar week of August 2013 has only three days (the
+1st-3rd), so XWKA1 for August 2013 is the week starting the 4th, and has a value of 32
+(being defined the 32nd week of the year). Although not included as variables on the public
+files, a more detailed description of the XWKA(i) variables can be found in the User’s Guide
+at https://www.census.gov/programs-surveys/sipp/guidance/users-guide.html. Note
+that week 1 of the year will contain more than seven days when the first calendar week of
+the year has 3 or fewer days, such as occurred in January 2015. Similarly, week 52 of the
+year will contain more than seven days when the last calendar week of the year has 3 or
+fewer days, such as occurred in December 2013. Additionally, for earnings variables where
+the last calendar week in the month has less than 4 days, values for those days are carried
+into the first week of the next month (and vice-versa to the previous month where the first
+calendar week has less than 4 days). Also note that this does not affect monthly sums (ex.
+RJB1_MSUM), which account for every day in the month.
+
+
+
+
+                                             6
+           Topic
+
+
+Adult and Child Well Being
+
+
+
+
+             7
+                             Subtopic
+
+                      Adult Well-Being
+
+
+                   Variables in this subtopic
+
+Variable    Description
+
+EAWBCRACK   Are there cracks in the ceiling or walls?
+EAWBHOLES   Are there holes in the floor?
+EAWBPESTS   Is there a problem with pests?
+EAWBPLUMB   Are there plumbing problems?
+EAWBTRAFF   Is street noise or traﬀic a problem?
+EAWBTRASH   Is trash a problem?
+EAWBSTAY    Did ... stay home during certain time because he/she thought it
+            might be unsafe?
+EAWBSAFE    Is ... neighborhood safe from crime?
+EAWBMORT    Was ... unable to pay rent or mortgage?
+EAWBGAS     Was ... unable to pay the utility bills?
+
+
+
+
+                                 8
+Topic: Adult and Child Well Being                          Subtopic: Adult Well-Being
+
+                                    EAWBCRACK
+
+
+Name: EAWBCRACK
+Description: Are there cracks in the ceiling or walls?
+Universe: THHLDSTATUS in (1,2,3,4)
+Universe Description: All interviewed households (asked of reference person).
+Length: 1
+Status Flag: AAWBCRACK
+File: Household
+Possible Values
+
+      1. Yes
+      2. No
+
+
+
+
+                                           9
+Topic: Adult and Child Well Being                          Subtopic: Adult Well-Being
+
+                                    EAWBHOLES
+
+
+Name: EAWBHOLES
+Description: Are there holes in the floor?
+Universe: THHLDSTATUS in (1,2,3,4)
+Universe Description: All interviewed households (asked of reference person).
+Length: 1
+Status Flag: AAWBHOLES
+File: Household
+Possible Values
+
+      1. Yes
+      2. No
+
+
+
+
+                                             10
+

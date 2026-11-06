@@ -4,16 +4,19 @@ Invented API cases only, with no population or forecast claim.
 """
 
 from dataclasses import fields
+from datetime import date
 
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import gross_benefits as g
+from populace_dynamics.track_b import insured_status as insured
 from tests.test_track_b_gross_benefits_fix_round_12_contract import (
-    COMPUTE,
-    EVALUATE,
-    _outcome,
+    COMPUTE as PAYMENT_COMPUTE,
+)
+from tests.test_track_b_gross_benefits_fix_round_12_contract import (
+    EVALUATE as PAYMENT_EVALUATE,
 )
 from tests.test_track_b_gross_benefits_fix_round_15_receivers import Foreign
 from tests.test_track_b_input_schema import (
@@ -27,6 +30,40 @@ from tests.test_track_b_input_schema import (
 from tests.test_track_b_input_schema import (
     public_world as public_world,
 )
+
+
+def _insured_status(*, refused=False):
+    return insured.insured_status(
+        insured.Person(
+            date(2026, 1, 2),
+            prior_disability_periods_provenance=insured.EarningsProvenance.OBSERVED,
+            current_disability_period_established=False,
+            current_disability_period_provenance=insured.EarningsProvenance.OBSERVED,
+            sspa211_applies=False,
+            sspa211_provenance=insured.EarningsProvenance.OBSERVED,
+        ),
+        {
+            2026: insured.CoverageYear(
+                insured.EarningsProvenance.OBSERVED, qc_count=0
+            )
+        },
+        date(2026, 1, 1),
+        test=insured.InsuredTest.FULLY,
+        totalization_credits=("foreign-credit",) if refused else (),
+    )
+
+
+COMPUTE = {**PAYMENT_COMPUTE, "insured_status": _insured_status}
+EVALUATE = {
+    **PAYMENT_EVALUATE,
+    "insured_status": insured.evaluate_insured_status,
+}
+
+
+def _outcome(layer, *, refused=False):
+    return EVALUATE[layer](
+        f"{layer}-{refused}", 1, lambda: COMPUTE[layer](refused=refused)
+    )
 
 
 def _layer(module_name):

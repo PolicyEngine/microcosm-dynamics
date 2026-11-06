@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="cfr.xsl"?>
+<CFRGRANULE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="CFRMergedXML.xsd">
+    <FDSYS>
+        <CFRTITLE>20</CFRTITLE>
+        <CFRTITLETEXT>Employees' Benefits</CFRTITLETEXT>
+        <VOL>2</VOL>
+        <DATE>2024-04-01</DATE>
+        <ORIGINALDATE>2024-04-01</ORIGINALDATE>
+        <COVERONLY>false</COVERONLY>
+        <TITLE>Fishing.</TITLE>
+        <GRANULENUM>404.1031</GRANULENUM>
+        <HEADING>Section 404.1031</HEADING>
+        <ANCESTORS>
+            <PARENT HEADING="Title 20" SEQ="4">Employees' Benefits</PARENT>
+            <PARENT HEADING="CHAPTER III" SEQ="3">SOCIAL SECURITY ADMINISTRATION</PARENT>
+            <PARENT HEADING="PART 404" SEQ="2">FEDERAL OLD-AGE, SURVIVORS AND DISABILITY INSURANCE (1950- )</PARENT>
+            <PARENT HEADING="Subpart K" SEQ="1">Employment, Wages, Self-Employment, and Self-Employment Income</PARENT>
+            <PARENT HEADING="" SEQ="0">Work Excluded from Employment</PARENT>
+        </ANCESTORS>
+    </FDSYS>
+    <SECTION>
+        <SECTNO>§ 404.1031</SECTNO>
+        <SUBJECT>Fishing.</SUBJECT>
+        <P>(a) If you work on a boat engaged in catching fish or other forms of aquatic animal life, your work is not employment if you have an arrangement with the owner or operator of the boat which provides for all of the following:</P>
+        <P>(1) You do not receive any cash pay (other than as provided in paragraph (a)(2) of this section).</P>
+        <P>(2) You receive a share of the catch or a share of the proceeds from the sale of the catch.</P>
+        <P>(3) The amount of your share depends on the size of the catch.</P>
+        <P>(4) The operating crew of the boat (or each boat from which you receive a share if the fishing operation involves more than one boat) is normally made up of fewer than 10 individuals.</P>
+        <P>(b) Work excluded from employment under this section is considered to be self-employment (§ 404.1068(e)).</P>
+    </SECTION>
+</CFRGRANULE>
