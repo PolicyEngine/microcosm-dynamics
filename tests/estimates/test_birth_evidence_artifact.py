@@ -640,6 +640,20 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     }
     assert entrant_modules.issubset(module_paths)
     assert entrant_modules.isdisjoint(reachable)
+    # The set grows by itself, so a new part's module gets this check unasked.
+    open_population_modules = {
+        name
+        for name in module_paths
+        if name == "populace_dynamics.open_population"
+        or name.startswith("populace_dynamics.open_population.")
+    }
+    assert (
+        "populace_dynamics.open_population.harness" in open_population_modules
+    )
+    assert open_population_modules.isdisjoint(reachable), (
+        "the opt-in open-population package became reachable from the "
+        f"birth-evidence reducer: {sorted(open_population_modules & reachable)}"
+    )
     history_modules = {
         "populace_dynamics.person_identity",
         "populace_dynamics.forward_earnings_history",
@@ -794,6 +808,17 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "the opt-in Track M layer became reachable from the "
         f"birth-evidence reducer: {sorted(track_m_modules & reachable)}"
     )
+
+
+def test_every_open_population_module_is_an_exact_exclusion():
+    """A module the tuple misses fails here by name."""
+    package = ROOT / "src" / "populace_dynamics" / "open_population"
+    modules = {
+        path.relative_to(ROOT) for path in sorted(package.rglob("*.py"))
+    }
+    assert Path("src/populace_dynamics/open_population/harness.py") in modules
+    missing = modules - set(reducer.POST_REVIEW_SOURCE_EXCLUSIONS)
+    assert not missing, sorted(missing)
 
 
 def test_reducer_accepts_explicit_unresolved_upstream_boundary():

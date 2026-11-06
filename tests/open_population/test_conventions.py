@@ -4,17 +4,21 @@ import math
 from types import MappingProxyType
 
 import numpy as np
+import pandas as pd
 import pytest
 from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.baselines.fertility import ASFR_STREAM_TAG
+from populace_dynamics.engine.entrant_schedule import build_entrant_schedule
+from populace_dynamics.engine.loop import SyntheticPersonIdAllocator
 from populace_dynamics.engine.rng import (
     ProjectionModule,
     ProjectionRNGRegistry,
 )
 from populace_dynamics.open_population.conventions import (
     BIRTH_ORDER_COLUMN,
+    FOREIGN_BORN_COLUMN,
     LIVE_FERTILITY_STREAM_TAG,
     NEWBORN_SEX_STREAM_TAG,
     OUT_OF_DOMAIN_COLUMNS,
@@ -254,6 +258,7 @@ def test_shared_columns_are_distinct():
         SECOND_PARENT_UNLINKED_COLUMN,
         SPOUSE_ABROAD_COLUMN,
         SPOUSE_ABROAD_YEAR_COLUMN,
+        FOREIGN_BORN_COLUMN,
         *OUT_OF_DOMAIN_COLUMNS.values(),
     )
     assert len(set(columns)) == len(columns)
@@ -264,6 +269,27 @@ def test_shared_columns_are_distinct():
         "earnings",
         "claiming",
     }
+
+
+def test_foreign_born_column_is_the_one_a_schedule_carries():
+    """OP4's law reads the name the sealed schedule writes on entrants."""
+    donor = pd.DataFrame(
+        {
+            "person_id": [1, 2],
+            "weight": [1.0, 3.0],
+            "entry_age": [30, 40],
+            "is_female": [True, False],
+            "source_year": [2012, 2012],
+            "peinusyr": [1, 2],
+            "prcitshp": [1, 2],
+            "penatvty": [1, 2],
+            "foreign_born": [True, False],
+        }
+    )
+    schedule = build_entrant_schedule(
+        donor, {2030: 1.0}, allocator=SyntheticPersonIdAllocator(100)
+    )
+    assert schedule.frames[2030][FOREIGN_BORN_COLUMN].tolist() == [True, False]
 
 
 def test_stream_tags_are_distinct():

@@ -41,6 +41,9 @@ SECOND_PARENT_UNLINKED_COLUMN = "second_parent_unlinked_reason"
 #: A stayer's spouse who emigrated, and the year, never a death (design §5.4).
 SPOUSE_ABROAD_COLUMN = "spouse_abroad_person_id"
 SPOUSE_ABROAD_YEAR_COLUMN = "spouse_abroad_year"
+#: A row's nativity for OP4's exit law. ``build_entrant_schedule`` carries this
+#: name from the donor without asserting it (``entrant_schedule.py:151–154``).
+FOREIGN_BORN_COLUMN = "foreign_born"
 #: Adult processes a row stays out of until a milestone admits it (§§3.1, 5.4).
 OUT_OF_DOMAIN_COLUMNS: Mapping[str, str] = MappingProxyType(
     {
