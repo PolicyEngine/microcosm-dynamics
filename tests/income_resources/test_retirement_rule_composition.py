@@ -52,7 +52,7 @@ def test_statutory_tax_can_feed_both_ssi_readings(reading, expected):
 
 
 def test_lifetime_rmd_exemption_does_not_imply_ssi_resource_exclusion():
-    """IRC408A(c)(5) and POMS SI01120.210 B ask different questions."""
+    """IRC408A(c)(4) and POMS SI01120.210 B ask different questions."""
     assert (
         required_minimum_distribution(
             10_000, 75, 2026, AccountType.ROTH_IRA, birth_date=date(1951, 1, 1)
