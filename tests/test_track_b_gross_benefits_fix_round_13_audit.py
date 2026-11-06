@@ -14,6 +14,7 @@ import pickle
 from collections.abc import Mapping
 from copy import copy, deepcopy
 from dataclasses import fields, is_dataclass, replace
+from datetime import date
 from decimal import Decimal
 from enum import Enum
 from fractions import Fraction as F
@@ -27,6 +28,7 @@ from hypothesis import strategies as st
 from populace_dynamics.track_b import _provenance as provenance
 from populace_dynamics.track_b import arf as a
 from populace_dynamics.track_b import gross_benefits as g
+from populace_dynamics.track_b import insured_status as insured
 from populace_dynamics.track_b import recompute as c
 from populace_dynamics.track_b import ret_grace as grace
 from populace_dynamics.track_b import ret_ledger as ret
@@ -71,12 +73,14 @@ PUBLIC_NAMES = {
         "NESEProrationPolicy",
         "WorkEarnings",
         "RETBeneficiary",
+        "RETFamilyMonth",
         "RecordYear",
         "calculated_excess",
         "countable_earnings",
         "PartialPaymentAllocation",
         "partial_payments",
         "BeneficiaryMonth",
+        "RedistributedBeneficiaryMonth",
         "WorkerLedger",
         "RETLedger",
         "apply_ret_year",
@@ -158,6 +162,8 @@ def test_cross_layer_public_names_and_members_have_explicit_audit_coverage():
             "RecordCondition",
             "BeneficiaryCondition",
             "OwnBenefitKind",
+            "SavingsClauseReading",
+            "DeductionReason",
         }
     )
     for module, names in PUBLIC_NAMES.items():
@@ -366,6 +372,24 @@ def _declaration_cases():
     for _, factory, _, _, _ in MUTATION_CASES:
         value = factory()
         cases[type(value).__name__] = value
+    cases.update(
+        {
+            "Person": insured.Person(
+                date(2000, 1, 2),
+                prior_disability_periods_provenance=insured.EarningsProvenance.OBSERVED,
+                current_disability_period_established=False,
+                current_disability_period_provenance=insured.EarningsProvenance.OBSERVED,
+                sspa211_applies=False,
+                sspa211_provenance=insured.EarningsProvenance.OBSERVED,
+            ),
+            "CoverageYear": insured.CoverageYear(
+                insured.EarningsProvenance.OBSERVED, qc_count=4
+            ),
+            "DisabilityPeriod": insured.DisabilityPeriod(
+                date(2020, 1, 1), date(2021, 1, 1)
+            ),
+        }
+    )
     return cases
 
 
@@ -434,6 +458,8 @@ def test_object_new_declarations_do_not_hide_missing_fields(case):
 
 @cache
 def _sealed_samples():
+    from tests.test_track_b_ret_ledger_deductions import family_record
+
     objects, _, _ = _world(100)
     samples = {
         type(value).__name__: value
@@ -458,6 +484,14 @@ def _sealed_samples():
     ledger = COMPUTE["ret"]()
     samples["WorkerLedger"] = ledger.workers[0]
     samples["BeneficiaryMonth"] = ledger.months[0]
+    redistributed = ret.apply_ret_year(
+        family_record(separate=True), load_ret_parameters()
+    )
+    samples["RedistributedBeneficiaryMonth"] = next(
+        row
+        for row in redistributed.months
+        if type(row) is ret.RedistributedBeneficiaryMonth
+    )
     samples["PartialPaymentAllocation"] = ret.partial_payments(
         1, {"nh": 2}, {"nh": 2}
     )
@@ -465,6 +499,38 @@ def _sealed_samples():
         2026, grace.GraceYearState(), [grace.GraceMonth()] * 12
     )
     samples["RecomputationDecision"] = c.recomputation_decision(1, 2)
+    person = insured.Person(
+        date(2026, 1, 2),
+        prior_disability_periods_provenance=insured.EarningsProvenance.OBSERVED,
+        current_disability_period_established=False,
+        current_disability_period_provenance=insured.EarningsProvenance.OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=insured.EarningsProvenance.OBSERVED,
+    )
+    years = {
+        2026: insured.CoverageYear(
+            insured.EarningsProvenance.OBSERVED, qc_count=0
+        )
+    }
+    result = insured.insured_status(person, years, date(2026, 1, 1))
+    samples["InsuredStatus"] = result
+    samples["StatusDecision"] = result.fully
+    samples["DLIRange"] = result.dli
+    samples["InsuredOutcome"] = insured.evaluate_insured_status(
+        "supported-insured", 1, lambda: result
+    )
+    samples["InsuredConfigurationUnsupported"] = (
+        insured.evaluate_insured_status(
+            "unsupported-insured",
+            1,
+            lambda: insured.insured_status(
+                person,
+                years,
+                date(2026, 1, 1),
+                totalization_credits=("foreign-system",),
+            ),
+        ).unsupported
+    )
     return samples
 
 
@@ -478,6 +544,7 @@ SEALED_NAMES = (
     "RETConfigurationUnsupported",
     "PartialPaymentAllocation",
     "BeneficiaryMonth",
+    "RedistributedBeneficiaryMonth",
     "WorkerLedger",
     "RETLedger",
     "RETOutcome",
@@ -489,6 +556,11 @@ SEALED_NAMES = (
     "RecomputationDecision",
     "RecomputationResult",
     "RecomputationOutcome",
+    "InsuredConfigurationUnsupported",
+    "StatusDecision",
+    "DLIRange",
+    "InsuredStatus",
+    "InsuredOutcome",
 )
 
 

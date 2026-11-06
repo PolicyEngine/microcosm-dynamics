@@ -151,6 +151,33 @@ def mutation_cases():
             "suspension_method": "full_month",
             "foreign_work": 1,
             "vocational_rehabilitation_refusal": 1,
+            "family_months": {13: object()},
+        },
+    )
+    add(
+        "family_month",
+        lambda: r.RETFamilyMonth(
+            g.RecordState(
+                g.FamilyKind.RETIREMENT,
+                F(600),
+                F(900),
+                worker=g.OwnBenefit(g.OwnBenefitKind.OLD_AGE, F(600)),
+                eligibility_year=2026,
+            ),
+            (),
+            PARAMS,
+            {},
+        ),
+        lambda value: r.apply_ret_year(
+            record(beneficiary(), foreign_work=True, family_months={1: value}),
+            RET_PARAMS,
+        ),
+        {
+            "state": object(),
+            "beneficiaries": ("unknown",),
+            "params": object(),
+            "households": {"unknown": "household"},
+            "standalone": 1,
         },
     )
     add(

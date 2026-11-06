@@ -14,7 +14,8 @@ Evaluators establish provenance, layer and integrity, not freshness or
 caller-declared attribution of an earlier genuine result or refusal.
 The contract excludes code accessing private names, monkeypatching modules,
 or mutating an input from another thread during a call.
-One private capability seals every declared G, R2 and R3 result, refusal,
+One private capability seals every declared G, R2, R3 and insured-status
+result, refusal,
 outcome and denominator. Public construction and copying are input errors;
 serialization is rejected. Persist declared inputs and recompute instead.
 """
@@ -520,6 +521,13 @@ def _checked_public_methods(cls):
 
     if cls not in _RESULT_TYPES and cls not in _DECLARATION_TYPES:
         _STATEFUL_TYPES.add(cls)
+        # Stateful constructors need their declared enum kinds before
+        # __new__ validates the first call's raw arguments. Lazy schema
+        # binding in __init__ would make explicit choices order dependent.
+        for annotation in get_type_hints(
+            cls.__init__, localns={cls.__name__: cls}
+        ).values():
+            _register_annotation_enums(annotation)
 
     def guard(method, name):
         # Inherited wrappers belong to their declaring class. Rewrap the
@@ -709,7 +717,7 @@ def _checked_public_methods(cls):
                 name.startswith("__") and name.endswith("__")
             )
             if not private:
-                if name == "__notes__":
+                if name == "__notes__" and args:
                     # BaseException.add_note installs a list, then appends
                     # to that same list. Validate its complete schema while
                     # preserving this caller-owned metadata's identity.
@@ -977,7 +985,9 @@ def _external_declarations():
 
 def _schema(annotation, module, *, name="", owner=None):
     origin, args = get_origin(annotation), get_args(annotation)
-    exact = module.endswith((".arf", ".recompute", ".ret_ledger"))
+    exact = module.endswith(
+        (".arf", ".recompute", ".ret_ledger", ".insured_status")
+    )
     if annotation is object or annotation is Fraction:
         return lambda value, label: _numeric_schema(
             value,

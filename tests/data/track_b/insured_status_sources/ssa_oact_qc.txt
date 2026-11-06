@@ -1,0 +1,160 @@
+Automatic Determinations
+    Employment coverage thresholds
+     Wage-indexed amounts
+
+     Latest amount & QC explanation
+      The amount of earnings required for a quarter of coverage (QC) in 2027 is
+      $1,970.  "Quarter of coverage" is a
+      legal term,
+      but you may also see the term "Social Security credit" (or just "credit") used
+      elsewhere.  A QC is the basic unit for determining whether a worker is
+      insured under the Social Security program.
+      No matter how high your earnings may be, you can not earn more than 4 QC's in
+      one year.
+     History
+      See historical series of earnings needed
+      to earn one quarter of coverage, 1978-2027.
+
+      For years before 1978, an individual generally was credited with a quarter of
+      coverage for each quarter in which wages of $50 or more were paid, or an
+      individual was credited with 4 quarters of coverage for every taxable year in
+      which $400 or more of self-employment income was earned.  Beginning in 1978,
+      employers generally report wages on an annual, instead of quarterly, basis.
+      With this change to annual reporting, the law provided that a quarter of
+      coverage be credited for each $250 of an individual's total wages and
+      self-employment income for calendar year 1978 (up to a maximum of 4 quarters
+      of coverage for the year).  After 1978, the amount of earnings needed for a
+      quarter of coverage changes automatically each year with changes in the
+      national average wage index.
+     Determination of the quarter of coverage amount for 2027
+      The law specifies that the quarter of coverage (QC) amount for 2027 is
+      equal to the 1978 amount of $250 multiplied by the ratio of the
+      national average wage index for 2025 to that for
+      1976, or, if larger, the 2026 amount of $1,890.  If the amount so
+      determined is not a multiple of $10, it shall be rounded to the nearest
+      multiple of $10.
+
+      Calculation details
+
+        Amounts informula
+        1978 earnings for one QC$250
+      1976 average wage index9,226.48
+
+        2025 average wage index72,800.33
+
+        Computation$250 times 72,800.33 divided by 9,226.48
+         equals $1,972.59, which rounds to $1,970
+
+        Higher amount$1,970 exceeds the amount for 2026,
+        so the earnings needed to earn one QC in 2027 is $1,970
+
+ Amount of earnings needed to earn one quarter of coverage
+
+  Year
+  Earnings
+  1978
+     $250
+  1979
+     260
+  1980
+     290
+  1981
+     310
+  1982
+     340
+  1983
+     370
+  1984
+     390
+  1985
+     410
+  1986
+     440
+  1987
+     460
+  1988
+     470
+  1989
+     500
+  1990
+     520
+  1991
+     540
+  1992
+     570
+  1993
+     590
+  1994
+     620
+  1995
+     630
+  1996
+     640
+  1997
+     670
+
+  Year
+  Earnings
+  1998
+     $700
+  1999
+     740
+  2000
+     780
+  2001
+     830
+  2002
+     870
+  2003
+     890
+  2004
+     900
+  2005
+     920
+  2006
+     970
+  2007
+     1,000
+  2008
+     1,050
+  2009
+     1,090
+  2010
+     1,120
+  2011
+     1,120
+  2012
+     1,130
+  2013
+     1,160
+  2014
+     1,200
+  2015
+     1,220
+  2016
+     1,260
+  2017
+     1,300
+
+  Year
+  Earnings
+  2018
+     $1,320
+  2019
+     1,360
+  2020
+     1,410
+  2021
+     1,470
+  2022
+     1,510
+  2023
+     1,640
+  2024
+     1,730
+  2025
+     1,810
+  2026
+     1,890
+  2027
+     1,970

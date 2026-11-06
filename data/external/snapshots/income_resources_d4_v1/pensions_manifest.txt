@@ -1,0 +1,32 @@
+# URL https://www.federalreserve.gov/releases/z1/
+2026-10-24T12:41:10Z b62f9c27e66233a1a5004d9de9de810a92e5989a622295986fcd71e374624244 120825 fed_release.html
+# URL https://www.dol.gov/agencies/ebsa/researchers/statistics/retirement-bulletins/private-pension-plan
+2026-10-24T12:41:14Z c32608b14b81c54f0e5917a694f4b164d3ad8c96f33755efc7f28117c683b62b 103883 dol_landing.html
+# URL https://www.irs.gov/statistics/soi-tax-stats-accumulation-and-distribution-of-individual-retirement-arrangements
+2026-10-24T12:41:19Z e2955985c8c3a43b46120936441e020dd1a70f02269ab09d65397af10ce95051 172336 irs_landing.html
+# URL https://www.federalreserve.gov/releases/z1/current/z1_table_mapping.csv
+2026-10-24T12:43:07Z 2b1ebfb5ffc9f755ff36861ae6fa4c6cc802b814c6658f24b033b1aeb633f24f 9737 fed_mapping.csv
+# URL https://www.federalreserve.gov/releases/z1/current/z1_csv_files.zip
+2026-10-24T12:43:08Z b63af9755437df0fb88b7cf346f8f9eaeb22bf1aa2b5df1709334135c43de4b6 8336582 fed_tables.zip
+# URL https://www.dol.gov/sites/dolgov/files/ebsa/researchers/statistics/retirement-bulletins/private-pension-plan-bulletins-abstract-2023.xlsx
+2026-10-24T12:43:09Z cbb35a0f9d16749ed8184a913da1b457bceb6afbad627cb2ff01b0b8e7318eb3 434019 dol_bulletin_2023.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in01ira.xlsx
+2026-10-24T12:43:06Z 5716444ff8f28adddaf0737d82ada2cfce8591c60e222fa76767a229040f1ca5 11460 irs_2023_table_01.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in02ira.xlsx
+2026-10-24T12:43:08Z bfcf581ced743df4cc4c9786b8086b910082a2d258634a7a6ad8cc7cfd64fbf1 13686 irs_2023_table_02.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in03ira.xlsx
+2026-10-24T12:43:08Z d304678b39ddf277048def3b6f6b486899e0df8adeccc8383f47853e0ccf26e4 14542 irs_2023_table_03.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in04ira.xlsx
+2026-10-24T12:43:09Z 83a0da20618ecbdb76ea14ec18d3ad38a32389b8c18356eba45b8e302a70c068 13894 irs_2023_table_04.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in05ira.xlsx
+2026-10-24T12:43:09Z 17b02670eeb35dab5d3f8be6a26333d527993f8b22933fa77bb3a06f3c8ad143 11345 irs_2023_table_05.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in06ira.xlsx
+2026-10-24T12:43:10Z b526e4d4163172ed9992d16375cbf601b1c8b4d5bcf66f86e038c0e91c420418 11380 irs_2023_table_06.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in07ira.xlsx
+2026-10-24T12:43:10Z 1454c2cdfcc0d6df493fd6b5aea9f94d3d7bdfb237e36e5f0d321442e3752b99 12501 irs_2023_table_07.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in08ira.xlsx
+2026-10-24T12:43:11Z 92d505742b2f1bf489e358cd2b38d195cb680fca1f9ea86b5637856e8dd7dad8 14214 irs_2023_table_08.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in09ira.xlsx
+2026-10-24T12:43:11Z 1c9d544c0374f2c0347a5c3546415cf9252d52db55f56192505a0f83f4bc734a 12847 irs_2023_table_09.xlsx
+# URL https://www.irs.gov/pub/irs-soi/23in10ira.xlsx
+2026-10-24T12:43:12Z 9b1d412a608fe51128df846e7f626700e27bd06d2c95cad7afa1eb61c9298f16 13490 irs_2023_table_10.xlsx

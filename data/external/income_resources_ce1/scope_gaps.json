@@ -1,0 +1,78 @@
+[
+  {
+    "provision": "42 U.S.C. 410(a), preamble, clauses (A), (B) and (C)",
+    "gap": "No family in this registry reads 410(a)'s base definition of employment. Within the United States, service is employment \"irrespective of the citizenship or residence of either\" (clause (A)(i)). Outside the United States, 410(a) makes service employment only (A)(ii) on or in connection with an American vessel or American aircraft under a contract of service entered into within the United States, or one during which the craft touches at a United States port, while the employee is employed on and in connection with it, \"irrespective of the citizenship or residence of either\"; (B) \"by a citizen or resident of the United States\" (before 1984, \"a citizen of the United States\": Pub. L. 98-21 section 323(a)(2), for remuneration paid after 1983) as an employee (i) of an American employer or (ii) of a foreign affiliate of an American employer \"during any period for which there is in effect an agreement, entered into pursuant to section 3121(l)\" with respect to the affiliate (Pub. L. 98-21 section 321(b), for agreements entered into after April 20, 1983, wrote \"American employer\" for \"a domestic corporation\" and \"affiliate\" for \"subsidiary\"); or (C) \"regardless of where or by whom performed\", where an agreement under section 433 designates the service as employment or recognizes it as equivalent to employment (added by Pub. L. 98-21 section 322(a)(1), effective in taxable years beginning on or after April 20, 1983). So a case or residual that reads covered does not reach service outside the United States that none of (A)(ii), (B) and (C) reaches: a noncitizen's before 1984, and a nonresident noncitizen's from 1984, that is not on or in connection with an American vessel or aircraft as (A)(ii) states and that no section 433 agreement designates; and a citizen's or resident's service abroad for an employer that is neither an American employer nor a foreign affiliate under a 3121(l) agreement in effect, unless a section 433 agreement designates it. That holds for a Federal employer as for any other: POMS RS 01901.340 A names \"services performed outside the U.S. by an alien\" as excluded by some other provision of law (review r6 M-5, r7 H-2 and low 9).",
+    "citations": [
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a), preamble, clause (A)",
+        "quote": "(A) by an employee for the person employing him, irrespective of the citizenship or residence of either, (i) within the United States, or (ii) on or in connection with an American vessel or American aircraft under a contract of service which is entered into within the United States or during the performance of which and while the employee is employed on the vessel or aircraft it touches at a port in the United States, if the employee is employed on and in connection with such vessel or aircraft when outside the United States, or"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a), preamble, clause (B)(ii)",
+        "quote": "(ii) of a foreign affiliate (as defined in section 3121( l )(6) of the Internal Revenue Code of 1986 ) of an American employer during any period for which there is in effect an agreement, entered into pursuant to section 3121( l ) of such Code, with respect to such affiliate,"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "410(a), preamble, clause (C)",
+        "quote": "(C) if it is service, regardless of where or by whom performed, which is designated as employment or recognized as equivalent to employment under an agreement entered into under section 433 of this title ;"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "1983 amendment note, Pub. L. 98-21 section 322(a)(1)",
+        "quote": "Pub. L. 98–21, § 322(a)(1) , added cl. (C)"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "Effective Date of 1983 Amendment, section 322(a)(1)",
+        "quote": "Amendment by section 322(a)(1) of Pub. L. 98–21 effective in taxable years beginning on or after Apr. 20, 1983"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "1983 amendment note, Pub. L. 98-21 section 321(b)",
+        "quote": "Pub. L. 98–21, § 321(b) , amended cl. (B) in provisions preceding par. (1) generally"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "Effective Date of 1983 Amendment, section 321(b)",
+        "quote": "Amendment by section 321(b) of Pub. L. 98–21 applicable to agreements entered into after Apr. 20, 1983"
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "1983 amendment note, Pub. L. 98-21 section 323(a)(2)",
+        "quote": "Pub. L. 98–21, § 323(a)(2) , substituted “a citizen or resident of the United States” for “a citizen of the United States” in cl. (B) in provisions preceding par. (1)."
+      },
+      {
+        "capture": "lii_42_410.html",
+        "sha256": "661681512a6ff124d0af432c54a0f6f1b90b66f956534086c841dc6b8e934e32",
+        "authority": "42 USC 410, current code and amendment/effective-date notes captured 2026-10-21",
+        "location": "Effective Date of 1983 Amendment, section 323(a)(2)",
+        "quote": "Amendment by section 323(a)(2) of Pub. L. 98–21 applicable to remuneration paid after Dec. 31, 1983"
+      },
+      {
+        "capture": "poms_rs_01901340.html",
+        "sha256": "579b14057519ec25f74a6bba5feab6274354122085093c4fe950061a9079d52c",
+        "authority": "POMS RS 01901.340",
+        "location": "A",
+        "quote": "excluded by some other provision of law, (e.g., student services or services performed outside the U.S. by an alien)"
+      }
+    ]
+  }
+]

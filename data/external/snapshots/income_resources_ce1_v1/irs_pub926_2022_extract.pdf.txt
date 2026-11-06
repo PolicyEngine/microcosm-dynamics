@@ -1,0 +1,64 @@
+Table 1. Do You Need To Pay Employment Taxes?
+ IF you ...                                                                        THEN you need to ...
+ A       Pay cash wages of $2,400 or more in 2022 to any one                       Withhold and pay social security and Medicare taxes.
+         household employee.                                                        • The taxes are 15.3%1 of cash wages.
+         Don't count wages you pay to:                                              • Your employee's share is 7.65%.1 (You can choose to pay it
+                                                                                       yourself and not withhold it.)
+          • Your spouse,
+          • Your child under the age of 21,                                         • Your share is 7.65%.
+          • Your parent (see Wages not counted, later, for an
+             exception), or
+          • Any employee under the age of 18 at any time in 2022 (see
+             Wages not counted, later, for an exception).
+ B       Pay total cash wages of $1,000 or more in any calendar quarter            Pay FUTA tax.
+         of 2021 or 2022 to household employees.                                    • The tax is 6% of cash wages.
+         Don't count wages you pay to:                                              • Wages over $7,000 a year per employee aren't taxed.
+          • Your spouse,                                                            • You may also owe state unemployment tax.
+          • Your child under the age of 21, or
+          • Your parent.
+ 1
+   In addition to withholding Medicare tax at 1.45%, you must withhold a 0.9% Additional Medicare Tax from wages you pay to an employee in excess of
+ $200,000 in a calendar year. You’re required to begin withholding Additional Medicare Tax in the pay period in which you pay wages in excess of $200,000
+ to an employee and continue to withhold it each pay period until the end of the calendar year. Additional Medicare Tax is only imposed on the employee.
+ There is no employer share of Additional Medicare Tax. All wages that are subject to Medicare tax are subject to Additional Medicare Tax withholding if
+ paid in excess of the $200,000 withholding threshold.
+ Note. If neither A nor B above applies, you don't need to pay any federal employment taxes. But you may still need to pay state employment taxes.
+
+Table 2. Household Employer's Checklist
+              You may need to do the following things when you have a household employee.
+
+ When you hire a household employee:                     Find out if the person can legally work in the United States.
+                                                         Find out if you need to withhold and pay federal taxes.
+                                                         Find out if you need to withhold and pay state taxes.
+ When you pay your household                             Withhold social security and Medicare taxes.
+ employee:                                               Withhold federal income tax.
+                                                         Decide how you will make tax payments.
+                                                         Keep records.
+ By January 31, 2023:                                     Get an employer identification number (EIN).
+                                                          Give your employee Copies B, C, and 2 of Form W-2, Wage and Tax Statement.
+                                                          Send Copy A of Form W-2 with Form W-3 to the SSA. Don't send Form W-2 to the SSA
+                                                      if you didn't withhold federal income tax and the social security and Medicare wages were
+                                                      below $2,400 for 2022.
+ By April 18, 2023:                                       File Schedule H (Form 1040), Household Employment Taxes, with your 2022 federal
+                                                      income tax return (Form 1040, 1040-SR, 1040-NR, 1040-SS, or 1041).
+                                                      If you don't have to file a return, file Schedule H by itself.
+
+should've withheld and paid. See section 2 of Pub. 15 for                       (6.2% for social security tax and 1.45% for Medicare tax)
+additional information. Interest and penalties may also be                      of the employee's social security and Medicare wages.
+charged. You may have to pay a penalty if you don't give                        Your employee's share is also 7.65% (6.2% for social se-
+Forms W-2 to your employees or file Copy A of the forms                         curity tax and 1.45% for Medicare tax). In addition to with-
+with the SSA by the due dates. You may also have to pay                         holding Medicare tax at 1.45%, you must withhold a 0.9%
+a penalty if you don't show your employee's SSN on Form                         Additional Medicare Tax from wages you pay to an em-
+W-2 or don't provide correct information on the form.                           ployee in excess of $200,000 in a calendar year. You’re
+                                                                                required to begin withholding Additional Medicare Tax in
+                                                                                the pay period in which you pay wages in excess of
+Social Security and Medicare Taxes                                              $200,000 to an employee and continue to withhold it each
+                                                                                pay period until the end of the calendar year. Additional
+The social security tax pays for old-age, survivors, and                        Medicare Tax is only imposed on the employee. There is
+disability benefits for workers and their families. The Medi-                   no employer share of Additional Medicare Tax. All wages
+care tax pays for hospital insurance.                                           that are subject to Medicare tax are subject to Additional
+   Both you and your household employee may owe so-                             Medicare Tax withholding if paid in excess of the
+cial security and Medicare taxes. Your share is 7.65%
+
+Publication 926 (2022)                                                                                                                               Page 5
+

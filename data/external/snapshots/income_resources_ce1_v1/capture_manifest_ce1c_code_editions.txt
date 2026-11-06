@@ -1,0 +1,84 @@
+# CE1c official prior U.S. Code section captures.
+# Plain requests; edition labels are not earlier effective-date claims.
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-1994-title26/html/USCODE-1994-title26-chap2-sec1402.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 1994, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 1402, "title": 26}
+2026-10-25T02:36:09Z 5f11b90bdea54f8a3608469bba60e298805f379c11180dc52c7a714177377f68 114234 uscode_1994_26_1402.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-1994-title42/html/USCODE-1994-title42-chap6-subchapII_2-sec410.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 1994, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 410, "title": 42}
+2026-10-25T02:36:09Z c6e61ddfb7f7d16449707bde64476cb7421ec0ad55479e1d62efd91e1d54252b 127466 uscode_1994_42_410.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-1995-title42/html/USCODE-1995-title42-chap6-subchapII_2-sec410.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 1995, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 410, "title": 42}
+2026-10-25T02:36:19Z c6b37287a15392d88b96efbc579181c3a64f3dbee7f70e490b4bd4df2d2ccaac 127466 uscode_1995_42_410.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-1997-title42/html/USCODE-1997-title42-chap7-subchapII-sec410.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 1997, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 410, "title": 42}
+2026-10-25T02:36:19Z 93939bca4925df02bf9debddebc685c842dbbcbf1ff0e67b05c6ec1f7a0b318a 131092 uscode_1997_42_410.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-1997-title42/html/USCODE-1997-title42-chap7-subchapII-sec411.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 1997, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 411, "title": 42}
+2026-10-25T02:36:19Z a88f64af261326670d0051b68368c1798c1f69ced7fd079694d4e92e6b3c8cf9 71041 uscode_1997_42_411.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2000-title42/html/USCODE-2000-title42-chap7-subchapII-sec411.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 2000, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 411, "title": 42}
+2026-10-25T02:36:12Z 624df0c3d2503f3038cb5befe7cc877738e77d18d0814ee9282573a3987d221c 71020 uscode_2000_42_411.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2004-title42/html/USCODE-2004-title42-chap7-subchapII-sec411.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 2004, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 411, "title": 42}
+2026-10-25T02:36:21Z 440cfe2a7fa66bdb0857ae1a8c533a92d943dc472c206ffc9f0ee566a35776d1 73089 uscode_2004_42_411.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2006-title42/html/USCODE-2006-title42-chap7-subchapII-sec411.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 2006, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 411, "title": 42}
+2026-10-25T02:36:13Z f9fa67fb2d85bbe216b90590ce5f5c080aa8448cc08cf78150c681e1510979a8 73089 uscode_2006_42_411.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2007-title42/html/USCODE-2007-title42-chap7-subchapII-sec411.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 2007, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 411, "title": 42}
+2026-10-25T02:36:21Z 701a5797aee86cb6ff994c589f353585d3e04a03e89b919f560f692cd2ff5d6a 73885 uscode_2007_42_411.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2008-title26/html/USCODE-2008-title26-subtitleA-chap2-sec1402.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 2008, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 1402, "title": 26}
+2026-10-25T02:36:23Z b94297ea8dd6abd8a9c4d4d701ce1ea0306e41f4e6858b30fc9d9f0c48ae5213 125397 uscode_2008_26_1402.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2008-title42/html/USCODE-2008-title42-chap7-subchapII-sec411.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 2008, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 411, "title": 42}
+2026-10-25T02:36:23Z f8e3acf63bf6e865b04693e2ae7ab9c5679889a65619b83a07907b8da2128e46 77593 uscode_2008_42_411.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2012-title42/html/USCODE-2012-title42-chap7-subchapII-sec410.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 2012, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 410, "title": 42}
+2026-10-25T02:36:14Z a11b5f7fbf2827566d7c42ef6a567b2efb8e8e96cf03186ab4f7dd69aacd5bbb 137621 uscode_2012_42_410.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2012-title42/html/USCODE-2012-title42-chap7-subchapII-sec411.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 2012, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 411, "title": 42}
+2026-10-25T02:36:14Z 3943dbedbfee61b4c2c0f2e2c3e7ab4b880cbc7036d06f94a262ff768d239b0a 78167 uscode_2012_42_411.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2014-title42/html/USCODE-2014-title42-chap7-subchapII-sec410.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 2014, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 410, "title": 42}
+2026-10-25T02:36:24Z acfa00ffe273f79fe5663919565b8f7819ae97ae437210cdca747d8fa1cdb061 137304 uscode_2014_42_410.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2018-title42/html/USCODE-2018-title42-chap7-subchapII-sec410.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 2018, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 410, "title": 42}
+2026-10-25T02:36:15Z c4c6208eff6a70577b49d1ba4a2d47b2c976b59a02443d225519211db4a8b0f8 138070 uscode_2018_42_410.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2024-title26/html/USCODE-2024-title26-subtitleA-chap2-sec1402.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 2024, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 1402, "title": 26}
+2026-10-25T02:36:18Z 557324ea7bd53515f953997ceaf912a1f161fe9d2daf8084315adc842a800275 128872 uscode_2024_26_1402.html
+
+# URL: https://www.govinfo.gov/content/pkg/USCODE-2024-title42/html/USCODE-2024-title42-chap7-subchapII-sec410.htm
+# Provenance: {"actual_section_heading_verified": true, "citation_scope": "Each row separately identifies section text as printed versus historical amendment-note support; edition label is not an earlier effective-date claim.", "collection": "United States Code", "edition_label": 2024, "format": "official section HTML", "publisher": "U.S. Government Publishing Office", "section": 410, "title": 42}
+2026-10-25T02:36:16Z d8618e7d8bbcffae1d81a07cb2890fabaa60f8d274a58c7a5100be19cd94ee15 139768 uscode_2024_42_410.html
+
+# SOURCE_BLOCKED HTTP 503: https://www.govinfo.gov/metadata/granule/USCODE-2014-title42/USCODE-2014-title42-chap7-subchapII-sec410/mods.xml
+# retrieved_at=null; recorded_at=2026-10-25T02:43:23Z (audit time only)
+# Plain request returned Please Retry later in15Seconds refresh/challenge page; stopped with no retry or alternate endpoint.
+# Exact request/retrieval second was not retained. recorded_at is the UTC audit timestamp, not retrieval time.
+
+# SOURCE_BLOCKED HTTP 403: https://www.loc.gov/item/uscode1970-028042007/?fo=json
+# retrieved_at=null; recorded_at=2026-10-25T02:43:23Z (audit time only)
+# Earlier registry_audit plain request refused; no retry, alternate host or attempt to obtain the linked LoC files.
+# Earlier agent did not retain exact request/retrieval second. recorded_at is this UTC audit timestamp, not retrieval time.
+
+# Reused uscode_1994_42_411.html; original capture metadata retained.
+# Reused uscode_2024_42_411.html; step6 capture metadata retained.
+# Contemporaneous edition labels unavailable:1964,1970,1976,1982,1988.

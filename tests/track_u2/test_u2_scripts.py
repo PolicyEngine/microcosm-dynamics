@@ -989,14 +989,24 @@ def test_binding_covers_every_registered_identity(registered):
     ) != registered.binding_sha256("d" * 64, evidence)
 
 
-def test_preflight_refuses_while_the_evidence_record_is_absent(registered):
+def test_preflight_refuses_while_the_evidence_record_is_absent(
+    registered, tmp_path, monkeypatch
+):
     """Section 14: execution rechecks the frozen identities, so without
-    the committed pre-registration evidence record (none exists at this
-    commit) the preflight refuses before comparing the binding."""
+    the committed pre-registration evidence record (forced absent here
+    through an explicit missing path; the committed record stays in
+    place) the preflight refuses before comparing the binding."""
 
     from populace_dynamics.uniform_cut_track_u2 import loader
 
-    assert not loader.PREREGISTRATION_EVIDENCE_PATH.exists()
+    read = loader.read_preregistration_evidence
+    missing = tmp_path / "absent.json"
+    assert not missing.exists()
+    monkeypatch.setattr(
+        loader,
+        "read_preregistration_evidence",
+        lambda *args, **kwargs: read(missing),
+    )
     with pytest.raises(loader.U2LoaderRefusal, match="no pre-registration"):
         _preflight(registered, evidence=None)
     with pytest.raises(loader.U2LoaderRefusal, match="registries other"):

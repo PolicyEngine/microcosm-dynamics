@@ -176,6 +176,16 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # Experimental entrants are outside the registered projection call graph.
     Path("src/populace_dynamics/engine/entrant_schedule.py"),
     Path("src/populace_dynamics/engine/entrant_domains.py"),
+    # OP1 wraps the sealed loop through an explicit opt-in package.
+    Path("src/populace_dynamics/open_population/__init__.py"),
+    Path("src/populace_dynamics/open_population/errors.py"),
+    Path("src/populace_dynamics/open_population/events.py"),
+    Path("src/populace_dynamics/open_population/exits.py"),
+    Path("src/populace_dynamics/open_population/births.py"),
+    Path("src/populace_dynamics/open_population/schedule.py"),
+    Path("src/populace_dynamics/open_population/harness.py"),
+    Path("src/populace_dynamics/open_population/gates.py"),
+    Path("src/populace_dynamics/open_population/streams.py"),
     # The opt-in accounting-history validator is likewise unreachable.
     Path("src/populace_dynamics/engine/accounting_history.py"),
     # The opt-in identity transport is not imported by the historical reducer.
@@ -314,6 +324,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # nothing in the historical projection imports it.
     Path("src/populace_dynamics/track_b/gross_benefits.py"),
     Path("src/populace_dynamics/track_b/_provenance.py"),
+    # Insured status and QC accounting are opt-in statutory references.
+    Path("src/populace_dynamics/track_b/insured_status.py"),
+    Path("src/populace_dynamics/track_b/_insured_status_qc.py"),
     # R2 statutory payment mechanics also stay outside birth evidence.
     Path("src/populace_dynamics/track_b/ret_grace.py"),
     Path("src/populace_dynamics/track_b/ret_ledger.py"),
@@ -330,6 +343,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/track_b/holdout_registry.py"),
     # S1 development and future registration; no historical projection imports.
     Path("src/populace_dynamics/engine/forward_earnings_s1_v1.py"),
+    # P2 is used only by development and any future registration;
+    # nothing in the historical projection imports it.
+    Path("src/populace_dynamics/engine/forward_earnings_p2_v1.py"),
     # U2 documentary metadata stays outside the historical projection.
     Path("src/populace_dynamics/data/u2_source_registry.py"),
     Path("scripts/capture_track_u2_income_wealth.py"),
@@ -413,10 +429,46 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/group_breakdowns/fra68.py"),
     Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
     Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+    # SM1 is opt-in and absent from the historical projection call graph.
+    Path("src/populace_dynamics/mortality_ses/__init__.py"),
+    Path("src/populace_dynamics/mortality_ses/specification.py"),
+    Path("src/populace_dynamics/mortality_ses/normalizer.py"),
+    Path("src/populace_dynamics/mortality_ses/model.py"),
+    Path("src/populace_dynamics/mortality_ses/step.py"),
+    # The PSID income and wealth readers (D1a) are opt-in source readers;
+    # nothing in the historical projection imports them.
+    Path("src/populace_dynamics/data/psid_income_wealth.py"),
+    Path("src/populace_dynamics/data/psid_income_wealth_registry.py"),
+    # The income-and-resources aggregate-table readers (D4) are opt-in
+    # source readers; nothing in the historical projection imports them.
+    Path("src/populace_dynamics/income_resources/__init__.py"),
+    Path("src/populace_dynamics/income_resources/aggregate_coverage.py"),
+    Path("src/populace_dynamics/income_resources/aggregate_pensions.py"),
+    Path("src/populace_dynamics/income_resources/aggregate_poms.py"),
+    Path("src/populace_dynamics/income_resources/aggregate_tables.py"),
+    # The SSI interface (SSI0) is opt-in; nothing in the historical
+    # projection imports it.
+    Path("src/populace_dynamics/income_resources/ssi/__init__.py"),
+    Path("src/populace_dynamics/income_resources/ssi/_child.py"),
+    Path("src/populace_dynamics/income_resources/ssi/contract.py"),
+    Path("src/populace_dynamics/income_resources/ssi/dataset_worker.py"),
+    Path("src/populace_dynamics/income_resources/ssi/environment_wheels.json"),
+    Path("src/populace_dynamics/income_resources/ssi/input_contract.json"),
+    Path("src/populace_dynamics/income_resources/ssi/inventory.json"),
+    Path("src/populace_dynamics/income_resources/ssi/pin.json"),
+    Path("src/populace_dynamics/income_resources/ssi/pinning.py"),
+    Path("src/populace_dynamics/income_resources/ssi/records.py"),
+    Path("src/populace_dynamics/income_resources/ssi/runner.py"),
+    # CE1 coverage rules are opt-in; the historical projection imports none.
+    Path("src/populace_dynamics/income_resources/coverage_rules.py"),
+    # The opt-in SIPP income, asset, pension and SSI readers (D2) and their
+    # registry are source readers; nothing in the historical projection
+    # imports them.
+    Path("src/populace_dynamics/data/sipp_income.py"),
+    Path("src/populace_dynamics/data/sipp_income_registry.py"),
     # The income-and-resources retirement-plan rules (WP2) are opt-in
     # statutory references; nothing in the historical projection imports
     # them.
-    Path("src/populace_dynamics/income_resources/__init__.py"),
     Path("src/populace_dynamics/income_resources/contribution_limits.py"),
     Path("src/populace_dynamics/income_resources/early_distribution.py"),
     Path("src/populace_dynamics/income_resources/pension_cola.py"),

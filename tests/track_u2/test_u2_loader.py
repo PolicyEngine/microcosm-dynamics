@@ -23,8 +23,8 @@ real decision), with up to five patches, each named where it is applied:
   invented frames;
 * for a frozen load, ``loader.read_preregistration_evidence`` returns the
   invented evidence record the load is given, standing in for the
-  committed record (none is committed yet; a frozen load refuses any
-  other record, ``test_a_frozen_load_needs_the_committed_record``).
+  committed record (a frozen load refuses any other record,
+  ``test_a_frozen_load_needs_the_committed_record``).
 
 An audit hook refuses any open under the PSID directory -- the default
 one and the one under the account's real home, which differ when HOME is
@@ -1036,8 +1036,9 @@ def test_a_frozen_load_needs_the_committed_record(
     against the committed pre-registration record, so a fabricated record,
     however well-formed, cannot stand in for the authorization an unfrozen
     load needs.  It refuses before any PSID path is resolved or any file
-    opened: while no record is committed, and when the committed one
-    differs."""
+    opened: when no record can be read (forced here through an explicit
+    missing path; the committed record stays in place), and when the
+    committed one differs."""
 
     import sys
 
@@ -1056,7 +1057,14 @@ def test_a_frozen_load_needs_the_committed_record(
         "_resolve_data_dir",
         lambda data_dir: resolved.append(data_dir) or original(data_dir),
     )
-    assert not loader.PREREGISTRATION_EVIDENCE_PATH.exists()
+    read = loader.read_preregistration_evidence
+    missing = tmp_path / "no-record" / "absent.json"
+    assert not missing.exists()
+    monkeypatch.setattr(
+        loader,
+        "read_preregistration_evidence",
+        lambda *args, **kwargs: read(missing),
+    )
     with pytest.raises(
         loader.U2FrozenIdentityMismatch, match="no pre-registration evidence"
     ):
@@ -1206,13 +1214,40 @@ def test_an_absent_or_unpinned_evidence_record_refuses(
         loader.read_preregistration_evidence(path)
 
 
-def test_the_committed_evidence_record_is_absent_so_registration_refuses():
-    """At this commit the section 20 step-4 pass has not run: there is no
-    committed evidence record, so the registered run cannot bind one."""
+def test_the_committed_evidence_record_is_the_pinned_one(tmp_path):
+    """Section 20 step 5: the committed evidence record is the one the
+    step-4 pass wrote, byte for byte, and the reader accepts it.  An
+    absent record and a copy one byte away from it still refuse."""
 
-    assert not loader.PREREGISTRATION_EVIDENCE_PATH.exists()
+    path = loader.PREREGISTRATION_EVIDENCE_PATH
+    assert path.is_file()
+    raw = path.read_bytes()
+    assert (
+        hashlib.sha256(raw).hexdigest()
+        == loader.PREREGISTRATION_EVIDENCE_SHA256
+        == "7bc5c3c26ff014271061a8228068c6e71103430ec299048462570476a510b845"
+    )
+    assert loader.read_preregistration_evidence() == (
+        loader.check_preregistration_evidence(json.loads(raw))
+    )
+    absent = tmp_path / "absent.json"
+    assert not absent.exists()
     with pytest.raises(loader.U2LoaderRefusal, match="no pre-registration"):
-        loader.read_preregistration_evidence()
+        loader.read_preregistration_evidence(absent)
+    # One hex digit of the frame digest changes: the copy stays a
+    # well-formed record, so only the pin refuses it.
+    key = b'"input_frames_sha256"'
+    at = raw.index(b'"', raw.index(key) + len(key)) + 1
+    altered = bytearray(raw)
+    altered[at] = ord("1") if raw[at] == ord("0") else ord("0")
+    assert sum(a != b for a, b in zip(raw, altered, strict=True)) == 1
+    assert loader.check_preregistration_evidence(json.loads(bytes(altered)))
+    copy_path = tmp_path / "evidence.json"
+    copy_path.write_bytes(bytes(altered))
+    with pytest.raises(
+        loader.U2FrozenIdentityMismatch, match="not the committed record"
+    ):
+        loader.read_preregistration_evidence(copy_path)
 
 
 def test_evidence_is_recorded_only_from_loader_sealed_inputs(

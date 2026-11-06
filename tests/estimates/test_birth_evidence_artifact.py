@@ -100,6 +100,15 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/engine/claiming.py"),
         Path("src/populace_dynamics/engine/entrant_schedule.py"),
         Path("src/populace_dynamics/engine/entrant_domains.py"),
+        Path("src/populace_dynamics/open_population/__init__.py"),
+        Path("src/populace_dynamics/open_population/errors.py"),
+        Path("src/populace_dynamics/open_population/events.py"),
+        Path("src/populace_dynamics/open_population/exits.py"),
+        Path("src/populace_dynamics/open_population/births.py"),
+        Path("src/populace_dynamics/open_population/schedule.py"),
+        Path("src/populace_dynamics/open_population/harness.py"),
+        Path("src/populace_dynamics/open_population/gates.py"),
+        Path("src/populace_dynamics/open_population/streams.py"),
         Path("src/populace_dynamics/engine/accounting_history.py"),
         Path("src/populace_dynamics/person_identity.py"),
         Path("src/populace_dynamics/forward_earnings_history.py"),
@@ -183,6 +192,8 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/track_b/reconstructed.py"),
         Path("src/populace_dynamics/track_b/gross_benefits.py"),
         Path("src/populace_dynamics/track_b/_provenance.py"),
+        Path("src/populace_dynamics/track_b/insured_status.py"),
+        Path("src/populace_dynamics/track_b/_insured_status_qc.py"),
         Path("src/populace_dynamics/track_b/ret_grace.py"),
         Path("src/populace_dynamics/track_b/ret_ledger.py"),
         Path("src/populace_dynamics/track_b/arf.py"),
@@ -190,6 +201,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/track_b/b2.py"),
         Path("src/populace_dynamics/track_b/holdout_registry.py"),
         Path("src/populace_dynamics/engine/forward_earnings_s1_v1.py"),
+        Path("src/populace_dynamics/engine/forward_earnings_p2_v1.py"),
         Path("src/populace_dynamics/data/u2_source_registry.py"),
         Path("scripts/capture_track_u2_income_wealth.py"),
         Path("scripts/capture_track_u2_ssi_parameters.py"),
@@ -254,7 +266,41 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/group_breakdowns/fra68.py"),
         Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
         Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
+        Path("src/populace_dynamics/mortality_ses/__init__.py"),
+        Path("src/populace_dynamics/mortality_ses/specification.py"),
+        Path("src/populace_dynamics/mortality_ses/normalizer.py"),
+        Path("src/populace_dynamics/mortality_ses/model.py"),
+        Path("src/populace_dynamics/mortality_ses/step.py"),
+        # The PSID income and wealth readers (D1a) are opt-in source readers;
+        # nothing in the historical projection imports them.
+        Path("src/populace_dynamics/data/psid_income_wealth.py"),
+        Path("src/populace_dynamics/data/psid_income_wealth_registry.py"),
+        # The income-and-resources aggregate-table readers (D4) are opt-in
+        # source readers; nothing in the historical projection imports them.
         Path("src/populace_dynamics/income_resources/__init__.py"),
+        Path("src/populace_dynamics/income_resources/aggregate_coverage.py"),
+        Path("src/populace_dynamics/income_resources/aggregate_pensions.py"),
+        Path("src/populace_dynamics/income_resources/aggregate_poms.py"),
+        Path("src/populace_dynamics/income_resources/aggregate_tables.py"),
+        # The SSI interface (SSI0) is opt-in; nothing in the historical
+        # projection imports it.
+        Path("src/populace_dynamics/income_resources/ssi/__init__.py"),
+        Path("src/populace_dynamics/income_resources/ssi/_child.py"),
+        Path("src/populace_dynamics/income_resources/ssi/contract.py"),
+        Path("src/populace_dynamics/income_resources/ssi/dataset_worker.py"),
+        Path(
+            "src/populace_dynamics/income_resources/ssi/environment_wheels.json"
+        ),
+        Path("src/populace_dynamics/income_resources/ssi/input_contract.json"),
+        Path("src/populace_dynamics/income_resources/ssi/inventory.json"),
+        Path("src/populace_dynamics/income_resources/ssi/pin.json"),
+        Path("src/populace_dynamics/income_resources/ssi/pinning.py"),
+        Path("src/populace_dynamics/income_resources/ssi/records.py"),
+        Path("src/populace_dynamics/income_resources/ssi/runner.py"),
+        # CE1 coverage rules are opt-in; the historical projection imports none.
+        Path("src/populace_dynamics/income_resources/coverage_rules.py"),
+        Path("src/populace_dynamics/data/sipp_income.py"),
+        Path("src/populace_dynamics/data/sipp_income_registry.py"),
         Path("src/populace_dynamics/income_resources/contribution_limits.py"),
         Path("src/populace_dynamics/income_resources/early_distribution.py"),
         Path("src/populace_dynamics/income_resources/pension_cola.py"),
@@ -395,6 +441,8 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.track_b.reconstructed",
         "populace_dynamics.track_b.gross_benefits",
         "populace_dynamics.track_b._provenance",
+        "populace_dynamics.track_b.insured_status",
+        "populace_dynamics.track_b._insured_status_qc",
         "populace_dynamics.track_b.ret_grace",
         "populace_dynamics.track_b.ret_ledger",
         "populace_dynamics.track_b.arf",
@@ -402,6 +450,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.track_b.b2",
         "populace_dynamics.track_b.holdout_registry",
         "populace_dynamics.engine.forward_earnings_s1_v1",
+        "populace_dynamics.engine.forward_earnings_p2_v1",
     }
     assert track_b_modules.issubset(module_paths)
     u2_registry = "populace_dynamics.data.u2_source_registry"
@@ -535,6 +584,64 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "the opt-in EPUF modules became reachable from the birth-evidence "
         f"reducer: {sorted(epuf_modules & reachable)}"
     )
+    income_wealth_modules = {
+        "populace_dynamics.data.psid_income_wealth",
+        "populace_dynamics.data.psid_income_wealth_registry",
+    }
+    assert income_wealth_modules.issubset(module_paths)
+    assert income_wealth_modules.isdisjoint(reachable), (
+        "the opt-in PSID income and wealth readers became reachable from "
+        "the birth-evidence reducer: "
+        f"{sorted(income_wealth_modules & reachable)}"
+    )
+    aggregate_table_modules = {
+        "populace_dynamics.income_resources",
+        "populace_dynamics.income_resources.aggregate_coverage",
+        "populace_dynamics.income_resources.aggregate_pensions",
+        "populace_dynamics.income_resources.aggregate_poms",
+        "populace_dynamics.income_resources.aggregate_tables",
+    }
+    assert aggregate_table_modules.issubset(module_paths)
+    assert aggregate_table_modules.isdisjoint(reachable), (
+        "the opt-in aggregate-table readers became reachable from the "
+        "birth-evidence reducer: "
+        f"{sorted(aggregate_table_modules & reachable)}"
+    )
+    ssi_modules = {
+        "populace_dynamics.income_resources",
+        "populace_dynamics.income_resources.ssi",
+        "populace_dynamics.income_resources.ssi._child",
+        "populace_dynamics.income_resources.ssi.contract",
+        "populace_dynamics.income_resources.ssi.dataset_worker",
+        "populace_dynamics.income_resources.ssi.pinning",
+        "populace_dynamics.income_resources.ssi.records",
+        "populace_dynamics.income_resources.ssi.runner",
+    }
+    assert ssi_modules.issubset(module_paths)
+    assert ssi_modules.isdisjoint(reachable), (
+        "the opt-in SSI interface became reachable from the "
+        "birth-evidence reducer: "
+        f"{sorted(ssi_modules & reachable)}"
+    )
+    coverage_rule_modules = {
+        "populace_dynamics.income_resources",
+        "populace_dynamics.income_resources.coverage_rules",
+    }
+    assert coverage_rule_modules.issubset(module_paths)
+    assert coverage_rule_modules.isdisjoint(reachable), (
+        "the opt-in CE1 coverage rules became reachable from the "
+        f"birth-evidence reducer: {sorted(coverage_rule_modules & reachable)}"
+    )
+    sipp_income_modules = {
+        "populace_dynamics.data.sipp_income",
+        "populace_dynamics.data.sipp_income_registry",
+    }
+    assert sipp_income_modules.issubset(module_paths)
+    assert sipp_income_modules.isdisjoint(reachable), (
+        "the opt-in SIPP income readers became reachable from the "
+        "birth-evidence reducer: "
+        f"{sorted(sipp_income_modules & reachable)}"
+    )
     income_resources_modules = {
         "populace_dynamics.income_resources",
         "populace_dynamics.income_resources.contribution_limits",
@@ -620,6 +727,16 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "birth-evidence reducer"
     )
     assert "populace_dynamics.engine.steps" in reachable
+    mortality_ses_modules = {
+        name
+        for name in module_paths
+        if name == "populace_dynamics.mortality_ses"
+        or name.startswith("populace_dynamics.mortality_ses.")
+    }
+    assert len(mortality_ses_modules) == 5
+    assert mortality_ses_modules.isdisjoint(
+        reachable
+    ), "SM1 became reachable from the historical birth-evidence reducer"
     scenario_module = "populace_dynamics.scenario_benefits"
     assert scenario_module in module_paths
     assert scenario_module not in reachable, (
