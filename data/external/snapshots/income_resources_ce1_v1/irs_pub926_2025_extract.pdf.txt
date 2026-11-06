@@ -1,0 +1,66 @@
+Table 1. Do You Need To Pay Employment Taxes?
+IF you ...                                                                         THEN you need to ...
+A        Pay cash wages of $2,800 or more in 2025 to any one household Withhold and pay social security and Medicare taxes.
+         employee.                                                      • The taxes are 15.3%1 of cash wages.
+         Don't count wages you pay to:                                  • Your employee's share is 7.65%.1 (You can choose to pay it
+                                                                           yourself and not withhold it.)
+          • Your spouse,
+             •
+             Your child under the age of 21,                            •  Your share is 7.65%.
+             • Your parent (see Wages not counted, later, for an
+               exception), or
+             • Any employee under the age of 18 at any time in 2025 (see
+               Wages not counted, later, for an exception).
+B        Pay total cash wages of $1,000 or more in any calendar quarter            Pay FUTA tax.
+         of 2024 or 2025 to household employees.                                    • The tax is 6% of cash wages.
+         Don't count wages you pay to:                                              • Wages over $7,000 a year per employee aren't taxed.
+          • Your spouse,                                                            • You may also owe state unemployment tax.
+          • Your child under the age of 21, or
+          • Your parent.
+1
+  In addition to withholding Medicare tax at 1.45%, you must withhold a 0.9% Additional Medicare Tax from wages you pay to an employee in excess of
+$200,000 in a calendar year. You’re required to begin withholding Additional Medicare Tax in the pay period in which you pay wages in excess of $200,000
+to an employee and continue to withhold it each pay period until the end of the calendar year. Additional Medicare Tax is only imposed on the employee.
+There is no employer share of Additional Medicare Tax. All wages that are subject to Medicare tax are subject to Additional Medicare Tax withholding if paid
+in excess of the $200,000 withholding threshold.
+Note. If neither A nor B above applies, you don't need to pay any federal employment taxes. But you may still need to pay state employment taxes.
+
+Table 2. Household Employer's Checklist
+              You may need to do the following things when you have a household employee.
+
+When you hire a household employee:                      Find out if the person can legally work in the United States.
+                                                         Find out if you need to withhold and pay federal taxes.
+                                                         Find out if you need to withhold and pay state taxes.
+When you pay your household                              Withhold social security and Medicare taxes.
+employee:                                                Withhold federal income tax.
+                                                         Decide how you will make tax payments.
+                                                         Keep records.
+By February 2, 2026:                                    Get an employer identification number (EIN).
+                                                        Give your employee Copies B, C, and 2 of Form W-2, Wage and Tax Statement.
+                                                        Send Copy A of Form W-2 with Form W-3 to the SSA. Don't send Form W-2 to the SSA if
+                                                      you didn't withhold federal income tax and the social security and Medicare wages were
+                                                      below $2,800 for 2025.
+By April 15, 2026:                                        File Schedule H (Form 1040) with your 2025 federal income tax return (Form 1040,
+                                                      1040-SR, 1040-SS, 1040-NR, or 1041).
+                                                      If you don't have to file a return, file Schedule H by itself.
+
+for social security tax and 1.45% for Medicare tax) of the                       Tax withholding if paid in excess of the $200,000 withhold-
+employee's social security and Medicare wages. Your em-                          ing threshold. For more information on Additional Medi-
+ployee's share is also 7.65% (6.2% for social security tax                       care Tax, go to IRS.gov/ADMT.
+and 1.45% for Medicare tax). In addition to withholding                                    Generally, you can use Table 3 to figure the
+Medicare tax at 1.45%, you must withhold a 0.9% Addi-
+                                                                                  TIP amount of social security and Medicare taxes to
+tional Medicare Tax from wages you pay to an employee in                                   withhold from each wage payment.
+excess of $200,000 in a calendar year. You’re required to
+begin withholding Additional Medicare Tax in the pay pe-                            You’re responsible for payment of your employee's
+riod in which you pay wages in excess of $200,000 to an                          share of the taxes as well as your own. You can either
+employee and continue to withhold it each pay period until                       withhold your employee's share from the employee's wa-
+the end of the calendar year. Additional Medicare Tax is                         ges or pay it from your own funds. If you decide to pay the
+only imposed on the employee. There is no employer                               employee's share from your own funds, see Not withhold-
+share of Additional Medicare Tax. All wages that are sub-                        ing the employee's share, later. Pay the taxes as dis-
+ject to Medicare tax are subject to Additional Medicare                          cussed under How Do You Make Tax Payments, later.
+                                                                                 Also see What Forms Must You File, later.
+
+
+Publication 926 (2025)                                                                                                                                         5
+

@@ -1,0 +1,64 @@
+Table 1. Do You Need To Pay Employment Taxes?
+IF you ...                                                                        THEN you need to ...
+A       Pay cash wages of $2,200 or more in 2020 to any one                       Withhold and pay social security and Medicare taxes.
+        household employee.                                                        • The taxes are 15.3%1 of cash wages.
+        Don't count wages you pay to:                                              • Your employee's share is 7.65%.1 (You can choose to pay it
+                                                                                      yourself and not withhold it.)
+         • Your spouse,
+         • Your child under the age of 21,                                         • Your share is 7.65%.
+         • Your parent (see Wages not counted, later, for an
+            exception), or
+         • Any employee under the age of 18 at any time in 2020 (see
+            Wages not counted, later, for an exception).
+B       Pay total cash wages of $1,000 or more in any calendar quarter            Pay federal unemployment tax.
+        of 2019 or 2020 to household employees.                                    • The tax is 6% of cash wages.
+        Don't count wages you pay to:                                              • Wages over $7,000 a year per employee aren't taxed.
+         • Your spouse,                                                            • You also may owe state unemployment tax.
+         • Your child under the age of 21, or
+         • Your parent.
+1
+  In addition to withholding Medicare tax at 1.45%, you must withhold a 0.9% Additional Medicare Tax from wages you pay to an employee in excess of
+$200,000 in a calendar year. You’re required to begin withholding Additional Medicare Tax in the pay period in which you pay wages in excess of $200,000
+to an employee and continue to withhold it each pay period until the end of the calendar year. Additional Medicare Tax is only imposed on the employee.
+There is no employer share of Additional Medicare Tax. All wages that are subject to Medicare tax are subject to Additional Medicare Tax withholding if
+paid in excess of the $200,000 withholding threshold.
+Note. If neither A nor B above applies, you don't need to pay any federal employment taxes. But you may still need to pay state employment taxes.
+
+Table 2. Household Employer's Checklist
+             You may need to do the following things when you have a household employee.
+
+When you hire a household employee:                     Find out if the person can legally work in the United States.
+                                                        Find out if you need to withhold and pay federal taxes.
+                                                        Find out if you need to withhold and pay state taxes.
+When you pay your household                             Withhold social security and Medicare taxes.
+employee:                                               Withhold federal income tax.
+                                                        Decide how you will make tax payments.
+                                                        Keep records.
+By February 1, 2021:                                     Get an employer identification number (EIN).
+                                                         Give your employee Copies B, C, and 2 of Form W-2, Wage and Tax Statement.
+                                                         Send Copy A of Form W-2 with Form W-3 to the SSA. Don't send Form W-2 to the SSA
+                                                     if you didn't withhold federal income tax and the social security and Medicare wages were
+                                                     below $2,200 for 2020.
+By April 15, 2021:                                       File Schedule H (Form 1040 or 1040-SR), Household Employment Taxes, with your
+                                                     2020 federal income tax return (Form 1040, 1040-SR, 1040-NR, 1040-SS, or 1041).
+                                                     If you don't have to file a return, file Schedule H by itself.
+
+Social security and Medicare wages. You figure social                              Cash wages. Cash wages include wages you pay by
+security and Medicare taxes on the social security and                         check, money order, etc. Cash wages don't include the
+Medicare wages you pay your employee.                                          value of food, lodging, clothing, transit passes, and other
+   If you pay your household employee cash wages of                            noncash items you give your household employee. How-
+$2,200 or more in 2020, all cash wages you pay to that                         ever, cash you give your employee in place of these items
+employee in 2020 (regardless of when the wages were                            is included in cash wages.
+earned) up to $137,700 are social security wages and all                           Noncash wages paid to household employees aren't
+cash wages are Medicare wages. However, any noncash                            subject to social security taxes or Medicare taxes; how-
+wages you pay don't count as social security and Medi-                         ever, they are subject to federal income tax unless a spe-
+care wages.                                                                    cific exclusion applies. Report the value of taxable non-
+   If you pay the employee less than $2,200 in cash wa-                        cash wages in box 1 of Form W-2 together with cash
+ges in 2020, none of the wages you pay the employee are                        wages. Don't show noncash wages in box 3 or in box 5 of
+social security or Medicare wages and neither you nor                          Form W-2. See Do You Need To Withhold Federal In-
+your employee will owe social security or Medicare tax on                      come Tax, later. Also see section 5 of Pub. 15 for more in-
+those wages.                                                                   formation on cash and noncash wages, and Pub. 15-B for
+                                                                               more information on fringe benefits.
+
+Publication 926 (2020)                                                                                                                              Page 5
+
