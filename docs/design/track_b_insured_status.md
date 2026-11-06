@@ -3926,6 +3926,9 @@ draws never reach the cap, and fails the boundary tests; `prior_basis_inverted`
 fails the shortcut's differential property. Round 24's list keeps round 23's
 and adds these 28; `precedence_possible` now drops only the
 `_refuse_unsupported_priors` call that round 24's checks follow.
+A cloud session then ran all 135 at `d30e4426`, through every insured status
+module. All 135 failed a named test, with no restricted open
+(`round_24_mutations`, PR #562 comment 6620539979).
 
 With `f32d8812`'s `insured_status.py` in place of this round's, eight of the
 tests that call the rule fail: the UNKNOWN records of the unflagged prior, both
