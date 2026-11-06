@@ -1,0 +1,624 @@
+[
+  {
+    "aggregation_scope": "person_year",
+    "citations": [
+      {
+        "authority": "42 USC 411",
+        "capture": "lii_42_411.html",
+        "location": "411(i)(1)-(4), 1986 effective-date note",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      }
+    ],
+    "comparison": "at_least",
+    "eligible_concept": "Church employee net earnings after 411(a)(11), separate from ordinary-unit gains/losses",
+    "indexing": null,
+    "monotone": false,
+    "publication_basis": "fixed statutory amount, 42 USC 411(i)(2)(B)",
+    "published_values": {
+      "1986": 100,
+      "1987": 100,
+      "1988": 100,
+      "1989": 100,
+      "1990": 100,
+      "1991": 100,
+      "1992": 100,
+      "1993": 100,
+      "1994": 100,
+      "1995": 100,
+      "1996": 100,
+      "1997": 100,
+      "1998": 100,
+      "1999": 100,
+      "2000": 100,
+      "2001": 100,
+      "2002": 100,
+      "2003": 100,
+      "2004": 100,
+      "2005": 100,
+      "2006": 100,
+      "2007": 100,
+      "2008": 100,
+      "2009": 100,
+      "2010": 100,
+      "2011": 100,
+      "2012": 100,
+      "2013": 100,
+      "2014": 100,
+      "2015": 100,
+      "2016": 100,
+      "2017": 100,
+      "2018": 100,
+      "2019": 100,
+      "2020": 100,
+      "2021": 100,
+      "2022": 100,
+      "2023": 100,
+      "2024": 100,
+      "2025": 100,
+      "2026": 100
+    },
+    "threshold_id": "church_employee_minimum",
+    "unit_id": "church_employee_income"
+  },
+  {
+    "aggregation_scope": "employer_employee_year",
+    "citations": [
+      {
+        "authority": "42 USC 411",
+        "capture": "lii_42_411.html",
+        "location": "1986 amendment note quoting prior 411(a)(13)(C)",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      }
+    ],
+    "comparison": "at_least",
+    "eligible_concept": "Gross remuneration from each electing-church employer in taxable year",
+    "indexing": null,
+    "monotone": false,
+    "publication_basis": "fixed statutory amount; separate employer aggregation in 1984-1985",
+    "published_values": {
+      "1984": 100,
+      "1985": 100
+    },
+    "threshold_id": "church_employee_minimum_historical",
+    "unit_id": "church_employee_income_historical"
+  },
+  {
+    "aggregation_scope": "person_year",
+    "citations": [
+      {
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "capture": "lii_42_411.html",
+        "location": "411(a)(11), (b)(2), (i)(1)-(4); effective date of 1983 amendment",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      }
+    ],
+    "comparison": "at_least",
+    "eligible_concept": "Net earnings in other-net-earnings statutory unit, after regular factor and optional-method elections",
+    "indexing": null,
+    "monotone": false,
+    "publication_basis": "fixed statutory amount, 42 USC 411(b)(2)",
+    "published_values": {
+      "1986": 400,
+      "1987": 400,
+      "1988": 400,
+      "1989": 400,
+      "1990": 400,
+      "1991": 400,
+      "1992": 400,
+      "1993": 400,
+      "1994": 400,
+      "1995": 400,
+      "1996": 400,
+      "1997": 400,
+      "1998": 400,
+      "1999": 400,
+      "2000": 400,
+      "2001": 400,
+      "2002": 400,
+      "2003": 400,
+      "2004": 400,
+      "2005": 400,
+      "2006": 400,
+      "2007": 400,
+      "2008": 400,
+      "2009": 400,
+      "2010": 400,
+      "2011": 400,
+      "2012": 400,
+      "2013": 400,
+      "2014": 400,
+      "2015": 400,
+      "2016": 400,
+      "2017": 400,
+      "2018": 400,
+      "2019": 400,
+      "2020": 400,
+      "2021": 400,
+      "2022": 400,
+      "2023": 400,
+      "2024": 400,
+      "2025": 400,
+      "2026": 400,
+      "1968": 400,
+      "1969": 400,
+      "1970": 400,
+      "1971": 400,
+      "1972": 400,
+      "1973": 400,
+      "1974": 400,
+      "1975": 400,
+      "1976": 400,
+      "1977": 400,
+      "1978": 400,
+      "1979": 400,
+      "1980": 400,
+      "1981": 400,
+      "1982": 400,
+      "1983": 400,
+      "1984": 400,
+      "1985": 400
+    },
+    "threshold_id": "other_net_earnings_minimum",
+    "unit_id": "other_net_earnings"
+  },
+  {
+    "aggregation_scope": "person_year",
+    "citations": [
+      {
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "capture": "lii_42_411.html",
+        "location": "411(a) concluding provisions; 411(g), (k); 2008 amendment/effective-date notes",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2011",
+        "capture": "irs_schedule_se_2011.pdf",
+        "location": "Part II, lines 14-17",
+        "sha256": "f639b7a6b81ea22d386130dac53d5a7cccba84fbf54ae6442568cd17eaa9a16d"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2012",
+        "capture": "irs_schedule_se_2012.pdf",
+        "location": "Part II, lines 14-17",
+        "sha256": "99ea6d8a7252dd83b070a61fc1668f5b2db3a269bd740437443fab0c1731553f"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2025",
+        "capture": "irs_schedule_se_2025.pdf",
+        "location": "Part II, lines 14-17",
+        "sha256": "05bc2b3e1dfca65d8c6fc6d652af4fa3736e953c6575d6e9f82590484677d347"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2008",
+        "capture": "irs_schedule_se_2008.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "94ed7b76529ed8270fc7132aa2c68119c9977b29a76049e8c258c02ebea8a9ed"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2009",
+        "capture": "irs_schedule_se_2009.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "6644ed97cb30866b052ecb11b55701f33736130bc6826ebd32a95230b967edf9"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2010",
+        "capture": "irs_schedule_se_2010.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "e9984e568e0ade3b2ea4ecd93d01db85c5a0c14ffb3915f8f749d1cd45114a36"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2013",
+        "capture": "irs_schedule_se_2013.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "4b412967e1b73d4ff7e0dcd779a4ee577b87eb0f1468e14772d13f8107a97882"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2014",
+        "capture": "irs_schedule_se_2014.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "763f68df5cec68e44742ee693207fd241c335b571f57f87b3096dcc817204d85"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2015",
+        "capture": "irs_schedule_se_2015.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "18d156b748768daa20917a5c8916f704319084c32200c386d95febcbaeb655ce"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2016",
+        "capture": "irs_schedule_se_2016.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "a37053ca569e98cb2647a836844949bf06171018f797d68e4e60aca5143b4bed"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2017",
+        "capture": "irs_schedule_se_2017.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "aefe3565f69e47ccea2beaca0822a0c3cbd3b83bc9c48f326c4c54369fe24180"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2018",
+        "capture": "irs_schedule_se_2018.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "d9252d7f7d8202a341204f79c19a3238cbbf2e917173d1c72133f47f987d7eb7"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2019",
+        "capture": "irs_schedule_se_2019.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "79cf20b576733e8e994e37300b81c217e49f600452bebda989d60ad34ce95b38"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2020",
+        "capture": "irs_schedule_se_2020.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "60a44d23087c4631d27f8114f65297ce11994446fe1e4d97e717554bc5c51186"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2021",
+        "capture": "irs_schedule_se_2021.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "474ef0024350fcc7aa2d2c879b28f362e6fdc11e41ef9ea3fba9e6f51ee01e51"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2022",
+        "capture": "irs_schedule_se_2022.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "60900671b35f6076b3dd6b24ede232d7e40da1c4dc4eaac49f84257d3a4dc269"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2023",
+        "capture": "irs_schedule_se_2023.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "ae11beaaedd525f47155e1692c7f7e5386c912c334912978f5f87507dcdc0b30"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2024",
+        "capture": "irs_schedule_se_2024.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "ac8ba97e554b67275d0e888d709e0ecadc9b45634c52cd934fa9bdcfd15179b0"
+      },
+      {
+        "authority": "SSA POMS RS 00301.250",
+        "capture": "poms_rs_00301250.html",
+        "location": "Chart of Increment Amounts, 2008-2026; Amount Required for 4 QCs",
+        "sha256": "b6506e3fd2e807812f6e3ff0570473c4e3f5032fc6e870b78d782fe45d130a64"
+      },
+      {
+        "authority": "SSA POMS RS 01803.180",
+        "capture": "poms_rs_01803180.html",
+        "location": "A.1, 2013 formula and final explanatory sentence",
+        "sha256": "3ca7c4bdf902230ab179dd06023ed195130d499f89721e97e2260e2c7a72eb74"
+      },
+      {
+        "authority": "42 USC 413, pinned LII current republication",
+        "capture": "lii_42_413.html",
+        "location": "413(d) quarter-of-coverage indexing formula",
+        "sha256": "2dc803f32773ee70e257a7de9a04ccdd04018f55d42078b93bec198bcd832cd3"
+      }
+    ],
+    "comparison": "at_least",
+    "eligible_concept": "Maximum deemed net earnings under optional method; actual-earnings eligibility bound",
+    "indexing": {
+      "first_year": 2008,
+      "kind": "quarter_of_coverage_sum",
+      "last_year": 2026,
+      "multiplier_denominator": 1,
+      "multiplier_numerator": 1,
+      "parameter_name": "quarter_of_coverage_amounts_cents_by_calendar_quarter",
+      "requires_all_quarters": true
+    },
+    "monotone": true,
+    "published_values": {
+      "1986": 1600,
+      "1987": 1600,
+      "1988": 1600,
+      "1989": 1600,
+      "1990": 1600,
+      "1991": 1600,
+      "1992": 1600,
+      "1993": 1600,
+      "1994": 1600,
+      "1995": 1600,
+      "1996": 1600,
+      "1997": 1600,
+      "1998": 1600,
+      "1999": 1600,
+      "2000": 1600,
+      "2001": 1600,
+      "2002": 1600,
+      "2003": 1600,
+      "2004": 1600,
+      "2005": 1600,
+      "2006": 1600,
+      "2007": 1600,
+      "2008": 4200,
+      "2009": 4360,
+      "2010": 4480,
+      "2011": 4480,
+      "2012": 4520,
+      "2013": 4640,
+      "2014": 4800,
+      "2015": 4880,
+      "2016": 5040,
+      "2017": 5200,
+      "2018": 5280,
+      "2019": 5440,
+      "2020": 5640,
+      "2021": 5880,
+      "2022": 6040,
+      "2023": 6560,
+      "2024": 6920,
+      "2025": 7240,
+      "1968": 1600,
+      "1969": 1600,
+      "1970": 1600,
+      "1971": 1600,
+      "1972": 1600,
+      "1973": 1600,
+      "1974": 1600,
+      "1975": 1600,
+      "1976": 1600,
+      "1977": 1600,
+      "1978": 1600,
+      "1979": 1600,
+      "1980": 1600,
+      "1981": 1600,
+      "1982": 1600,
+      "1983": 1600,
+      "1984": 1600,
+      "1985": 1600
+    },
+    "threshold_id": "self_employment_optional_lower_limit",
+    "computed_values": {
+      "2026": {
+        "citation": {
+          "authority": "SSA POMS RS 00301.250",
+          "capture": "poms_rs_00301250.html",
+          "location": "2026 row increment 1890, 4 QC 7560",
+          "sha256": "b6506e3fd2e807812f6e3ff0570473c4e3f5032fc6e870b78d782fe45d130a64"
+        },
+        "parameter_name": "quarter_of_coverage_amounts_cents_by_calendar_quarter",
+        "parameter_value": [
+          189000,
+          189000,
+          189000,
+          189000
+        ],
+        "value": 7560
+      }
+    },
+    "nonfarm_available_from": 1973,
+    "statutory_basis": "411(a) optional final sentences; 411(k)(1)"
+  },
+  {
+    "aggregation_scope": "person_year",
+    "citations": [
+      {
+        "authority": "42 U.S.C. 411, pinned LII republication retrieved 2026-10-21/22",
+        "capture": "lii_42_411.html",
+        "location": "411(a) concluding provisions; 411(g), (k); 2008 amendment/effective-date notes",
+        "sha256": "2c46b53b2037a825ef51fb20d189049d852165eecc0d116e6d1fd852c8803984"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2011",
+        "capture": "irs_schedule_se_2011.pdf",
+        "location": "Part II, lines 14-17",
+        "sha256": "f639b7a6b81ea22d386130dac53d5a7cccba84fbf54ae6442568cd17eaa9a16d"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2012",
+        "capture": "irs_schedule_se_2012.pdf",
+        "location": "Part II, lines 14-17",
+        "sha256": "99ea6d8a7252dd83b070a61fc1668f5b2db3a269bd740437443fab0c1731553f"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2025",
+        "capture": "irs_schedule_se_2025.pdf",
+        "location": "Part II, lines 14-17",
+        "sha256": "05bc2b3e1dfca65d8c6fc6d652af4fa3736e953c6575d6e9f82590484677d347"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2008",
+        "capture": "irs_schedule_se_2008.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "94ed7b76529ed8270fc7132aa2c68119c9977b29a76049e8c258c02ebea8a9ed"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2009",
+        "capture": "irs_schedule_se_2009.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "6644ed97cb30866b052ecb11b55701f33736130bc6826ebd32a95230b967edf9"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2010",
+        "capture": "irs_schedule_se_2010.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "e9984e568e0ade3b2ea4ecd93d01db85c5a0c14ffb3915f8f749d1cd45114a36"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2013",
+        "capture": "irs_schedule_se_2013.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "4b412967e1b73d4ff7e0dcd779a4ee577b87eb0f1468e14772d13f8107a97882"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2014",
+        "capture": "irs_schedule_se_2014.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "763f68df5cec68e44742ee693207fd241c335b571f57f87b3096dcc817204d85"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2015",
+        "capture": "irs_schedule_se_2015.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "18d156b748768daa20917a5c8916f704319084c32200c386d95febcbaeb655ce"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2016",
+        "capture": "irs_schedule_se_2016.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "a37053ca569e98cb2647a836844949bf06171018f797d68e4e60aca5143b4bed"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2017",
+        "capture": "irs_schedule_se_2017.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "aefe3565f69e47ccea2beaca0822a0c3cbd3b83bc9c48f326c4c54369fe24180"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2018",
+        "capture": "irs_schedule_se_2018.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "d9252d7f7d8202a341204f79c19a3238cbbf2e917173d1c72133f47f987d7eb7"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2019",
+        "capture": "irs_schedule_se_2019.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "79cf20b576733e8e994e37300b81c217e49f600452bebda989d60ad34ce95b38"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2020",
+        "capture": "irs_schedule_se_2020.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "60a44d23087c4631d27f8114f65297ce11994446fe1e4d97e717554bc5c51186"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2021",
+        "capture": "irs_schedule_se_2021.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "474ef0024350fcc7aa2d2c879b28f362e6fdc11e41ef9ea3fba9e6f51ee01e51"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2022",
+        "capture": "irs_schedule_se_2022.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "60900671b35f6076b3dd6b24ede232d7e40da1c4dc4eaac49f84257d3a4dc269"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2023",
+        "capture": "irs_schedule_se_2023.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "ae11beaaedd525f47155e1692c7f7e5386c912c334912978f5f87507dcdc0b30"
+      },
+      {
+        "authority": "IRS Schedule SE (Form 1040), 2024",
+        "capture": "irs_schedule_se_2024.pdf",
+        "location": "Part II optional-method limits",
+        "sha256": "ac8ba97e554b67275d0e888d709e0ecadc9b45634c52cd934fa9bdcfd15179b0"
+      },
+      {
+        "authority": "SSA POMS RS 00301.250",
+        "capture": "poms_rs_00301250.html",
+        "location": "Chart of Increment Amounts, 2008-2026; Amount Required for 4 QCs",
+        "sha256": "b6506e3fd2e807812f6e3ff0570473c4e3f5032fc6e870b78d782fe45d130a64"
+      },
+      {
+        "authority": "SSA POMS RS 01803.180",
+        "capture": "poms_rs_01803180.html",
+        "location": "A.1, 2013 formula and final explanatory sentence",
+        "sha256": "3ca7c4bdf902230ab179dd06023ed195130d499f89721e97e2260e2c7a72eb74"
+      },
+      {
+        "authority": "42 USC 413, pinned LII current republication",
+        "capture": "lii_42_413.html",
+        "location": "413(d) quarter-of-coverage indexing formula",
+        "sha256": "2dc803f32773ee70e257a7de9a04ccdd04018f55d42078b93bec198bcd832cd3"
+      }
+    ],
+    "comparison": "greater_than",
+    "eligible_concept": "Gross farm/nonfarm optional-method upper limit, 150 percent lower",
+    "indexing": {
+      "first_year": 2008,
+      "kind": "quarter_of_coverage_sum",
+      "last_year": 2026,
+      "multiplier_denominator": 2,
+      "multiplier_numerator": 3,
+      "parameter_name": "quarter_of_coverage_amounts_cents_by_calendar_quarter",
+      "requires_all_quarters": true
+    },
+    "monotone": true,
+    "published_values": {
+      "1986": 2400,
+      "1987": 2400,
+      "1988": 2400,
+      "1989": 2400,
+      "1990": 2400,
+      "1991": 2400,
+      "1992": 2400,
+      "1993": 2400,
+      "1994": 2400,
+      "1995": 2400,
+      "1996": 2400,
+      "1997": 2400,
+      "1998": 2400,
+      "1999": 2400,
+      "2000": 2400,
+      "2001": 2400,
+      "2002": 2400,
+      "2003": 2400,
+      "2004": 2400,
+      "2005": 2400,
+      "2006": 2400,
+      "2007": 2400,
+      "2008": 6300,
+      "2009": 6540,
+      "2010": 6720,
+      "2011": 6720,
+      "2012": 6780,
+      "2013": 6960,
+      "2014": 7200,
+      "2015": 7320,
+      "2016": 7560,
+      "2017": 7800,
+      "2018": 7920,
+      "2019": 8160,
+      "2020": 8460,
+      "2021": 8820,
+      "2022": 9060,
+      "2023": 9840,
+      "2024": 10380,
+      "2025": 10860,
+      "1968": 2400,
+      "1969": 2400,
+      "1970": 2400,
+      "1971": 2400,
+      "1972": 2400,
+      "1973": 2400,
+      "1974": 2400,
+      "1975": 2400,
+      "1976": 2400,
+      "1977": 2400,
+      "1978": 2400,
+      "1979": 2400,
+      "1980": 2400,
+      "1981": 2400,
+      "1982": 2400,
+      "1983": 2400,
+      "1984": 2400,
+      "1985": 2400
+    },
+    "threshold_id": "self_employment_optional_upper_limit",
+    "computed_values": {
+      "2026": {
+        "citation": {
+          "authority": "SSA POMS RS 00301.250",
+          "capture": "poms_rs_00301250.html",
+          "location": "2026 row increment 1890; upper = 150 percent of four-QC sum",
+          "sha256": "b6506e3fd2e807812f6e3ff0570473c4e3f5032fc6e870b78d782fe45d130a64"
+        },
+        "parameter_name": "quarter_of_coverage_amounts_cents_by_calendar_quarter",
+        "parameter_value": [
+          189000,
+          189000,
+          189000,
+          189000
+        ],
+        "value": 11340
+      }
+    },
+    "nonfarm_available_from": 1973,
+    "statutory_basis": "411(k)(2)"
+  }
+]

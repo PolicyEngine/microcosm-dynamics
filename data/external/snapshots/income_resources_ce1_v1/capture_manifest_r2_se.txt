@@ -1,0 +1,7 @@
+# CE1 round-2 self-employment primary-source captures.
+# URL https://www.govinfo.gov/content/pkg/STATUTE-101/pdf/STATUTE-101-Pg1330.pdf
+# Extract of govinfo_statute101_pg1330.pdf (76350791 bytes, sha256 d6db9b3e2cf96a864a10ac36a816ad3cdfcf2322a72452b19cef86c94563f759): original PDF pages 1,284,295,296,297,473; qpdf --deterministic-id --empty --pages govinfo_statute101_pg1330.pdf 1,284,295,296,297,473 -- govinfo_statute101_pg1330_extract.pdf (qpdf version 12.4.2)
+2026-10-26T07:22:15Z b1f5bc5fcbaa0791d3f1f033b00e85d7d35930c594738a3bc3e0b7ef9f0ac9d1 968516 govinfo_statute101_pg1330_extract.pdf
+# Text derivative of govinfo_statute101_pg1330_extract.pdf: pdftotext -f 4 -l 5 -layout govinfo_statute101_pg1330_extract.pdf govinfo_statute101_pg1330_extract.pdf.txt
+2026-10-26T07:22:15Z 1ea7ede8450b428acfd56121f54aa20e9d8d94f72ed4f35e7fb48cecfc7bd7f3 7368 govinfo_statute101_pg1330_extract.pdf.txt
+# Provenance: {"derived_from": "govinfo_statute101_pg1330_extract.pdf", "source_sha256": "b1f5bc5fcbaa0791d3f1f033b00e85d7d35930c594738a3bc3e0b7ef9f0ac9d1", "method": "pdftotext -f 4 -l 5 -layout", "pdf_pages": [4, 5], "original_pdf_pages": [296, 297], "printed_pages": ["1330-295", "1330-296"]}

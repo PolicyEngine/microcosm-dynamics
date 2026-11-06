@@ -1,0 +1,63 @@
+Table 1. Do You Need To Pay Employment Taxes?
+IF you ...                                                                  THEN you need to ...
+A–       Pay cash wages of $2,000 or more in 2017 to any one                Withhold and pay social security and Medicare taxes.
+         household employee.                                                    The taxes are 15.3%1 of cash wages.
+         Don't count wages you pay to—                                          Your employee's share is 7.65%1. (You can choose to pay it
+             Your spouse,                                                       yourself and not withhold it.)
+             Your child under the age of 21,                                    Your share is 7.65%.
+             Your parent (see Wages not counted, later, for an
+             exception), or
+             Any employee under the age of 18 at any time in 2017 (see
+             Wages not counted, later, for an exception).
+B–       Pay total cash wages of $1,000 or more in any calendar quarter     Pay federal unemployment tax.
+         of 2016 or 2017 to household employees.                                The tax is 6% of cash wages.
+         Don't count wages you pay to—                                          Wages over $7,000 a year per employee aren't taxed.
+             Your spouse,                                                       You also may owe state unemployment tax.
+             Your child under the age of 21, or
+             Your parent.
+1
+  In addition to withholding Medicare tax at 1.45%, you must withhold a 0.9% Additional Medicare Tax from wages you pay to an employee in
+excess of $200,000 in a calendar year. You’re required to begin withholding Additional Medicare Tax in the pay period in which you pay
+wages in excess of $200,000 to an employee and continue to withhold it each pay period until the end of the calendar year. Additional
+Medicare Tax is only imposed on the employee. There is no employer share of Additional Medicare Tax. All wages that are subject to
+Medicare tax are subject to Additional Medicare Tax withholding if paid in excess of the $200,000 withholding threshold.
+Note. If neither A nor B above applies, you don't need to pay any federal employment taxes. But you may still need to pay state employment
+taxes.
+
+Table 2. Household Employer's Checklist
+             You may need to do the following things when you have a household employee.
+
+When you hire a household employee:                 Find out if the person can legally work in the United States.
+                                                    Find out if you need to withhold and pay federal taxes.
+                                                    Find out if you need to withhold and pay state taxes.
+When you pay your household                         Withhold social security and Medicare taxes.
+employee:                                           Withhold federal income tax.
+                                                    Decide how you will make tax payments.
+                                                    Keep records.
+By January 31, 2018:                                Get an employer identification number (EIN).
+                                                    Give your employee Copies B, C, and 2 of Form W-2, Wage and Tax Statement.
+                                                    Send Copy A of Form W-2 with Form W-3 to the Social Security Administration (SSA).
+                                                  Don't send Form W-2 to the SSA if you didn't withhold federal income tax and the social
+                                                  security and Medicare wages were below $2,000 for 2017.
+By April 17, 2018:                                    File Schedule H (Form 1040), Household Employment Taxes, with your 2017 federal
+                                                  income tax return (Form 1040, 1040NR, 1040-SS, or 1041).
+                                                  If you don't have to file a return, file Schedule H by itself.
+
+         If you don't need to pay social security, Medicare,              Consequences of not paying employment taxes. If
+ TIP or federal unemployment tax and don't choose to                      you have a household employee and you're required to
+        withhold federal income tax, read State employ-                   withhold and pay employment taxes and you don't, you
+ment taxes next. The rest of this publication doesn't apply               will generally be liable for the employment taxes that you
+to you.                                                                   should've withheld and paid. See section 2 in Pub. 15 for
+                                                                          additional information. Interest and penalties may also be
+State employment taxes. You should contact your state                     charged. You may have to pay a penalty if you don't give
+unemployment tax agency to find out whether you need to                   Forms W-2 to your employees or file Copy A of the forms
+pay state unemployment tax for your household em-                         with the SSA by the due dates. You may also have to pay
+ployee. For a list of state unemployment tax agencies,                    a penalty if you don't show your employee's SSN on Form
+visit the U.S. Department of Labor's website at                           W-2 or don't provide correct information on the form.
+workforcesecurity.doleta.gov/unemploy/agencies.asp.
+You should also determine if you need to pay or collect
+other state employment taxes or carry workers' compen-
+sation insurance.
+
+Page 4                                                                                                              Publication 926 (2017)
+
