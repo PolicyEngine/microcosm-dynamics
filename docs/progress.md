@@ -356,7 +356,7 @@ Every block of work moves through the same pipeline before it counts here: a ful
 
 ## Links
 
-- [Amendment 20 draft (PR #405)](https://github.com/PolicyEngine/microcosm-dynamics/pull/405)
+- [Amendment 20 draft (PR #405, closed unmerged)](https://github.com/PolicyEngine/microcosm-dynamics/pull/405)
 - [Pre-registered gate contract (gates.yaml)](https://github.com/PolicyEngine/microcosm-dynamics/blob/master/gates.yaml)
 - [Timeline forecast ledger (machine-readable)](https://github.com/PolicyEngine/microcosm-dynamics/blob/master/docs/forecasts/timeline_ledger.json)
 - [The Microcosm Dynamics paper](https://microcosm.institute/dynamics/paper)
