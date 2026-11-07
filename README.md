@@ -223,10 +223,7 @@ not by the Python package metadata.
 ## Related Projects
 
 - [PolicyEngine-US](https://github.com/PolicyEngine/policyengine-us)
-- [PolicyEngine-US-Data](https://github.com/PolicyEngine/policyengine-us-data)
-- [Populace](https://github.com/PolicyEngine/populace) — PolicyEngine's open-source microdata stack (MIT)
-- [microimpute](https://github.com/PolicyEngine/microimpute)
-- [microcalibrate](https://github.com/PolicyEngine/microcalibrate)
+- [Microcosm](https://github.com/PolicyEngine/microcosm) — PolicyEngine's open-source microdata stack (MIT), including `microcosm-fit` for imputation and `microcosm-calibrate` for calibration
 - [Cato social_security_cato_model](https://github.com/kchanwong/social_security_cato_model)
 
 ## Contact
