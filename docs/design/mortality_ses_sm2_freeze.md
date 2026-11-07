@@ -9,12 +9,15 @@ Claude Code, Opus 5.5).*
 Claude Code, Opus 5.5), which answers independent review r1 and changed
 only this file; §13.6 records what that round read and fetched.*
 
+*Revised 7 November 2026 by fix round 2 (Subfleet build, Codex, GPT-6).
+This round answers review r2; §13.7 records its reads and checks.*
+
 ## 1. Status and authority
 
 **This record freezes SM2 under section 5.1 of the lane design**
-(`docs/design/mortality_groups_financing.md`): "Source hashes, module
-versions, seeds, populations, estimands, tolerances and alternatives are
-frozen before any real-data outcome is computed." **It is not a
+(`docs/design/mortality_groups_financing.md`), which requires the record
+to freeze source hashes, module versions, seeds, populations, estimands,
+tolerances and alternatives before anyone computes a real-data outcome. **It is not a
 registration on #42, and it claims no blind status.** The job that wrote
 it read every source it freezes, so it and this file count as exposed to
 those sources; nothing here feeds a blind role.
@@ -32,7 +35,9 @@ those sources; nothing here feeds a blind role.
   review and the gate's registration "confirm or amend" each
   **[proposed]** item before anyone computes an outcome, and "may tighten or
   rescope it but never loosen it". This record tightens or rescopes in
-  the places section 2's table names, and loosens nothing.
+  the places section 2's table names. Fix round 1 weakened the frozen
+  disagreement consequence; this round restores it throughout (§10).
+  The operative rules here loosen no frozen requirement.
 - **Rulings that bind this record, unamended.**
   - **Q4:** within each single age × sex × year cell, SM1's normalizer
     scales relative risks to the baseline's expected deaths
@@ -52,13 +57,24 @@ those sources; nothing here feeds a blind role.
   sets, a rule, constant or seed this record sets, or a constant it
   derives from those (the Bonferroni critical values and the widening
   they imply).
-- **Data.** Neither the freeze job nor its fix round opened a PSID, HRS,
-  SIPP, NHIS or ACS microdata file, and neither computed anything on real
+- **Data.** Neither the freeze job nor either fix round opened a PSID, HRS,
+  SIPP, NHIS or ACS microdata file, and none computed anything on real
   data. PSID use follows the project's data-access record. This record
   uses and compares no DYNASIM, Urban Institute or PWBM material, which
   reaches these gates only through a validation lane (S0.1 scope). CBO
   publication 49659 stays closed; its methods count as open until a
   validation lane supplies a bounded definitions-only extract.
+- **Current eligibility, before any fit.** OACT random variation and LMF
+  perturbation remain open. Both propagate through JR-C to every derived
+  earnings and race e65 member (§9.3); lifetime earnings, race and
+  Hispanic origin, and SM2 cannot pass until the components each member
+  needs close. Education keeps a separate reconstruction-conformance
+  status subject to the other requirements; option (b) leaves its 85+
+  targets inconclusive too (§4.5). Numeric intervals omit and name both
+  components, yet those omissions affect verdicts through dependencies.
+  Section 9.7 counts component eligibility with other issues resolved;
+  it reports no real-data verdicts. A post-outcome closure requires a new
+  registered version preserving the first attempt (§9.3, §10).
 - **Markers.** **[frozen here]** marks a decision this record makes.
   **[frozen, S0.1 §x]** keeps a decision S0.1 already froze, with its
   pointer. **[open]** marks an item this record leaves unsettled and names
@@ -86,39 +102,42 @@ narrower than S0.1's proposal or adds a requirement; no row loosens one.
 | Row | Audit line | S0.1 item | Resolution | Where | State |
 |---|---|---|---|---|---|
 | S2-01 | 424 | **[proposed]** mapping assumption: OACT rate ratios used directly as annual-q multipliers, reported with the dynamic-AIME versus frozen-rank distinction and the beneficiary population difference | Confirmed and tightened: adds Study 129's exposure convention (deaths get a full year of exposure, which makes each published rate an initial-exposure estimate of an annual probability, p. 5 and Appendix B pp. 13–14), the age-basis mapping, and three named mapping assumptions (M-E2 to M-E4) that every report carries | §4.1 | frozen here |
-| S2-02 | 440 | **[open]** availability of earlier NCHS education editions | Settled by the NVSR listing and twelve earlier *Deaths: Final Data* reports: 2010–2017 cover reporting states only (31 rising to 49 states plus DC); 2018–2020 are national in the internet tables I–7 and I–19; 2021–2022 are national in printed Table 14 and Table VIII; the listing of 1 November 2026 holds no edition for 2023. The fit uses 2018–2022; 2010–2017 form a labeled sensitivity. A fitted year whose layout fails the loader's check counts as unobserved under §7.5, labeled (fix round 1) | §3.2 | frozen here |
-| S2-03 | 474 | **[open]** harmonization of earlier NHIS years | Rescoped to NHIS 2009–2018 sample adults. The 2009, 2016 and 2018 layouts carry `EDUC1`, `HISPAN_I`, `RACERPI2`, `AGE_P`, `SEX`, `SRVY_YR`, `INTV_QRT` and `HHX`/`FMX`/`FPX` with identical code lists; the design variables are `STRAT_P`/`PSU_P` in 2009 and `PSTRAT`/`PPSU` in 2016 and 2018. The fit job checks each intervening year's layout against these names and code lists before use; a year that fails leaves the pool, labeled "NHIS year dropped: layout", and if no year passes, `SOURCE_UNAVAILABLE` (ii) applies (fix round 1) | §3.4, §9.3 | frozen here (window and variables); intervening layouts checked by the fit job, with the failure outcome frozen |
-| S2-04 | 481 | **[open]** a three-dimension joint gradient conditional on lifetime earnings | Resolved by the joint route: joint marginal calibration on a public reference population, with the earnings–education–race dependence taken from a stated proxy. The dependence itself stays unidentified in public data, and §6.4 says so. Where the fit applies the proxy's dependence outside its estimation sample, this record names the copy assumption M-J1, with sensitivity JR-C-IND (§6.5, §6.6) | §6 | frozen here (route); the dependence stays unidentified and named |
+| S2-02 | 440 | **[open]** availability of earlier NCHS education editions | Settled by the NVSR listing and twelve earlier *Deaths: Final Data* reports: 2010–2017 cover reporting states only (31 rising to 49 states plus DC); 2018–2020 are national in the internet tables I–7 and I–19; 2021–2022 are national in printed Table 14 and Table VIII; the listing of 1 November 2026 holds no edition for 2023. The fit uses 2018–2022; 2010–2017 form a labeled sensitivity. A fitted year whose layout fails counts as unavailable; its members remain inconclusive in the family and block admission; the latest education source stays 2022 (§10) | §3.2 | frozen here |
+| S2-03 | 474 | **[open]** harmonization of earlier NHIS years | Rescoped to NHIS 2009–2018 sample adults. The 2009, 2016 and 2018 layouts carry `EDUC1`, `HISPAN_I`, `RACERPI2`, `AGE_P`, `SEX`, `SRVY_YR`, `INTV_QRT` and `HHX`/`FMX`/`FPX` with identical code lists; the design variables are `STRAT_P`/`PSU_P` in 2009 and `PSTRAT`/`PPSU` in 2016 and 2018. Year-qualified family/person keys and a nesting/singleton stop tighten survey handling (§9.3). The fit job checks each intervening year's layout against these names and code lists before use; a year that fails leaves the pool, labeled "NHIS year dropped: layout", and if no year passes, `SOURCE_UNAVAILABLE` (ii) applies (fix round 1) | §3.4, §9.3 | frozen here (window and variables); intervening layouts checked by the fit job, with the failure outcome frozen |
+| S2-04 | 481 | **[open]** a three-dimension joint gradient conditional on lifetime earnings | Resolved by the joint route: joint marginal calibration on a public reference population, with the earnings–education–race dependence taken from a stated proxy. Support and rank checks tighten the route before any residual inspection (§6.3). A disagreement removes competing NCHS/NHIS sources from fitted roles, leaving JR-C without education/race targets and stopping it under `SOURCE_UNAVAILABLE` (§10). The dependence itself stays unidentified in public data, and §6.6 says so. Where the fit applies the proxy's dependence outside its estimation sample, this record names the copy assumption M-J1, with sensitivity JR-C-IND (§6.5, §6.6) | §6 | frozen here (route); the dependence stays unidentified and named |
 | S2-05 | 511 | **[open mapping]** Cristia's odds ratios | Frozen: predicted probabilities on a named reference population, then ratios to `q3`'s probability. Cristia enters only as a sensitivity and a source reported beside the fit; no log odds ratio enters as a log relative risk | §4.4 | frozen here |
 | S2-06 | 520 | **[proposed]** CBO 41681 as context only | Confirmed. It supplies the reason the widening alternative leaves race and Hispanic origin flat (pp. 1–2), with p. 1's qualifier that the black–white gap held for men and narrowed for women, and no coefficient or target | §3.1, §7.4 | frozen here |
-| S2-07 | 538 | **[proposed schema]** dimensions, columns, categories, references and unclassified treatment | Confirmed against `mortality_ses/specification.py`; tightened to one unclassified string per dimension, a fixed category order, and a crosswalk per source. `R_ref`'s persons under 25 hold the reference categories by rule, labeled `reference_below_25` (§6.2, §8.1). The ACS crosswalk maps every `SCHL`, `HISP` and `RAC1P` code in the 2010–2019 and 2021–2024 dictionaries; 2020's codes stay open until the fit job's first step (§8.2). NHIS `HISPAN_I` 00–11 map to `hispanic`, following S0.1's frozen reading, with 10 and 11 unclassified in X-R1 | §8 | frozen here (2020's ACS codes: checked by the fit job first) |
+| S2-07 | 538 | **[proposed schema]** dimensions, columns, categories, references and unclassified treatment | Confirmed against `mortality_ses/specification.py`; tightened to one unclassified string per dimension, a fixed category order, and a crosswalk per source. `R_ref`'s persons under 25 hold the reference categories by rule, labeled `reference_below_25` (§6.2, §8.1). The ACS crosswalk maps every `SCHL`, `HISP` and `RAC1P` code in the 2010–2019 and 2021–2024 dictionaries; fix round 2 also confirms 2020's experimental code lists (§8.2). NHIS `HISPAN_I` 00–11 map to `hispanic`, following S0.1's frozen reading, with 10 and 11 unclassified in X-R1 | §8 | frozen here (2020 code-list item closed in fix round 2) |
 | S2-08 | 564 | **[proposed loader]** OACT contrasts `log(r_q) − log(r_q3)`, band expansion, a source-year matrix that says what happens before a band first appears | Confirmed; tightened with the band-backcast rule, the figure-year rule and two independent table transcriptions | §3.1, §4.1, §5 | frozen here |
-| S2-09 | 570 | **[open]** earnings ages below 62 and 90–120 | Frozen: the 62–64 coefficient holds down to age 25 and the age-25 value below; the 85–89 coefficient holds up to 120; four registered sensitivities. `R_ref` holds everyone under 25 at the reference categories, so the values below 25 reach no one in the fit (§6.2) | §5, §6.2 | frozen here |
-| S2-10 | 579 | **[open]** terminal 100+ rule and any unsupported other-group coefficient | Frozen: race contrasts at 100–120 hold the age-99 contrast, and the fit reads no contrast from the 100+ interval; the e65 targets read that interval's `Tx` and `lx` for NCHS's closing only (§9.2); `other_non_hispanic` comes from NHIS–LMF, with NCHS's AIAN and Asian tables reported beside as a partial group | §4.3, §5, §9.2 | frozen here |
+| S2-09 | 570 | **[open]** earnings ages below 62 and 90–120 | Frozen: the 62–64 coefficient holds down to age 25 and the age-25 value below; the 85–89 coefficient holds up to 120; five registered sensitivities. `R_ref` holds everyone under 25 at the reference categories, so the values below 25 reach no one in the fit (§6.2) | §5, §6.2 | frozen here |
+| S2-10 | 579 | **[open]** terminal 100+ rule and any unsupported other-group coefficient | Frozen: race contrasts at 100–120 hold the age-99 contrast, and the fit reads no contrast from the 100+ interval; the e65 targets read that interval's `Tx` and `lx` for NCHS's closing only (§9.2); `other_non_hispanic` uses NHIS–LMF where identified. Fix round 2 narrows that input: its unidentified 85+ targets cannot pass (§4.5). NCHS's AIAN and Asian tables remain beside the fit as a partial group | §4.3, §5, §9.2 | frozen here |
 | S2-11 | 587 | **[open]** extraction and digitization of the 2022 gradient, its uncertainty, complete coverage | Frozen: vector extraction of Study 129 Figures 7–12, validated against Tables 7–12 at every table year, with a digitization half-width the validation sets; complete tables at every knot | §7.1–7.3 | frozen here |
 | S2-12 | 591 | **[open]** widening `CoefficientPath`: slope, origin, ages, caps; knot years and synchronization | Frozen: origin 2024, slopes from a frozen estimator on OACT's pre-pandemic annual figures, caps of 30 years and a 1.5 multiplier, race held flat; annual knots 2010–2024 with one synchronization rule | §7.4–7.5 | frozen here |
 | S2-13 | 602 | **[proposed]** `unclassified_rule="reference"` for SM3's overall denominator | Confirmed for SM3; `refuse` for conformance runs and for any projection until the frame carries the attributes. On `R_ref`, `refuse` applies after the under-25 rule and the ACS crosswalk, which map every code the dictionaries read list (§6.2, §8.2) | §8.3 | frozen here |
-| S2-14 | 606 | **[open: identification]** marginal contrasts do not determine mutually adjusted coefficients; freeze a joint route and its reference distribution | Five candidate routes and one unavailable route; primary JR-C; JR-A (plain addition, labeled), JR-B, JR-D and JR-E as sensitivities. NHIS targets compare as age-standardized hazard ratios on `R_ref(t)`'s single-age population, under named assumption M-H1 (§4, §4.5). The ordered logit fits once per knot year and sex on that year's ACS, and again inside every replicate, with a frozen optimizer, convergence rule and tie rule (§6.2). The ACS income item passes a frozen acceptance rule, and JR-C-W covers the proxy's weakness for women (§6.2, §6.5) | §4, §6 | frozen here |
+| S2-14 | 606 | **[open: identification]** marginal contrasts do not determine mutually adjusted coefficients; freeze a joint route and its reference distribution | Five candidate routes and one unavailable route; primary JR-C subject to the identification and disagreement stops. A disagreement leaves competing sources only as sensitivities, with no fitted substitute (§10). JR-A (plain addition, labeled), JR-B, JR-D and JR-E as sensitivities. NHIS targets compare as age-standardized hazard ratios on `R_ref(t)`'s single-age population, under named assumption M-H1 (§4, §4.5). Support and rank checks now precede conformance residual inspection, tightening the proposal; unidentified 85+ NHIS members cannot pass (§4.5, §6.3). The ordered logit fits once per knot year and sex on that year's ACS, and again inside every replicate, with a frozen optimizer, convergence rule and tie rule (§6.2). The ACS income item passes a frozen acceptance rule, and JR-C-W covers the proxy's weakness for women (§6.2, §6.5) | §4, §6 | frozen here |
 | S2-15 | 629 | **[open]** exact release dates of any earlier NHIS cohort used | Left open. The linked-mortality `.dat` files carry the listing date 26 April 2022; each NHIS year's release date settles from that year's survey description, which the fit job records. Nothing in SM2 depends on it, because SM2 claims no prospective origin | §3.4 | left open; settled by the fit job's per-year release ledger |
-| S2-16 | 641 | **[frozen tolerance; proposed operationalization]** e65 target from source ratios on one baseline, with a fixed reference population, marginalization and tail rule | Frozen; the 0.1-year limit stays. Corrected in fix round 1 to keep NCHS's age and closing conventions, which S0.1 requires (audit lines 647–648) and the first draft dropped: the race and Hispanic-origin targets close NCHS's "100 and older" interval as NCHS does, and the model side keeps the repository's closing, so a mismatch in the tail reaches the test. The earnings targets keep the fixed tail rule S0.1 asks of OACT (audit lines 643–646) | §9.2 | frozen here (operationalization); tolerance frozen, S0.1 §2.5 |
+| S2-16 | 641 | **[frozen tolerance; proposed operationalization]** e65 target from source ratios on one baseline, with a fixed reference population, marginalization and tail rule | Frozen; the 0.1-year limit stays. Fix round 2 tightens the operationalization: it converts the other-group source hazard before baseline rescaling, names the open-interval central-rate assumption, and adds the tail extraction fields. Corrected in fix round 1 to keep NCHS's age and closing conventions, which S0.1 requires (audit lines 647–648) and the first draft dropped: the race and Hispanic-origin targets close NCHS's "100 and older" interval as NCHS does, and the model side keeps the repository's closing, so a mismatch in the tail reaches the test. The earnings targets keep the fixed tail rule S0.1 asks of OACT (audit lines 643–646) | §9.2 | frozen here (operationalization); tolerance frozen, S0.1 §2.5 |
 | S2-17 | 649 | **[open]** whether the different source populations and baselines can satisfy the targets together | This record freezes the procedure: one joint calibration per knot on one reference population, and a named failure when it cannot reproduce every target. Whether it can is an outcome, so this record does not settle it | §6.3, §9 | left open; settled by the fit under §9's rule |
-| S2-18 | 659 | **[open until the loader plan is frozen]** the critical family's integer size and which joint-survey targets it holds | Frozen: **6,884** targets, itemized | §9.4 | frozen here |
-| S2-19 | 677 | **[proposed named procedure]** `SM2_SOURCE_RECONSTRUCTION_AND_CLUSTER_BOOTSTRAP` | Filled in step by step | §9 | frozen here |
+| S2-18 | 659 | **[open until the loader plan is frozen]** the critical family's integer size and which joint-survey targets it holds | Frozen and tightened: **6,884** targets, itemized and machine-counted in §9.7; missing members never leave the conjunction | §9.4 | frozen here |
+| S2-19 | 677 | **[proposed named procedure]** `SM2_SOURCE_RECONSTRUCTION_AND_CLUSTER_BOOTSTRAP` | Filled in step by step; tightened with endpoint validity and error checks, unresolved-age handling, rank checks and component dependencies, and restoration of the frozen disagreement consequence in fix round 2 | §9 | frozen here |
 | S2-20 | 688 | **[proposed suppression]** at least 100 unweighted persons per published microdata subgroup | Confirmed and tightened: also at least 20 deaths in any published death-based cell, and the rule applies to ACS as well as NHIS aggregates | §11.5 | frozen here |
 | S2-21 | 353 | Unmarked: CBO 49659's "safely bounded definitions remain open" | Left open as the brief requires; SM2 uses no part of 49659 | §3.1 | left open; settled by a validation lane's definitions-only extract |
 | S2-22 | 523 | Unmarked: "CBO 49659's mixed-source methods remain open pending a safely bounded definitions-only extract" | Same item as S2-21 | §3.1 | left open; as S2-21 |
 | S2-23 | 588 | Unmarked: "A 2020 table-only path is a proposed registered sensitivity" | Confirmed as sensitivity P-TABLE; it cannot become primary without amending Q6 | §7.3 | frozen here |
-| S2-24 | 669 | Unmarked: a source that does not publish the uncertainty a target needs leaves that item "open or inconclusive" | Applied: OACT publishes no deaths or exposures, so OACT's random-variation component stays open, and every OACT e65 member stays inconclusive (or fails, if its point residual lies outside ±0.1 year) until the component closes. That keeps lifetime earnings, and with it SM2 as a whole, from admission. The fit reports a Poisson approximation from `R_ref`'s recipients beside each member, labeled as likely understating the variation; it changes no verdict. Applied too to the public LMF's perturbation, which no public file lets the fit assess: that sensitivity stays open, outside every bound as U4 always was, and every NHIS result carries a label (fix round 1, low finding 5) | §9.3, §9.5, §10 | left open; settled by OACT exposure or death counts by sex × band × quintile × year; the perturbation, only by restricted-use linked files |
-| S2-25 | 698 | Unmarked: "`SOURCE_UNAVAILABLE` / open identification applies to the complete modern three-dimension joint source and missing source-age mappings" | Each trigger and fallback stated | §10 | frozen here |
+| S2-24 | 669 | Unmarked: a source that does not publish the uncertainty a target needs leaves that item "open or inconclusive" | Applied component by component and residual by residual: all 150 earnings e65 and 120 race e65 members need both OACT random variation and LMF perturbation through the joint calibration, absent a reviewed invariance proof. A point failure still fails. Same-target successful-refit contrasts retain reconstruction verdicts. Public LMF perturbation enters no numeric bound but reaches verdicts through dependencies. Both omitted components label intervals handed on; the fit runs and publishes supported results. A closure after outcomes requires a new registered version, preserving the first attempt | §1, §9.3–§9.7, §10 | left open; source-published uncertainty, sufficient deaths/exposure, or reviewed residual-specific invariance, through a recorded amendment; restricted-use LMF first needs its exclusion amended |
+| S2-25 | 698 | Unmarked: "`SOURCE_UNAVAILABLE` / open identification applies to the complete modern three-dimension joint source and missing source-age mappings" | Tightened: support/rank, valid dates, family nesting and singleton checks block unsupported fits; every missing NCHS member remains in the family, and a missing last-observed source blocks its dimension and SM2 | §10 | frozen here |
 
-**Counts.** Of the 25 rows, this record freezes 20 and leaves 5 open, each
+**Counts.** Of the 25 rows, this record freezes 20 procedures/resolutions and leaves 5 items open, each
 with what settles it (S2-15, S2-17, S2-21, S2-22, S2-24); none goes to Max.
-S2-24's open item keeps lifetime earnings inconclusive, and with it SM2's
-admission, until OACT's counts close it (§9.3); the same row leaves the
-public LMF's perturbation sensitivity open. S2-02, S2-03 and S2-07 carry
-checks the fit job performs (the NCHS education layouts, the intervening
-NHIS layouts and 2020's ACS codes), each with a failure outcome this
-record freezes. Section 12 holds two rules for cases outside this table.
+The frozen option (b) procedure explicitly leaves the eight NHIS 85+
+members unidentified; the row-state count does not count them as closed.
+S2-24's open components prevent lifetime earnings, race and Hispanic
+origin, and SM2 from passing until their required dependencies close.
+Education has a separate reconstruction status subject to other limits,
+including §4.5's unidentified 85+ members. The fit reports every dimension's
+status (§9.5). S2-02 and S2-03 retain fit-job checks for the NCHS education
+and intervening NHIS layouts, with failure outcomes frozen here; S2-07's
+2020 ACS code-list item closes in this round. Section 12 holds two rules for cases outside this table.
 
 ## 3. Source-year matrix
 
@@ -210,8 +229,9 @@ year.
   read the 2018, 2020 and 2022 layouts with values masked and the 2019 and
   2021 titles only; the fit job's loader checks every year's layout. A
   year whose layout does not match this one (bands, sexes, the three
-  education levels and the columns) counts as unobserved under §7.5,
-  labeled, as a missing file does under `SOURCE_UNAVAILABLE` (vii) (§10);
+  education levels and the columns) counts as unavailable, as a missing
+  file does under `SOURCE_UNAVAILABLE` (vii) (§10); its members stay
+  inconclusive in the family, and the dimension and SM2 cannot pass;
   the same rule covers every life-table year in §3.3.
 - **Limits stated by the source.** No data below 25 (schooling may be
   incomplete) and none at 65 and over ("reporting quality is poorer at
@@ -344,6 +364,13 @@ year.
 | Education | NCHS 2018–2022 (25–64); NHIS–LMF (65+, split) | NHIS–LMF at 25–64; Cristia Tables 3–6; NCHS 2010–2017 reporting-state tables | CBO 41681 |
 | Race and Hispanic origin | NCHS life tables 2010–2024 (Hispanic, NH white, NH black); NHIS–LMF (`other_non_hispanic`) | NHIS–LMF `hispanic` and `black_non_hispanic`; NCHS AIAN-and-Asian composite 2019–2024; Cristia Tables 3–6 | CBO 41681 |
 
+These fitted roles apply only while `GRADIENT_SOURCES_INCONSISTENT` has
+not fired. On its trigger OACT remains primary and every competing
+NCHS/NHIS source becomes a registered sensitivity, with no fitted role.
+JR-C then lacks required education/race targets and stops under
+`SOURCE_UNAVAILABLE`, open identification (§10); no OACT-only substitute
+can satisfy Q5's three dimensions. The family keeps every member.
+
 None of the sources reported beside is an unused holdout: this job read
 them, and SM2 claims no out-of-sample check (§10, `EXPOSURE_UNRESOLVED`).
 
@@ -387,7 +414,9 @@ at age `a`: one fixed set of weights for both categories. Above the ACS
 age top code, `W(a)` comes from §6.2's spread of top-coded records, so the
 85+ band runs on single ages 85–120. The target side needs no weights:
 under assumption M-H1 (§4.5) NHIS's ratio holds at every age of its band,
-so any fixed standard returns it. The sources read here give no reason to
+so any fixed standard returns it where the estimator identifies it. The
+85+ targets remain unidentified under §4.5; that algebra does not supply
+an age-allocation assumption. The sources read here give no reason to
 prefer another standard; NHIS's own person-time would make the implied
 value depend on survey records, while `R_ref(t)` is the population the
 coefficients act on.
@@ -460,7 +489,9 @@ coefficients act on.
 - **M-D4, ages 65 and over.** NHIS–LMF supplies marginal hazard ratios of
   `less_than_high_school`, `some_college` and `college` against
   `high_school` at attained ages 65–74, 75–84 and 85+, by sex, pooled and
-  held constant over time. An NHIS hazard `μ` maps to an annual probability
+  held constant over time where identified. The six required 85+ members
+  remain unidentified/inconclusive under option (b), §4.5. An NHIS hazard
+  `μ` maps to an annual probability
   as `q = 1 − exp(−μ)` (constant force within the year).
 - **M-D5, degrees versus years (assumption).** NCHS and NHIS classify by
   highest diploma or degree; SM3's PSID attribute counts years (<12, 12,
@@ -487,7 +518,9 @@ coefficients act on.
   the printed `Tx` and `lx` of that row (§9.2).
 - **M-R4, `other_non_hispanic`.** NHIS–LMF supplies the marginal hazard
   ratio against `white_non_hispanic` at attained ages 25–44, 45–64,
-  65–74, 75–84 and 85+, by sex, pooled and held constant over time (fit).
+  65–74, 75–84 and 85+, by sex, pooled and held constant over time where
+  identified (fit). The two 85+ members remain unidentified/inconclusive
+  under §4.5; no coarse top-code estimate supplies a fitted substitute.
   Beside it, for 2019–2024, the record reports `ln` of the ACS-weighted
   average of the AIAN and Asian NH `q` over the NH white `q`, labeled
   "partial group: no NHPI, multiracial or other people".
@@ -498,7 +531,7 @@ coefficients act on.
   possible 2023–2024 change (label).** In NVSR 75(5), the 2024 tables,
   the notes under Tables 4 (p. 21), 5 (p. 23), 7 (p. 27), 8 (p. 29) and
   9 (p. 31), that is Hispanic total and male and AIAN total, male and
-  female, read "Updated classification ratios were applied"; the note
+  female, state that NCHS applied updated classification ratios; the note
   does not appear under Table 6 (Hispanic female, p. 25), and NVSR 74(2)
   and 74(6) carry no such note. The 2024 Hispanic tables may therefore
   rest on a revised misclassification adjustment. P-PRIMARY holds the
@@ -571,29 +604,62 @@ in Figure 2 (race and marital status) appears only as a plotted line.
 
 - **Persons.** Sample adults interviewed 2009–2018 with `ELIGSTAT = 1`,
   weighted by `SA_WGT_NEW` divided by 10 (ten pooled years).
-- **Time at risk.** From the middle of the interview quarter
-  (`SRVY_YR`, `INTV_QRT`) to the middle of the death quarter (`DODYEAR`,
-  `DODQTR`) for `MORTSTAT = 1`, or to 31 December 2019.
-- **Attained age.** `AGE_P` plus elapsed time. Because NHIS suppresses
-  birth dates, the estimator splits each person-year across attained ages
-  on the assumption that birthdays fall uniformly through the year. A person
-  with `AGE_P = 85` (85 or older at interview) contributes only to the
-  85+ band, the one band whose lower bound such a person surely meets.
-- **Model.** For each sex, band and dimension, a survey-weighted Poisson
-  regression of deaths on that dimension's category indicators and
-  single-year attained-age indicators, with log person-years as offset.
-  In the 85+ band the age terms are indicators of attained ages 85–89,
-  90–94 and 95+ for persons interviewed below 85, and one indicator per
-  completed year since interview for persons top-coded at interview. The
-  exponentiated category coefficients are the marginal hazard ratios.
-- **M-H1, proportional hazards within a band (assumption).** The model
-  gives each category one hazard ratio per band, so it assumes that ratio
-  holds at every attained age in the band. In the 85+ band the assumption
-  covers ages 85–120, including the ages that NHIS sees only through its
-  95+ indicator and through persons top-coded at interview. §4's common
-  scale compares this ratio with an age-standardized model ratio, and
-  §11.7 tests that the two agree whenever the model's hazards are
-  proportional.
+- **Time at risk: M-H2, within-quarter timing (assumption).** Public NHIS
+  supplies interview year/quarter, and the LMF supplies death year/quarter,
+  not NHIS person-month follow-up (LMF dictionary p. 3). Treat every quarter
+  as one quarter-year and map an interview to its quarter's midpoint.
+  For a death in a later quarter, use that death quarter's midpoint. For
+  a death in the interview quarter, put death halfway from the interview
+  midpoint to the quarter's end: exposure is one sixteenth of a year.
+  This assumes a uniform event time over the remainder of that quarter,
+  conditional on survival to the midpoint. It gives every event positive
+  exposure. Censor assumed survivors at the end of 2019. Sensitivity
+  H-TIME replaces only same-quarter exposure by one twenty-fourth and
+  one eighth of a year, the one-third and full remaining-quarter choices.
+  Never drop these deaths or choose timing after seeing estimates.
+  Missing/out-of-range dates, death before the interview quarter, death
+  after 2019, a death date on an assumed survivor, or nonpositive event
+  exposure stop the estimator under `SOURCE_UNAVAILABLE` (viii); report
+  aggregate error counts only. No date repair or exclusion follows an
+  outcome. Dates on linkage-ineligible persons do not enter this check.
+- **Attained age.** For interview ages below 85, reconstruct birthdays
+  uniformly within the year consistent with `AGE_P` at interview, split
+  person-time at single-age boundaries and allocate each event's unit
+  count across its possible attained ages under that same birthday rule.
+  Use single-age indicators everywhere these records identify an age,
+  including single ages above 84 reached during follow-up. This is a
+  birthday-reconstruction assumption, not observed birthdays.
+- **Open-band limit: option (b) [frozen here].** The 2018 Sample Adult
+  layout p. 11 reports single ages through 84 and pools interview ages
+  85 and over; the public file cannot identify their category-specific
+  true-age mixes. This record freezes no age-allocation assumption for
+  them. Their records do not supply an identified 85+ ratio; the six
+  NHIS education 85+ members and two NHIS other-group 85+ members remain
+  in §9.4's family and cannot pass. Excluding top-coded interviews would
+  change the population and cannot identify the full-band target either.
+  Report any estimator on that restricted population as a sensitivity
+  only. `SOURCE_UNAVAILABLE` (viii), open identification, blocks the
+  affected education/race dimensions and SM2's complete primary fit;
+  report the supported estimates, the eight inconclusive members and
+  dimension statuses. A complete diagnostic table may use §10's labeled
+  sensitivities, never substitute them into P-PRIMARY. A future top-code
+  allocation needs an amendment and a new registered version before use.
+  This choice follows the documented lack of age information; it avoids
+  claiming that proportional hazards identifies an unknown age mix.
+- **Model.** For each sex, supported band and dimension, a survey-weighted
+  Poisson regression of deaths on category indicators and every available
+  single-year attained-age indicator, with log person-years as offset.
+  Positive event exposure under M-H2 keeps that offset finite. The
+  exponentiated category coefficients are marginal hazard ratios under
+  the age and timing assumptions, conditional on the rank checks (§6.3).
+- **M-H1, proportional hazards within a band (assumption).** Each category
+  has one hazard ratio per band, constant at every single age. §4 compares
+  that ratio with the model's age-standardized hazard ratio. This does
+  not remove confounding from an unobserved age mix. In 85+ the desired
+  estimand still spans 85–120, but the public estimator cannot identify
+  it under this record; no coarse-age or elapsed-time indicator repairs
+  that limit. §11.7 tests the estimator and implied value together on the
+  review's unequal-age-mix example, including this inconclusive outcome.
 - **Missing values.** `EDUC1` 97–99, and any race code that §8.2 leaves
   unclassified (none in the primary; `HISPAN_I` 10 and 11 under
   sensitivity X-R1), drop out of that dimension's estimate only, and the
@@ -614,9 +680,9 @@ the marginal targets.
 | Dimension | Ages the fit's sources support | Primary rule below | Primary rule above | Registered sensitivities |
 |---|---|---|---|---|
 | Lifetime earnings | 62–89 (bands 62–64 to 85–89, with backcasts before 2015 and 2020, §3.1) | `TAIL_E_HOLD_62_64_DOWN`: ages 25–61 take the 62–64 coefficient; ages 0–24 take the age-25 value | `TAIL_E_HOLD_85_89_UP`: ages 90–120 take the 85–89 coefficient | T-E1: ages 25–61 take the 65–69 coefficient instead, which avoids the early-claimer selection the source describes for 62–64 (Study 129 p. 6). T-E2: Cristia age shape (below). T-E3: a linear taper of each log contrast from its 85–89 value at age 89 to zero at age 110, and zero above, labeled "assumed convergence, not a finding" (the source reports narrower spreads at older ages, pp. 3, 8, but no rate). T-E4: every OACT band shifted one year younger (M-E5). T-B1: in place of `BAND_BACKCAST_HOLD_FIRST`, a band takes, at each knot before its first fully supported year, the targets of the next younger band fully supported at that knot: 75–79's for 80–84 and for 85–89 at 2010–2014, and 80–84's for 85–89 at 2015–2019, labeled "band backcast from a younger band" |
-| Education | 25–64 (NCHS bands); 65–74, 75–84 and 85+ (NHIS–LMF) | `TAIL_D_HOLD_25_DOWN`: ages 0–24 take the 25–34 coefficient | The 85+ band runs to 120 | T-D1: ages 65–120 take the 55–64 coefficients, with no NHIS input, to show how much the 65+ coefficients rest on NHIS |
+| Education | 25–64 (NCHS bands); 65–74 and 75–84 (NHIS–LMF); 85+ unidentified under §4.5 | `TAIL_D_HOLD_25_DOWN`: ages 0–24 take the 25–34 coefficient | The 85+ band runs to 120 | T-D1: ages 65–120 take the 55–64 coefficients, with no NHIS input, to show how much the 65+ coefficients rest on NHIS |
 | Race and Hispanic origin: `hispanic`, `black_non_hispanic` | Single ages 0–99 | None needed | `TAIL_R_HOLD_99_UP`: ages 100–120 take the age-99 coefficient; the fit reads no contrast from the "100 and older" interval | T-R1: a taper from the age-99 value to zero at age 110, labeled as T-E3 |
-| `other_non_hispanic` | 25–44, 45–64, 65–74, 75–84, 85+ (NHIS–LMF) | `TAIL_O_HOLD_25_DOWN`: ages 0–24 take the 25–44 coefficient | 85+ runs to 120 | T-R2: for 2019–2024, the partial AIAN-and-Asian composite (M-R4) replaces NHIS at every age, labeled "partial group" |
+| `other_non_hispanic` | 25–44, 45–64, 65–74, 75–84 (NHIS–LMF); 85+ unidentified under §4.5 | `TAIL_O_HOLD_25_DOWN`: ages 0–24 take the 25–44 coefficient | 85+ runs to 120 | T-R2: for 2019–2024, the partial AIAN-and-Asian composite (M-R4) replaces NHIS at every age, labeled "partial group" |
 
 - **T-E2, Cristia's age shape.** For each sex and non-reference quintile
   `k`, let `c_b(k)` be Cristia's marginal log contrast against `q3` in age
@@ -807,15 +873,17 @@ records which it does), with these attributes:
   definition and `SSP` dictionary entry: a file whose SHA-256 equals the
   one §13.6 lists passes, and any other copy passes when the item's text
   matches the frozen wording for its years, line breaks and spacing aside.
-  A year that fails, or whose documents the fit job cannot obtain (2020's
-  dictionary is one, §8.2), takes `λ` from the nearest passing year, the
+  A year that fails, or whose documents the fit job cannot obtain (any future replacement included), takes `λ` from the nearest passing year, the
   earlier year on a tie, keeps its own file for everything else, and
   carries the label "income-item definition borrowed from" that year. If
   no year passes, `SOURCE_UNAVAILABLE` (vi) applies (§10).
 
 ### 6.3 Joint marginal calibration [frozen here]
 
-For each knot `t` and sex `s`, the unknowns are:
+Before this route runs, apply §10's disagreement consequence. If it
+removes competing sources, JR-C stops; no remaining source supplies its
+required education/race targets. Otherwise, for each knot `t` and sex `s`,
+the unknowns are:
 
 | Block | Unknowns | Targets |
 |---|---|---|
@@ -847,7 +915,33 @@ age-standardized hazards for NHIS targets (§4, common scale).
   the sum of squared log residuals falls; a start that would need a 31st
   halving, or that has not converged after 100 steps, fails to converge.
   A second start from all-zero coefficients must reach the same solution
-  within `1 × 10⁻⁹`.
+  within `1 × 10⁻⁹`. Agreement checks numerical reproducibility at two
+  prescribed starts; it proves neither identification nor global uniqueness.
+- **Support and rank before conformance residual inspection.** At each
+  knot, sex and replicate, first require positive reference weight in
+  every target category and its reference, at every single age and
+  subpopulation entering that target. Form the weighted model design
+  matrix `X`: one row per positive-weight expanded cell, columns for
+  precisely the 247 free coefficients above, with the split and tail
+  equalities substituted and reference columns removed. Multiply each row
+  by its square-root weight; normalize each nonzero column to unit norm.
+  Require full column rank by SVD: every singular value must exceed
+  `1 × 10⁻¹⁰` times the largest. A zero column fails support.
+  Also check the analytic Jacobian `J = ∂(implied target vector)/∂β`
+  of §6.3's 247 log contrasts, including normalization and all weight
+  averages. Normalize its nonzero columns the same way and require the
+  same SVD rank at both starts, every accepted Newton iterate and each
+  final solution, before inspecting residuals for conformance. At a
+  clipping boundary require the check for both one-sided Jacobians;
+  inability to evaluate either leaves identification unresolved.
+  Run the corresponding category/single-age design check on each NHIS
+  Poisson fit and the free-parameter design on each ordered logit too.
+  Missing support, deficient rank or an unavailable derivative stops
+  that knot/replicate under existing `SOURCE_UNAVAILABLE` (viii), open
+  identification, and blocks its dimension and SM2. Never inspect a
+  favorable residual and then repair rank by dropping a column, imposing
+  a penalty or changing a target. These checks tighten S2-14's proposal;
+  full local rank does not prove global uniqueness.
 - **Failure.** If either start fails to converge, or the two disagree,
   the knot's calibration fails. That is a gate failure, not a tuning
   opportunity (§10, `GATE_FAIL_OR_REGRESSION_FAIL`), and whether it
@@ -880,7 +974,9 @@ are `κ` times JR-A's, and ages outside 35–75 take the nearest range's `κ`.
 
 ### 6.5 Choice
 
-**Primary: JR-C.** Sensitivities: JR-A (labeled "plain addition of
+**Primary: JR-C, subject to §10's disagreement and identification stops.**
+A disagreement promotes competing sources to sensitivities and leaves no
+admissible complete joint route. Sensitivities: JR-A (labeled "plain addition of
 marginals"), JR-B (JR-C with `λ = 0`), JR-C with `λ` scaled by 0.5 and by
 1.5, JR-C-IND and JR-C-W (below), JR-D and JR-E. Reasons:
 
@@ -994,8 +1090,9 @@ dependence men show.
 | 2023 | Held at 2022 | Held at 2022 | NVSR 74(6) |
 | 2024 | Held at 2022 | Held at 2022 | NVSR 75(5) |
 
-Every knot also carries the NHIS-based targets (education at 65+, the
-split, `other_non_hispanic`). "Held" means the fit imposes the same
+Every knot also lists the NHIS-based targets (education at 65+, the
+split, `other_non_hispanic`), including the eight unidentified 85+ members
+that prevent a complete admitted primary fit under §4.5. "Held" means the fit imposes the same
 published targets again on that year's reference population, so the
 conditional coefficients can still move with the population's
 composition.
@@ -1063,7 +1160,7 @@ age and for both sexes, by
 | Earnings slope `g_E(s, B)` | For each sex and OACT band with at least ten annual points in 2005–2019: the least-squares slope, over those years, of `S(t) / S̄`, where `S(t) = L_E(q1)(t) − L_E(q5)(t)` from the annual figures and `S̄` is its mean over the same years. Bands with fewer points (80–84, five points; 85–89, none) take the mean of the 70–74 and 75–79 slopes for the same sex, each computed as above before the zero floor; the floor below then applies to the mean. Ages outside 62–89 take the nearest band's slope | Study 129 calls the gradient's trends "generally, slowly growing" (p. 10); 2005–2019 are the fifteen pre-pandemic years with at least three bands present, and the estimator leaves out the pandemic years because of p. 9 |
 | Negative slopes | Set to zero: no widening for that sex and band, which then equals P-PRIMARY | The alternative is a widening path; a fitted narrowing is not evidence for it |
 | Education slope `g_D(s)` | `g_E(s, 62–64)` | No national education series longer than five years exists (§3.2); 62–64 is the earnings band nearest NCHS's ages |
-| Race and Hispanic origin | `m(t) = 1`, held flat | CBO 41681 says the gaps between whites and blacks "have narrowed somewhat" (p. 2), with a qualifier on p. 1: for men the black–white gap "has been maintained", and black women's larger gains were "halving the gap"; no source here supports a widening race path |
+| Race and Hispanic origin | `m(t) = 1`, held flat | CBO 41681 says the gaps between whites and blacks "have narrowed somewhat" (p. 2), with a qualifier on p. 1: the black–white gap held for men and narrowed for women; no source here supports a widening race path |
 | Ages | Every age 0–120 (the tails follow §5's rules applied to the multiplied coefficients) | One rule for the whole table |
 | Caps | The multiplier stops growing after 30 years (2054) and never exceeds 1.5 | The source series spans 1995–2022, about 30 years; the alternative carries no trend further than the data it comes from |
 
@@ -1075,6 +1172,10 @@ frozen estimator; this record computes none.
 
 ### 7.5 Synchronization
 
+Source unavailability never changes the frozen last-observed years
+(earnings 2022, education 2022, race 2024). Section 10 governs missing
+files before this rule runs: an earlier-year sensitivity cannot become
+Q6's primary, and no unavailable member leaves the family.
 One rule covers every path: all three dimensions share the same knot
 years; at each knot each dimension takes its latest observed targets at
 or before the knot (hold-first before its first observation); the joint
@@ -1119,19 +1220,19 @@ classification (§6.2). SM1 reads only the dimension and `sex` columns
 | `college` | Bachelor's degree or higher | Within "Some college or collegiate degree" | 18–21 | `SCHL` 21–24 (bachelor's, master's, professional, doctorate) | 16–17 (the reader's upper code) |
 | `unclassified` | — | "Not stated" | 96–99 | None at 25 and over: `SCHL` covers every person aged 3 and over ("bb" marks under 3), and §6.2 holds everyone under 25 at `high_school` | Missing |
 
-The ACS codes come from the data dictionaries for 2010–2019 and 2021–2024
-(§13.6): `SCHL` has the same 24 codes and the same universe in every one
-of them, and `HISP` and `RAC1P` the same code lists (the 2010 and 2011
-dictionaries word `RAC1P` 9 "Two or more major race groups", later ones
-"Two or More Races"). **2020 stays [open]:** its 1-year dictionary sits
-only under the Census Bureau's experimental-data path (§11.6), outside
-what fix round 1 could fetch. The fit job's first step fetches it,
-records its hash, and checks its `SCHL`, `HISP`, `RAC1P`, `AGEP` and
-`SSP` entries against the code lists above and §6.2's frozen texts; if
-they match, 2020 uses this crosswalk, and if they do not, 2020 counts as
-a missing ACS year (§10, `SOURCE_UNAVAILABLE` (iii)). For every year, the
-loader also tests that each code lands in exactly one category. NHIS
-codes come from the 2009, 2016 and 2018 person layouts (pp. 265, 296,
+The ACS codes come from the data dictionaries for 2010–2024 (§13.6,
+§13.7). Fix round 2 compared the 2020 experimental dictionary's `SCHL`,
+`HISP` and `RAC1P` codes and labels with this crosswalk: they match.
+`SCHL` retains its 24 codes and under-3 blank code; `HISP` retains 01–24
+and `RAC1P` 1–9. The 2010 and 2011 `RAC1P` 9 wording differs as §13.6
+records, with the same mapping. **The 2020 code-list item closes.**
+The 2020 variable-changes document pp. 2–4 names none of these three
+variables among changed codes; it explicitly keeps the weight names
+while using experimental person and replicate weights. The fit must use
+those 2020 experimental weights. This code/label check computes no ACS
+quantity and does not certify data URLs or survey precision. The fit
+job still checks `AGEP` and `SSP` against §6.2; this code-list closure
+waives neither check nor its existing failure rule. For every year the loader tests that each code lands in exactly one category. NHIS codes come from the 2009, 2016 and 2018 person layouts (pp. 265, 296,
 294).
 
 **Race and Hispanic origin.**
@@ -1195,7 +1296,10 @@ a classification.
 ## 9. Conformance procedure: `SM2_SOURCE_RECONSTRUCTION_AND_CLUSTER_BOOTSTRAP`
 
 **[frozen here]** throughout, unless a step names S0.1. The procedure runs
-on P-PRIMARY under JR-C. Sensitivities run the same steps and report;
+on P-PRIMARY under JR-C where the identification/source checks allow it.
+Run those checks before conformance residual inspection; retain every
+unavailable member and publish supported steps and all statuses (§4.5,
+§6.3, §9.5, §10). Sensitivities run the same steps and report;
 they do not gate. Its order:
 
 1. Pin every input: source files at the hashes in §13 and the fit job's
@@ -1266,8 +1370,14 @@ failure stops the procedure (§10, `GATE_FAIL_OR_REGRESSION_FAIL`).
   `q_T,g(a) = min(1, q_base(s, a, t) × ρ_g(a))`, with
   `ρ_g(a) = q_g(a) / q_total(a)` from the knot's NCHS tables for
   `hispanic`, `white_non_hispanic` and `black_non_hispanic` (M-R6), and
-  `ρ(a) = HR_b(a) × q_NHW(a) / q_total(a)` for `other_non_hispanic`, with
-  `HR_b(a)` the NHIS hazard ratio of `a`'s band. Survivors run
+  `q_source,other(a) = 1 − (1 − q_NHW(a))^HR_b(a)` followed by
+  `ρ_other(a) = q_source,other(a) / q_total(a)` for `other_non_hispanic`.
+  Only then rescale by `q_base` and cap, as above. `HR_b(a)` is the NHIS
+  hazard ratio of `a`'s band. M-D4's constant-force conversion acts on the
+  source NH white probability before its ratio to the source total;
+  applying HR to either a probability or the already rescaled baseline
+  would define a different target. The 85+ input remains unidentified
+  under §4.5, so this formula specifies a target, not an available value. Survivors run
   `l(65) = 1` and `l(a + 1) = l(a)(1 − q_T,g(a))`, and person-years
   `L(a) = (l(a) + l(a + 1)) / 2`, NCHS's equation 17 (NVSR 75(5) p. 61).
   The open interval closes as NCHS closes it. NCHS sets `∞q100 = 1.0`,
@@ -1280,7 +1390,12 @@ failure stops the procedure (§10, `GATE_FAIL_OR_REGRESSION_FAIL`).
   older" rows of the group's and the total's tables, and
   `e100_base = life_expectancy(q_base(s, ·, t)[0..120], 100)`. For
   `other_non_hispanic`, `e100_T = e100_base × (e100_NHW / e100_total) /
-  HR_85+`. An open interval's central death rate is `l100 / T100 =
+  HR_85+`. **M-R7, open-interval central-rate scaling (assumption):**
+  apply the 85+ NHIS hazard ratio to the NH white open-interval central
+  rate before dividing by the source total's central rate and rescaling
+  the baseline's central rate. This separate assumption equates that HR
+  to a central-rate multiplier; constant force at single ages alone does
+  not imply it. An open interval's central death rate is `l100 / T100 =
   1 / e100`, so this applies the source's ratio of open-interval death
   rates. Then `e65_T,g = (Σ_{a=65..99} L(a) + l(100) × e100_T,g) / l(65)`,
   which equals `life_table.py`'s backward recursion from 99 down to 65
@@ -1324,49 +1439,97 @@ combined.
 | U1, rounding and digitization | Every printed value; every digitized RMR | Uniform within the printing interval of §9.1, independently for each printed cell; uniform within `±δ_dig` for each digitized value |
 | U2, random mortality variation | NCHS education | Poisson on the printed death counts: the `1/D` term of Formula 9 (NVSR 74(4) p. 132) and nothing else. Formula 9's ACS term `(SE(P)/P)²` enters through U3's replicate refits, so the ACS variance counts once |
 | | NCHS life tables | Poisson with expected deaths `q_x × P_x`, where `P_x` is the group's population at age `x` in `R_ref(t)`. The life-table reports print no death counts, so this is a registered approximation, used at the Medicare-supplemented ages too. For the open interval (§9.2), Poisson on its central rate `1 / e100` with expected deaths `P_100+ / e100`, `P_100+` being the group's population at 100 and over in `R_ref(t)` |
-| | OACT | **[open]** Study 129 prints rates and RMRs but no deaths or exposures (Tables 1–12), so the source cannot supply this component (row S2-24). It settles when OACT's exposure or death counts by sex × band × quintile × year are available. Until then every OACT e65 member is inconclusive or fails (below) |
+| | OACT | **[open]** Study 129 prints rates and RMRs but no deaths or exposures (Tables 1–12), so the source cannot supply this component (row S2-24). It closes only through one of the three recorded routes below. Its direct and joint dependencies bar both earnings and race e65 members from passing while it stays open |
 | U3, survey sampling | ACS (reference population and NCHS education denominators) | One refit per ACS replicate, with the variance formula that each year's PUMS documentation gives and the fit job records. NCHS's denominators move with the same replicate: each category's share within sex and band is re-tabulated from that replicate and scaled to NCHS's printed total. The fit job also reports the ratio of its replicate standard errors to NCHS's printed ones (Table VIII, I–19) |
-| | NHIS–LMF | Rao–Wu rescaled bootstrap: PSUs resampled with replacement within strata, separately for each design period: the 2009 layout's `STRAT_P`/`PSU_P` and the 2016 and 2018 layouts' `PSTRAT`/`PPSU`, with the periods' strata kept distinct, as the 2018 survey description directs for pooled years: years within one design period pool as one, and different periods count as statistically independent, with distinct strata (pp. 92–93); the fit job reads which names each intervening year uses. Resampling whole PSUs keeps every family and every person's whole history together, once the fit job confirms from each year's survey description that families nest within PSUs. Where a description does not confirm it, the fit job checks the files instead: a family whose records carry more than one PSU or stratum merges those PSUs, and their strata, into one resampling unit, and the fit reports how many merges it made |
-| U4, linkage and perturbation sensitivity | NHIS–LMF | Linkage: one discrete alternative fit, not draws, with NHIS weights replaced by the original sample-adult weight and ineligible persons dropped; the fit reports its conformance, and it does not gate. Perturbation: **[open]**, because public data cannot assess it. NCHS substituted synthetic data "for follow-up time or underlying cause of death for select records" and did not perturb vital status (LMF description p. 1), and the public data dictionary flags none of the altered records, so no public alternative can isolate the effect. Only the restricted-use linked files, which this project excludes (§3.4), would settle it. Every NHIS target, and every comparison that uses NHIS, carries the label "public-file perturbation not assessed". X-R1, which recodes `HISPAN_I` 10 and 11, is a crosswalk sensitivity (§8.2), not part of U4 |
+| | NHIS–LMF | Rao–Wu rescaled bootstrap: PSUs resampled with replacement within strata, separately for each design period: the 2009 layout's `STRAT_P`/`PSU_P` and the 2016 and 2018 layouts' `PSTRAT`/`PPSU`, with the periods' strata kept distinct, as the 2018 survey description directs for pooled years: years within one design period pool as one, and different periods count as statistically independent, with distinct strata (pp. 92–93); the fit job reads which names each intervening year uses. Use family key `(SRVY_YR, HHX, FMX)` and person key `(SRVY_YR, HHX, FMX, FPX)`; survey description p. 71 defines the identifiers for within-year merges. Before resampling, check that each family nests in exactly one `(design_period, stratum, PSU)`, and keep all of each person's follow-up together. Never merge PSUs or strata. Failed nesting or fewer than two PSUs in any full-sample stratum stops the NHIS variance calculation under `SOURCE_UNAVAILABLE` (viii), and blocks education, race and SM2. For `n_h ≥ 2` PSUs, draw `n_h − 1` with replacement; a PSU drawn `m_hi` times takes multiplier `n_h m_hi / (n_h − 1)`. Use the full pooled sample's design units before subpopulation restriction, preserving zero-contribution PSUs. A singleton cannot yield an admitted zero variance. Survey description pp. 92–94 supports pooling 2009–2015 and 2016–2018 within their respective design periods and separating the periods, not merging units |
+| U4, linkage and perturbation sensitivity | NHIS–LMF | Linkage: one discrete alternative fit, not draws, with NHIS weights replaced by the original sample-adult weight and ineligible persons dropped; the fit reports its conformance, and it does not gate. Perturbation: **[open]**, because public data cannot assess it. NCHS substituted synthetic data "for follow-up time or underlying cause of death for select records" and did not perturb vital status (LMF description p. 1), and the public data dictionary flags none of the altered records, so no public alternative can isolate the effect. The three closure routes below govern it; use of restricted-use linked files would first need an amendment to their exclusion (§3.4). Every NHIS target, every comparison using NHIS and every joint-fit product carries "public-file perturbation not assessed". Public data cannot size this component, so it enters no numeric bound; the dependency rule below carries it into verdicts. X-R1, which recodes `HISPAN_I` 10 and 11, is a crosswalk sensitivity (§8.2), not part of U4 |
 
-**What OACT's open U2 means [frozen here].** S0.1 keeps a target whose
-source does not publish the uncertainty it needs "open or inconclusive",
-and it lets no complete-count rate count as free of uncertainty (audit
-lines 661–669). Every Monte Carlo draw refits the model to that draw's
-targets (§9.4), so a source's random variation moves target and fit
-together, but it still reaches an e65 residual through capping,
-composition and tails. Leaving OACT's term out would narrow the earnings
-e65 bounds and make passing easier, so this record applies S0.1's rule:
+**Component and residual dependencies [frozen here, coordinator's r2
+ruling].** Treat LMF perturbation and OACT random variation component by
+component and residual by residual. Separate reporting exempts neither
+component when a required bound needs it. S0.1's rule (audit lines
+661–669) keeps those members inconclusive until their components close;
+a point residual outside tolerance still fails. Do not instead mark an
+uncertain input target inconclusive merely because it is an input.
 
-- **Every OACT e65 member is inconclusive while the component stays
-  open.** The 150 members of e65 by earnings quintile (§9.4) cannot pass:
-  one whose point residual lies inside ±0.1 year is inconclusive, and one
-  whose point residual lies outside fails (§9.5). The component closes
-  only when OACT's deaths or exposure by sex × band × quintile × year
-  reach the project, through a recorded amendment (§11.1).
-- **What that stops.** Under §9.5 an inconclusive member makes lifetime
-  earnings inconclusive, and `WEAK_POWER_OR_VACUITY` blocks that
-  dimension's admission (§10). SM2 passes as a whole only when all three
-  dimensions pass, so **SM2 cannot earn admission while this item stays
-  open**. The fit still runs every step and publishes every member's
-  residual and bound (except what §11.5 withholds for an NHIS target
-  below a floor), and each dimension's status, so education and race
-  and Hispanic origin carry verdicts of their own.
-- **The OACT contrast members keep their verdicts.** Each draw refits to
-  its own targets, so a contrast member checks the reconstruction (§9.4);
-  OACT's random variation does not enter its residual.
-- **A Poisson sensitivity, reported and never a verdict.** Beside each
-  OACT e65 member, the fit reports a bound with an added Poisson term:
-  at each single age of a band, expected deaths equal the target's
-  probability times one fifth of that age's Social Security recipients of
-  that sex in `R_ref(t)`. It carries the label "likely understates OACT's
-  random variation", because `R_ref`'s recipients include beneficiaries
-  that OACT's population leaves out (M-E4), which overstates exposure. It
-  changes no verdict.
-- **Two labels stay.** The lifetime-earnings coefficient intervals that
-  SM2 hands to SM3 and SM4 carry "OACT random variation not included",
-  and the Study 129 versus Study 124 comparison, which the fit reports,
-  cannot trigger `GRADIENT_SOURCES_INCONSISTENT` (§10).
+- **Every derived earnings e65 and every derived race/Hispanic-origin
+  e65 member needs both components, absent a reviewed invariance proof.**
+  The 150 earnings members and 120 race members (§9.4) use
+  `q_F,g = q_base h_g / h_all`, and `h_g` averages the jointly normalized
+  risks. The joint system is `F(β, w) = T_E,T_D,T_R` (§6.3), so locally
+  `dβ = J⁻¹ dT` when the rank checks pass. The shared normalization and
+  non-product `w(k,d,r)` give cross-dimension derivatives: a change in
+  OACT's earnings targets can change race `h_g` with the race targets
+  fixed. NHIS perturbation changes exposure, attained-age allocation and
+  its fitted hazard targets (§4.5; LMF description p. 1); their change
+  can change earnings single-age `h_g` while its band target stays fixed.
+  A band-average constraint does not fix its single-age probabilities,
+  and the e65 recursion uses those probabilities separately (§9.2).
+  Race e65 has a direct NHIS dependency for the other group too. Thus
+  neither freezing the other target nor reporting a component separately
+  removes the joint dependency. The one-age and two-age invented
+  fixtures in §11.7 exhibit the two directions; they prove no invariance.
+- **Contrasts keep their reconstruction verdicts under one condition.**
+  A successful refit must use exactly the same perturbed target on both
+  sides of its reconstruction residual, at every imposing knot. Then
+  `F_k(β*) − T_k = 0` to the fixed solver tolerance, for NHIS and OACT
+  alike, and either missing component cancels from that residual. The
+  same condition applies to NCHS reconstruction contrasts. Missing age
+  identification, failed support/rank, a failed refit, an unmatched
+  perturbation on the two sides or a changed estimand removes this
+  exemption: keep the member in the family, label it unresolved under
+  `SOURCE_UNAVAILABLE`/open identification or fail under
+  `GATE_FAIL_OR_REGRESSION_FAIL` when the point residual fails. Never
+  assume cancellation for an e65 residual.
+- **Exactly three closure routes, by component and residual.** Before
+  any outcome, a recorded amendment may (1) use uncertainty the source
+  publishes, (2) use deaths or exposure the project obtains sufficient
+  to construct the needed uncertainty, or (3) cite a reviewed invariance
+  proof that removes the component's dependency from that residual over
+  the full registered domain, including normalization, capping and
+  tails. For OACT, (1) needs uncertainty/covariance for the fitted
+  sex × band × quintile × year targets and derived bounds; (2) needs
+  their death or exposure counts and the corresponding rate/exposure
+  information; (3) must cover indirect race effects as well as any
+  claimed earnings invariance. For LMF, (1) needs NCHS information sizing
+  follow-up-time perturbation with shared-target dependence; (2) needs
+  unperturbed deaths/exposures or a documented aggregate counterpart
+  that identifies that component. Public totals alone do not separate
+  synthetic follow-up. Restricted-use linked files remain excluded;
+  that route would first need the exclusion amended. Route (3) must
+  cover event exposure, attained age and both directions of joint
+  propagation for each residual it exempts. An amendment names the
+  person who chose the route, when they chose it and its evidence.
+- **Run and publish while components stay open.** The fit does not wait
+  for closure: run the supported steps and publish the residuals,
+  numeric bounds conditional on included components, all omitted-component
+  labels, and each dimension's status, subject to §4.5's identification
+  limit and §11.5's suppression. A closure obtained after those outcomes
+  cannot precede them: a verdict using it requires a new registered
+  version in the lane's attempt ledger under
+  `GATE_FAIL_OR_REGRESSION_FAIL`. Preserve the first attempt's published
+  verdicts and ledger entries; nothing replaces them. The new version
+  discloses which first-attempt residuals and bounds its authors had seen,
+  and records who chose the closure route and when.
+- **Consequence and hand-on.** Lifetime earnings, race and Hispanic
+  origin, and SM2 as a whole cannot pass until every member's needed
+  components close. Education keeps its separate reconstruction-conformance
+  status, subject to every other rule, including the 85+ age limit.
+  Every coefficient interval handed to SM3/SM4 names **both** omitted
+  components: "OACT random variation not included" and "public-file
+  perturbation not assessed", with any residual-specific invariance
+  exemption named. **Reading for the next review:** an inconclusive SM2
+  still hands on these labeled intervals; the scopes of
+  `WEAK_POWER_OR_VACUITY` and `GATE_FAIL_OR_REGRESSION_FAIL` stay as §10
+  states them. This reading authorizes no use that a failed gate blocks.
+- **OACT Poisson sensitivity only.** Beside every affected e65 member,
+  report a bound adding Poisson variation with expected deaths equal to
+  the target probability times one fifth of that age's Social Security
+  recipients of that sex in `R_ref(t)`, labeled "likely understates OACT's
+  random variation": those recipients include beneficiaries OACT excludes
+  (M-E4). It closes no component and changes no verdict. Study 129 versus
+  Study 124 lacks this uncertainty too; report it without triggering
+  `GRADIENT_SOURCES_INCONSISTENT` until its needed component closes.
 
 **The engine.**
 
@@ -1397,17 +1560,44 @@ e65 bounds and make passing easier, so this record applies S0.1's rule:
   value: the `q3` RMR enters four contrasts; an NH white `qx` enters two
   race contrasts and every race e65 target; an ACS replicate enters the
   reference population and NCHS's denominators together.
-- **The simultaneous bound.** `r̂_k ± z × SD_k`, with
-  `z = Φ⁻¹(1 − 0.025 / 6,884) ≈ 4.486`, the two-sided 95 percent
-  Bonferroni bound over the family (§9.4). If a member's Monte Carlo
-  draws have skewness above 1 in absolute value, its bound uses the
-  first-order Cornish–Fisher quantile `z + (z² − 1) γ / 6` in place of `z`.
-- **Monte Carlo error.** For each member, the Monte Carlo standard error
-  of the bound's half-width, `z × SD_MC,k / sqrt(2(B − 1))`, must stay under
-  one tenth of the member's tolerance `τ_k`: less than 0.01 year for e65,
-  and less than `ε / 10` for a contrast. If it is not, `B` doubles, up to
-  32,000; if the rule still fails, the member is inconclusive. Tier A has
-  no simulation error.
+- **Separate endpoints and approximation guard.** For each member set
+  `z = Φ⁻¹(1 − 0.025 / 6,884) ≈ 4.486`, `γ` to the sample skewness
+  of its Monte Carlo residuals, and `S = sqrt(Var_MC + Var_ACS)`.
+  For each `u ∈ {−z, +z}`, set `c(u, γ) = u + (u² − 1)γ/6`.
+  The lower endpoint is `r̂ + S c(−z, γ)`; the upper endpoint is
+  `r̂ + S c(+z, γ)`. Always compute both; never use one corrected
+  quantile as a symmetric half-width. For exactly constant Monte Carlo
+  residuals take `γ = 0`; keep any ACS variance in `S`.
+  Freeze the validity guard to finite inputs, `|γ| z < 3`, and explicit
+  `c(−z, γ) < 0 < c(+z, γ)` and lower ≤ upper. The skewness guard
+  makes the first-order quantile map strictly increasing throughout
+  `[−z, z]`, since its derivative is `1 + γu/3`. This is an operational
+  domain for the approximation, not a coverage theorem. Outside it a
+  member is inconclusive, never a pass; do not clip or reorder endpoints.
+  **First-order Cornish–Fisher alone does not establish nominal
+  Bonferroni coverage.** These are approximate, component-conditional
+  residual bounds using the nominal 95 percent Bonferroni allocation,
+  under the registered resampling and mapping assumptions. They claim
+  propagation of the included components under that approximation, not
+  certified 95 percent repeated-sample family coverage. A claim that
+  requires nominal coverage remains open unless a reviewed pre-outcome
+  coverage argument justifies it; the approximation alone cannot confer
+  that claim or a pass requiring it. Report the guard and this limitation
+  with each bound. Missing-component rules below apply independently.
+- **Monte Carlo error of each endpoint.** Use a delete-one-draw
+  jackknife, recomputing `S`, `γ` and `c` with ACS variance fixed, for
+  lower and upper separately. For endpoint `E`, with leave-one-out
+  endpoints `E_(b)` and their mean `Ē`,
+  `SE_MC(E) = sqrt((B − 1)/B × Σ_b (E_(b) − Ē)²)`.
+  This includes uncertainty in skewness and SD; `r̂` is the deterministic
+  point-fit residual and stays fixed. Every leave-one-out sample must
+  pass the same validity guard. Require **each** endpoint's SE below
+  `τ_k / 10`: less than 0.01 year for e65 and `ε / 10` for a contrast.
+  If either error exceeds its limit or a leave-one-out guard fails,
+  double `B`, up to 32,000. At exhaustion the member is inconclusive;
+  a full-sample validity failure is immediately inconclusive. Tier A
+  carries no simulation error. Point residuals outside tolerance fail
+  even when the procedure cannot establish endpoint validity or precision.
 
 ### 9.4 The critical family: 6,884 targets [frozen here]
 
@@ -1423,6 +1613,83 @@ e65 bounds and make passing easier, so this record applies S0.1's rule:
 | NHIS `other_non_hispanic` contrasts (M-R4): 5 bands × 2 sexes | 10 | ε |
 | **Total** | **6,884** | |
 
+**Machine-readable member groups.** These are the same eight groups,
+including every unavailable or unidentified member. Contrast kinds below
+mean the same-target successful-refit condition of §9.3. Counts here
+count quantities, never source table values.
+
+```json
+{"sm2_member_groups": [
+    {
+      "source": "OACT",
+      "dimension": "lifetime_earnings",
+      "kind": "oact_contrast",
+      "knots_or_ages": "63 observed band-years, 2010–2022; six bands 62–89; two sexes, four contrasts",
+      "count": 504
+    },
+    {
+      "source": "OACT",
+      "dimension": "lifetime_earnings",
+      "kind": "earnings_e65",
+      "knots_or_ages": "2010–2024; age 65; five quintiles, two sexes",
+      "count": 150
+    },
+    {
+      "source": "NCHS",
+      "dimension": "education",
+      "kind": "nchs_education_contrast",
+      "knots_or_ages": "2018–2022; four bands 25–64; two sexes, two contrasts",
+      "count": 80
+    },
+    {
+      "source": "NHIS",
+      "dimension": "education",
+      "kind": "nhis_education_contrast",
+      "knots_or_ages": "pooled; 65–74, 75–84, 85+; three contrasts, two sexes; six 85+ members unidentified",
+      "count": 18
+    },
+    {
+      "source": "NHIS",
+      "dimension": "education",
+      "kind": "nhis_split_contrast",
+      "knots_or_ages": "pooled; 25–64; two sexes",
+      "count": 2
+    },
+    {
+      "source": "NCHS",
+      "dimension": "race_hispanic_origin",
+      "kind": "nchs_race_contrast",
+      "knots_or_ages": "2010–2024; ages 0–99; two groups, two sexes",
+      "count": 6000
+    },
+    {
+      "source": "NCHS+NHIS",
+      "dimension": "race_hispanic_origin",
+      "kind": "race_e65",
+      "knots_or_ages": "2010–2024; age 65; four groups, two sexes",
+      "count": 120
+    },
+    {
+      "source": "NHIS",
+      "dimension": "race_hispanic_origin",
+      "kind": "nhis_other_contrast",
+      "knots_or_ages": "pooled; 25–44, 45–64, 65–74, 75–84, 85+; two sexes; two 85+ members unidentified",
+      "count": 10
+    }
+  ]
+}
+```
+
+- **Component eligibility.** Each of the 150 earnings e65 and 120 race
+  e65 members needs both OACT random variation and LMF perturbation
+  through §9.3's joint dependency rule, until a recorded closure or
+  reviewed residual-specific invariance amendment removes that need.
+  Successful same-target reconstruction contrasts retain their verdicts;
+  unavailable ages/inputs and point failures still cannot pass. Publish
+  supported residuals and component-labeled bounds while components stay
+  open. A closure after outcomes requires the new registered ledger
+  version of §9.3, preserving first verdicts. Section 9.7 computes counts
+  with other issues resolved, without changing this family.
 - **Joint-survey targets.** The 30 NHIS targets are in the family; they
   are the only targets whose estimates this project computes from survey
   records. NCHS's education rates also rest on a survey, through their
@@ -1434,8 +1701,9 @@ e65 bounds and make passing easier, so this record applies S0.1's rule:
   each knot's is a member.
 - **What the contrast members test.** For a contrast, the residual is the
   model-implied contrast minus the draw's target after that draw's refit.
-  Because §6.3's system has as many equations as unknowns, a contrast
-  member shows whether every refit reproduces its targets: a
+  Under §6.3's support/rank checks and the same-target successful-refit
+  condition (§9.3), a contrast member shows whether every refit
+  reproduces its targets: a
   reconstruction check. The
   e65 members compare two different constructions (the model on the
   reference population against the source's ratios on the baseline), so
@@ -1447,8 +1715,9 @@ e65 bounds and make passing easier, so this record applies S0.1's rule:
   Hispanic-origin e65 members also test the model's tail against NCHS's:
   their targets close the "100 and older" interval as NCHS does, while the
   model keeps the repository's closing (§9.2).
-- **What the contrast members cost.** The 6,614 contrast members cannot
-  fail by chance, yet they raise the Bonferroni constant for the 270 e65
+- **What the contrast members cost.** The 6,614 contrast members under the same-target successful-refit
+  condition carry no residual source uncertainty; numerical failure and
+  identification limits still apply. Their inclusion raises the Bonferroni constant for the 270 e65
   members from `Φ⁻¹(1 − 0.025 / 270) ≈ 3.738` to about 4.486, which makes
   those bounds about 20 percent wider; the family still follows S0.1's
   definition (audit lines 657–659), and this record leaves it unchanged.
@@ -1461,8 +1730,9 @@ SM2 earns admission, labeled "calibrated, not validated", only if all
 of these hold:
 
 1. every tier A check passes (§9.1);
-2. every one of the 6,884 members has its simultaneous bound inside
-   `±τ_k`, with the Monte Carlo rule met (§9.3);
+2. every one of the 6,884 members has its residual bound inside `±τ_k`,
+   with §9.3's endpoint validity/error and needed-component requirements
+   met; an approximation alone cannot establish required nominal coverage;
 3. every invariant of §9.6 holds;
 4. no condition in §10 blocks.
 
@@ -1473,10 +1743,19 @@ and OACT contrasts: lifetime earnings; education contrasts: education;
 race contrasts, race e65 and `other_non_hispanic`: race and Hispanic
 origin). **A bound too wide to judge never passes.** The record publishes
 each dimension's status; SM2 passes as a whole only when all three pass,
-because SM1 needs all three. While OACT's random-variation component
-stays open, every e65 member by earnings quintile is inconclusive or
-fails whatever its computed bound (§9.3), so lifetime earnings cannot
-pass, and neither can SM2 as a whole.
+because SM1 needs all three. Every derived earnings and race e65 member
+needs OACT random variation and LMF perturbation through the joint fit,
+unless a reviewed invariance amendment removes that dependency (§9.3).
+While either needed component stays open, such a member is inconclusive
+or fails whatever its numeric bound, so lifetime earnings, race and
+Hispanic origin, and SM2 cannot pass. Education retains its own
+reconstruction-conformance status subject to all other findings; §4.5's
+six education and two race 85+ members cannot pass under option (b).
+Every failed, unavailable or unidentified member stays in the 6,884-member
+conjunction. Endpoint invalidity or inadequate endpoint precision cannot
+turn an inconclusive member into a pass. A disagreement trigger removes
+competing sources from fitted roles as §10 requires; that removal never
+shrinks the family or earns admission.
 
 ### 9.6 Invariants (design §6)
 
@@ -1486,7 +1765,8 @@ pass, and neither can SM2 as a whole.
   the uniform-deaths convention the module applies at every other age
   (`life_table.py:13`); `f0` moves only `L0` and `e0` (lines 143 and
   173–177), which no SM2 quantity reads; survivorship and
-  person-years are nonnegative and nonincreasing with age; changing the
+  remaining person-years `Tx` are nonnegative and nonincreasing with age;
+  interval person-years `Lx` are nonnegative; changing the
   radix changes no life expectancy; raising any `q` cannot raise life
   expectancy at an earlier age (`life_table.py:39–51`).
 - **Registered ordering.** For each sex and knot: if the earnings e65
@@ -1504,6 +1784,258 @@ pass, and neither can SM2 as a whole.
 - **SM1.** Each table passes `RelativeRiskSpec`; SM1's cell conservation
   holds on `R_ref` at every knot; SM1's own test modules pass unchanged.
 
+### 9.7 Eligibility while components stay open
+
+These count **eligibility to pass**, considering each component with all
+other issues resolved, including age identification, source availability,
+endpoint validity and the same-target successful-refit condition. Actual
+point failures remain failures. No real-data verdict enters these counts.
+They follow §9.3's needed-bound rule, not an input-target override.
+Option (b)'s eight unidentified 85+ contrasts remain in the member list;
+they cannot pass the actual conjunction (§9.5), but these component-only
+counts resolve that separate issue by definition.
+
+<!-- sm2-eligibility-table:start -->
+| Open component(s) | Dimension | Cannot pass | Still eligible |
+|---|---|---:|---:|
+| OACT random variation | lifetime_earnings | 150 | 504 |
+| OACT random variation | education | 0 | 100 |
+| OACT random variation | race_hispanic_origin | 120 | 6010 |
+| OACT random variation | **Total** | **270** | **6614** |
+| LMF perturbation | lifetime_earnings | 150 | 504 |
+| LMF perturbation | education | 0 | 100 |
+| LMF perturbation | race_hispanic_origin | 120 | 6010 |
+| LMF perturbation | **Total** | **270** | **6614** |
+| OACT random variation + LMF perturbation | lifetime_earnings | 150 | 504 |
+| OACT random variation + LMF perturbation | education | 0 | 100 |
+| OACT random variation + LMF perturbation | race_hispanic_origin | 120 | 6010 |
+| OACT random variation + LMF perturbation | **Total** | **270** | **6614** |
+<!-- sm2-eligibility-table:end -->
+
+The generator reads §9.4's member groups from the path argument and
+stores no family or dimension count in code. Its dependency function uses
+source, dimension and kind. The test states its case table separately
+from §9.3's prose: reconstruction contrasts need neither component under
+the cancellation condition; both e65 kinds need both components. It
+checks exact table reproduction and family total, every subset's
+partition by dimension, monotonicity when components close, the union of
+barred members, contrast cancellation, every kind's dependencies, and
+Hypothesis-drawn invented lists against member-by-member enumeration.
+Hypothesis uses no database or deadline and omits `Phase.explain`.
+
+**CI does not run these blocks.** Any amendment to the member list must
+extract and rerun them. From the repository root the exact extraction
+command is:
+
+```bash
+.venv/bin/python -I -B - <<'PYEXTRACT'
+from pathlib import Path
+import re
+record = Path('docs/design/mortality_ses_sm2_freeze.md').read_text()
+out = Path('.sm2-fix2-scratch/eligibility')
+out.mkdir(parents=True, exist_ok=True)
+pattern = r'^```python\n(# sm2-eligibility: (generator|test)\n.*?)^```$'
+blocks = {kind: code for code, kind in re.findall(pattern, record, re.M | re.S)}
+assert set(blocks) == {'generator', 'test'}
+for kind, name in [('generator', 'eligibility.py'), ('test', 'test_eligibility.py')]:
+    (out / name).write_text(blocks[kind])
+PYEXTRACT
+```
+
+Then, from `.sm2-fix2-scratch/eligibility/`, run:
+
+```bash
+../../.venv/bin/python -I -B -m pytest -q -p no:cacheprovider --noconftest -c /dev/null --rootdir=. --basetemp=../pt test_eligibility.py
+```
+
+```python
+# sm2-eligibility: generator
+import json
+import re
+import sys
+from pathlib import Path
+
+COMPONENTS = ("OACT random variation", "LMF perturbation")
+DIMENSIONS = ("lifetime_earnings", "education", "race_hispanic_origin")
+
+
+def dependencies(source, dimension, kind):
+    """Same-target successful-refit reconstruction contrasts only."""
+    contrasts = {
+        ("OACT", "lifetime_earnings", "oact_contrast"),
+        ("NCHS", "education", "nchs_education_contrast"),
+        ("NHIS", "education", "nhis_education_contrast"),
+        ("NHIS", "education", "nhis_split_contrast"),
+        ("NCHS", "race_hispanic_origin", "nchs_race_contrast"),
+        ("NHIS", "race_hispanic_origin", "nhis_other_contrast"),
+    }
+    if (source, dimension, kind) in contrasts:
+        return frozenset()
+    if (source, dimension, kind) in {
+        ("OACT", "lifetime_earnings", "earnings_e65"),
+        ("NCHS+NHIS", "race_hispanic_origin", "race_e65"),
+    }:
+        return frozenset(COMPONENTS)
+    raise ValueError("Unregistered member kind/source/dimension")
+
+
+def read_groups(path):
+    record = Path(path).read_text()
+    match = re.search(r"```json\n(\{\"sm2_member_groups\".*?\})\n```", record, re.S)
+    groups = json.loads(match.group(1))["sm2_member_groups"]
+    for group in groups:
+        if not isinstance(group["count"], int) or group["count"] < 0:
+            raise ValueError("Invalid member count")
+        dependencies(group["source"], group["dimension"], group["kind"])
+    return groups
+
+
+def grouped_counts(groups, opened):
+    counts = {dimension: [0, 0] for dimension in DIMENSIONS}
+    for group in groups:
+        needs = dependencies(group["source"], group["dimension"], group["kind"])
+        barred = bool(needs & set(opened))
+        counts[group["dimension"]][0 if barred else 1] += group["count"]
+    return counts
+
+
+def markdown(groups):
+    lines = ["| Open component(s) | Dimension | Cannot pass | Still eligible |",
+             "|---|---|---:|---:|"]
+    scenarios = [(component,) for component in COMPONENTS] + [COMPONENTS]
+    for opened in scenarios:
+        label = " + ".join(opened)
+        counts = grouped_counts(groups, opened)
+        for dimension, (barred, eligible) in counts.items():
+            lines.append(f"| {label} | {dimension} | {barred} | {eligible} |")
+        barred = sum(pair[0] for pair in counts.values())
+        eligible = sum(pair[1] for pair in counts.values())
+        lines.append(f"| {label} | **Total** | **{barred}** | **{eligible}** |")
+    return "\n".join(lines) + "\n"
+
+
+if __name__ == "__main__":
+    print(markdown(read_groups(sys.argv[1])), end="")
+```
+
+```python
+# sm2-eligibility: test
+import importlib.util
+import itertools
+import re
+from pathlib import Path
+
+import pytest
+from hypothesis import Phase, given, settings, strategies as st
+
+HERE = Path(__file__).resolve().parent
+RECORD = HERE.parent.parent / "docs/design/mortality_ses_sm2_freeze.md"
+spec = importlib.util.spec_from_file_location("sm2_eligibility", HERE / "eligibility.py")
+generator = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(generator)
+OACT, LMF = "OACT random variation", "LMF perturbation"
+# Independent case table from §9.3's prose, one row per member kind.
+CASES = [
+    ("OACT", "lifetime_earnings", "oact_contrast", ()),
+    ("OACT", "lifetime_earnings", "earnings_e65", (OACT, LMF)),
+    ("NCHS", "education", "nchs_education_contrast", ()),
+    ("NHIS", "education", "nhis_education_contrast", ()),
+    ("NHIS", "education", "nhis_split_contrast", ()),
+    ("NCHS", "race_hispanic_origin", "nchs_race_contrast", ()),
+    ("NCHS+NHIS", "race_hispanic_origin", "race_e65", (OACT, LMF)),
+    ("NHIS", "race_hispanic_origin", "nhis_other_contrast", ()),
+]
+EXPECTED = {case[:3]: set(case[3]) for case in CASES}
+SUBSETS = [set(subset) for size in range(3)
+           for subset in itertools.combinations((OACT, LMF), size)]
+
+
+def enumerate_members(groups, opened):
+    counts = {dimension: [0, 0] for dimension in generator.DIMENSIONS}
+    for group in groups:
+        needs = EXPECTED[group["source"], group["dimension"], group["kind"]]
+        for _ in range(group["count"]):
+            counts[group["dimension"]][0 if needs.intersection(opened) else 1] += 1
+    return counts
+
+
+def barred_ids(groups, opened):
+    return {(index, member) for index, group in enumerate(groups)
+            if generator.dependencies(group["source"], group["dimension"], group["kind"]) & opened
+            for member in range(group["count"])}
+
+
+def test_record_table_and_total():
+    record = RECORD.read_text()
+    groups = generator.read_groups(RECORD)
+    printed = record.split("<!-- sm2-eligibility-table:start -->\n", 1)[1].split(
+        "<!-- sm2-eligibility-table:end -->", 1)[0]
+    assert printed == generator.markdown(groups)
+    total = re.search(r"### 9\.4 The critical family: ([\d,]+) targets", record).group(1)
+    assert sum(group["count"] for group in groups) == int(total.replace(",", ""))
+
+
+@pytest.mark.parametrize("source,dimension,kind,expected", CASES)
+def test_dependency_cases(source, dimension, kind, expected):
+    assert generator.dependencies(source, dimension, kind) == set(expected)
+
+
+def test_every_subset_partition():
+    groups = generator.read_groups(RECORD)
+    totals = {dimension: sum(group["count"] for group in groups
+                             if group["dimension"] == dimension)
+              for dimension in generator.DIMENSIONS}
+    for opened in SUBSETS:
+        counts = generator.grouped_counts(groups, opened)
+        assert counts == enumerate_members(groups, opened)
+        for dimension, (barred, eligible) in counts.items():
+            assert barred + eligible == totals[dimension]
+
+
+def test_closing_monotonic_and_union():
+    groups = generator.read_groups(RECORD)
+    for opened in SUBSETS:
+        for closed in SUBSETS:
+            if closed <= opened:
+                assert barred_ids(groups, closed) <= barred_ids(groups, opened)
+                a = generator.grouped_counts(groups, closed)
+                b = generator.grouped_counts(groups, opened)
+                for dimension in generator.DIMENSIONS:
+                    assert a[dimension][0] <= b[dimension][0]
+    assert barred_ids(groups, {OACT, LMF}) == (
+        barred_ids(groups, {OACT}) | barred_ids(groups, {LMF}))
+    # Count the union member by member; catches intersection aggregation.
+    union = barred_ids(groups, {OACT}) | barred_ids(groups, {LMF})
+    counts = generator.grouped_counts(groups, {OACT, LMF})
+    for dimension in generator.DIMENSIONS:
+        assert counts[dimension][0] == sum(
+            groups[index]["dimension"] == dimension for index, _ in union)
+
+
+def test_contrasts_never_barred():
+    groups = [group for group in generator.read_groups(RECORD)
+              if group["kind"].endswith("_contrast")]
+    for opened in SUBSETS:
+        assert not barred_ids(groups, opened)
+        assert all(barred == 0 for barred, _ in generator.grouped_counts(groups, opened).values())
+
+
+@st.composite
+def invented_groups(draw):
+    cases = draw(st.lists(st.sampled_from(CASES), min_size=0, max_size=20))
+    return [dict(source=source, dimension=dimension, kind=kind,
+                 count=draw(st.integers(min_value=0, max_value=40)),
+                 knots_or_ages="invented") for source, dimension, kind, _ in cases]
+
+
+@settings(database=None, deadline=None,
+          phases=(Phase.explicit, Phase.generate, Phase.shrink))
+@given(invented_groups())
+def test_grouped_equals_enumeration(groups):
+    for opened in SUBSETS:
+        assert generator.grouped_counts(groups, opened) == enumerate_members(groups, opened)
+```
+
 ## 10. Named conditions
 
 This record fixes every fallback below now, before any outcome. **Nobody
@@ -1511,14 +2043,14 @@ tunes anything so that sources agree** (S0.1 §2.5, frozen).
 
 | Condition | Trigger for SM2 | What it stops | Fallback |
 |---|---|---|---|
-| `GRADIENT_SOURCES_INCONSISTENT` | Two comparable sources disagree beyond SM2's fit tolerance. "Comparable": the same SM category definitions and sex, overlapping ages, calendar windows that overlap at least half the shorter one, and populations that differ at most in institutional coverage. Assessed: (a) Study 129 against Study 124 at table years 1995–2015, bands 62–84; (b) NCHS life tables against NHIS–LMF for `hispanic` and `black_non_hispanic` at 25–84; (c) NCHS education for 2018 and 2019, the two fitted NCHS years inside NHIS's 2009–2019 window, against NHIS–LMF at 25–64, compared year by year as (b) compares, with NHIS's estimator (§4.5) run at attained ages 25–64 by sex and with `some_college` and `college` pooled into one category to match M-D2. Not assessed: OACT against Cristia (different years, ages and earnings measures), and `other_non_hispanic` against the partial composite (different groups). Metric: the difference in temporary life expectancy over the pair's shared ages, each built by applying the source's ratios to the TR 2026 baseline of the year compared: for (a), from 62 to the top of the year's oldest band printed in both studies, per table year, sex and quintile (5 × 2 × 5 = 50 comparisons); for (b), from 25 to 85, per NCHS year 2010–2019, sex and group (10 × 2 × 2 = 40); for (c), from 25 to 65, per NCHS year, sex and contrast (`less_than_high_school` and `some_college_or_more`, each against `high_school`; 2 × 2 × 2 = 8). NHIS's hazard ratios act on the baseline's hazard, `q = 1 − (1 − q_base)^HR` (M-D4's constant-force mapping). Triggered when a comparison's simultaneous 95 percent bound, Bonferroni over these 98 comparisons (`z = Φ⁻¹(1 − 0.025 / 98) ≈ 3.475`), excludes ±0.1 year | Nothing about SM2's admission. OACT stays primary for earnings and NCHS for race and for education at 25–64; the other source of each pair keeps its role beside the fit (§3.6), and (c)'s pooled-category NHIS estimate serves this comparison only; the fit's report publishes the disagreement. A triggered (b) or (c) leaves NHIS's fitted roles (education at 65+, the `college`/`some_college` split and `other_non_hispanic`) in the fit, each labeled "NHIS disagrees with NCHS at overlapping ages", with the triggering comparisons named beside them, and nobody tunes anything to make the sources agree. Pair (a) has no random-variation term (§9.3), so the fit reports a disagreement it finds and it does not trigger | None needed |
-| `SOURCE_UNAVAILABLE` | (i) The digitization fails validation, or the digitizer cannot read a figure; (ii) an NHIS or LMF file is missing or its hash differs; (iii) an ACS year is missing; (iv) the ordered logit does not converge for some knot, sex or ACS replicate (§6.2); (v) any source file's hash differs from §13 or the fit job's manifest (the ACS documents of §13.6 follow §6.2's text rule instead); (vi) no ACS year's income-item documents pass §6.2's acceptance rule; (vii) an NCHS report or table file that §3 lists is missing | (i) P-PRIMARY, and with it SM2's admission; (ii) admission of education and race; (iii) one missing year: nothing, the knot uses the nearest observed ACS year, the earlier one on a tie, labeled; two or more: SM2's admission; (iv) JR-C, and with it SM2's admission; (v) the run; (vi) JR-C, and with it SM2's admission (a year that fails alone only borrows `λ`, labeled, §6.2); (vii) one missing year of a dimension: nothing, that year counts as unobserved under §7.5's rule (the knot takes the latest observed year at or before it; a knot before the first observation takes that first observation), labeled; its contrast members leave the family, and `z` keeps the frozen family size of §9.4; two or more missing years of one dimension: that dimension's admission, and with it SM2's | (i) P-TABLE, computed and published labeled, never substituted; the Q6 question goes to Max (§12). (ii) T-D1 for education at 65+, Cristia's conditional `college`/`some_college` contrast for the split, T-R2 for `other_non_hispanic` at 2019–2024, with knots 2010–2018 taking the 2019 composite by §7.5's hold-first rule, labeled "partial group, held back from 2019", so no knot falls to a default zero; all labeled, none admitted. (iv) and (vi) JR-B, labeled, not admitted |
+| `GRADIENT_SOURCES_INCONSISTENT` | Two comparable sources disagree beyond SM2's fit tolerance. "Comparable": the same SM category definitions and sex, overlapping ages, calendar windows that overlap at least half the shorter one, and populations that differ at most in institutional coverage. Assessed: (a) Study 129 against Study 124 at table years 1995–2015, bands 62–84; (b) NCHS life tables against NHIS–LMF for `hispanic` and `black_non_hispanic` at 25–84; (c) NCHS education for 2018 and 2019, the two fitted NCHS years inside NHIS's 2009–2019 window, against NHIS–LMF at 25–64, compared year by year as (b) compares, with NHIS's estimator (§4.5) run at attained ages 25–64 by sex and with `some_college` and `college` pooled into one category to match M-D2. Not assessed: OACT against Cristia (different years, ages and earnings measures), and `other_non_hispanic` against the partial composite (different groups). Metric: the difference in temporary life expectancy over the pair's shared ages, each built by applying the source's ratios to the TR 2026 baseline of the year compared: for (a), from 62 to the top of the year's oldest band printed in both studies, per table year, sex and quintile (5 × 2 × 5 = 50 comparisons); for (b), from 25 to 85, per NCHS year 2010–2019, sex and group (10 × 2 × 2 = 40); for (c), from 25 to 65, per NCHS year, sex and contrast (`less_than_high_school` and `some_college_or_more`, each against `high_school`; 2 × 2 × 2 = 8). NHIS's hazard ratios act on the baseline's hazard, `q = 1 − (1 − q_base)^HR` (M-D4's constant-force mapping). Triggered when a comparison's simultaneous 95 percent bound, Bonferroni over these 98 comparisons (`z = Φ⁻¹(1 − 0.025 / 98) ≈ 3.475`), excludes ±0.1 year, using §9.3's separate endpoints, validity/error checks and coverage limitation with this comparison-family critical value | Apply S0.1's frozen consequence (audit 694–696; design 905): OACT stays primary and all competing sources become registered sensitivities. Remove NCHS and NHIS from every fitted role, including NHIS education 65+, the split and the other group. The required education/race targets then lack a fitted source: JR-C, those dimensions and SM2 stop under `SOURCE_UNAVAILABLE`, open identification. Keep every family member and publish the trigger and the stopped statuses. Pair (a) lacks its random-variation component (§9.3), so report its comparison without a trigger until that dependency closes | Competing-source products run only as labeled registered sensitivities; none supplies a fallback fitted role |
+| `SOURCE_UNAVAILABLE` | (i) The digitization fails validation, or the digitizer cannot read a figure; (ii) an NHIS or LMF file is missing or its hash differs; (iii) an ACS year is missing; (iv) the ordered logit does not converge for some knot, sex or ACS replicate (§6.2); (v) any source file's hash differs from §13 or the fit job's manifest (the ACS documents of §13.6 follow §6.2's text rule instead); (vi) no ACS year's income-item documents pass §6.2's acceptance rule; (vii) an NCHS report/table file that §3 lists is missing or fails its layout; (viii) unidentified NHIS open-band ages, invalid dates, failed support/rank/derivatives, failed family nesting or a full-sample singleton (§4.5, §6.3, §9.3); or the disagreement consequence removes a required fitted source | (i) P-PRIMARY, and with it SM2's admission; (ii) admission of education and race; (iii) one missing year: nothing, the knot uses the nearest observed ACS year, the earlier one on a tie, labeled; two or more: SM2's admission; (iv) JR-C, and with it SM2's admission; (v) the run; (vi) JR-C, and with it SM2's admission (a year that fails alone only borrows `λ`, labeled, §6.2); (vii) any missing required NCHS year blocks its dimension and SM2: every missing contrast stays in the family, inconclusive, and every dependent e65 stays inconclusive. In particular a missing frozen last-observed source cannot shift Q6 to an earlier year. This tighter rule removes fix round 1's interior-year admission fallback as well. (viii) the affected estimator/knot/replicate and dimension, JR-C when it cannot form a complete table, and SM2; no dropping members or rank-deficient columns | (i) P-TABLE, computed and published labeled, never substituted; the Q6 question goes to Max (§12). (ii) T-D1 for education at 65+, Cristia's conditional `college`/`some_college` contrast for the split, T-R2 for `other_non_hispanic` at 2019–2024, with knots 2010–2018 taking the 2019 composite by §7.5's hold-first rule, labeled "partial group, held back from 2019", so no knot falls to a default zero; all labeled, none admitted. (iv) and (vi) JR-B, labeled, not admitted. (vii) an earlier-year product only as a labeled sensitivity pending an amendment; Q6's primary stays frozen. (viii) §4.5/§10's supported estimates and diagnostic sensitivities only, with no admitted complete primary; none retains a competing source in a fitted role after disagreement |
 | `EXPOSURE_UNRESOLVED` | Any report calls a comparison with a source reported beside the fit out of sample or a holdout, or describes a later role as blind to these sources | That claim | None: every SM2 source is an exposed target (§1) |
 | `FRAME_ATTRIBUTE_MISSING` | A frame that would use SM2's coefficients lacks a dimension's column; the Microcosm frame lacks education (design §7.2) | Use of the coefficients on that frame; closed-cohort work continues, labeled | None. The reference population's missing lifetime earnings is a declared proxy (§6.2), not this condition |
 | `SMALL_CELL_DISCLOSURE` | A published aggregate from NHIS or ACS microdata rests on fewer than 100 unweighted persons, or a published death-based cell on fewer than 20 deaths (§11.5) | Publication of that artifact until the writer suppresses the cell and any complement that reveals it | Suppression |
 | `CELL_CONSERVATION_BROKEN` | SM1's cell log on `R_ref` at any knot shows an infeasible cell, or a feasible cell that does not conserve deaths | SM2's admission | None |
-| `GATE_FAIL_OR_REGRESSION_FAIL` | A tier A check fails; a family member's point residual lies outside `±τ`; a knot's calibration fails to converge or converges to two solutions (§6.3); an invariant fails; an SM1 test regresses | SM2's admission and everything resting on it: SM3's registration on these coefficients and SM4's use of them. The fit publishes the result with no seed selection and no tolerance relief; a new attempt needs a new registered version and enters the lane's attempt ledger (design §8) | None |
-| `WEAK_POWER_OR_VACUITY` | A family member is inconclusive (§9.5), which includes every OACT e65 member while OACT's random-variation component stays open (§9.3); or a report presents the contrast members' pass, which reproduces inputs by construction, as evidence that the gradients are right | The affected dimension's admission, and with it SM2's admission as a whole (§9.5); the claim | None. SM2 makes no 0.90-power claim (S0.1 §2.5). The fit still publishes every residual, bound and dimension status, except what §11.5 withholds |
+| `GATE_FAIL_OR_REGRESSION_FAIL` | A tier A check fails; a family member's point residual lies outside `±τ`; a knot's calibration fails to converge or its prescribed starts disagree (§6.3); an invariant fails; an SM1 test regresses | SM2's admission and everything resting on it: SM3's registration on these coefficients and SM4's use of them. The fit publishes the result with no seed selection and no tolerance relief; a new attempt needs a new registered version and enters the lane's attempt ledger (design §8) | None |
+| `WEAK_POWER_OR_VACUITY` | A family member is inconclusive (§9.5), which includes each derived earnings or race e65 member while either needed OACT/LMF component stays open, and each unidentified 85+ member (§4.5, §9.3); or a report presents the contrast members' pass, which reproduces inputs by construction, as evidence that the gradients are right | The affected dimension's admission, and with it SM2's admission as a whole (§9.5); the claim | None. SM2 makes no 0.90-power claim (S0.1 §2.5). The fit still publishes every residual, bound and dimension status, except what §11.5 withholds |
 
 ## 11. Build plan
 
@@ -1584,8 +2116,10 @@ source's registry entry. Columns:
 | `table_or_figure`, `pdf_page`, `printed_page` | Locator |
 | `row_label`, `column_label`, `category_source` | Verbatim strings from the source |
 | `category_sm`, `sex`, `age_lower`, `age_upper`, `year` | Mapped keys (§8.2) |
-| `quantity` | One of `rmr`, `death_rate`, `qx`, `rate_per_100000`, `deaths`, `population`, `standard_error`, `odds_ratio`, `z_statistic`, `mortality_ratio` |
+| `quantity` | One of `rmr`, `death_rate`, `qx`, `rate_per_100000`, `deaths`, `population`, `standard_error`, `odds_ratio`, `z_statistic`, `mortality_ratio`, `lx`, `Tx` |
 | `printed_string`, `value`, `decimals`, `half_width` | The string as printed, its parsed value, its printed decimals and its printing (or digitization) half-width |
+| `age_interval`, `interval_width`, `age_label_printed` | `single_age`, `closed_band` or `open`; a positive width for a finite interval and null for open. An open interval has `age_upper = null`, `age_lower = 100` and the source's printed age-label string. Never encode it as an annual probability at age 100 |
+| `quantity_units`, `radix`, `provenance_id` | Units of `lx` and `Tx`, the table's radix identifier, and a link to the sidecar's source hash, page and transcription provenance. Pair `lx` and `Tx` only within the same table, sex, year, open interval and radix |
 | `method`, `reader_version` | `text_layer_a`, `text_layer_b` or `vector_digitized`, and the tool version |
 | `transcription_check`, `validation_residual` | Whether the two transcriptions agree; for digitized values, the residual at validation points |
 | `assumption_labels` | The §4–§7 labels that apply (for example `M-E2;BAND_BACKCAST_HOLD_FIRST`) |
@@ -1638,22 +2172,32 @@ every complement that would reveal them.
 | NHIS 2009–2018 data files | https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NHIS/ followed by the year | Not listed in this job; the fit job lists each year's folder and records the sample-adult and person file names, sizes and hashes |
 | NHIS 2009–2018 documentation | https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NHIS/ followed by the year, files `samadult_layout.pdf`, `personsx_layout.pdf`, `srvydesc.pdf` | 2009, 2016 and 2018 downloaded |
 | ACS 1-year PUMS person files, 2010–2024 | The Census Bureau's PUMS directory, https://www2.census.gov/programs-surveys/acs/data/pums/ followed by `<year>/1-Year/`; for 2020, the file with experimental weights under https://www2.census.gov/programs-surveys/acs/experimental/2020/data/pums/1-Year/, which the Census Bureau's 2020 experimental-PUMS page links | **Not checked**: no round fetched or listed a data directory. The fit job confirms each URL and records sizes and hashes before use |
-| ACS PUMS documentation, 2010–2024 | Data dictionaries under https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/ (`PUMSDataDict10.pdf` to `PUMSDataDict12.pdf`, `PUMSDataDict13.txt` to `PUMSDataDict16.txt`, then `PUMS_Data_Dictionary_<year>.txt`); subject definitions under https://www2.census.gov/programs-surveys/acs/tech_docs/subject_definitions/ (`<year>_ACSSubjectDefinitions.pdf`); top-coded values under https://www2.census.gov/programs-surveys/acs/tech_docs/pums/top_coded_values/. The 2020 1-year dictionary sits only under https://www2.census.gov/programs-surveys/acs/experimental/2020/documentation/pums/ (`PUMS_Data_Dictionary_2020.txt`) | Fix round 1 fetched every dictionary but 2020's, every subject-definitions file 2010–2024 and the 2024 top-coded values (§13.6). 2020's dictionary lay outside that round's cleared path; the fit job fetches it first (§8.2) |
+| ACS PUMS documentation, 2010–2024 | Data dictionaries under https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/ (`PUMSDataDict10.pdf` to `PUMSDataDict12.pdf`, `PUMSDataDict13.txt` to `PUMSDataDict16.txt`, then `PUMS_Data_Dictionary_<year>.txt`); subject definitions under https://www2.census.gov/programs-surveys/acs/tech_docs/subject_definitions/ (`<year>_ACSSubjectDefinitions.pdf`); top-coded values under https://www2.census.gov/programs-surveys/acs/tech_docs/pums/top_coded_values/. The 2020 1-year dictionary sits only under https://www2.census.gov/programs-surveys/acs/experimental/2020/documentation/pums/ (`PUMS_Data_Dictionary_2020.txt`) | Fix round 1 fetched every dictionary but 2020's, every subject-definitions file 2010–2024 and the 2024 top-coded values (§13.6). 2020's dictionary lay outside that round's cleared path; fix round 2 reads the lane's fetched copy and closes its code-list item (§8.2, §13.7) |
+| ACS 2020 experimental documentation: `PUMS_Data_Dictionary_2020.txt` | https://www2.census.gov/programs-surveys/acs/experimental/2020/documentation/pums/PUMS_Data_Dictionary_2020.txt | Lane-fetched copy; fix round 2 checked SHA-256 `eab88ac77bc2df8273409a85b841c9ea18879982f575eb15cedf6ee3c965e6e3`; §13.7 |
+| ACS 2020 experimental documentation: `ACS2020_PUMS_Variable_Changes_and_Explanations.pdf` | https://www2.census.gov/programs-surveys/acs/experimental/2020/documentation/pums/ACS2020_PUMS_Variable_Changes_and_Explanations.pdf | Lane-fetched copy; fix round 2 checked SHA-256 `698c4cb6dc09bb0191c12352b710939585e86d8993683cbcac49e1118f3acd24`; §13.7 |
+| ACS 2020 experimental documentation: `ACS2020_PUMS_Variable_Changes_and_Explanations.pdf.txt` | https://www2.census.gov/programs-surveys/acs/experimental/2020/documentation/pums/ACS2020_PUMS_Variable_Changes_and_Explanations.pdf | Lane-fetched copy; fix round 2 checked SHA-256 `a4d94973c3d4416b6e1dd9a871541b953377a99f3ef006b689a94213de24b9a4`; §13.7 |
 | TR 2026 death probabilities | Already in the repository behind `data/tr2026.death_probability` (S0.1 §1.1) | — |
 
 ### 11.7 Invariants for property-based tests (Hypothesis, invented data)
 
 - Printing intervals contain the printed point, widen as the half-width
   grows, and swapping the two values negates the interval.
-- `q = m / (1 + m/2)` and `q = 1 − exp(−μ)` increase, stay in `[0, 1)`
-  and invert exactly.
+- On generated finite `0 ≤ m < 2` and finite `μ ≥ 0` whose floating-point
+  conversion stays below one, `q = m / (1 + m/2)` and
+  `q = 1 − exp(−μ)` increase, stay in `[0, 1)` and invert within numerical
+  tolerance. Values `m ≥ 2` lie outside this property's domain.
 - Every completed table holds each category, sex and age 0–120 exactly
   once, with zero reference coefficients, and §5's rules reproduce the held
   values exactly.
 - **Calibration round trip:** invented coefficients and an invented
-  reference population generate targets, and §6.3 recovers the
+  reference population that passes the support/rank checks generate
+  targets, and §6.3 recovers the
   coefficients within `1 × 10⁻⁹`. With `λ = 0` and one dimension varying,
-  JR-C equals JR-A. Permuting rows, or scaling every weight by one
+  JR-C equals JR-A on identifiable fixtures only. The null-direction
+  fixture with perfectly coincident education/race membership and
+  coefficient shifts `(b, −b)` must fail the design/Jacobian rank check,
+  even when both starts coincide and all categories have support.
+  Permuting rows, or scaling every weight by one
   constant, changes no coefficient.
 - Each calibrated table passes `RelativeRiskSpec` and SM1's cell
   conservation on the invented population.
@@ -1685,6 +2229,40 @@ every complement that would reveal them.
   the log of that multiple for any positive weights `W` and any age mixes
   of the two categories. A companion example with invented values shows
   the crude ratio failing the same check when the age mixes differ.
+- **Endpoint checks (r2 M1):** use separate Cornish–Fisher endpoints for
+  invented skewness −1.2, −1.5 and +1.2; reject all three under §9.3's
+  validity guard, never accept a negative half-width, and test valid
+  small positive/negative skewness, ordering, each endpoint's jackknife
+  error and doubling/exhaustion outcome.
+- **Age-mix counterexample (r2 M2):** equal category hazards at two true
+  ages with unequal category age mixes must give zero category log ratio
+  from the single-age Poisson fit and from §4's implied value, within
+  numerical error. When the public age pools those ages, option (b) in
+  §4.5 leaves the affected required members unidentified/inconclusive;
+  no coarse-stratum estimate can pass them.
+- **Other-group target (r2 M3/M10):** carry an invented extraction with
+  printed `qx`, open `lx` and `Tx`, rounding widths and provenance
+  through constant-force conversion with a non-unit HR, source-total
+  division, baseline rescaling, cap, M-R7 and the whole e65 target.
+  Compare the direct sum with a separately seeded backward recursion;
+  never multiply source `qx` directly by HR. Reject incompatible radix
+  or open-interval provenance and missing `lx`/`Tx`.
+- **Joint dependencies (r2 M4):** in an invented one-age joint
+  earnings/race population hold the race hazard target fixed and vary
+  earnings; race marginal probabilities must change. In the review's
+  two-age fixture hold the earnings band target fixed and vary race;
+  earnings single-age probabilities must change. Both changes enter
+  e65 residuals; absent an invariance proof each derived member needs
+  both components under §9.3. Same-target successful-refit contrasts
+  still cancel for NHIS and OACT alike.
+- **Same-quarter deaths (r2 M5):** every invented valid interview/death
+  quarter, including equal quarters, has positive event exposure and a
+  finite Poisson log offset under M-H2 and H-TIME. Invalid chronology
+  stops rather than drops records or repairs dates.
+- **Nesting/singletons (r2 M9):** repeated household/family numbers in
+  different survey years never collide; a true within-year family
+  spanning PSUs fails nesting. A full-sample singleton must stop variance
+  estimation and cannot yield a passing zero variance.
 - The digitizer recovers known values from synthetic vector figures
   within the plotting tolerance and rejects a figure with inconsistent
   ticks.
@@ -1748,8 +2326,11 @@ This record amends none of Q4, Q5, Q6 or Q11.
 
 ### 13.1 Restricted lists
 
-The job read each with `sed -n 'a,bp'` in parts of at most 60 lines, every
-part shown in full, and opened no harness-saved copy of any of them.
+The job's stream records the parts below. It requested a maximum of 60
+lines but read one 61-line part: entry c, lines 61–121. This corrects the
+earlier blanket claim of at most 60. Its report says each part showed in
+full and it opened no harness-saved copy; the command-only trace cannot
+independently establish display completeness (§13.7).
 
 | File | SHA-256 | Parts |
 |---|---|---|
@@ -1757,7 +2338,7 @@ part shown in full, and opened no harness-saved copy of any of them.
 | `EV/coordinator/restricted-files-pending-20261024.md` | `4b4936f05955541d4ad8b09ecf35ff01d73df104b01ae06c3446122e815ab931` | 2 (1–105) |
 | `EV/coordinator/restricted-files-pending-20261025.md` | `9f78e02177b3591c58f7177179fdcb018d4daedf64b909e6dd6824e03e5972ac` | 1 (1–23) |
 | `EV/coordinator/restricted-files-pending-20261025b.md` | `0fb8ba87bd8098062b3a133a2e501c0394ac34716e8ee93f1fb749baabf35a69` | 1 (1–38) |
-| `EV/coordinator/restricted-files-pending-20261025c.md` | `8268e05c8f2e885aa114eb08391db13dc13ea78be503a582b015fda88738774b` | 2 (1–121) |
+| `EV/coordinator/restricted-files-pending-20261025c.md` | `8268e05c8f2e885aa114eb08391db13dc13ea78be503a582b015fda88738774b` | 2 (1–60; 61–121, the latter 61 lines) |
 | `EV/coordinator/restricted-files-pending-20261029.md` | `c405c38194a3a3535b275d84e458964b9f71ce50fd058339ac57c8c54e025609` | 1 (1–26) |
 
 `EV` is `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909`.
@@ -1873,8 +2454,11 @@ counts as exposed, like the first, and nothing from it feeds a blind role.
 **Restricted lists.** It read the six lists of §13.1 and a seventh,
 `EV/coordinator/restricted-files-pending-20261101.md`
 (`84ab3e1f4c5824a3fd97f8a742a293737deabc680d674724e7e6f2cf4dfc00f5`, 16
-lines), in parts of at most 30 lines, every part shown in full, and opened
-no harness-saved copy of any. All seven hashes matched its brief, and no
+lines). The round reported parts of at most 30 lines, every part shown
+in full, and no harness-saved copy opened. Its path-only `reads.md`
+confirms the seven paths, but records no part boundaries or sizes; fix
+round 2 cannot independently verify that size/display claim from it.
+All seven hashes matched its brief, and no
 newer pending file existed.
 
 **Documents fetched.** Thirty-five files on 3 November 2026, from
@@ -1981,3 +2565,142 @@ nothing on real data and computed no outcome. It also ran
 Those tests import repository modules beyond SM1's, though not
 `estimates/group_breakdown.py`, and the run displayed none of their
 content.
+
+### 13.7 Fix round 2 (7 November 2026)
+
+Codex (GPT-6) revised only this repository file for review r2. The job
+counts as exposed, opens no microdata, computes no real-data outcome,
+fetches nothing, and feeds no blind role. It leaves the working tree
+uncommitted because this lane's sandbox cannot write `.git`; the lane
+handles the commit and PR update. Scratch and the proposed PR body stay
+in `.sm2-fix2-scratch/`, outside the repository's tracked file set.
+
+**Restricted lists.** The job first read all eleven lists with visible
+`sed -n 'a,bp'` parts of at most 60 lines; it opened no saved output.
+Every hash matched the brief; no newer pending file existed. It applied
+all ten pending files, and none closed a permitted input.
+
+| File | SHA-256 | This round's parts |
+|---|---|---|
+| `EV/RESTRICTED-FILES.md` | `b09a2a56533b6880dd832135a60d315e171fa6850079940d8c1aee795f1a6351` | 15 nonempty parts (40 or 60 lines requested), plus one empty EOF read |
+| `EV/coordinator/restricted-files-pending-20261024.md` | `4b4936f05955541d4ad8b09ecf35ff01d73df104b01ae06c3446122e815ab931` | 2 parts (1–60, 61–120) |
+| `EV/coordinator/restricted-files-pending-20261025.md` | `9f78e02177b3591c58f7177179fdcb018d4daedf64b909e6dd6824e03e5972ac` | 1 part (1–60) |
+| `EV/coordinator/restricted-files-pending-20261025b.md` | `0fb8ba87bd8098062b3a133a2e501c0394ac34716e8ee93f1fb749baabf35a69` | 1 part (1–60) |
+| `EV/coordinator/restricted-files-pending-20261025c.md` | `8268e05c8f2e885aa114eb08391db13dc13ea78be503a582b015fda88738774b` | 3 parts (1–60, 61–120, 121–180) |
+| `EV/coordinator/restricted-files-pending-20261029.md` | `c405c38194a3a3535b275d84e458964b9f71ce50fd058339ac57c8c54e025609` | 1 part (1–60) |
+| `EV/coordinator/restricted-files-pending-20261101.md` | `84ab3e1f4c5824a3fd97f8a742a293737deabc680d674724e7e6f2cf4dfc00f5` | 1 part (1–60) |
+| `EV/coordinator/restricted-files-pending-20261106.md` | `cacdb34097d9c2ae8386dc025b40020611d45b018d1f4b20a71b313f62f2167f` | 1 part (1–60) |
+| `EV/coordinator/restricted-files-pending-20261106b.md` | `6d333ed13c563d1d0ccd80c26fbc349e31fdafd5822e7172c7b1c5174b8e3d89` | 1 part (1–60) |
+| `EV/coordinator/restricted-files-pending-20261106c.md` | `db19d9549386df451887e4fde06a29e83e16f23f4f1052176b5c88a5961ce8d8` | 1 part (1–60) |
+| `EV/coordinator/restricted-files-pending-20261106d.md` | `5203b47108b974960b16a58274dbfaebc5712c5a7405b1927dca3a645645f01e` | 1 part (1–60) |
+
+**Correction to the history (r2 low 13).** The lane's command-only
+`I/freeze-job-list-reads.txt` confirms §13.1's part counts: 13, 2, 1, 1,
+2 and 1. Its entry-c reads cover 1–60 and 61–121, so the latter part
+exceeded the 60-line limit by one line. Section 13.1 now states that
+explicitly and no longer claims every part met the limit. The trace
+contains commands, not their displayed output. Fix round 1's
+`.sm2-fix-scratch/reads.md` lists its seven restriction paths, without
+part sizes or boundaries; it cannot independently establish that round's
+reported at-most-30-line parts or complete displays. Section 13.6 now
+distinguishes its report from what that log can verify.
+
+**Lane-fetched ACS documentation.** `I` is
+`EV/mortality-groups-financing-20261021/builds/sm2-fix-r2-inputs`.
+The lane retrieved the originals on 6 November 2026, with UTC times,
+URLs, sizes and hashes in its manifest; this job fetched nothing. It
+compared only `SCHL`, `HISP` and `RAC1P` codes/labels against §8.2 and
+read the variable-changes text. All three lists match the crosswalk;
+2020's code-list item closes. The experimental-weight distinction stays
+explicit. Section 8 changes only that ACS provenance/closure paragraph,
+including preservation of the `AGEP`/`SSP` fit-job checks; no category,
+column, reference or mapping changes. The PDF below received a hash
+check only; the job read its lane-supplied text conversion.
+
+| File in `I/acs-2020-docs/` | URL | SHA-256 | Reliance |
+|---|---|---|---|
+| `PUMS_Data_Dictionary_2020.txt` | https://www2.census.gov/programs-surveys/acs/experimental/2020/documentation/pums/PUMS_Data_Dictionary_2020.txt | `eab88ac77bc2df8273409a85b841c9ea18879982f575eb15cedf6ee3c965e6e3` | Code/label comparison |
+| `ACS2020_PUMS_Variable_Changes_and_Explanations.pdf` | https://www2.census.gov/programs-surveys/acs/experimental/2020/documentation/pums/ACS2020_PUMS_Variable_Changes_and_Explanations.pdf | `698c4cb6dc09bb0191c12352b710939585e86d8993683cbcac49e1118f3acd24` | Lane-fetched original; hash check only |
+| `ACS2020_PUMS_Variable_Changes_and_Explanations.pdf.txt` | https://www2.census.gov/programs-surveys/acs/experimental/2020/documentation/pums/ACS2020_PUMS_Variable_Changes_and_Explanations.pdf | `a4d94973c3d4416b6e1dd9a871541b953377a99f3ef006b689a94213de24b9a4` | Experimental weights and variable changes; local text conversion |
+| `MANIFEST.tsv` | Lane manifest for https://www2.census.gov/programs-surveys/acs/experimental/2020/documentation/pums/ | `b1f0b4e6d4673f7caa75236e3e06b8850db2c47fe6962a85f3bab9e1fe93e445` | URLs, retrieval times, sizes and hashes |
+
+**Other outside-repository opens, including hash checks and the required
+mutant runner.** The scratch read log records repeats and bounded ranges;
+this inventory names every distinct explicit outside file. Python's
+standard library, pytest/Hypothesis and their runtime imports are runtime
+dependencies, not additional source evidence.
+
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/RESTRICTED-FILES.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/coordinator/restricted-files-pending-20261024.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/coordinator/restricted-files-pending-20261025.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/coordinator/restricted-files-pending-20261025b.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/coordinator/restricted-files-pending-20261025c.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/coordinator/restricted-files-pending-20261029.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/coordinator/restricted-files-pending-20261101.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/coordinator/restricted-files-pending-20261106.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/coordinator/restricted-files-pending-20261106b.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/coordinator/restricted-files-pending-20261106c.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/coordinator/restricted-files-pending-20261106d.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/builds/sm2-review-r2.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/builds/sm2-fix-r2-inputs/acs-2020-docs/MANIFEST.tsv`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/builds/sm2-fix-r2-inputs/review-scripts/nhis2018_adult.txt`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/builds/sm2-fix-r2-inputs/review-scripts/nhis2018_survey.txt`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/builds/sm2-fix-r2-inputs/acs-2020-docs/PUMS_Data_Dictionary_2020.txt`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/s0_1-sources/nchs_lmf_public-use-linked-mortality-files-data-dictionary.txt`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/s0_1-sources/nchs_lmf_public-use-linked-mortality-file-description.txt`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/builds/sm2-fix-r2-inputs/acs-2020-docs/ACS2020_PUMS_Variable_Changes_and_Explanations.pdf.txt`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/builds/sm2-fix-r2-inputs/review-scripts/joint_uncertainty.py`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/builds/sm2-fix-r2-inputs/review-scripts/check_math.py`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/builds/sm2-fix-r2-inputs/freeze-job-list-reads.txt`
+- `/Users/maxghenis/reviews/uk-hub/tools/run_capped.py`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/builds/sm2-fix-r2-inputs/pr-595-body-before.md`
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/builds/sm2-fix-r2-inputs/acs-2020-docs/ACS2020_PUMS_Variable_Changes_and_Explanations.pdf`
+
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/s0_1-sources/nchs_nvsr75-05.txt` (masked table-note phrase contexts, to preserve meaning while changing passive quotations).
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/mortality-groups-financing-20261021/s0_1-sources/cbo_41681.txt` (masked pp. 1–2 phrase contexts, for the same style check).
+
+**Repository reads.** This record; S0.1 audit section 2; lane design lines
+880–920; `life_table.py` lines 13–51, 143–177 and 181–203; and the
+path-only fix-round-1 read log. The final edit also checked S0.1's
+authority header (lines 1–60). The life-table read included its printed
+TR example constants; none enters this record or the PR body. The job
+read neither an additional repository source file nor a survey record.
+One overlarge documentation-context display truncated; the job opened
+no saved copy and reread the relevant age, pooling and crosswalk parts
+in smaller selections. Its visible portion included published survey
+counts and ACS income bounds; none enters this record or the PR body.
+
+**Checks run.** The two §9.7 blocks extracted by that section's exact
+command pass 13 pytest cases; CI does not run them. All three required
+mutants produced named failing pytest tests under `run_capped.py` with
+1.5 GB RSS and 300 seconds: contrast barring, intersection aggregation,
+and removal of race e65's joint dependency. The job restored the
+unmutated generator from the record. The component-only eligibility
+table matches the review's needed-bound counts; option (b)'s eight age
+limits do not alter this table, which resolves other issues by definition.
+The scratch `invented_checks.py` passes eight check groups for endpoints,
+the age-adjusted Poisson estimator and option (b), non-unit-HR
+extraction-to-e65 construction, both directions of joint propagation,
+same-quarter exposure, the identification null direction, singleton
+handling and the rate-transformation domain. The unchanged review
+`joint_uncertainty.py` also runs on invented inputs in scratch. These
+checks support formula/design choices; they implement no loader or fit.
+The job runs no `tests/mortality_ses` test and makes no tier recount:
+only this Markdown record changes, with two embedded Python blocks and
+no repository module or test file.
+
+**Choices and remaining limits.** The job chose a monotone first-order
+quantile domain and separate endpoint jackknives; neither establishes
+nominal Bonferroni coverage. It chose option (b) for unidentified public
+85+ interview ages, M-H2 and H-TIME for same-quarter events, existing
+`SOURCE_UNAVAILABLE` for identification/design/date stops, normalized
+SVD rank tolerance `1 × 10⁻¹⁰`, exact Rao–Wu rescaling with a singleton
+stop, and no interior-year NCHS admission fallback. These freeze choices
+before outcomes and tighten support, precision and availability checks.
+All three component closure routes require recorded amendments; a
+closure after outcomes takes a new ledger version preserving the first
+attempt. **Reading for the next review:** inconclusive SM2 hands on
+intervals naming both omitted components, while §10's weak-power and
+failed-gate scopes stay unchanged (§9.3, §9.5). No outcome can settle a
+limit in this job; source uncertainty, unsupported ages, joint feasibility
+and nominal coverage remain limits as their operative sections state.
