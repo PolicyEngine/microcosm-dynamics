@@ -27,6 +27,9 @@ from populace_dynamics.track_b.ret_grace import (
 from populace_dynamics.track_b.ret_grace import (
     TerminationReason as T,
 )
+from tests.track_b_gross_benefit_support import (
+    source_text as gross_source_text,
+)
 from tests.track_b_ret_ledger_support import source_text
 
 
@@ -320,10 +323,24 @@ def test_simultaneous_rib_dib_elections_preserve_2010_lmety():
     assert rib.next_state.last_met_year == 2010
 
 
-def test_simultaneous_disability_cfr_default_and_poms_alternative_are_explicit():
+def test_simultaneous_disability_default_follows_202k4_and_cfr_alternative_is_explicit():
+    """Source conflict us:oasdi-ret-grace-simultaneous-rib-dib.
+
+    Act 202(k)(4): a person entitled to RIB and DIB is "entitled to only"
+    the benefit paid for the month, so an elected RIB month is not a month
+    "entitled to disability benefits" under 404.435(b)(3). The default
+    counts its NSMs, as RS 02501.030B.4 does; the former technical-
+    entitlement exclusion stays selectable.
+    """
     months = [EMPTY] * 5 + [month(B.RIB, entitled={B.RIB, B.DIB})] * 7
-    conservative = grace_year(2026, GraceYearState(), months)
-    poms = grace_year(
+    poms = grace_year(2026, GraceYearState(), months)
+    conservative = grace_year(
+        2026,
+        GraceYearState(),
+        months,
+        disability_reading=D.CFR_ENTITLEMENT_EXCLUSION,
+    )
+    assert poms == grace_year(
         2026,
         GraceYearState(),
         months,
@@ -342,6 +359,12 @@ def test_simultaneous_disability_cfr_default_and_poms_alternative_are_explicit()
         "If the beneficiary becomes simultaneously entitled to RIB and DIB benefits, the earnings test (ET) applies to any month they elect to receive RIB."
         in source_text("poms_rs_02501_030")
     )
+    assert (
+        "shall be entitled to only the larger of such benefits for such "
+        "month, except that, if such individual so elects, he shall "
+        "instead be entitled to only the smaller of such benefits for "
+        "such month."
+    ) in " ".join(gross_source_text("lii_usc_402_415").split())
 
 
 def test_cfr_404435_don_april_retirement_initial_may_through_december():
@@ -910,6 +933,9 @@ def test_property_disabled_different_type_preserves_pending_until_eligible_nsm(
     "construct",
     [
         lambda: GraceMonth(received_types={B.RIB}),
+        lambda: GraceMonth(
+            entitled_types={B.RIB, B.DIB}, received_types={B.RIB, B.DIB}
+        ),
         lambda: GraceMonth(entitled_types={"rib"}),
         lambda: GraceMonth(nonservice=1),
         lambda: GraceYearState(gap_since_entitlement=True),
@@ -973,6 +999,9 @@ def arbitrary_month(draw):
         if types
         else set()
     )
+    if {B.RIB, B.DIB} <= received:
+        # 202(k)(4): one of the two is paid for the month.
+        received.discard(draw(st.sampled_from([B.RIB, B.DIB])))
     return GraceMonth(
         entitled_types=types,
         received_types=received,
@@ -987,25 +1016,49 @@ def arbitrary_month(draw):
 def test_property_only_entitled_nondisability_prefra_nonservice_months_protected(
     months, fra
 ):
-    result = grace_year(2026, GraceYearState(), months, fra_month=fra)
-    expected = {
-        i
-        for i, value in enumerate(months, 1)
-        if i < fra
-        and value.nonservice
-        and value.received_types - DISABILITY_TYPES
-        and not value.entitled_types & DISABILITY_TYPES
-    }
-    assert result.protected_months == expected
-    assert result.met_eligible_months == {
-        i
-        for i, value in enumerate(months, 1)
-        if i < fra
-        and value.received_types - DISABILITY_TYPES
-        and not value.entitled_types & DISABILITY_TYPES
-    }
-    assert result.applies == bool(expected)
-    assert (result.next_state.last_met_year == 2026) == bool(expected)
+    """Default 202(k)(4) reading and the explicit CFR alternative.
+
+    By default a paid RIB month with only DIB alongside counts (the person
+    is entitled to RIB alone that month); DWB and CDB months never count.
+    """
+
+    def counts(value, reading):
+        disability = value.entitled_types & DISABILITY_TYPES
+        return bool(value.received_types - DISABILITY_TYPES) and (
+            not disability
+            or (
+                reading is D.POMS_RIB_ELECTION
+                and B.RIB in value.received_types
+                and disability == {B.DIB}
+            )
+        )
+
+    for reading, result in (
+        (
+            D.POMS_RIB_ELECTION,
+            grace_year(2026, GraceYearState(), months, fra_month=fra),
+        ),
+        (
+            D.CFR_ENTITLEMENT_EXCLUSION,
+            grace_year(
+                2026,
+                GraceYearState(),
+                months,
+                fra_month=fra,
+                disability_reading=D.CFR_ENTITLEMENT_EXCLUSION,
+            ),
+        ),
+    ):
+        eligible = {
+            i
+            for i, value in enumerate(months, 1)
+            if i < fra and counts(value, reading)
+        }
+        expected = {i for i in eligible if months[i - 1].nonservice}
+        assert result.met_eligible_months == eligible
+        assert result.protected_months == expected
+        assert result.applies == bool(expected)
+        assert (result.next_state.last_met_year == 2026) == bool(expected)
 
 
 @settings(max_examples=200, deadline=None)
@@ -1135,7 +1188,14 @@ def test_property_poms_rib_election_separates_entitlement_from_receipt(
     assert poms.met_eligible_months == eligible
     assert poms.protected_months == expected
     assert poms.applies == bool(expected)
-    conservative = grace_year(2026, GraceYearState(), months, fra_month=fra)
+    assert poms == grace_year(2026, GraceYearState(), months, fra_month=fra)
+    conservative = grace_year(
+        2026,
+        GraceYearState(),
+        months,
+        fra_month=fra,
+        disability_reading=D.CFR_ENTITLEMENT_EXCLUSION,
+    )
     assert not conservative.applies
     assert not conservative.met_eligible_months
 

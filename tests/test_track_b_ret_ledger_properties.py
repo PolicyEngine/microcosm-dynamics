@@ -853,7 +853,13 @@ def test_every_raw_month_set_element_is_validated_before_deduplication(
             _month_set_case(field, values, month)
 
 
-@pytest.mark.parametrize("field", MONTH_SET_FIELDS)
+# Any non-empty own_work_exempt_months is an input error (202(s)(3)).
+VALID_MONTH_SET_FIELDS = tuple(
+    field for field in MONTH_SET_FIELDS if field != "own_work_exempt_months"
+)
+
+
+@pytest.mark.parametrize("field", VALID_MONTH_SET_FIELDS)
 @settings(max_examples=30, deadline=None)
 @given(st.lists(st.integers(1, 12), min_size=1, max_size=30))
 def test_valid_month_set_duplicates_and_order_preserve_the_same_months(
