@@ -52,7 +52,7 @@
 <header>
   <div class="kicker">Populace · planning document · 2026-07-14</div>
   <h1>Employer–firm relationships in Populace</h1>
-  <p class="sub">A US-first plan for attaching <b>job spells with employer attributes</b> to the Populace dynamic person panel, following an impute-then-calibrate recipe (impute from panel data → calibrate to administrative aggregates) and the populace-dynamics evaluation discipline (pre-registered gates, noise floors, one-shot candidate runs).</p>
+  <p class="sub">A US-first plan for attaching <b>job spells with employer attributes</b> to the Populace dynamic person panel: impute from panel data, calibrate to administrative aggregates, and keep the populace-dynamics evaluation discipline (pre-registered gates, noise floors, one-shot candidate runs).</p>
 </header>
 
 <div class="kicker">Why</div>
@@ -163,7 +163,7 @@
   <tr><td><b>PSID</b></td><td>Employer tenure, job-change indicators over 50+ years</td><td>Long-horizon validation (does simulated tenure accumulate realistically over decades?)</td><td>Person-level only; biennial after 1997; tenure series has wording/bracket breaks — needs a harmonized series</td></tr>
   <tr><td><b>JOLTS · BED · NLSY · CBP · SynLBD</b> <span class="muted">(added in review round 1)</span></td><td>JOLTS: monthly hires/quits/layoffs by industry &amp; establishment size. BED: quarterly job gains/losses by firm size. NLSY79/97: decades-long panels with true within-panel employer IDs. CBP: establishment size × county. SynLBD: public synthetic establishment panel with realistic firm dynamics</td><td>External cross-checks on flow rates (JOLTS/BED), long-horizon employer-attachment labels (NLSY), fine-geography register margins (CBP), phase-2 firm-dynamics shapes (SynLBD)</td><td>JOLTS/BED are establishment-based; NLSY cohorts aren't population-representative; SynLBD is itself synthetic — shapes, not truth</td></tr>
 </table></div>
-<p class="muted">The key constraint: the true matched employer–employee microdata (LEHD) is restricted. So we never observe a real firm's roster — we <i>construct</i> one that is consistent with every published margin. PolicyEngine's microdata works under the same limit with tax records, and the same answer applies: calibrate hard, validate against every aggregate that exists.</p>
+<p class="muted">The key constraint: the true matched employer–employee microdata (LEHD) is restricted. So we never observe a real firm's roster — we <i>construct</i> one that is consistent with every published margin. PolicyEngine faces the same limit with tax records when it builds its microdata, and the same answer applies: calibrate hard, validate against every aggregate that exists.</p>
 
 <h2>Phasing</h2>
 <div class="grid cols3">
@@ -215,7 +215,7 @@
 </table></div>
 <p style="margin-top:10px"><span class="pill">noise floors first</span><span class="pill">thresholds locked pre-run</span><span class="pill">candidates registered on issue #42 pattern</span><span class="pill">one-shot runs, committed artifacts in <code>runs/</code></span></p>
 <div class="card" style="margin-top:14px"><h3>Two pre-lock protocol rules (review round 1)</h3><ul class="muted">
-<li><b>Target/gate partition.</b> E1/E2/E3/E7 score against external aggregates that are also calibration targets — scoring on the training set. Pre-register the cells microcosm-calibrate uses as disjoint from gate cells (e.g., calibrate on industry × age margins, gate on the held-out sex or firm-age dimension).</li>
+<li><b>Target/gate partition.</b> E1/E2/E3/E7 score against external aggregates that are also calibration targets — scoring on the training set. Pre-register microcosm-calibrate's target cells as disjoint from the gate cells (e.g., calibrate on industry × age margins, gate on the held-out sex or firm-age dimension).</li>
 <li><b>Seam reconciliation before thresholds lock.</b> SIPP holdout transitions carry seam bias that the half-vs-half floor cannot see (both halves share it), and E2's LEHD reference has no seam — a model may be unable to pass E2 and E4 simultaneously. Commit a documented SIPP-vs-J2J rate-reconciliation run and decide ex ante which source is truth for rates (J2J) vs persistence structure (SIPP).</li>
 </ul></div>
 

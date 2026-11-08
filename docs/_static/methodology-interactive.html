@@ -382,7 +382,7 @@
 
     <div class="key-insight">
       <h3>Key Insight</h3>
-      <p><strong>This isn't starting from scratch.</strong> PolicyEngine already has the tools (microcosm-fit, microcosm-calibrate), the infrastructure (Microcosm's U.S. microdata), and the rules engine (SSI, SNAP, Medicaid, Social Security). We're connecting existing pieces with longitudinal earnings histories.</p>
+      <p><strong>PolicyEngine already has the tools</strong> (microcosm-fit, microcosm-calibrate), the infrastructure (Microcosm's U.S. microdata), and the rules engine (SSI, SNAP, Medicaid, Social Security). We're connecting existing pieces with longitudinal earnings histories.</p>
     </div>
 
     <p class="section-label">Click any component to learn more</p>
@@ -511,7 +511,7 @@
         icon: '🌲',
         title: 'microcosm-fit',
         content: `
-          <p>Microcosm's imputation package. Its <strong>RegimeGatedQRF</strong> fits weight-aware <strong>Quantile Regression Forests (QRF)</strong> that impute missing variables while preserving distributional properties.</p>
+          <p>The <strong>RegimeGatedQRF</strong> in microcosm-fit fits weight-aware <strong>Quantile Regression Forests (QRF)</strong> that impute missing variables while preserving distributional properties.</p>
           <div class="code-block">
 <span class="keyword">from</span> microcosm.fit <span class="keyword">import</span> RegimeGatedQRF
 
@@ -528,7 +528,7 @@ histories = model.<span class="function">predict</span>(cps_data)
           </div>
           <div style="margin-top: 1rem;">
             <span class="tag existing">✓ Already exists</span>
-            <span class="tag default">Runs Microcosm's U.S. and UK imputations</span>
+            <span class="tag default">Runs in Microcosm's U.S. and UK builds</span>
           </div>
         `
       },
@@ -589,6 +589,7 @@ histories = model.<span class="function">predict</span>(cps_data)
           <div class="code-block">
 <span class="keyword">from</span> microcosm.calibrate <span class="keyword">import</span> calibrate
 
+<span class="comment"># base_population: a microcosm.frame.Frame</span>
 <span class="comment"># ssa_targets: a TargetSet of 100+ demographic/economic targets</span>
 result = <span class="function">calibrate</span>(base_population, ssa_targets)
 base_population = result.frame

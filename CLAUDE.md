@@ -76,7 +76,7 @@ The model extends Microcosm, PolicyEngine's microdata stack, from cross-sectiona
 3. **microcosm-calibrate**: Gradient descent optimization to match SSA administrative targets
 4. **PolicyEngine-US**: Calculate benefits using existing Social Security rules
 
-Build new imputation on microcosm-fit and new calibration on microcosm-calibrate. microimpute, microcalibrate and L0 belong to PolicyEngine's previous data stack; see `docs/infrastructure.md` for how Microcosm succeeds them.
+Build new imputation on microcosm-fit and new calibration on microcosm-calibrate. The `microimpute`, `microcalibrate` and `L0` packages belong to PolicyEngine's previous data stack; see `docs/infrastructure.md` for how Microcosm succeeds them.
 
 ## Repository Structure
 
@@ -101,7 +101,7 @@ docs/
 
 | Repository | Purpose | Relevance |
 |------------|---------|-----------|
-| [microcosm](https://github.com/PolicyEngine/microcosm) | PolicyEngine's microdata stack: `microcosm-frame`, `microcosm-fit`, `microcosm-calibrate`, `microcosm-graph` | Base population; core tools for earnings histories (`microcosm-fit`) and SSA calibration (`microcosm-calibrate`, with opt-in L0 sample selection) |
+| [microcosm](https://github.com/PolicyEngine/microcosm) | PolicyEngine's microdata stack, including `microcosm-frame`, `microcosm-fit`, `microcosm-calibrate` and `microcosm-graph` | Base population; core tools for earnings histories (`microcosm-fit`) and SSA calibration (`microcosm-calibrate`, with opt-in L0 sample selection) |
 | [policyengine-us](https://github.com/PolicyEngine/policyengine-us) | US tax-benefit rules | Has Social Security implementation |
 
 ## Code Layout

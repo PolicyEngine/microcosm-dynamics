@@ -119,8 +119,8 @@ that share the `microcosm.*` namespace:
   rules layer next). Succeeds microdf and microunit.
 - `microcosm-fit`: weight-aware conditional models for synthesis and
   imputation. Succeeds microimpute.
-- `microcosm-calibrate`: targets-to-weights calibration (accelerated
-  projected gradient and L0 sparse selection). Succeeds
+- `microcosm-calibrate`: targets-to-weights calibration (Adam on
+  log-weights by default, with opt-in L0 sparse selection). Succeeds
   microcalibrate.
 - `microcosm-data` / `microcosm-build`: dataset registry and the
   gated, no-fallback build pipeline.
