@@ -69,14 +69,14 @@ This is an **academic planning document** intended for funders and stakeholders.
 
 ## Core Technical Concepts
 
-The model extends PolicyEngine's **Enhanced CPS (ECPS)** methodology:
+The model extends Microcosm, PolicyEngine's microdata stack, from cross-sectional to longitudinal analysis:
 
-1. **microimpute**: Train quantile regression forests on PSID panel data
+1. **microcosm-fit** (`RegimeGatedQRF`): Train quantile regression forests on PSID panel data. The engine imports it under its pre-rename name, `populace.fit`.
 2. **Apply to CPS**: Generate 35-year earnings histories for cross-sectional sample
-3. **microcalibrate**: Gradient descent optimization to match SSA administrative targets
+3. **microcosm-calibrate**: Gradient descent optimization to match SSA administrative targets
 4. **PolicyEngine-US**: Calculate benefits using existing Social Security rules
 
-Key insight: ECPS already proved this approach works for cross-sectional tax modeling (matches JCT and TPC estimates). This project extends the same methodology to longitudinal analysis.
+Build new imputation on microcosm-fit and new calibration on microcosm-calibrate. The `microimpute`, `microcalibrate` and `L0` packages belong to PolicyEngine's previous data stack; see `docs/infrastructure.md` for how Microcosm succeeds them.
 
 ## Repository Structure
 
@@ -101,11 +101,8 @@ docs/
 
 | Repository | Purpose | Relevance |
 |------------|---------|-----------|
-| [microimpute](https://github.com/PolicyEngine/microimpute) | QRF-based imputation | Core tool for earnings history |
-| [microcalibrate](https://github.com/PolicyEngine/microcalibrate) | Gradient descent reweighting | Core tool for SSA calibration |
-| [policyengine-us-data](https://github.com/PolicyEngine/policyengine-us-data) | Enhanced CPS construction | Proves methodology works |
+| [microcosm](https://github.com/PolicyEngine/microcosm) | PolicyEngine's microdata stack, including `microcosm-frame`, `microcosm-fit`, `microcosm-calibrate` and `microcosm-graph` | Base population; core tools for earnings histories (`microcosm-fit`) and SSA calibration (`microcosm-calibrate`, with opt-in L0 sample selection) |
 | [policyengine-us](https://github.com/PolicyEngine/policyengine-us) | US tax-benefit rules | Has Social Security implementation |
-| [L0](https://github.com/PolicyEngine/L0) | Sparse reweighting | Optional sample selection |
 
 ## Code Layout
 

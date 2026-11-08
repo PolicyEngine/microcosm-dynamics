@@ -52,7 +52,7 @@
 <header>
   <div class="kicker">Populace · planning document · 2026-07-14</div>
   <h1>Employer–firm relationships in Populace</h1>
-  <p class="sub">A US-first plan for attaching <b>job spells with employer attributes</b> to the Populace dynamic person panel, following the ECPS recipe (impute from panel data → calibrate to administrative aggregates) and the populace-dynamics evaluation discipline (pre-registered gates, noise floors, one-shot candidate runs).</p>
+  <p class="sub">A US-first plan for attaching <b>job spells with employer attributes</b> to the Populace dynamic person panel: impute from panel data, calibrate to administrative aggregates, and keep the populace-dynamics evaluation discipline (pre-registered gates, noise floors, one-shot candidate runs).</p>
 </header>
 
 <div class="kicker">Why</div>
@@ -106,7 +106,7 @@
 
     <!-- middle -->
     <rect x="305" y="64" width="210" height="92" rx="8" fill="none" stroke="#4fc3f7" stroke-width="2"/>
-    <text x="410" y="90" text-anchor="middle" font-weight="700">microimpute (QRF)</text>
+    <text x="410" y="90" text-anchor="middle" font-weight="700">microcosm-fit (QRF)</text>
     <text x="410" y="110" text-anchor="middle" fill="#9fb0bf">job spells + employer attributes</text>
     <text x="410" y="126" text-anchor="middle" fill="#9fb0bf">onto CPS persons; spell</text>
     <text x="410" y="142" text-anchor="middle" fill="#9fb0bf">transition hazards (phase 1)</text>
@@ -156,14 +156,14 @@
 <div class="tbl-scroll"><table>
   <tr><th>Source</th><th>What it gives us</th><th>Role</th><th>Caveats</th></tr>
   <tr><td><b>SIPP</b> (2014+ panels)</td><td>Monthly job-level records: within-panel job IDs (<code>EJB(n)_JOBID</code>, dependent-interview-edited), start/end dates, industry, <b>location/establishment size</b> (<code>EJB1_EMPSIZE</code> — the redesign dropped the all-locations question), earnings per job, up to 7 jobs</td><td>Primary label panel — trains job-spell transitions and provides the holdout for gate scoring</td><td>IDs don't link across panels; seam effects; <b>heterogeneous 1–4-year windows</b> post-2018 (2018 panel is wave-1 only); measures establishment size, <i>not</i> firm size</td></tr>
-  <tr><td><b>CPS</b> (ASEC + tenure supplement)</td><td>Industry, class of worker, <b>firm size at all locations</b> (<code>NOEMP</code>/IPUMS <code>FIRMSIZE</code> — the only worker-reported <i>firm</i>-size label available), job tenure (biennial supplement)</td><td>Cross-sectional base the spells are imputed onto (the ECPS host); primary firm-size training label</td><td>Worker-reported; no employer ID; tenure only biennial; size bands changed 2011–2018 vs 2019+ — pooled years must harmonize</td></tr>
-  <tr><td><b>LEHD QWI &amp; J2J</b></td><td>Hires, separations, job-to-job flow rates by industry × firm size/age × geography × sex × age</td><td>Calibration targets for the match layer (microcalibrate)</td><td>Aggregates only — microdata is restricted; dimensions are <b>pairwise-restricted</b> (firm size XOR firm age; one demographic pair at a time; sub-sector industry × size at state level only; private ownership only); publishes <b>mean</b> earnings, never medians; extra release lag on size/age tabs; state coverage gaps</td></tr>
+  <tr><td><b>CPS</b> (ASEC + tenure supplement)</td><td>Industry, class of worker, <b>firm size at all locations</b> (<code>NOEMP</code>/IPUMS <code>FIRMSIZE</code> — the only worker-reported <i>firm</i>-size label available), job tenure (biennial supplement)</td><td>Cross-sectional base for the spell imputation; primary firm-size training label</td><td>Worker-reported; no employer ID; tenure only biennial; size bands changed 2011–2018 vs 2019+ — pooled years must harmonize</td></tr>
+  <tr><td><b>LEHD QWI &amp; J2J</b></td><td>Hires, separations, job-to-job flow rates by industry × firm size/age × geography × sex × age</td><td>Calibration targets for the match layer (microcosm-calibrate)</td><td>Aggregates only — microdata is restricted; dimensions are <b>pairwise-restricted</b> (firm size XOR firm age; one demographic pair at a time; sub-sector industry × size at state level only; private ownership only); publishes <b>mean</b> earnings, never medians; extra release lag on size/age tabs; state coverage gaps</td></tr>
   <tr><td><b>SUSB / BDS</b></td><td>Firm and establishment counts, employment by firm-size class × industry × state; firm entry/exit (BDS)</td><td>Margins for the synthetic firm register; firm birth/death rates for phase 2</td><td>Firm ≠ establishment distinction needs care; size classes are banded</td></tr>
   <tr><td><b>QCEW</b></td><td>Quarterly employment and wages by county × industry</td><td>Geographic/industry employment margins</td><td>No firm-size dimension at fine geography</td></tr>
   <tr><td><b>PSID</b></td><td>Employer tenure, job-change indicators over 50+ years</td><td>Long-horizon validation (does simulated tenure accumulate realistically over decades?)</td><td>Person-level only; biennial after 1997; tenure series has wording/bracket breaks — needs a harmonized series</td></tr>
   <tr><td><b>JOLTS · BED · NLSY · CBP · SynLBD</b> <span class="muted">(added in review round 1)</span></td><td>JOLTS: monthly hires/quits/layoffs by industry &amp; establishment size. BED: quarterly job gains/losses by firm size. NLSY79/97: decades-long panels with true within-panel employer IDs. CBP: establishment size × county. SynLBD: public synthetic establishment panel with realistic firm dynamics</td><td>External cross-checks on flow rates (JOLTS/BED), long-horizon employer-attachment labels (NLSY), fine-geography register margins (CBP), phase-2 firm-dynamics shapes (SynLBD)</td><td>JOLTS/BED are establishment-based; NLSY cohorts aren't population-representative; SynLBD is itself synthetic — shapes, not truth</td></tr>
 </table></div>
-<p class="muted">The key constraint: the true matched employer–employee microdata (LEHD) is restricted. So we never observe a real firm's roster — we <i>construct</i> one that is consistent with every published margin. That's the same epistemic position ECPS is in with tax records, and the same answer applies: calibrate hard, validate against every aggregate that exists.</p>
+<p class="muted">The key constraint: the true matched employer–employee microdata (LEHD) is restricted. So we never observe a real firm's roster — we <i>construct</i> one that is consistent with every published margin. PolicyEngine faces the same limit with tax records when it builds its microdata, and the same answer applies: calibrate hard, validate against every aggregate that exists.</p>
 
 <h2>Phasing</h2>
 <div class="grid cols3">
@@ -215,7 +215,7 @@
 </table></div>
 <p style="margin-top:10px"><span class="pill">noise floors first</span><span class="pill">thresholds locked pre-run</span><span class="pill">candidates registered on issue #42 pattern</span><span class="pill">one-shot runs, committed artifacts in <code>runs/</code></span></p>
 <div class="card" style="margin-top:14px"><h3>Two pre-lock protocol rules (review round 1)</h3><ul class="muted">
-<li><b>Target/gate partition.</b> E1/E2/E3/E7 score against external aggregates that are also calibration targets — scoring on the training set. Cells used in microcalibrate must be pre-registered as disjoint from gate cells (e.g., calibrate on industry × age margins, gate on the held-out sex or firm-age dimension).</li>
+<li><b>Target/gate partition.</b> E1/E2/E3/E7 score against external aggregates that are also calibration targets — scoring on the training set. Pre-register microcosm-calibrate's target cells as disjoint from the gate cells (e.g., calibrate on industry × age margins, gate on the held-out sex or firm-age dimension).</li>
 <li><b>Seam reconciliation before thresholds lock.</b> SIPP holdout transitions carry seam bias that the half-vs-half floor cannot see (both halves share it), and E2's LEHD reference has no seam — a model may be unable to pass E2 and E4 simultaneously. Commit a documented SIPP-vs-J2J rate-reconciliation run and decide ex ante which source is truth for rates (J2J) vs persistence structure (SIPP).</li>
 </ul></div>
 
@@ -247,7 +247,7 @@
     <ul class="muted">
       <li><b>Target pipeline</b>: fetch/version SUSB, BDS, CBP, QWI, J2J, JOLTS, BED extracts as committed reference tables (like <code>data/external/</code> in the UK work), each with a provenance note</li>
       <li><b>Register</b>: canonical firm-size banding decision; BLM firm-type register drawn to SUSB/BDS margins; firm entry/exit dynamics from BDS/SynLBD (phase 2)</li>
-      <li><b>Calibration</b>: microcalibrate spell-carrying persons to the QWI/J2J target cells; owns the target/gate partition registration</li>
+      <li><b>Calibration</b>: calibrate spell-carrying persons to the QWI/J2J target cells with microcosm-calibrate; owns the target/gate partition registration</li>
       <li><b>Evaluation it owns</b>: E1, E2, E6, E7, E11, E12; aggregate-side floor studies</li>
     </ul>
   </div>

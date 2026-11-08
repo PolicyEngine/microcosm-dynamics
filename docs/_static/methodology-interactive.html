@@ -377,12 +377,12 @@
     <header>
       <img src="https://raw.githubusercontent.com/PolicyEngine/policyengine-app/master/src/images/logos/policyengine/teal.png" alt="PolicyEngine" class="logo">
       <h1>Social Security Microsimulation</h1>
-      <p class="subtitle">An open-source dynamic model extending PolicyEngine's proven Enhanced CPS methodology from cross-sectional to longitudinal analysis</p>
+      <p class="subtitle">An open-source dynamic model that extends Microcosm, PolicyEngine's microdata stack, from cross-sectional to longitudinal analysis</p>
     </header>
 
     <div class="key-insight">
       <h3>Key Insight</h3>
-      <p><strong>This isn't starting from scratch.</strong> PolicyEngine already has the tools (microimpute, microcalibrate), the infrastructure (Enhanced CPS), and the rules engine (SSI, SNAP, Medicaid, Social Security). We're connecting existing pieces with longitudinal earnings histories.</p>
+      <p><strong>PolicyEngine already has the tools</strong> (microcosm-fit, microcosm-calibrate), the infrastructure (Microcosm's U.S. microdata), and the rules engine (SSI, SNAP, Medicaid, Social Security). We're connecting existing pieces with longitudinal earnings histories.</p>
     </div>
 
     <p class="section-label">Click any component to learn more</p>
@@ -396,15 +396,15 @@
           <div class="node-subtitle">Panel data</div>
         </div>
         <span class="arrow">→</span>
-        <div class="pipeline-node existing" data-detail="microimpute" onclick="showDetail('microimpute')">
+        <div class="pipeline-node existing" data-detail="microcosmFit" onclick="showDetail('microcosmFit')">
           <div class="node-icon">🌲</div>
-          <div class="node-title">microimpute</div>
+          <div class="node-title">microcosm-fit</div>
           <div class="node-subtitle">QRF training</div>
         </div>
         <span class="arrow">→</span>
         <div class="pipeline-node data-source" data-detail="cps" onclick="showDetail('cps')">
           <div class="node-icon">👥</div>
-          <div class="node-title">CPS / ECPS</div>
+          <div class="node-title">CPS / Microcosm</div>
           <div class="node-subtitle">Base population</div>
         </div>
       </div>
@@ -424,9 +424,9 @@
           <div class="node-subtitle">Public statistics</div>
         </div>
         <span class="arrow">→</span>
-        <div class="pipeline-node existing" data-detail="microcalibrate" onclick="showDetail('microcalibrate')">
+        <div class="pipeline-node existing" data-detail="microcosmCalibrate" onclick="showDetail('microcosmCalibrate')">
           <div class="node-icon">⚖️</div>
-          <div class="node-title">microcalibrate</div>
+          <div class="node-title">microcosm-calibrate</div>
           <div class="node-subtitle">Gradient descent</div>
         </div>
       </div>
@@ -479,10 +479,6 @@
         <div class="stat-value">50+</div>
         <div class="stat-label">Programs in PE-US</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-value">7,000+</div>
-        <div class="stat-label">ECPS calibration targets</div>
-      </div>
     </div>
 
     <footer>
@@ -511,37 +507,40 @@
           </div>
         `
       },
-      microimpute: {
+      microcosmFit: {
         icon: '🌲',
-        title: 'microimpute',
+        title: 'microcosm-fit',
         content: `
-          <p>PolicyEngine's machine learning imputation library, already proven in the Enhanced CPS. Uses <strong>Quantile Regression Forests (QRF)</strong> to impute missing variables while preserving distributional properties.</p>
+          <p>The <strong>RegimeGatedQRF</strong> fits weight-aware <strong>Quantile Regression Forests (QRF)</strong> that impute missing variables while preserving distributional properties.</p>
           <div class="code-block">
-<span class="keyword">from</span> microimpute <span class="keyword">import</span> QRFImputer
+<span class="keyword">from</span> microcosm.fit <span class="keyword">import</span> RegimeGatedQRF
 
 <span class="comment"># Train on PSID earnings trajectories</span>
-imputer = QRFImputer()
-imputer.<span class="function">fit</span>(psid_earnings, features=[<span class="string">'age'</span>, <span class="string">'education'</span>, <span class="string">'sex'</span>])
+model = RegimeGatedQRF(seed=0).<span class="function">fit</span>(
+    psid_earnings,
+    predictors=[<span class="string">'age'</span>, <span class="string">'education'</span>, <span class="string">'sex'</span>],
+    targets=[<span class="string">'earnings'</span>],
+    weights=<span class="string">'weight'</span>,
+)
 
 <span class="comment"># Apply to CPS population</span>
-cps_with_histories = imputer.<span class="function">transform</span>(cps_data)
+histories = model.<span class="function">predict</span>(cps_data)
           </div>
           <div style="margin-top: 1rem;">
             <span class="tag existing">✓ Already exists</span>
-            <span class="tag default">Battle-tested in ECPS</span>
+            <span class="tag default">Runs in Microcosm's U.S. and UK builds</span>
           </div>
         `
       },
       cps: {
         icon: '👥',
-        title: 'Current Population Survey / Enhanced CPS',
+        title: 'Current Population Survey / Microcosm',
         content: `
           <p>The CPS Annual Social and Economic Supplement provides our <strong>base population</strong>—~200,000 individuals with demographics, income, and program participation.</p>
-          <p>The <strong>Enhanced CPS</strong> (ECPS) goes further: it imputes underreported income and calibrates to IRS, Census, and SSA targets. This proven methodology is what we're extending to longitudinal data.</p>
+          <p><strong>Microcosm</strong> builds PolicyEngine's U.S. microdata from the CPS and other primary sources: it imputes income components with microcosm-fit and calibrates weights to official targets with microcosm-calibrate. This project extends that pipeline to longitudinal data.</p>
           <div style="margin-top: 1rem;">
             <span class="tag public">Public data</span>
-            <span class="tag existing">ECPS proven accurate</span>
-            <span class="tag default">Matches JCT estimates</span>
+            <span class="tag default">Open source</span>
           </div>
         `
       },
@@ -582,23 +581,21 @@ cps_with_histories = imputer.<span class="function">transform</span>(cps_data)
           </div>
         `
       },
-      microcalibrate: {
+      microcosmCalibrate: {
         icon: '⚖️',
-        title: 'microcalibrate',
+        title: 'microcosm-calibrate',
         content: `
-          <p>PolicyEngine's base-population calibration library. It can align a starting cross-section to hundreds of targets before the relationship network and longitudinal event histories are constructed.</p>
+          <p>Microcosm's calibration package can align a starting cross-section to hundreds of targets before the model builds the relationship network and longitudinal event histories.</p>
           <div class="code-block">
-<span class="keyword">from</span> microcalibrate <span class="keyword">import</span> Calibrator
+<span class="keyword">from</span> microcosm.calibrate <span class="keyword">import</span> calibrate
 
-calibrator = Calibrator(
-    targets=ssa_targets,  <span class="comment"># 100+ demographic/economic targets</span>
-    priorities={<span class="string">'beneficiary_counts'</span>: 1.0, ...}
-)
-base_population = calibrator.<span class="function">fit_transform</span>(base_population)
+<span class="comment"># base_population: a microcosm.frame.Frame</span>
+<span class="comment"># ssa_targets: a TargetSet of 100+ demographic/economic targets</span>
+result = <span class="function">calibrate</span>(base_population, ssa_targets)
+base_population = result.frame
           </div>
           <div style="margin-top: 1rem;">
             <span class="tag existing">✓ Already exists</span>
-            <span class="tag default">Handles 7,000+ targets in ECPS</span>
           </div>
         `
       },
