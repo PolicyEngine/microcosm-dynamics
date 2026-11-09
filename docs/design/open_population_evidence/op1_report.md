@@ -918,11 +918,40 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     code passed to `eval`, `exec`, `compile` or `ForwardRef` is parsed and
     scanned with the module, and so is literal code nested in it, down to
     five levels. A call whose literal code would be a sixth level is
-    reported as `dynamic-code` whatever the module binds. Annotations
-    differ. There only the hint checks parse literals, and they read
-    expressions, so a statement suite in an annotation, such as
-    `v: exec("def f(x): ...")`, stays unparsed at every depth and gives no
-    hit (limit class 4).
+    reported as `dynamic-code` whatever the module binds. A code call in
+    an annotation follows the same rules when its literal does not parse
+    as an expression, as in `v: exec("def f(x): ...")`, and the levels
+    count the same way. In an annotation, a string that parses as an
+    expression is one more level of code, because `typing.get_type_hints`
+    evaluates a string hint, and a string in a subscript such as
+    `List["X"]`, as the expression it spells. The scan never parses such
+    a string as a suite: the hint checks read its expression, so
+    `ForwardRef("ProjectionRNGRegistry")` stays trusted. It does look
+    inside the expression for code calls and further strings. It reads
+    every such string in the hint, wherever it sits, because the folder
+    cannot always tell which one a hint picks at run time, as in
+    `"exec(S)" if flag else "int"`. So a string Python keeps as data there,
+    such as a `Literal` value, `Annotated` metadata or a list item, gives
+    the hit its code would give. The scan also reads the pieces the folder
+    builds a string from. The folder takes `str` to mean the builtin, and a
+    module can bind that name to `eval`, so `(str("exec(S)"), "int")[1]`
+    can run a piece the folder's value leaves out. Reading every piece
+    gives a false hit where `str` keeps its meaning, as on a slice of a
+    literal, and the scan accepts that hit. A text that starts with `*`
+    counts as the `(*x,)[0]` that `typing` compiles from it. The walk
+    follows each distinct text once in a hint, which bounds its work.
+    `typing` guards a text only along one recursive path and evaluates it
+    again in a sibling position, so this guard rests on another argument:
+    the walk's first visit found what the text holds, or marked the hint.
+    The walk does not follow a string at a sixth level unless it has
+    followed that text before. A hit at a sixth level therefore depends on
+    the order: the walk reads a tuple's last item first, so a copy of the
+    text there hides the sixth level, having already read what it holds.
+    The scan never asks whether Python evaluates the annotation, so a local
+    variable's hint, which Python never runs, gives the same hit. Where a
+    sixth level, or a code call on text the folder cannot read, sits in a
+    literal inside an annotation, the scan walks no node that holds it, so
+    the annotation itself reports `dynamic-code`, whatever the module binds.
   - `member-introspection`: a dunder read on, or an introspection call
     such as `inspect.getmodule` or `getattr` on, a member of a module
     through which a class can be reached.
@@ -971,7 +1000,19 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   text as long as that literal before the folder refuses the result.
   Across a module, the values the folder keeps weigh at most 1 MiB in
   characters and items, the weight of 16 texts at the limit; past that the
-  scan stops with an error naming the module, so it never skips one.
+  scan stops with an error naming the module, so it never skips one. The
+  walk through a module's hints spends from a second budget of the same
+  size, because most of what it reads Python never runs. All of a module's
+  hints share that budget, those inside what a hint runs included, since a
+  fresh budget for each nested hint would multiply the work at every level.
+  A hint the walk cannot finish reports `dynamic-code` in place of all the
+  walk found, and so does each later hint that holds an expression, because
+  the budget stays spent. The scan goes on and the module's other checks
+  still report. Those hits are an intended over-approximation: such a hint
+  may run no code at all. A suite a hint runs joins the module's code, so
+  the values the checks fold from it count against the module's budget.
+  Past that budget the scan stops with the error, as it does for the same
+  suite in a statement.
   - `test_folder_refuses_results_past_its_limits` checks
     19 expressions past those limits: the folder gives
     no value, and holds under 1 MiB while refusing.
@@ -988,6 +1029,31 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     `test_scan_stops_at_the_folder_budget_naming_only_the_path`, a module
     of twelve built 64 KiB texts scans clean, one of twenty stops with the
     error, and one of twenty 64 KiB literals scans clean.
+  - `test_scan_reports_a_hint_past_the_walk_budget` puts a short hint, whose
+    100 texts each spell a 4,000-character text, in all four annotation
+    places beside an ordinary check. Pruned and unpruned, the hint reports
+    `dynamic-code` and the check reports `isinstance`.
+    `test_scan_reports_a_hint_past_the_walk_budget_whatever_the_module_binds`
+    gives the same hint in a module that binds nothing tracked, and in a
+    statement's suite.
+    `test_scan_keeps_a_hint_within_the_walk_budget_off_the_module_budget`
+    gives a longer hint, of 70 texts, that fits the budget and scans clean.
+    `test_scan_shares_the_walk_budget_across_a_module` gives two hints that
+    each fit and together spend it: the second reports, and so does a
+    working check in a third.
+    `test_scan_bounds_hints_inside_what_a_hint_runs` gives hints that each
+    run a suite of 2, 4, 8 or 20 more such hints, and expects `dynamic-code`
+    in under 4,000 parses.
+    `test_a_hint_past_the_walk_budget_marks_only_itself` checks that the
+    failed walk leaves one mark, on the hint, and none on the tree it
+    dropped.
+    `test_a_failure_inside_what_a_hint_runs_goes_to_the_outermost_hint` gives
+    a hint that runs a suite whose own hint holds a text too deep for the
+    parser, before a working check: the outermost hint alone reports, and the
+    check reports through that hit.
+    `test_scan_stops_at_the_budget_on_a_suite_a_hint_runs` gives one
+    suite past the budget in a statement and in a hint, and expects the error
+    both ways.
   - `test_folder_runs_each_listed_method_and_builtin` calls each of the
     26 methods and 10 builtins the folder runs (`format` both ways) and
     compares the result with Python's.
@@ -1001,21 +1067,43 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     exception it allows is the four-digit width rule; with that rule off,
     the folder must agree.
 - **Deep expressions.** The walks that follow class info, instances and
-  module paths keep their own stacks, as the folder and the catch-all do,
-  with one exception: `module_path` still recurses through literal
-  `sys.modules[...]` subscripts. Beside a working check, such a chain
-  passes at 500 links and raises `RecursionError` at 1000. The error stops
-  the scan, so it cannot silently miss a check.
-  `test_scan_reads_long_chains_without_exhausting_recursion` gives seven
-  working checks inside or beside chains 3000 links long: a sum of
-  literals, a union, slices, conditionals, attributes, calls and
-  negations. At `5a4fc14c`, the sum, the union, the slices and the
-  attributes raised `RecursionError` at 1000 links.
+  module paths keep their own stacks, as the folder and the catch-all do.
+  `module_path` unwinds attributes and literal `sys.modules[...]` reads in
+  one loop.
+  `test_scan_reads_long_chains_without_exhausting_recursion` gives nine
+  working checks inside or beside long chains. Seven run 3000 links: a sum
+  of literals, a union, slices, conditionals, attributes, calls and
+  negations. Two run 1500 `sys.modules` reads of two nodes each, so they
+  reach the same depth. One sits beside its check, and the other ends in
+  the module its check takes the class from. At `5a4fc14c`, the sum, the
+  union, the slices and the attributes raised `RecursionError` at 1000
+  links, and at `6413d842` a `sys.modules` chain did too.
+  `test_module_path_agrees_with_a_recursive_walk_on_short_chains` compares
+  `module_path` with a recursive reference on all 26,180 chains of up to
+  three links, invented re-exports included.
+  `test_module_path_agrees_with_a_recursive_walk` does the same on 200
+  Hypothesis chains of four to eight links, and
+  `test_scan_reads_sys_modules_through_a_re_exported_sys` reaches a module
+  through a re-exported `sys`, by name and by attribute. The walk through
+  an annotation's strings recurses once per level, so it never goes past a
+  sixth level. Without that bound, a 1002-level chain of string hints, each
+  spelling the next, ended in a `RecursionError` that the folder absorbed,
+  and the scan gave no hit. A hint that spells itself takes one reading, so
+  it stays within the walk's budget. On this host Python's parser raises
+  `MemoryError` on a deep text, such as 10,000 unary operators, and
+  `RecursionError` on a very long chain, such as 100,000 additions. A text
+  that only the walk reads reports `dynamic-code`, as past the budget, in
+  `test_scan_reports_a_hint_text_too_deep_for_the_parser`. A code call and
+  the hint checks parse what they read, as they did at the base, so there
+  the error stops the scan, in
+  `test_scan_stops_at_a_text_too_deep_for_the_parser`. Python cannot compile
+  those texts either.
 - **Cost.** Right after parsing, each literal container of constants is
   replaced by `None` unless a string in it holds either class's or
   module's name in any case, a probe name, or a name a read of a trusted
-  place spells, or the folder could read it. No check can report or bind
-  anything from such a container. The generated data modules of
+  place spells, or the folder could read it, or it sits in an annotation.
+  No check can report or bind anything from such a container. The
+  generated data modules of
   18.5, 11.1 and 1.6 MB are almost all such containers: pruning leaves
   178, 78 and 7 of their 706,994, 251,826 and 85,417 syntax-tree nodes, and
   934,121 of the 2,007,909 in all 302 modules at `a747bafa`. At `9cced8ff`
@@ -1023,7 +1111,7 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   source changes between the two.
   `test_pruning_leaves_every_invented_scan_unchanged` and
   `test_pruning_leaves_scans_unchanged_for_any_literal` (200 Hypothesis
-  literals, each placed in fourteen positions, folded ones among them)
+  literals, each placed in sixteen positions, folded ones among them)
   check that pruning changes no result. On the host, at a one-minute load near
   100, the real-tree test took 15.0 s and the census test
   4.8 s. A process that parses the tree peaks near
@@ -1066,6 +1154,68 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
     a working `isinstance` check in one to seven literal `exec` calls. It
     is reported as `isinstance` down to five levels and as `dynamic-code`
     at six and seven.
+  - `test_scan_reads_statement_suites_an_annotation_runs` hides a working
+    check in class, argument, return and coroutine return annotations, in
+    one, five, six and seven literal `exec` calls, and reads the annotation
+    to run it. Pruned and unpruned, the scan reports `isinstance` down to
+    five levels and `dynamic-code` at six and seven.
+    `test_scan_counts_levels_through_every_mix_of_code_calls` does the same,
+    pruned and unpruned, for all 127 mixes of `exec` and `eval` in up to six
+    outer calls, at each of the four places.
+  - `test_scan_reads_code_an_annotation_hides` gives thirteen more working
+    checks: a folded literal, compiled code, an expression literal around
+    the suite, a padded one, three string hints, a keyword-only and a
+    starred argument,
+    a coroutine, an annotation inside literal code, and a trusted
+    function's hint at the first and sixth levels.
+    `test_pruning_keeps_each_hint_whole` puts a working check's literal
+    under a lambda's default in each of the four annotation places.
+  - `test_scan_reads_each_string_in_a_hint_as_code` gives 34 cases, each
+    read the way it runs, pruned and unpruned:
+    - Working checks in a string in `List`, in `dict` and in a
+      `Callable`'s arguments, in a string that a conditional, an `and` or a
+      tuple index picks at run time, in a string that starts with `*`, in
+      one with `*` only in a comment, and in a keyword argument.
+    - A working check whose text differs from a `Literal` value only in
+      case, so the guard must keep the two apart.
+    - Six working checks in a piece of a folded string: `str` or `repr`
+      bound to `eval`, `str` or another name bound to `exec`, and `str`
+      bound in literal code or through `globals()`.
+    - The level boundary. Four strings around an `exec` give `isinstance`
+      and five give `dynamic-code`, as do a string hint around four and
+      five `exec` calls. Five strings around a name give nothing, and six
+      give `dynamic-code`.
+    - The order at a sixth level. Six strings around a name give
+      `dynamic-code` before a copy of the name's text and nothing after
+      one, a copy with spaces around it included.
+    - String-hint chains that each spell the next level, 6, 50 and 1002
+      levels deep, all reported as `dynamic-code`.
+    - Five strings Python keeps as data, pinned as intended false hits: a
+      `Literal` value, `Annotated` metadata, a list item and the pieces of
+      a folded and of a spelled literal.
+    - One intended miss: a hint that names a variable bound to code
+      text (limit class 1).
+
+    `test_scan_reads_a_piece_when_builtins_itself_is_rebound` binds
+    `builtins.str` to `eval`, which no list of a module's own bindings would
+    see, and expects the piece's check.
+    `test_scan_follows_a_hint_text_once` gives a hint that spells itself,
+    with and without 600 characters of padding, and expects only the
+    module's own check. `test_scan_reads_a_text_again_in_another_hint`
+    expects a hit on each of two hints that hold one text, and
+    `test_scan_reports_a_sixth_level_of_hint_text_whatever_the_module_binds`
+    reports six strings around a name in a module that binds nothing.
+  - `test_scan_trusts_code_in_a_hint_that_reaches_no_class` gives eight
+    hints in a module that binds nothing tracked, and
+    `test_scan_leaves_expression_literals_in_hints_to_the_hint_checks`
+    keeps `ForwardRef` and `eval` hints that name the registry trusted.
+  - `test_scan_reads_a_suite_in_a_hint_as_it_reads_one_in_a_statement`
+    wraps each spelling and negative in a hint and in an `exec` statement.
+    The hint gives every check the statement gives, with two exceptions.
+    The catch-all reads the statement's string, so its name hits do not
+    carry over. And a hint that names a tracked class turns a namespace
+    read, or `vars` of a module, into an `annotation-read` on the same
+    line. The test checks each lost hit's replacement on its line.
 - **Its messages.** A hit carries only a module path, line number and node
   kind. `test_scan_messages_never_show_source_text` plants a distinctive
   literal in an invented snippet and checks that it is absent from the
@@ -1085,7 +1235,15 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
      attributes of objects built elsewhere, run-time containers, closures
      or frames: `type(a) is type(b)`, `isinstance(x, type(y))` with `y`
      passed in, and the dataclass-generated `==` between a registry and a
-     direct instance built elsewhere.
+     direct instance built elsewhere. So is a hint whose value is text the
+     folder cannot read, such as a name bound to a string, a call's result
+     or a literal expression past the folder's limits, which
+     `typing.get_type_hints` evaluates as a forward reference. So is a
+     callee the scan knows only by its name. After `run = exec`, `run(code)`
+     is no code call to the scan, and after `str = lambda _: code`,
+     `exec(str('pass'))` reads as `exec('pass')`. Each runs a working check
+     and gives no hit, in a statement or in a hint, and
+     `test_scan_reads_a_callee_by_its_name` pins all four misses.
   2. **Introspection of run-time values.** The annotations, docstring,
      source or members of an object that arrives at run time, such as a
      function passed in. Among the readers of run-time annotations in
@@ -1097,8 +1255,7 @@ of `src/populace_dynamics/` outside `open_population/`: 302 modules at
   3. **Files read as data**, a module's own source among them, as with
      `open(__file__)` or `importlib.resources`.
   4. **Code it does not read**: the excluded modules, OP1's own package,
-     scripts, tests, third-party code and literal statement suites inside
-     annotations.
+     scripts, tests and third-party code.
 
   So a clean scan is evidence, not proof. Behaviour is checked
   separately, at run time: on the paths the reader runs and §4's identity
@@ -1454,6 +1611,180 @@ section changes and the code does not: `tests/open_population` and
    mutant apart. **Fix:** the mutant paragraph now limits the claim to this
    repository's modules.
 
+### Follow-up to review inject-r4
+
+Review inject-r4's two minor findings first reached this report as wording,
+and the section above records that wording as #591 landed it. This follow-up
+branches from master `6413d842` and fixes both in the code, so the
+`dynamic-code` bullet, limit class 4 and "Deep expressions" no longer state
+either exception. The review's two nits stay stated limits.
+
+1. **Literal statement suites in annotations.** `_embedded` now passes each
+   hint to `_hint_code`. A code call whose literal parses as an expression
+   stays with the hint checks. Any other literal takes `_expanded`, the path
+   a code call outside an annotation takes, with the same memo, depth and
+   `unexpanded` set. `_hint_code` also follows an expression literal one
+   level deeper, to find a suite inside it. `hits()` already walked
+   annotation calls, so a trusted function's sixth-level call reports
+   `dynamic-code` with no change to `walked_hints`. The scan walks no
+   spelled copy, so the real hint stands for it in `unexpanded`, and `_kind`
+   now tests that set first, because a string hint is a constant.
+
+   The fix needed two adjacent changes. `_prune` now keeps each hint whole:
+   with the old pruning, a pruned scan missed a suite that an unpruned scan
+   reported, in a literal under a call the folder does not fold through. A
+   code call on unreadable text spelled in a hint's literal, as in
+   `def g(v: 'exec(S)')`, now reports `dynamic-code` at the hint. Without
+   that, limit class 4 would need a new exception.
+2. **`module_path` recursion.** One loop now unwinds attributes and
+   `sys.modules[...]` subscripts from the outermost link inward, and a
+   second replays the links from the base. A chain that raised
+   `RecursionError` at 1000 links at `6413d842` now passes at 3000.
+
+Six invariants hold for the fixes:
+- A pruned scan and an unpruned scan give the same hits on every source.
+- `module_path` agrees with a recursive reference on every chain the
+  recursion survives.
+- A working check in a hint reports its own kind down to five levels and
+  `dynamic-code` past them, for every mix of `exec` and `eval`.
+- A hint gives every check an `exec` statement gives, with the two
+  exceptions the parity test states.
+- A literal in a hint that parses as an expression is never parsed as a
+  suite itself: the hint checks read it, and the scan looks inside it for
+  code calls and further strings.
+- On the real tree the scan gives exactly the pinned hit.
+
+Reviews scanfix-r1 and scanfix-r2 add three more:
+- The walk through a hint's strings follows at most five levels and each
+  distinct text once, and all of a module's hints spend from one budget. Each
+  level parses no more text than the level above it holds, plus what that
+  budget lets the folder build, so the walk ends on every source within a
+  fixed multiple of the module's text and the budget. The walk itself never
+  stops the scan: past its budget, or on a text the parser refuses, the
+  outermost hint reports `dynamic-code`.
+- A string at a sixth level reports `dynamic-code`, whatever the module
+  binds, unless the walk has already followed that text in this hint. In
+  that case its first visit found what the text holds, or marked the hint.
+- The walk reads every string in a hint, the pieces of a folded string
+  included, so no binding of a name the folder runs hides a literal from it.
+
+### Review scanfix-r1
+
+Review scanfix-r1 read the follow-up at `f8d64f8b` and returned REVISE. A
+Codex attempt stopped before its final checks, and a Claude Opus 5.5 attempt
+finished the review. It found `module_path` correct: 374,348 exhaustive
+chains of up to three links and 40,000 random longer ones matched the scan
+at `6413d842`. It also found that the annotation fix reported every working
+`exec` and `eval` check it built, 513 of them across 15 places. Its six
+findings, and what changed:
+
+1. **Major: `_hint_code` followed spelled text with no bound.** A
+   self-spelling `str.format` hint of 2,011 characters, which the base read
+   correctly, ran the folder past its budget. A 1002-level chain of
+   string hints ended in a `RecursionError` that `_apply` absorbed, so the
+   scan gave no hit. **Fix:** the walk now puts a string at a sixth level
+   in `unexpanded` instead of following it, and each hint has a guard that
+   follows each text once. Both sources are now tests, with the chain at 6,
+   50 and 1002 levels.
+2. **Minor: data strings in a hint read as code.** A `Literal` value,
+   `Annotated` metadata, a list item, a `str` call's argument and a piece
+   of an `exec` literal each gave `isinstance`, though Python keeps them as
+   data. The review proposed following only strings in the places
+   `typing` evaluates. **Fix, in part:** the scan now skips the pieces of a
+   folded or spelled literal, which removes the hit from the piece of an
+   `exec` literal. The `str` call folds to a string hint, which
+   `get_type_hints` would run, so its hit stays. The scan keeps reading
+   every other string, because the folder cannot always tell which string
+   a hint picks at run time. A conditional, an `and` and a tuple
+   index with a run-time index each pick a string that `get_type_hints`
+   runs, and a walk over typing's places alone would miss all three
+   silently. The `dynamic-code` bullet now states the over-approximation,
+   invariant 5 says what the scan does with such a literal, and three
+   cases pin it as intended. Review scanfix-r2 found a working check that
+   the skip lost, so `7a830f39` is the last revision that skips pieces.
+3. **Minor: no test had a coroutine's return hint**, and two mutants that
+   drop it survived. **Fix:** `_FORCED_HINTS` gains an async return place,
+   which the level, mix and pruning tests all use, and the sweep carries
+   both mutants.
+4. **Minor: limit class 1 omitted hint values the folder cannot read.**
+   `typing.get_type_hints` runs `X = 'exec(S)'; def g(v: X)`, and neither
+   scan reports it. **Fix:** limit class 1 now states it, and a case pins
+   the miss.
+5. **Nit: the parity test's `or` was looser than its claim.** **Fix:** it
+   now checks that each lost hit is a namespace read or `vars` of a module
+   with an `annotation-read` on its line, and that the hint adds only
+   `annotation-read`. §6 names both substitutions.
+6. **Nit: the mix test ran only the pruned scan.** **Fix:** it runs both.
+
+### Review scanfix-r2
+
+Review scanfix-r2, a delta review on a Codex lane, read the follow-up at
+`7a830f39` and returned REVISE. It marked scanfix-r1's findings 3 to 6
+fixed, and it did not read `module_path` again. It ran 176 working mixes of
+strings and `eval` at levels four to seven, and each kept the boundary at
+five levels in both modes. Its four findings, the two mutants it added that
+survived, and what changed:
+
+1. **Major: skipping a folded subtree lost a working check.** The folder
+   takes `str` to mean the builtin. After `str = eval`, the hint
+   `(str("exec(...)"), "int")[1]` folds to `"int"`, Python runs the piece,
+   and the skip left that piece unread. `f8d64f8b` reported the check, and
+   `7a830f39` and the base gave no hit. The review proposed that the folder
+   refuse any name the module rebinds. **Fix, by another route:** the walk
+   reads every string in a hint again, pieces included, and the folder stays
+   as it was. A list of bindings would miss `builtins.str = eval`, and it
+   would need its own rules for `globals()['str'] = eval`,
+   `exec('str = eval')` and a star import. It would also change what the
+   folder gives every other check in such a module. Reading every string catches
+   each of these with less code, and it costs a false hit on a piece, which
+   fails loudly. The two piece cases that `50e7e61c` moved to no hit go back
+   to `isinstance`, now pinned as false hits, and six working cases and
+   `test_scan_reads_a_piece_when_builtins_itself_is_rebound` pin the
+   checks. This reverses the part of scanfix-r1's finding 2 that skipped
+   pieces. The false hits that finding reported stand, as stated.
+2. **Major: a wide hint stopped the scan.** A 6,429-character source of 100
+   distinct texts, each spelling a 4,000-character text, ran the walk past
+   the module's budget. The base scanned it clean, and `f8d64f8b` and
+   `7a830f39` stopped with the error. A second source, of 70 texts under
+   three layers of `replace`, did the same. **Fix, in part as proposed:** the
+   walk now spends from a budget of its own, and a hint past it reports
+   `dynamic-code` while the module's checks go on. The folder bullet states
+   the over-approximation, and both sources are now tests, the first beside
+   an ordinary check and alone. The review proposed one budget per hint. A
+   first version of the fix did that, and a probe showed its cost: a hint
+   inside what a hint runs got a fresh budget, so a suite of six such hints,
+   628 characters of source, took 46,659 parses, and the count grows with
+   the fifth power of the hints. So all of a module's hints share one
+   budget, a failure inside what a hint runs goes to the outermost hint, and
+   a test pins the parse count. Two neighbours of this fix needed a decision.
+   The `except` also takes the parser's `MemoryError` and `RecursionError`,
+   because at `7a830f39` the walk raised them on a second-level text past
+   the hint checks' 64 parts, where the base gave no hit. And a suite a hint
+   runs still counts against the module's budget, as the same suite in a
+   statement does, because the checks read that code and skipping it would
+   hide it. On that source this branch stops with the error where the base
+   gave no hit, and a test pins it.
+3. **Minor: the sixth-level invariant omitted the guard.** `(six strings
+   around "int", "int")` gives no hit, because the walk reads the tuple's
+   last item first, and the reverse order gives `dynamic-code`. No working
+   check goes missing, since the first visit read the text. **Fix:** the
+   invariant and the bullet now state the exception, and three cases pin
+   the order.
+4. **Nit: `typing`'s guard works along one recursive path.** `typing` ran a
+   sibling copy of one text twice, so the analogy claimed too much. **Fix:**
+   the bullet and the docstring now give the scan's own argument.
+5. **Two mutants survived:** guard keys that fold case, and a walk that
+   skips keyword-argument children. **Fix:** a case for each, and both join
+   the sweep below.
+
+The main session found two more while answering these:
+- A string that starts with `*` ran its check and gave no hit at the base
+  and at every revision since. `typing` compiles `*x` as `(*x,)[0]`, and the
+  parser refuses the bare form in expression mode. `_spelled` now reads it
+  the way `typing` does, so the hint checks read it too.
+- A callee the scan knows only by name gave no hit at the base and at every
+  revision since. Limit class 1 now states it, with four pinned misses.
+
 ### Commands and results
 
 ```sh
@@ -1682,6 +2013,178 @@ one-minute load under 100:
   `sys.modules` chain gives its check at 200 and 500 links and raises
   `RecursionError` at 1000 and 2000.
 
+For the follow-up to review inject-r4, the main session ran the same
+commands on the host at `35ba6e5c` from 19:11 to 19:53 UTC on 1 November,
+against base `6413d842`. The next commit changes only this report. Each
+process ran under the load-check audit hook and started only at a
+one-minute load under 100:
+- `tests/open_population`: **739 passed and 1 strict xfail** in 71.97 s.
+  The 45 tests this follow-up adds all sit in `test_stream_injection.py`.
+- The other four modules: 104 passed in 4.22 s.
+- The two Track B holdout-registry modules: 230 passed and 2 skipped. The
+  required command plus those two modules, in one process: **1,073 passed,
+  2 skipped and 1 strict xfail**.
+- Peak RSS was 1.35 GB.
+- The slowest tests took 19.12 s (the real-tree scan), 4.58 s (the census)
+  and 4.31 s (a long chain).
+- Nothing opened a file under a bar, the pattern line named only
+  `baselines/asfr.py` (read by the scan and the census, never displayed),
+  and a call-count hook on the one-process run counted no call to either
+  barred function.
+- `--collect-only -m unit tests/open_population` collects all 740. Black,
+  Ruff and `git diff --check 6413d842` are clean. `git diff --stat
+  6413d842` lists this report and `test_stream_injection.py`, and the
+  sealed-path `git diff --quiet` exits 0.
+- On the real tree the scan gives exactly the pinned hit, the census pin
+  holds, and every module's folded values still weigh under 16,384; the
+  heaviest outside `baselines/asfr.py` weighs 10,435. Pruning still keeps
+  the 934,121 of 2,007,909 nodes the Cost bullet gives, so keeping hints
+  whole costs the real tree nothing.
+- Through `repository_sources()`, the scans at `6413d842` and `35ba6e5c`
+  give the same single hit on all 302 modules.
+- Pruned and unpruned, the two scans give the same hits on all 176 invented
+  sources at the base: the 125 spellings, the 20 negatives, the seven
+  accessor cases, nested depths one to seven, ten pruning places and seven
+  long chains. Of the 43 sources this follow-up adds, 16 give the same hits.
+  The 27 that differ are the intended ones: two `sys.modules` chains that
+  raised `RecursionError` and now give their checks, the twelve forced
+  annotations and the thirteen hint cases. The new scan's pruned and
+  unpruned hits agree on all 219.
+- Review inject-r4's two minor findings no longer reproduce on invented
+  sources. The class and argument annotations that gave no hit at
+  `6413d842` report `isinstance` at `35ba6e5c`, and `sys.modules` chains
+  of 1000 and 2000 links that raised `RecursionError` report their check.
+  Its two nits reproduce unchanged, as stated limits.
+
+Thirty-nine mutants of the two fixes ran against the deterministic scan
+tests, after an unmutated control. Twenty-eight touch the annotation fix:
+a dropped hint pass, each annotation place and each pruning place dropped,
+spelled parts unfollowed or uncounted, limits one higher and one lower,
+wrong anchors, wrong line numbers, the unreadable call missed, and
+expression literals expanded as code. Eleven touch `module_path`: no
+`sys.modules` link, any attribute or module taken for it, a carried empty
+path, links replayed in walk order, unresolved names and attributes, a lost
+import base, the recursion restored, and a dropped link. The first sweep, of
+36, left four survivors, and `9d81e218` adds the tests that kill them. The
+second, of all 39 at `9d81e218`, left one: a code call with no argument in a
+hint. `35ba6e5c` adds that spelling, and under that mutant it fails, so all
+39 now fail a test. None of these ran against the real tree.
+
+After review scanfix-r1, the main session ran the same commands on the host
+at `50e7e61c` from 14:50 to 15:02 UTC on 2 November, against base
+`6413d842`. The next commit changes only this report. Each process ran
+under the load-check audit hook and started only at a one-minute load under
+100:
+- `tests/open_population`: **769 passed and 1 strict xfail** in 60.37 s.
+  The 75 tests this follow-up adds all sit in `test_stream_injection.py`.
+- The other four modules: 104 passed in 3.41 s.
+- The two Track B holdout-registry modules: 230 passed and 2 skipped. The
+  required command plus those two modules, in one process: **1,103 passed,
+  2 skipped and 1 strict xfail**.
+- Peak RSS was 1.35 GB.
+- The slowest tests took 16.03 s (the real-tree scan), 4.15 s (the census)
+  and 3.69 s (a long chain).
+- Nothing opened a file under a bar, the pattern line named only
+  `baselines/asfr.py`, and a call-count hook on the one-process run counted
+  no call to either barred function.
+- `--collect-only -m unit tests/open_population` collects all 770. Black,
+  Ruff and `git diff --check 6413d842` are clean, `git diff --stat
+  6413d842` lists this report and `test_stream_injection.py`, and the
+  sealed-path `git diff --quiet` exits 0.
+- On the real tree the scan gives exactly the pinned hit, the census pin
+  holds, the heaviest memo outside `baselines/asfr.py` weighs 10,435, and
+  pruning keeps 934,121 of 2,007,909 nodes. Through `repository_sources()`
+  the scans at `6413d842`, `f8d64f8b` and `50e7e61c` give the same single
+  hit on all 302 modules.
+- Against `f8d64f8b`, pruned and unpruned, the scans give the same hits on
+  all 178 sources of the base corpus. Of the 579 sources this follow-up
+  adds, the 127 mixes at four places among them, six differ in both modes,
+  each as intended:
+  - Six strings around a name now give `dynamic-code`, as a sixth level.
+  - The 1002-level countdown now gives `dynamic-code` instead of nothing.
+  - The pieces of a folded and of a spelled literal now give nothing.
+  - Two quines padded to 600 and 1000 characters now give the module's own
+    hit instead of `ScanError`.
+- The new scan's pruned and unpruned hits agree on all 757 sources.
+
+Forty-nine mutants ran against the deterministic scan tests at
+`50e7e61c`, after an unmutated control. They repeat the sweep above,
+whose `_hint_code` mutants now target the new walk, and add ten for review
+scanfix-r1's fixes:
+- no guard, a guard per level, and a guard shared across hints;
+- no bound on hint text, and the bound one level early or late;
+- folded pieces read, and spelled pieces read;
+- r1's two async mutants, one dropping a coroutine's return hint and one
+  pruning it.
+
+All 49 fail a test, and the module came back byte for byte. None ran
+against the real tree.
+
+After review scanfix-r2, the main session ran the same commands on the host
+at `181f40ca` from 12:36 to 13:19 UTC on 6 November, against base
+`6413d842`. The next commit changes only this report. Each process ran
+under the load-check audit hook. The first steps started only at a
+one-minute load under 100, and the rest under 130, the mark the coordinator
+set that day:
+- `tests/open_population`: **812 passed and 1 strict xfail** in 169.14 s.
+  The 118 tests this follow-up adds all sit in `test_stream_injection.py`.
+- The other four modules: 104 passed in 5.55 s.
+- The two Track B holdout-registry modules: 230 passed and 2 skipped. The
+  required command plus those two modules, in one process: **1,146 passed,
+  2 skipped and 1 strict xfail**.
+- Peak RSS was 1.33 GB.
+- The slowest tests took 46.67 s (the real-tree scan), 13.56 s (a long
+  chain) and 12.09 s (the census).
+- Nothing opened a file under a bar, the pattern line named only
+  `baselines/asfr.py`, and a call-count hook on the one-process run counted
+  no call to either barred function.
+- `--collect-only -m unit tests/open_population` collects all 813. Black,
+  Ruff and `git diff --check 6413d842` are clean, `git diff --stat
+  6413d842` lists this report and `test_stream_injection.py`, and the
+  sealed-path `git diff --quiet` exits 0.
+- On the real tree the scan gives exactly the pinned hit, the census pin
+  holds, every module's folded values weigh under 16,384, the heaviest memo
+  outside `baselines/asfr.py` weighs 10,433, the heaviest walk outside it
+  weighs 1,241, and pruning keeps 934,121 of 2,007,909 nodes. Through
+  `repository_sources()` the scans at `6413d842`, `f8d64f8b`, `7a830f39`
+  and `181f40ca` give the same single hit on all 302 modules.
+- Against `7a830f39`, pruned and unpruned, the scans give the same hits on
+  all 178 sources of the base corpus. Of the 617 sources this follow-up
+  adds, 23 differ in both modes, each as intended:
+  - A string that starts with `*` now gives `isinstance`.
+  - Six pieces that a rebound name runs (`str` or `repr` bound to `eval`,
+    `str` or another name bound to `exec`, `str` bound in literal code and
+    through `globals`) now give `isinstance`.
+  - The pieces of a folded and of a spelled literal go back to `isinstance`.
+  - Six wide sources (four annotation places, nothing bound, in a
+    statement) and three branching ones now report `dynamic-code` instead
+    of `ScanError`, and the four annotation places also keep their
+    `isinstance`.
+  - `builtins` rebound now gives `isinstance`.
+  - Four sources too deep for the parser now give `dynamic-code` instead of
+    `MemoryError` or `RecursionError`.
+- The new scan's pruned and unpruned hits agree on all 795 sources.
+
+Sixty-six mutants ran against the deterministic scan tests, after an
+unmutated control (546 passed, 2 deselected), under a memory cap with
+Hypothesis's explain phase off. They repeat the sweep above, with its two
+piece mutants reversed, and add seventeen for review scanfix-r2's fixes:
+- a walk that spends the module's budget, a fresh budget for each hint, a
+  nested hint keeping its own failure, and a walk's walk on another budget;
+- a budget that stops the scan, and each parser error that stops it;
+- a failure keeping the walk's marks, a failure marking nothing, and marks
+  dropped on success;
+- guard keys that fold case or keep the raw text, and skipped keyword
+  children;
+- no star form, and a star at any place;
+- a parser error caught in the statement path or in `_spelled`.
+
+Sixty-five fail a test. The survivor, a nested hint keeping its own failure,
+showed that no test pinned where a failure inside what a hint runs goes.
+`test_a_failure_inside_what_a_hint_runs_goes_to_the_outermost_hint` now
+kills it at the committed module (control 548 passed, 2 deselected). The
+module came back byte for byte each time. None ran against the real tree.
+
 ### Restricted-files statement
 
 The build read `RESTRICTED-FILES.md` at its pinned hash and the
@@ -1723,3 +2226,28 @@ changes used `--name-only`, `--stat` or `--quiet`, and displayed none of
 master's changed files beyond the two tier files. The real-tree scripts
 read the scanned modules only through the test module's own walk, under
 the audit hook, and printed paths, line numbers, node kinds and counts.
+
+The follow-up to review inject-r4 followed the same rules. The main session
+read `RESTRICTED-FILES.md` at its pinned hash and the coordinator's five
+pending entries before source work, and hashed them again before the review
+brief. Its searches took their file lists from the helper, and its git
+reads that spanned master's changes used `--name-only`, `--stat` or
+`--quiet`. Every probe, differential source and mutant used invented
+inputs. The fixes for review scanfix-r1 followed the same rules, after the
+main session read the coordinator's sixth pending entry, which closes paths
+that this branch's tree does not yet hold.
+
+The fixes for review scanfix-r2 followed the same rules, after the main
+session read the coordinator's seventh pending entry, which closes further
+paths and opens none. They hold one departure, which review scanfix-r2's
+report named. The real-tree figures helper printed one count about
+`baselines/asfr.py` alone, its scan hits. The rule on that file bars any
+figure about it alone. The line reached the main session's displays at
+`35ba6e5c` and `50e7e61c`, and review scanfix-r2 read it in the helper's
+output. It printed no source line, rate or table content, and this report
+does not repeat it. The helper no longer prints that line, and the main
+session removed it from its own saved outputs.
+
+The main session read the coordinator's eighth, ninth and tenth pending
+entries on 6 November. They close further paths, and none of those paths
+sits in this branch's tree.
