@@ -6,7 +6,7 @@ Placeholders: `N` is the next free registration number when posted (20 if nothin
 
 ---
 
-**Registration N: tests for starting the projections from Microcosm's US population. Two gates (H1 and gate 3's first cells) and two report-only checks (W2 and A1), registered before any code, floor or candidate run exists, with H1's three candidates frozen here.**
+**Registration N: tests for starting the projections from Microcosm's US population. Two gates (H1 and gate 3's first cells) and two report-only checks (W2 and A1), registered before any code, floor or candidate run exists, with H1's four candidates frozen here.**
 
 A gate, in this repository, is a pass-or-fail test whose rules we publish before running it. A part of the model counts as tested only after it passes. A report-only check is published the same way, with no pass or fail.
 
@@ -50,13 +50,19 @@ Today the projections follow a PSID cohort. Starting them from the frame needs t
 
 **Question.** Given only what a cross-section observes in one year, does the procedure the plan deploys produce careers whose benefit-relevant features match real careers it has not seen?
 
-**What a pass certifies.** The procedure as deployed:
+**What a pass certifies.** The passing candidate's procedure as deployed. For the three candidates with PSID donors (H-A, H-B and H-C):
 
 1. PSID donors, matched by rank from one observed year.
 2. Years the PSID lacks, filled by the procedure gate_epuf_fill certifies, or by the current rules if it certifies none.
 3. Conversion to covered, capped shares of the wage base.
 
-It is scored on SSA's records (arm E) and on the PSID (arm P). It does not certify the transfer of a rank from CPS or PUF records into the PSID, which W2 reports.
+For the candidate with donors from SSA's file (H-D):
+
+1. EPUF careers, matched by sex, age and rank in the last year the file records, and carried forward to the anchor year.
+2. Earnings levels from EPUF's own distributions through that year and from the PSID's after it.
+3. In arm P and on the frame, a tilt learned on the PSID that decides which kind of career a person draws.
+
+Each candidate is scored on SSA's records (arm E) and on the PSID (arm P). No pass certifies the transfer of a rank from CPS or PUF records into the donor data, which W2 reports.
 
 **The observable set.** For each person a candidate receives only:
 
@@ -91,6 +97,7 @@ That mirrors the frame, which ranks people within itself.
 
 - Draws come from counter-based uniforms keyed by the draw seed, the person id and the year, so a person's draw does not depend on which other persons are scored.
 - Every fitted component (H-A's participation model, H-C's forests, the fill refit) is seeded from `numpy.random.default_rng([7400, arm, seed, component])`. The arm code is 1 for E and 2 for P. The seed is 0 in arm E and the split seed in arm P. Component codes are listed in the second comment.
+- H-D fits nothing from a random seed. It draws one class and one donor for each person and draw seed, from counter-based uniforms keyed by the draw seed, the person id and a component code.
 
 #### Arm E: SSA's earnings records
 
@@ -99,7 +106,7 @@ That mirrors the frame, which ranks people within itself.
   - TRAIN is `u` below 0.6, DEV is 0.6 to 0.8, and TEST is 0.8 and above.
   - The salt differs from gate_epuf_fill's, so H1's TEST is not the set gate_epuf_fill reads and publishes. No EPUF statistic has been computed under this split.
   - TEST is read only through an accessor that refuses until `gates.yaml` locks gate_h1.
-- **Two configurations, both scored on H1-TEST.**
+- **Two configurations for the candidates with PSID donors, both scored on H1-TEST.** H-D has its own two, set out with that candidate below.
   - **Deployed (gated).**
     - The donors are PSID heads and spouses. The 2006 anchor rank is applied in the PSID's 2006 cell, the same transfer the frame makes into the PSID's 2022 cell.
     - Years the PSID lacks are filled by the procedure gate_epuf_fill certifies (or the current rules, if it certifies none), refit on H1-TRAIN so that no fitted parameter has seen an H1-TEST person. Which procedure that is follows from gate_epuf_fill's verdict, so H1's registered run waits for it, and the second comment names the procedure by gate_epuf_fill's run artifact. The frame itself uses gate_epuf_fill's own fit, not this refit.
@@ -135,6 +142,7 @@ That mirrors the frame, which ranks people within itself.
   - `n` is the effective sample size (Kish, from household weights) of the frame pinned at lock, among the frame's persons the group counts. For the zero-anchor block, that means the frame's zero earners of that sex and age.
   - `sigma` is the root mean square of `[m(A) - m(B)] / sqrt(2)` over the replicates.
   - The tolerance is `tau = K x sigma`, with **proposed K = 1**: the procedure may move a cell by at most one frame-size sampling error. Max ratifies K at lock.
+- **Pass.** A gating cell passes if `|gap| <= tau`. A candidate passes arm E if every gating cell passes in its deployed configuration. For H-D, the gating cells for ages 22 to 59 decide (see H-D, below).
 
 #### Arm P: the PSID
 
@@ -183,11 +191,11 @@ That mirrors the frame, which ranks people within itself.
   - **Arm E:** it is scored on DEV.
   - **Arm P:** it is fitted on the 80 percent of the bite part whose hash of `populace_dynamics.history_attachment.psid_bite_inner.v1|` and the unit id is 0.2 or above, and scored on the other 20 percent. No scored seed's held-out unit is read.
   - **Margin:** in each arm the strawman must fail at least one gating cell by more than 2 tau, gate_epuf_fill's margin (`BITE_MULTIPLE = 2.0`). In arm P the bite is scored on a sample about a quarter the size of a seed's held-out set, so its `tau` comes from a floor built at the bite sample's own size, by the same rule. If the strawman does not fail, H1 does not lock without an amendment.
-- **Gate pass.** H1 passes if arm E's deployed configuration and arm P both pass.
+- **Gate pass.** A candidate passes H1 if it passes arm E in its deployed configuration and passes arm P.
 
 #### Candidates, frozen here, run together
 
-Every constant below is fixed by this comment. The fill procedure is not a free choice: it follows from gate_epuf_fill's verdict, as stated in arm E. The second comment adds only the code commit, the component codes, the SHA-256 of any fitted artifact, the name of that fill procedure, and a forecast for each candidate. All three candidates and the strawman are scored in one registered run, after lock, and their results are published together. No candidate's result is seen before another's is fixed.
+Every constant below is fixed by this comment. For H-A, H-B and H-C the fill procedure is not a free choice: it follows from gate_epuf_fill's verdict, as stated in arm E. H-D uses no fill. The second comment adds only the code commit, the component codes, the SHA-256 of any fitted artifact, the name of that fill procedure, and a forecast for each candidate. All four candidates and the strawman are scored in one registered run, after lock, and their results are published together. No candidate's result is seen before another's is fixed.
 
 1. **H-A, rank-kNN.** Gate 1's candidate 11, unchanged in its draw and distances (`runs/gate1_rank_knn_v5.json`, `model`): k = 25, distance weights 1, 0.5 and 0.25, the fixed blend of 0.1 for the permanent rank, and the zero-anchor regime.
    - Earnings distributions are sex-specific.
@@ -200,10 +208,40 @@ Every constant below is fixed by this comment. The fill procedure is not a free 
 3. **H-C, a QRF with the predictors H1 can align across the PSID and the frame.** A backward chain of populace-fit's regime-gated QRF at its default hyperparameters: 100 trees, `zero_atol = 1e-6`, no leaf cap (as `runs/gate1_qrf_baseline_v1.json`, `model.hyperparameters`).
    - It predicts each earlier year from the next year's earnings, age, sex and anchor-year earnings.
    - In arm P it also uses marital status, disability status, annual hours and self-employment.
+4. **H-D, administrative donors.** H-D takes each person's path through the earnings distribution from an EPUF career, and takes no career from a PSID donor. The PSID supplies two things: earnings levels where EPUF has none, and the tilt below.
+   - **Donor pool.** EPUF persons with sex coded 1 or 2 who fall in H1-TRAIN and in TRAIN or DEV of gate_epuf_fill's registered split (`harness/epuf_fill_gate.py`, `SPLIT_SALT`). The two salts differ, so the pool holds about 48 percent of the file. No person in H1-TEST or in gate_epuf_fill's TEST enters the pool, and H-D reads no career of theirs at any stage.
+   - **File end and offset.** Each configuration fixes `E`, the last year of any EPUF career that H-D may read, and the offset `D`, the anchor year less `E`. A target born in year `b` draws from donors born in `b - D`, who had the target's anchor-year age in `E`.
+     - **The frame:** anchor 2024 for every record, `E` = 2006, `D` = 18.
+     - **Arm P:** anchor 2022, `E` = 2006, `D` = 16.
+     - **Arm E, deployed (gated):** anchor 2006, `E` = 1988, `D` = 18, the frame's offset. An accessor cuts every pool career at 1988.
+     - **Arm E, method only (report-only):** `E` = 2006 and `D` = 0, so donors share the target's birth year. The gap between the two arm-E configurations shows what the offset costs.
+   - **Cells and positions.** A cell holds the pool's persons of one sex and one five-year age band (15–19, 20–24 and so on) in one year. H-D gives each pool person a position in (0, 1) in each cell of their career, from the year they turned 16 (1951 at the earliest) through `E`. The position is the person's place in the cell's order of earnings, less one half, over the cell's count. Three kinds of tie get an order:
+     - people with no earnings that year sit lowest, ordered by one uniform per person, so a person keeps the same place among non-earners every year;
+     - people at the taxable maximum sit highest, ordered by a second uniform per person;
+     - EPUF's rounding produces every other tie, and a uniform keyed by person and year breaks it.
+   - **The match.** A target with anchor-year earnings draws among donors with earnings in `E`, and a target with none draws among donors with none.
+     - **With earnings:** the harness ranks the target among the scored population's earners of the same sex and five-year age band. H-D ranks each donor the same way, among the pool's earners in `E`. Among donors of the target's sex and donor birth year, H-D keeps the 25 nearest the target's rank and draws one with equal probability. A hash of the donor id breaks equal distances. If fewer than 25 qualify, H-D keeps them all.
+     - **Without earnings:** H-D draws one donor with equal probability among the pool's persons of the target's sex and donor birth year with no earnings in `E`.
+   - **The tilt (arm P and the frame).** EPUF records a person's sex, birth year and earnings, and nothing else. So H-D learns from the PSID which kind of recent career a target draws from.
+     - **Classes.** A person's class counts the years with earnings among five: two, four, six, eight and ten years before `E` for a donor, and before the anchor year for a PSID person. The PSID's waves fall every other year, so it recorded each of the five. The four classes are none, one or two, three or four, and all five. A PSID year counts when it holds any labor income, and an EPUF year when it holds covered earnings, so the classes carry that difference of concept.
+     - **Shares.** In each seed H-D tabulates the weighted share of each class among the PSID persons it may learn from. The cells cross sex, age band (35–44, 45–54, 55–64), anchor-year earnings (some or none), marital group and disability status. A PSID person who lacks one of the five years enters no cell, and H-D counts those persons.
+     - **Small cells.** A cell with fewer than 250 persons drops disability status, then marital group, then age band, until it holds 250. The last cell, sex by earnings status, stands at any count.
+     - **The draw.** H-D draws a class from the target's cell and matches only among donors of that class. If no donor of that class shares the target's sex, donor birth year and earnings status, H-D matches without the class for that draw and counts the case.
+     - **Under 35.** A target under 35 draws without a class. Ten years before the anchor year most such people were under 25, and the PSID records labor income only for heads and spouses.
+     - **On the frame** the shares come from every arm-P person. Marital group comes from `A_MARITL` and disability from `is_disabled`. A frame person aged 65 or over uses the 55–64 cells.
+     - **Arm E** has no marital or disability item, so H-D applies no tilt there.
+     - Education would join the tilt by amendment once the frame carries it.
+   - **From positions to earnings.** For each year `y` of the target's career before the anchor year, H-D reads the donor's position in year `y - D`. It returns the earnings at that position in the target's own cell for `y`.
+     - **Arm P:** the cell is the weighted distribution of labor income in `y`, zeros included, for the target's sex and five-year age band. It covers the PSID heads and spouses H-D may learn from. H-D returns dollars.
+     - **Arm E and the frame, `y` through `E`:** the cell is the pool's, for the target's sex and age band in `y`. H-D returns a share of the wage base.
+     - **Arm E and the frame, `y` after `E`:** EPUF records no such year in that configuration, so the cell is the PSID distribution above. H-D converts each amount to a share of the year's wage base and caps it at 1. The PSID skipped the odd years after 1996. For each of those, H-D pools the two adjacent years' distributions after scaling both to `y` by the national average wage index.
+     - **A donor year before 1951.** The file starts in 1951. Where `y - D` falls before it, H-D returns no earnings for `y`, as the career assembler does today for years before 1968, and counts those years per cell.
+   - **What arm E gates for H-D.** With `E` = 1988 the file holds no donor year for a target's years before 1969. From age 22 on, that reaches targets born before 1947, who were 60 to 69 in 2006. On the frame the same limit reaches careers from age 22 only for people aged 78 and over. So H-D's arm-E verdict rests on the gating cells for ages 22 to 59. The run computes and publishes its cells for ages 60 to 69 with the counts above, and they decide nothing. For targets born from 1947 to 1952 the limit reaches only years before age 22. Arm P gates H-D on every cell: its earliest scored year, 1968, needs donor year 1952.
+   - **A limit arm E cannot see.** EPUF records no deaths or emigration, so the pool's cells and its donors without earnings include people who had died or left by `E`. H1-TEST holds such people too, so arm E does not score the difference. Arm P does, on PSID respondents interviewed in 2023, and H-D's class draw answers it.
 
 **Adoption rule.**
 
-- **Order:** H-A if it passes H1; otherwise H-B if it passes; otherwise H-C if it passes.
+- **Order:** H-A if it passes H1; otherwise H-B if it passes; otherwise H-D if it passes; otherwise H-C if it passes.
 - **None passes:** no history procedure is certified. Any later use of histories on the frame is labeled uncertified, and no text may call it tested.
 - **Lower-order passes:** a passing candidate lower in the order is reported, not adopted.
 
@@ -313,7 +351,7 @@ Every constant below is fixed by this comment. The fill procedure is not a free 
 ### Rules
 
 - **Before lock.** No candidate reads held-out data before lock. Floors read real data only and score no candidate.
-- **One run.** H1's three candidates and its strawman run once, together, after gate_epuf_fill's verdict.
+- **One run.** H1's four candidates and its strawman run once, together, after gate_epuf_fill's verdict.
   - One disclosed re-execution is allowed, only for an infrastructure failure before scoring begins, and only after a comment here.
   - Nobody reads the failed attempt's outputs.
   - A failure after scoring begins, or a failed re-execution, ends this registration for H1.
@@ -327,6 +365,7 @@ Every constant below is fixed by this comment. The fill procedure is not a free 
   - The results then follow this repository's merge rules for a gate run.
 - **Amendments** are public and prospective, and cannot rescue a run already scored.
 - **Frame pin.** The frame release is fixed at lock by repository, revision, file and SHA-256.
+  - Max chose `populace-us-2024-spm-20260915` on 10 November 2026 (d2712): file `populace_us_2024.h5` in the Hugging Face dataset `policyengine/populace-us`, SHA-256 `6496cc4393d4d3c6574f76eca231de5898c803b9067645591fd5c4d3e65aee84`. It holds the bytes of `populace-us-2024-spm-20260909`, the release the plan read.
   - Changing it is an amendment.
   - The tolerances that depend on its effective sample size are re-derived before any further run.
 
@@ -348,6 +387,7 @@ Every constant below is fixed by this comment. The fill procedure is not a free 
   Tests use invented data only.
 - **Refusals.**
   - H1's TEST accessor refuses until `gates.yaml` locks gate_h1.
+  - H-D's pool accessor refuses every person in H1-TEST or in gate_epuf_fill's TEST, and returns no earnings after the configuration's `E`.
   - Every scored entry point refuses a pointer that is not a comment on this issue, a commit that is not the full SHA of a clean HEAD, and an existing output.
   - The frame reader refuses the real frame's hash outside a registered entry point, as Registration 19's population code does.
 
@@ -360,6 +400,7 @@ Every constant below is fixed by this comment. The fill procedure is not a free 
   - the candidates and the adoption order;
   - the partition and bite rules;
   - the platform.
+- **A second session** (Claude Code, Fable 5.2) added H-D on 11 November 2026, after Max ruled that the draft gain an administrative-donor candidate (d2712). It chose H-D's design and constants, its arm-E configurations, its place in the adoption order, and the sentence that states arm E's pass rule.
 - **The independent referees** shaped it: the review rounds below changed the split, the candidates' freezing, gate 3's statistic and bite, and arm E's deployed configuration.
 - **Max's ruling** authorizes posting (d947, quoted above). He ratifies the multipliers at lock.
 
@@ -403,6 +444,17 @@ The script and its output are `docs/plans/microcosm-start-evidence/frame_structu
 - No frame outcome.
 - No sealed comparator file listed in `EV/RESTRICTED-FILES.md`.
 
+**The session that added H-D.** On 2026-11-11 it read:
+
+- this draft and the plan in full, including the plan's comparison of the frame's marital makeup with a MINT tabulation (Registration 19);
+- the frame-structure evidence, and the hashes and manifests of the frame release;
+- the docstrings and constants of the repository's EPUF and PSID readers, and the split definitions in `harness/epuf_fill_gate.py` and `harness/epuf_gate.py`;
+- lines 2898, 5906 to 5935 and 5982 of `gates.yaml` (blob `6c1cf7674917d9ea40cee1f12cfac0729f8047b5`): the head of gate_epuf_fill's block and one line of its history. H-D takes nothing from them;
+- a filtered listing of file names under `runs/`, and no file's contents;
+- the titles of six Microcosm issues. Four state summaries of the frame. They cover its household and married-couple counts, the marital makeup of its people 65 and over beside a Census survey's, its Social Security beneficiary counts beside SSA's, and its count of people who hold all four benefit components. The third bears on W2's count cells.
+
+It saw no EPUF record, PSID record or frame record, no EPUF statistic under H1's split, and no sealed comparator file.
+
 **Research lanes.** Five Subfleet research lanes were briefed (`~/reviews/microcosm-start-plan-20261004/briefs/`) and cancelled before they started, when every Codex lane was on hold. The drafter did that reading itself.
 
 **No forecast** is registered here. The second comment carries one for each candidate, written before the run.
@@ -414,6 +466,7 @@ Independent of the drafter. Reports are in `~/reviews/microcosm-start-plan-20261
 - **Round 1** (Subfleet lane, Opus 5.5; `review-r1.md`): CHANGES REQUIRED, with 3 blocking, 16 major and 19 minor findings. Each was answered (`response-r1.md`).
 - **Round 2** (Subfleet lane, Opus 5.5; `review-r2.md`): CHANGES REQUIRED, with 6 major findings (N1–N6) and 14 minor ones. Each was answered (`response-r2.md`).
 - **Round 3** (Subfleet lane, Opus 5.5; `review-r3.md`): APPROVE AFTER LISTED FIXES. Five findings were edited in (`response-r3.md`). A delta check of the changed lines follows: `<verdict and path, filled when posted>`.
+- **H-D's review** (Subfleet lane; independent of the session that added the candidate): `<model, verdict and path, filled when the review returns>`.
 
 ### What comes next
 
