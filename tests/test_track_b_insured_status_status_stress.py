@@ -35,7 +35,8 @@ the reported start. Each exact count, assignment and date last insured must
 also be the best a filling with that start attains. A rejection needs no
 lawful filling. A named refusal retains the declaration and passes.
 ``check_no_period`` asks the same of a record with no current period, where a
-listed prior alone limits the fillings.
+listed prior alone limits the fillings. ``check_frozen_exit`` dates each ending
+of a record whose coverage ended by the query, where the date can run past it.
 """
 
 import calendar
@@ -219,13 +220,16 @@ def placements(annual):
         yield frozenset(credit for piece in pieces for credit in piece)
 
 
-def lawful_fillings(case, reading=LAST_40, *, keep=None, dated=True):
+def lawful_fillings(
+    case, reading=LAST_40, *, keep=None, dated=True, horizon=None
+):
     """Exhaust every filling before comparing to a public result.
 
     Each lawful filling gives its first start, three statuses, the best
     (insured, margin, count) for FULLY and CURRENTLY, its date last insured
-    quarter and its credits. ``keep`` limits the placements, and ``dated``
-    skips the date for a query that doesn't ask for one.
+    quarter and its credits. ``keep`` limits the placements, ``dated`` skips
+    the date for a query that doesn't ask for one, and ``horizon`` dates past
+    the query.
     """
     birth, onset, ending, month = (
         case["birth"],
@@ -317,7 +321,7 @@ def lawful_fillings(case, reading=LAST_40, *, keep=None, dated=True):
                                 last_insured(
                                     birth,
                                     credits,
-                                    at,
+                                    at if horizon is None else horizon,
                                     periods,
                                     blind,
                                     special or own_special,
@@ -399,7 +403,10 @@ def public(case, **options):
             if year >= 1978
             else rule.CoverageYear(observed, qc_quarters=(False,) * 4)
         )
-        for year in range(case["birth"].year, case["month"].year + 1)
+        for year in range(
+            case["birth"].year,
+            case.get("exit", case["month"]).year + 1,
+        )
     }
     return rule.insured_status(person, years, case["month"], **options)
 
@@ -865,6 +872,99 @@ def check_unknown_ending(case, unknown_prior=False):
     return "computed"
 
 
+def check_frozen_exit(case, test=None):
+    """Every ending of a frozen record must fit the range and its status.
+
+    An exit by the query stops the credits, so the date runs past the query to
+    the quarter before age 67, the retirement age of every birth from 1960
+    (RS 00301.148). Each ending from the reported start through that quarter,
+    and one past it, has its own best date, and the range has to reach them.
+    """
+    assert case["exit"] <= case["month"] and case["birth"].year >= 1960
+    try:
+        result = public(
+            {**case, "unknown_end": True},
+            coverage_end_month=case["exit"],
+            test=DISABILITY if test is None else test,
+        )
+    except rule.InsuredConfigurationUnsupported:
+        return "refused"
+    except InvalidFamilyInput:
+        return "invalid"
+    start = quarter(result.current_disability_period_start)
+    birth = case["birth"]
+    horizon = quarter(date(birth.year + 67, birth.month, birth.day)) - 1
+    through = quarter(
+        case.get("through", result.current_disability_period_start)
+    )
+    endings = [
+        quarter_end(at) for at in range(max(start, through), horizon + 1)
+    ]
+    best = []
+    for ending in (*endings, date(birth.year + 70, 12, 31)):
+        own = [
+            filling
+            for filling in lawful_fillings(
+                {**case, "ending": ending}, horizon=horizon
+            )
+            if filling[0] == start
+        ]
+        assert own, (case, ending, result)
+        for name, position in (
+            ("fully", 1),
+            ("currently", 2),
+            ("disability", 3),
+        ):
+            decision = getattr(result, name)
+            assert decision is None or decision.insured == any(
+                filling[position] for filling in own
+            ), (case, ending, name, result)
+        best.append(max(-1 if f[6] is None else f[6] for f in own))
+    assert result.dli.right_censored is False, (case, result)
+    assert quarter(result.dli.lower) == min(best), (case, best, result.dli)
+    assert quarter(result.dli.upper) == max(best), (case, best, result.dli)
+    return "computed"
+
+
+def frozen_exit_declaration(seed):
+    """A worker whose coverage ended by the query, near 20 of 40.
+
+    Late onsets keep each ending's scan short. Early work satisfies most of
+    the fully insured requirement, and draws set the last decade near 20 QCs
+    and the exit year's own count, which a later ending can take off the clock.
+    """
+    draw = random.Random(f"frozen-exit-{seed}")
+    birth = date(draw.randint(1960, 1966), 2, 2)
+    year = birth.year + draw.randint(57, 61)
+    onset = date(year, draw.choice((1, 2, 4, 5, 7, 8, 10, 11)), 15)
+    month = date(
+        year + draw.choice((0, 0, 1)), draw.randint(onset.month, 12), 1
+    )
+    exit_year = year - draw.choice((0, 0, 1))
+    stop = 12 if exit_year < month.year else month.month
+    annual = dict.fromkeys(range(birth.year + 22, birth.year + 32), 4)
+    density = draw.choice((0.4, 0.5, 0.6, 0.7))
+    for credited in range(year - 10, exit_year):
+        if draw.random() < density:
+            annual[credited] = 4
+    partial = draw.sample(range(year - 10, exit_year), k=1)[0]
+    annual[partial] = draw.randint(1, 3)
+    annual[exit_year] = draw.randint(1, 3)
+    case = {
+        "birth": birth,
+        "onset": onset,
+        "exit": date(exit_year, draw.randint(1, stop), 1),
+        "ending": onset,
+        "month": month,
+        "blind": draw.random() < 0.1,
+        "prior": (),
+        "annual": annual,
+    }
+    if draw.random() < 0.25:
+        case["through"] = date(year + draw.randint(1, 3), 6, 30)
+    return case
+
+
 DISABILITY = rule.InsuredTest.DISABILITY
 CURRENTLY = rule.InsuredTest.CURRENTLY
 EDGE_ANNUAL = {
@@ -1085,6 +1185,27 @@ def check_every_history(
                     for filling in held
                 ), found
     return "computed"
+
+
+# An ending in 2022Q1 takes 2021's last two QCs off the clock. The date falls
+# from 2025Q4 to 2025Q3, where setting the period aside (404.130(f)) holds it,
+# and later endings only skip empty quarters until they lift it past that.
+FROZEN_EXIT = {
+    "birth": date(1960, 2, 2),
+    "onset": date(2021, 2, 1),
+    "exit": date(2021, 1, 1),
+    "ending": date(2021, 3, 31),
+    "month": date(2021, 2, 1),
+    "blind": False,
+    "prior": (),
+    "annual": {
+        **dict.fromkeys(range(1982, 1992), 4),
+        2012: 4,
+        2015: 2,
+        **dict.fromkeys(range(2016, 2020), 4),
+        2021: 3,
+    },
+}
 
 
 # A prior from 1998Q1 finds 19 QCs from 1988Q2 through 1997Q4, so 404.130(b)
@@ -1608,3 +1729,44 @@ def test_status_stress_last_insured_matches_a_full_scan(seed, make):
                     assert last_insured(*args) == full_scan_last_insured(
                         *args
                     ), (case, args)
+
+
+def test_status_stress_a_frozen_exit_falls_once_past_its_year():
+    best = {
+        ending: max(
+            filling[6]
+            for filling in lawful_fillings(
+                {**FROZEN_EXIT, "ending": ending},
+                horizon=quarter(date(2026, 12, 31)),
+            )
+        )
+        for ending in (
+            date(2021, 3, 31),
+            date(2021, 12, 31),
+            date(2022, 3, 31),
+            date(2022, 6, 30),
+            date(2024, 6, 30),
+            date(2030, 12, 31),
+        )
+    }
+    assert [quarter_end(found) for found in best.values()] == [
+        date(2025, 12, 31),
+        date(2025, 12, 31),
+        date(2025, 9, 30),
+        date(2025, 9, 30),
+        date(2025, 12, 31),
+        date(2026, 12, 31),
+    ]
+
+
+def test_status_stress_a_frozen_exit_range_reaches_that_fall():
+    assert check_frozen_exit(FROZEN_EXIT) == "computed"
+
+
+@settings(max_examples=15, deadline=None, derandomize=True)
+@given(
+    seed=st.integers(0, 2**32 - 1),
+    test=st.sampled_from((rule.InsuredTest.ALL, DISABILITY)),
+)
+def test_status_stress_a_frozen_exit_ranges_every_ending(seed, test):
+    check_frozen_exit(frozen_exit_declaration(seed), test)

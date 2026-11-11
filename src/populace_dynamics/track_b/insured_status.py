@@ -171,7 +171,6 @@ class InsuredUnsupportedReason(Enum):
     UNKNOWN_CURRENT_PERIOD = "unknown_current_disability_period_decides_status"
     UNKNOWN_SSPA211 = "sspa211_applicability_unknown"
     CURRENT_PERIOD_HISTORY = "current_disability_period_requires_history"
-    CURRENT_PERIOD_DLI = "ongoing_disability_period_dli_horizon_unsupported"
     CURRENT_PERIOD_END = "ongoing_disability_period_end_decides_status"
     TOTALIZATION = "totalization_credits_unsupported"
     DEEMED_FULLY_INSURED = "deemed_fully_insured_unsupported"
@@ -2281,7 +2280,9 @@ def _period_outcomes(
     Establishment can't rest on its own exclusion, so DISABILITY reads
     ``person`` (see the decisions in ``insured_status``).
     """
-    for option in _current_period_completions(person, completed, start, month):
+    for option in _current_period_completions(
+        person, completed, start, month, exit_month
+    ):
         witnesses = tuple(
             _decision_witness(
                 person if kind is InsuredTest.DISABILITY else option,
@@ -2750,7 +2751,9 @@ def _settle_every_history(person, credits, month, exit_month, decisions, dli):
         )
 
 
-def _current_period_completions(person, completed, start, month):
+def _current_period_completions(
+    person, completed, start, month, exit_month=None
+):
     """Every possible end quarter through query, plus continuation.
 
     416(i)(2)(D) and 404.321(c) give alternative administrative endings.
@@ -2761,6 +2764,13 @@ def _current_period_completions(person, completed, start, month):
     Historical candidates may include an ending invalid under the recovery
     offset. Over-inclusion can only prevent agreement and retain a refusal;
     it cannot certify a status that fails a valid completion.
+
+    With an exit already reached the date last insured runs past the query,
+    so a later ending can move it. A later ending can take a QC of the exit
+    year off the clock (404.146(d)), so the date can fall, and the list runs
+    through the first quarter after that year. Later endings only skip
+    uncredited quarters, so the date can't fall from there on, and that
+    quarter's ending and the last one bound the rest.
     """
     if (
         start is None
@@ -2770,13 +2780,16 @@ def _current_period_completions(person, completed, start, month):
     ):
         return (completed,)
     cap = completed.prior_disability_periods[-1].end
-    last = min(_qid(month), _qid(cap))
-    endings = [
-        min(_qend(quarter), cap) for quarter in range(_qid(start), last + 1)
-    ]
-    if _qid(cap) > _qid(month):
-        endings.append(cap)
     through = person.current_disability_period_continues_through
+    frozen = exit_month is not None and exit_month <= month
+    last = max(_qid(month), (exit_month.year + 1) * 4 if frozen else 0)
+    last = min(last, _qid(cap))
+    quarters = list(range(_qid(start), last + 1))
+    if frozen and through is not None and last < _qid(through) < _qid(cap):
+        quarters.append(_qid(through))
+    endings = [min(_qend(quarter), cap) for quarter in quarters]
+    if _qid(cap) > last:
+        endings.append(cap)
     if through is not None:
         endings = [end for end in endings if end >= through]
     special = completed.prior_disability_periods[-1].special_insured
@@ -3409,26 +3422,11 @@ def insured_status(
             "Unknown earnings decide established current period start",
         )
     lo_completions = _current_period_completions(
-        person, lo_person, lo_start, month
+        person, lo_person, lo_start, month, coverage_end_month
     )
     hi_completions = _current_period_completions(
-        person, hi_person, hi_start, month
+        person, hi_person, hi_start, month, coverage_end_month
     )
-    # The current disability is known only through the query. A frozen-exit
-    # future DLI would require its unobserved recovery/end date.
-    if (
-        person.current_disability_period_established
-        and not prior_unknown
-        and end_unknown
-        and coverage_end_month is not None
-        and coverage_end_month <= month
-        and _dli_cap(person, month, coverage_end_month) > _qend(_qid(month))
-        and test in (InsuredTest.ALL, InsuredTest.DISABILITY)
-    ):
-        _refuse(
-            InsuredUnsupportedReason.CURRENT_PERIOD_DLI,
-            "Current period end beyond query is unobserved",
-        )
     decisions, candidates = {}, {}
     for kind in (
         InsuredTest.FULLY,

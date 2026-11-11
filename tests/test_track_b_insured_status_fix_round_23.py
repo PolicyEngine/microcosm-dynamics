@@ -243,6 +243,9 @@ M1_ENDS = tuple(
 
 @PROPERTY
 @example(qcs_1997=0, qcs_2001=2, qcs_2002=4, qcs_2012=1, end=M1_END)
+# Every placement begins this flagged prior and none meets 404.130(b), so
+# it holds on every placement and placement doesn't decide its start.
+@example(qcs_1997=0, qcs_2001=1, qcs_2002=3, qcs_2012=4, end=date(2004, 6, 30))
 @given(
     qcs_1997=st.integers(0, 4),
     qcs_2001=st.integers(1, 4),
@@ -516,15 +519,18 @@ def test_an_established_period_keeps_its_row_after_a_february_exit():
             coverage_end_month=exit_month,
         )
         assert result.current_disability_period_start == onset
+    # An ending in 2021Q1 keeps the 20 QCs through 2026Q1, and an ending at
+    # retirement age holds the date at 2037Q1.
     for test in (DISABILITY, ALL):
-        _refused(
-            Reason.CURRENT_PERIOD_DLI,
+        result = _computed(
             person,
             years(person),
             month,
             test=test,
             coverage_end_month=exit_month,
         )
+        assert result.disability.insured
+        assert _dli(result) == (date(2026, 3, 31), date(2037, 3, 31), False)
     person = _ended(date(1970, 6, 15), onset, date(2021, 4, 30))
     result = _computed(
         person, years(person), month, coverage_end_month=exit_month

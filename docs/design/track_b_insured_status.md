@@ -346,7 +346,9 @@ existing fields, preserving every existing positional argument.
 With an UNKNOWN ending, the rule evaluates every candidate end quarter from
 the derived period's start, restricted by any continuity observation,
 through the last quarter allowed by the query and FRA/death cap. It
-additionally considers continuation past the query when the cap permits.
+additionally considers continuation past the query when the cap permits. With
+an exit already reached, the list also runs through the first quarter after the
+exit year (round 26).
 Quarter representatives suffice because exclusions,
 credited endpoints, and elapsed-year freezes change only at quarter/year
 boundaries. It does not decide which candidates an administrative record
@@ -580,9 +582,8 @@ while the upper bound is the allowed query/FRA/death horizon; an exit
 already reached uses the frozen-coverage FRA/death horizon. This can be a
 broad range even when status is decided. With known prior-period history,
 a declared ongoing established current period and an exit already reached,
-a future DLI
-would depend on recovery beyond the query, which is unobserved. That
-configuration receives `ongoing_disability_period_dli_horizon_unsupported`.
+the date depends on a recovery the record doesn't show, so the rule reports
+the status with the range the endings allow (round 26).
 
 ## Exact rules and supported configurations
 
@@ -699,7 +700,6 @@ input. An input error propagates and creates no row.
 | Any candidate end quarter for an UNKNOWN current ending changes a requested status | `ongoing_disability_period_end_decides_status` |
 | Unknown section 214(c) applicability may change a requested status | `sspa211_applicability_unknown` |
 | Standalone requirement helper needs coverage history to derive a declared current period start | `current_disability_period_requires_history` |
-| Ongoing established current period, known prior-period history, and a frozen-exit DLI horizon beyond query | `ongoing_disability_period_dli_horizon_unsupported` |
 | Any foreign totalization credits after fixed chronology, before every credit-count proof; the route itself remains unmodeled and no totalization minimum is claimed | `totalization_credits_unsupported` |
 | Declared deemed nonprofit/veteran fully insured path | `deemed_fully_insured_unsupported` |
 | Declared transitional insured path | `transitional_insured_unsupported` |
@@ -890,11 +890,11 @@ to a statutory sentence that does not state it.
 | B3. A simplified-pre1951 possibility uses the smallest known freeze requirement, or six for unresolved establishment/history, and maximum post1950 ordinary credits without exclusions. UNKNOWN pre1951 raw wages remain potentially decisive. DISABILITY compares the same bound at each quarter where the recent rule holds or blindness removes it. | A213(c) grants "one quarter of coverage for each $400" subject to resulting fully insured status; B404.110(c)-(d); RS .315 B.1-B.2 record alternate historical/application conditions. This is an over-approximation for refusal, not a computed deemed-credit answer. A favorable ordinary witness with a higher requirement cannot narrow it. |
 | B4. An alternate-pre1956 possibility uses maximum feasible QCs and an eligible 1952Q3–1955Q4 start with at least 20 total QCs and at least six continuous credited clock quarters, under favorable all-period use or disregard. It survives unless lower credits establish 20/40 in U10's shared disabled-quarter scan. | RS .480 A requires "at least 20 quarters of coverage" and "all quarters beginning with 03/51 ... are QCs", with "at least six"; B.1 permits the first freeze day 07/01/52 through 12/31/55. RS .132 B.2 applies prior-period exclusions to the continuous alternate clock, retaining credited beginning/ending quarters; C.2 requires all periods used or all disregarded. Candidate starts obey I8/I14's latest permissible horizon, so recovery before July 1952 cannot be rescued by the first alternate start. Exclusion instead obeys U10's earliest shared date, including the two-month offset for declared ends and continuity. A lower-credit ordinary 20/40 witness in that shared interval removes the route for all credit fillings; an upper-only or later witness preserves the named refusal. Unmodeled application conditions can remove candidates but do not prove an input error. An explicit `DISABILITY_BEFORE_1956` flag adds no route beyond this check. A fully-route flag may rely on this same alternate possibility when its ordinary recent rules fail; neither flag adjudicates the alternate's application conditions. |
 | B5. Universal recent, fully-prerequisite, and annual count envelopes use zero through maximum feasible ordinary lifetime/year QCs whenever unknown periods/earnings can switch witnesses. | A213(a)(2)(B)(vi) prohibits double credit; B404.146(d) excludes interiors unless disregarded. Every concrete ordinary assignment is a subset of feasible unique lifetime quarters. The envelope permits every witness, even when adding QCs switches to a lower-count witness. Specialist possibilities remain refusals. |
-| B6. With known earnings and an UNKNOWN ending, returned count bounds include all end-candidate counts admitted by continuity; with entirely known facts they remain exact. | B404.120(b), .130(f), .146(d) distinguish credited endpoints and excluded interiors. All candidate quarters are enumerated, including early endpoints and capped-FRA candidates, subject to any continues-through observation; extrema therefore cover each completion. A continuity date is never inserted as a credited endpoint. No monotonic endpoint-count premise is used. |
+| B6. With known earnings and an UNKNOWN ending, returned count bounds include all end-candidate counts admitted by continuity; with entirely known facts they remain exact. | B404.120(b), .130(f), .146(d) distinguish credited endpoints and excluded interiors. The list holds every candidate quarter through the query, including early endpoints, and a capped-FRA candidate speaks for each later ending, which counts the same QCs at the query, subject to any continues-through observation; extrema therefore cover each completion. A continuity date is never inserted as a credited endpoint. No monotonic endpoint-count premise is used. |
 | B7. DLI lies through query without frozen exit, or through the pre-FRA-quarter/death horizon with frozen coverage; `None` is the bottom bound. A future exit cannot remove query censoring. | RS .148 defines DLI as "the last day in the last quarter" in which status is met and limits the search relative to FRA. B404.146(b) caps credits after death; A216(i)(2)(B) caps new periods. Future undeclared work is not assumed zero. Specialist routes are refused before this ordinary DLI calculation. |
 | B8. For a nonblind ordinary worker with no prior period, no DLI can lie more than 39 quarters after the last credited quarter. | B404.130(b)(2) requires "at least 20 QCs in the 40-quarter period ... ending with that quarter". After 39 later quarters no original QC remains. Blindness and prior-period special/exclusion routes disable this search shortcut; flagged or observable specialist routes refuse. |
 | B9. With unknown periods the disregard DLI is a lower bound and the permitted query/FRA/death horizon is the upper bound; unknown SSPA applicability reduces any positive DLI lower bound to `None`. | C320(a) permits favorable disregard; B404.130(f) permits counting all prior-period quarters; RS .102 B.2 imposes an additional requirement. The bound does not infer a particular recovery or history. Exemption can recover the ordinary upper witness but cannot exceed the calendar horizon. Round 19 requires every annual placement to reach the lower bound with no period in force, and refuses by name otherwise. |
-| B10. UNKNOWN-ending DLI bounds include every end candidate. With an unresolved ongoing end, known prior history, and frozen-exit future horizon beyond query, the named DLI-horizon refusal remains. | C321(c)'s alternative endings and RS .148's last qualifying quarter permit different historical DLI witnesses. The candidate extrema bound all declared endings; no recovery beyond the query is inferred. Refusal covers the unobserved future administrative fact. Round 17 requires every ending to reach the lower date on a filling with the reported start, and refuses by name otherwise. Under UNKNOWN priors every placement must reach it with no period in force, so no ending changes it (round 19). |
+| B10. UNKNOWN-ending DLI bounds include every end candidate. With an unresolved ongoing end, known prior history, and an exit already reached, they run from the lowest listed ending's date to the last ending's (round 26). | C321(c)'s alternative endings and RS .148's last qualifying quarter permit different historical DLI witnesses. The candidate extrema bound all declared endings; no recovery beyond the query is inferred. With an exit already reached, the list holds each ending through the first quarter after the exit year, where B404.146(d) can still take a QC off the clock, and each later ending only sets aside uncredited quarters, so its date can't fall below that quarter's. Round 17 requires every ending to reach the lower date on a filling with the reported start, and refuses by name otherwise. Under UNKNOWN priors every placement must reach it with no period in force, so no ending changes it (round 19). |
 | B11. The rule searches at most 4,096 combinations of disability endpoint assignments exactly, after any applicable impossibility proof. | B404.143(b) and RS .230 permit favorable assignment; B404.130(f) makes credited endpoints decisive. Six-QC and I15's minimum-requirement checks precede `_boundary_variants`, including both alternate-path calls and UNKNOWN-prior-history feasibility. A remaining excess returns `disability_boundary_assignments_unsupported`; computational complexity is neither a statutory impossibility bound nor permission to retain an all-invalid declaration. A middle count can have more assignments than either bound, so an input error also needs every completion's count within the cap (round 24). |
 | B12. Ordinary counted windows have 13 quarters for current insurance and 40 for ordinary disability; young/subsequent special windows require half their elapsed quarters after dropping an odd remainder, with a six-QC minimum. The young-worker window holds at most 39 quarters. A subsequent-special period past 40 quarters computes only where the Act's whole period and 404.130(d)(2)'s 20 of 40 agree (round 17). | B404.120(a) says "13-quarter period"; .130(b) says "20 QCs in the 40-quarter period"; .130(c)-(d) and A216(i)(3)(B) supply the half-quarter, odd-remainder, and 6/12 alternatives. Blindness uses only the fully insured prerequisite. A fully-route flag must still leave a recent-rule witness or possible automatic pre1956 alternate where I16 applies; the pre1956 flag adds no route beyond that alternate. Specialist paths retaining possibility receive their named refusal. |
 | B13. Indexed annual QC amounts are at least the prior year's statutory increment and the rounded indexed 1978 amount, with nearest-$10 rounding and $5 ties upward. | A213(d)(2) chooses "the larger of" the prior increment and indexed amount, rounded to "the next higher multiple of $10" at a $5 tie. This exact parameter calculation has no disability or specialist alternative; input-domain checks require positive NAWI and a statutory prior increment. |
@@ -3977,6 +3977,70 @@ last 40. With the regulation's cap in `special_recent`, the rule raises
 again. `insured_status.py` doesn't change. `round_25_mutations` in
 `track_b_insured_status_mutations.json` holds that run, and a later list takes
 round 24's 135 mutations and this one.
+
+## Round 26 an exit already reached gives a range
+
+Verification class: statutory conformance on invented declarations only. This
+correction admits no population, behavioral, payment, or forecast claim.
+
+Where coverage had ended by the query, the priors were known and the current
+period's ending stayed unknown, DISABILITY and ALL refused with
+`ongoing_disability_period_dli_horizon_unsupported`, even with the status
+settled. They now report the status and a range for the date, and that reason
+no longer exists. DISABILITY's status reads no ending, and FULLY and CURRENTLY
+still refuse by name where an ending changes them.
+
+A date can fall as the ending moves later. In
+`test_each_declared_ending_has_the_date_the_range_bounds`, endings in 2021 give
+2025Q4 and an ending in 2022Q1 gives 2025Q3, because that ending makes the rest
+of 2021 interior and 404.146(d) takes two of 2021's three QCs off the clock. So
+the list runs through the query's quarter or the first quarter after the exit
+year, whichever comes later, and then takes the last ending. A continuity
+observation past that point removes every earlier ending, so it adds its own
+quarter.
+
+The history stops at the exit year, so no QC sits in the quarters a later
+ending reaches from there on. That ending only sets aside uncredited quarters,
+so each counted window reaches further back and the fully insured requirement
+can only fall, on the Act's reading and the regulation's alike. No date falls
+from there on, and the last ending's date tops the range.
+
+Where a placement can move the start and no filling with the reported start
+reaches the lower date, the rule still refuses by name (round 17), as
+`test_established_current_period_ranges_an_unobserved_future_dli` shows for
+2022's two QCs. An ending after the query can decide that alone. In
+`test_an_ending_after_the_query_alone_can_refuse_the_low`, continuity past the
+query leaves no earlier ending, and the start needs 2022's one QC in 2022Q1,
+which leaves an ending in 2022Q3 a quarter short of the low. The list for the
+range's high end runs through the same endings. In
+`test_an_unknown_exit_year_can_split_the_cap_after_the_query`, four QCs in the
+unknown exit year split the two readings of the subsequent-special cap for an
+ending in 2022Q3, so the rule refuses by name. Three properties hold on every
+other record the tests draw:
+
+- each declared ending that computes gives a date inside the range, with the
+  range's start and status;
+- the range's ends equal the lowest and highest declared dates when every
+  ending computes;
+- no date falls from the list's last quarter on.
+
+`test_status_stress_a_frozen_exit_ranges_every_ending` compares the range with
+arithmetic that imports no production helper, across every ending through the
+quarter before age 67, on every annual placement of workers born from 1960.
+`test_every_declared_ending_fits_the_range` compares it with the rule's own
+answer for each declared ending, across ages, sexes, priors, blindness and
+continuity observations.
+
+`round_26_mutations` in `track_b_insured_status_mutations.json` takes round
+24's 135 mutations and round 25's one and adds nine for this round. Each ran
+against this source and failed its named test, and the audit hook counted no
+restricted open and no subprocess. Round 24's parser cut five node ids at a
+space, so this list gives them in full and quotes every target, and its
+commands need bash. Round 23's property draws its records at random and caught
+`flagged_refuses_every_placement` on only 3 of 40 seeds, so that test now pins
+a record that catches it every time. Dropping the exit from the list
+`_period_outcomes` reads, or from the high list, passed every earlier test, and
+the two tests named above now fail under each.
 
 ## Not in scope
 
