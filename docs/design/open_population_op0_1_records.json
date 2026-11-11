@@ -11,18 +11,66 @@
   },
   "registry_snapshot": {
     "path": "docs/design/track_b_holdout_registry.json",
-    "commit": "daf02425",
+    "commit": "4f99edfb",
     "sha256": "084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88",
-    "state": "draft_pr_560_not_merged",
+    "state": "merged_on_master",
     "j_candidates": "not_recorded",
-    "freeze_action": "Coordinator rechecks J first, reviews same-family relations and named overlaps, appends candidate entries before freeze, then cites merged commit and SHA-256."
+    "freeze_action": "The coordinator's registry PR adds source and family definitions and the ruling on J's sources. This lane appends each pick at the step before its freeze, the coordinator names the B3 and B4 rows that overlap each held-out year, and the record then cites the merged commit and SHA-256."
   },
   "registry_mutations": {
     "path": "docs/design/track_b_holdout_registry_mutations.json",
-    "commit": "daf02425",
-    "sha256": "0be8a0c8be8eb7d014587d7bbb58a2b980374a334ccaedf5cd0e25d588fbfa1f"
+    "commit": "4f99edfb",
+    "sha256": "686fefd587bcd80e4d563af9574d1b80817d86363b5898b471e12c9d44f360e9"
   },
-  "status_note": "Draft records, not frozen. Held-out years pending the shared registry and Track B J. Blinded feasibility and power review precedes registration; issue #42 registrations only through coordinator on Max's go.",
+  "registry_ruling": {
+    "date": "2026-11-06",
+    "j_takes_no_unit_from": [
+      "ACS PUMS",
+      "NCHS natality",
+      "Census counts, estimates and projections, the 2020 Demographic Analysis coverage tables among them",
+      "CBO projections",
+      "the June 2012 and June 2014 files of the CPS June Fertility Supplement"
+    ],
+    "source_ids": [
+      "acs",
+      "cbo",
+      "census2020",
+      "census2023",
+      "cps_fertility",
+      "nchs",
+      "popest"
+    ],
+    "j_first_still_binds": "Every source the ruling doesn't name, OP0.2's SSA picks for gate_ssa_totals among them.",
+    "leaves_in_place": [
+      "\"No unit\" clears no year, and each record keeps its upstream-exposure disclosures.",
+      "B3's and B4's own rows stay with the overlap rule.",
+      "gate_imm's 2014 dependency on Census 2023's exit assumptions goes to Max as a holdout pattern."
+    ],
+    "oact": "OP0.1 reserves no OACT unit. If J's author uses V.A1 or V.A2, each side's registration names the other: the earlier record carries a pointer, and the later one names the use. If J holds out a unit from a series OP uses as a control, J's registration says it doesn't test that margin independently.",
+    "psid_panel": "OP's record and J's registration both name the panel behind OP's fitted laws, and it isn't a held-out conflict. B0.2's exposure inventory lists the fit, and if J's candidate shares PSID units with that panel, J's registration excludes them or discloses the overlap.",
+    "freeze_order": [
+      "The coordinator's registry PR adds reviewed source and family definitions and this ruling, and no pick.",
+      "No gate with a held-out year freezes until that PR lands and its pick sits in the registry.",
+      "This lane appends each pick at the step before its freeze, because an entry's units never change once committed.",
+      "Each freeze request names its held-out years, and the coordinator answers with the B3 and B4 rows that overlap, by row name and year."
+    ],
+    "citations": [
+      {
+        "file": "coordinator-note-lane-20261106d.md",
+        "sha256": "83211e761bc0e0c795de681c245f81e471ac1a0aa00d79278c035e6dc3a0ec5a"
+      },
+      {
+        "file": "coordinator-note-lane-20261106c.md",
+        "sha256": "9b9da627facf15eedd73c98140fdb8070792621b98da686baba9d945078bc493"
+      },
+      {
+        "file": "coordinator/track-b-note-20261106b.md",
+        "sha256": "4e8153e1d1421961b9be79e1b65f28060ba736e9c66e7c463df7c053aa58a6d9"
+      }
+    ],
+    "citation_rule": "These files sit outside the repository, and the records cite them until the coordinator's registry PR lands. Note d corrects the other two on OACT's V.A1 and V.A2, which these records hold as controls."
+  },
+  "status_note": "Draft records, not frozen. Held-out years pending the shared registry, under the coordinator's ruling on J's sources. Blinded feasibility and power review precedes registration; issue #42 registrations only through coordinator on Max's go.",
   "manifest_status_semantics": "available means documented source/variable exists, not verified data bytes or an approved selection target. not_available means not established for the requested margin in inspected documentation. validation_only excludes selection. All uncaptured target hashes remain to capture.",
   "source_catalog": {
     "nchs": {
@@ -124,11 +172,11 @@
       "admitted_scope": "Unaligned births by maternal five-year age group and share male in OP5's roster, conditional on OP3/OP4 flows. Independent prediction only for separately demonstrated unused observations/estimands.",
       "registry_snapshot": {
         "path": "docs/design/track_b_holdout_registry.json",
-        "commit": "daf02425",
+        "commit": "4f99edfb",
         "sha256": "084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88",
-        "state": "draft_pr_560_not_merged",
+        "state": "merged_on_master",
         "j_candidates": "not_recorded",
-        "freeze_action": "Coordinator rechecks J first, reviews same-family relations and named overlaps, appends candidate entries before freeze, then cites merged commit and SHA-256."
+        "freeze_action": "The coordinator's registry PR adds source and family definitions and the ruling on J's sources. This lane appends each pick at the step before its freeze, the coordinator names the B3 and B4 rows that overlap each held-out year, and the record then cites the merged commit and SHA-256."
       },
       "source_release": [
         {
@@ -175,7 +223,7 @@
             "source": "nchs",
             "year": 2015,
             "status": "pending_registry",
-            "reason": "Candidate only: outside committed annual ASFR range. Do not read until source/estimand exposure, J and registry review clear it."
+            "reason": "Candidate only: outside committed annual ASFR range. Do not read until source/estimand exposure and registry review clear it."
           }
         ],
         "fit_years": [
@@ -192,10 +240,15 @@
           {
             "with": "Track B J",
             "years": [],
-            "reason": "No J candidates recorded; coordinator must check underlying data/family relation."
+            "reason": "J takes no unit from NCHS natality, ACS PUMS, Census estimates or the CPS June files under the coordinator's ruling. This record's freeze request names NCHS 2015, and the coordinator answers with any B3 or B4 row that overlaps it."
+          },
+          {
+            "with": "Track B J (PSID panel)",
+            "years": [],
+            "reason": "The fertility kernel this record consumes fits on the PSID panel (`models/family_transitions/components/fertility.py`, through `data/transitions.py` and `data/births.py`). OP holds out no PSID year, so both records name the panel, and it isn't a held-out conflict. B0.2's exposure inventory lists the fit, and if J's candidate shares PSID units with that panel, J's registration excludes them or discloses the overlap."
           }
         ],
-        "registry_rule": "J first; no year is cleared by absence from this incomplete registry.",
+        "registry_rule": "J takes no unit from this record's held-out sources under the coordinator's ruling, and J first still binds any source the ruling doesn't name. Absence from the registry clears no year, and no pick freezes until the coordinator's registry PR lands and the pick sits in the registry.",
         "excluded_years": [
           {
             "years": "2016–2024",
@@ -403,11 +456,11 @@
       "admitted_scope": "Recent-arrival demographic composition conditional on gross inflow; admits a surviving/staying stock proxy, not true entry-time state, legal status, gross flows or later earnings.",
       "registry_snapshot": {
         "path": "docs/design/track_b_holdout_registry.json",
-        "commit": "daf02425",
+        "commit": "4f99edfb",
         "sha256": "084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88",
-        "state": "draft_pr_560_not_merged",
+        "state": "merged_on_master",
         "j_candidates": "not_recorded",
-        "freeze_action": "Coordinator rechecks J first, reviews same-family relations and named overlaps, appends candidate entries before freeze, then cites merged commit and SHA-256."
+        "freeze_action": "The coordinator's registry PR adds source and family definitions and the ruling on J's sources. This lane appends each pick at the step before its freeze, the coordinator names the B3 and B4 rows that overlap each held-out year, and the record then cites the merged commit and SHA-256."
       },
       "source_release": [
         {
@@ -469,17 +522,22 @@
           {
             "with": "Track B J",
             "years": [],
-            "reason": "No J candidates; do not reserve before J."
+            "reason": "J takes no unit from ACS PUMS under the coordinator's ruling. This record's freeze request names ACS 2014, and the coordinator answers with any B3 or B4 row that overlaps it."
           },
           {
             "with": "OP4 Census 2023 emigration assumptions",
             "years": [
               2014
             ],
-            "reason": "Census methodology combines rates based on ACS 2011–2015, including 2014. If those rates enter entry survival/exposure adjustment, disclose upstream holdout overlap; coordinator must resolve independent status before freeze."
+            "reason": "Census methodology combines rates based on ACS 2011–2015, including 2014. If those rates enter entry survival/exposure adjustment, disclose upstream holdout overlap; this goes to Max as a holdout pattern, through the coordinator, before freeze."
+          },
+          {
+            "with": "Track B J (OACT V.A1 and V.A2)",
+            "years": [],
+            "reason": "OP0.1 reserves no OACT unit. If J's author uses V.A1 or V.A2, each side's registration names the other: the earlier record carries a pointer, and the later one names the use. If J holds out a unit from a series OP uses as a control, J's registration says it doesn't test that margin independently."
           }
         ],
-        "registry_rule": "J first; no year cleared by absence from incomplete registry.",
+        "registry_rule": "J takes no unit from this record's held-out sources under the coordinator's ruling, and J first still binds any source the ruling doesn't name. Absence from the registry clears no year, and no pick freezes until the coordinator's registry PR lands and the pick sits in the registry.",
         "excluded_sources": [
           "ACS five-year pooled files"
         ],
@@ -654,11 +712,11 @@
       "admitted_scope": "Exit totals aligned to V.A2 outflows; no independent exit-composition claim. EMIGRATION_UNIDENTIFIED remains in force.",
       "registry_snapshot": {
         "path": "docs/design/track_b_holdout_registry.json",
-        "commit": "daf02425",
+        "commit": "4f99edfb",
         "sha256": "084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88",
-        "state": "draft_pr_560_not_merged",
+        "state": "merged_on_master",
         "j_candidates": "not_recorded",
-        "freeze_action": "Coordinator rechecks J first, reviews same-family relations and named overlaps, appends candidate entries before freeze, then cites merged commit and SHA-256."
+        "freeze_action": "The coordinator's registry PR adds source and family definitions and the ruling on J's sources. This lane appends each pick at the step before its freeze, the coordinator names the B3 and B4 rows that overlap each held-out year, and the record then cites the merged commit and SHA-256."
       },
       "source_release": [
         {
@@ -709,10 +767,15 @@
           {
             "with": "Track B J",
             "years": [],
-            "reason": "Unrecorded; coordinator must review all source/family overlaps."
+            "reason": "J takes no unit from ACS PUMS or Census projections under the coordinator's ruling. This record holds out no year, and the coordinator's registry PR carries the source and family definitions."
+          },
+          {
+            "with": "Track B J (OACT V.A1 and V.A2)",
+            "years": [],
+            "reason": "OP0.1 reserves no OACT unit. If J's author uses V.A1 or V.A2, each side's registration names the other: the earlier record carries a pointer, and the later one names the use. If J holds out a unit from a series OP uses as a control, J's registration says it doesn't test that margin independently."
           }
         ],
-        "registry_rule": "J first; no year cleared by absence from incomplete registry.",
+        "registry_rule": "This record holds out no year. J first still binds any source the coordinator's ruling doesn't name, and absence from the registry clears no year.",
         "diagnostic_years": [
           2015,
           2016,
@@ -881,11 +944,11 @@
       "admitted_scope": "Fresh aligned replay at fixed person weights, with whole-unit selection for births/emigration and immigration by construction; mortality consumed from its owner. Alignment demonstrates no transition-law validity.",
       "registry_snapshot": {
         "path": "docs/design/track_b_holdout_registry.json",
-        "commit": "daf02425",
+        "commit": "4f99edfb",
         "sha256": "084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88",
-        "state": "draft_pr_560_not_merged",
+        "state": "merged_on_master",
         "j_candidates": "not_recorded",
-        "freeze_action": "Coordinator rechecks J first, reviews same-family relations and named overlaps, appends candidate entries before freeze, then cites merged commit and SHA-256."
+        "freeze_action": "The coordinator's registry PR adds source and family definitions and the ruling on J's sources. This lane appends each pick at the step before its freeze, the coordinator names the B3 and B4 rows that overlap each held-out year, and the record then cites the merged commit and SHA-256."
       },
       "source_release": [
         {
@@ -932,9 +995,14 @@
             "with": "gate_birth / gate_imm / emigration_check / gate_pop",
             "years": [],
             "reason": "Manifest controls may enter candidate arms; they cannot independently validate those same margins. All scientific gate runs remain unaligned."
+          },
+          {
+            "with": "Track B J (OACT V.A1 and V.A2)",
+            "years": [],
+            "reason": "OP0.1 reserves no OACT unit. If J's author uses V.A1 or V.A2, each side's registration names the other: the earlier record carries a pointer, and the later one names the use. If J holds out a unit from a series OP uses as a control, J's registration says it doesn't test that margin independently."
           }
         ],
-        "registry_rule": "J first; no year cleared by absence from incomplete registry."
+        "registry_rule": "This record holds out no year. J first still binds any source the coordinator's ruling doesn't name, and absence from the registry clears no year."
       },
       "critical_cells": [
         {
@@ -1192,11 +1260,11 @@
       "admitted_scope": "Unaligned 2013→2020 population composition by sex/five-year age and 2019 foreign-born period-of-entry stock, under declared date/universe bridges. Exposed 2020 estimands are regression evidence.",
       "registry_snapshot": {
         "path": "docs/design/track_b_holdout_registry.json",
-        "commit": "daf02425",
+        "commit": "4f99edfb",
         "sha256": "084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88",
-        "state": "draft_pr_560_not_merged",
+        "state": "merged_on_master",
         "j_candidates": "not_recorded",
-        "freeze_action": "Coordinator rechecks J first, reviews same-family relations and named overlaps, appends candidate entries before freeze, then cites merged commit and SHA-256."
+        "freeze_action": "The coordinator's registry PR adds source and family definitions and the ruling on J's sources. This lane appends each pick at the step before its freeze, the coordinator names the B3 and B4 rows that overlap each held-out year, and the record then cites the merged commit and SHA-256."
       },
       "source_release": [
         {
@@ -1280,10 +1348,20 @@
           {
             "with": "Track B J",
             "years": [],
-            "reason": "J absent; choice and source-family relations await coordinator."
+            "reason": "J takes no unit from ACS PUMS, Census counts or estimates or the 2020 Demographic Analysis coverage tables under the coordinator's ruling. This record's freeze request names Census 2020 and ACS 2019, and the coordinator answers with any B3 or B4 row that overlaps them."
+          },
+          {
+            "with": "Track B J (OACT V.A1 and V.A2)",
+            "years": [],
+            "reason": "OP0.1 reserves no OACT unit. If J's author uses V.A1 or V.A2, each side's registration names the other: the earlier record carries a pointer, and the later one names the use. If J holds out a unit from a series OP uses as a control, J's registration says it doesn't test that margin independently."
+          },
+          {
+            "with": "Track B J (PSID panel)",
+            "years": [],
+            "reason": "The fertility kernel this record consumes fits on the PSID panel (`models/family_transitions/components/fertility.py`, through `data/transitions.py` and `data/births.py`). OP holds out no PSID year, so both records name the panel, and it isn't a held-out conflict. B0.2's exposure inventory lists the fit, and if J's candidate shares PSID units with that panel, J's registration excludes them or discloses the overlap."
           }
         ],
-        "registry_rule": "J first; no year cleared by absence from incomplete registry.",
+        "registry_rule": "J takes no unit from this record's held-out sources under the coordinator's ruling, and J first still binds any source the ruling doesn't name. Absence from the registry clears no year, and no pick freezes until the coordinator's registry PR lands and the pick sits in the registry.",
         "exposure_disposition": "Recommend regression label on exposed 2020 facts and conservative unresolved exposure label on unestablished cells; do not claim pristine 2019/2020 holdouts."
       },
       "critical_cells": [
@@ -1497,11 +1575,11 @@
       "admitted_scope": "One production horizon to 2100 for TR2026, shorter outputs read as prefixes. Every year past 2030 conditional on named assumptions, never validated. OP11a comparisons report agreement/disagreement only.",
       "registry_snapshot": {
         "path": "docs/design/track_b_holdout_registry.json",
-        "commit": "daf02425",
+        "commit": "4f99edfb",
         "sha256": "084b8d50ba3c0fe7cf9bd70e3c7c700c60ae682644ead99cca2bb116bfb2ef88",
-        "state": "draft_pr_560_not_merged",
+        "state": "merged_on_master",
         "j_candidates": "not_recorded",
-        "freeze_action": "Coordinator rechecks J first, reviews same-family relations and named overlaps, appends candidate entries before freeze, then cites merged commit and SHA-256."
+        "freeze_action": "The coordinator's registry PR adds source and family definitions and the ruling on J's sources. This lane appends each pick at the step before its freeze, the coordinator names the B3 and B4 rows that overlap each held-out year, and the record then cites the merged commit and SHA-256."
       },
       "source_release": [
         {
@@ -1547,9 +1625,19 @@
             "with": "gate_birth / gate_pop / OP0.2",
             "years": [],
             "reason": "Shares demographic laws/controls and near-term admissions; report-only long-horizon agreement cannot rescue failed/unresolved gates."
+          },
+          {
+            "with": "Track B J (OACT V.A1 and V.A2)",
+            "years": [],
+            "reason": "OP0.1 reserves no OACT unit. If J's author uses V.A1 or V.A2, each side's registration names the other: the earlier record carries a pointer, and the later one names the use. If J holds out a unit from a series OP uses as a control, J's registration says it doesn't test that margin independently."
+          },
+          {
+            "with": "Track B J (PSID panel)",
+            "years": [],
+            "reason": "The fertility kernel this record consumes fits on the PSID panel (`models/family_transitions/components/fertility.py`, through `data/transitions.py` and `data/births.py`). OP holds out no PSID year, so both records name the panel, and it isn't a held-out conflict. B0.2's exposure inventory lists the fit, and if J's candidate shares PSID units with that panel, J's registration excludes them or discloses the overlap."
           }
         ],
-        "registry_rule": "No empirical future holdout reserved; any future retrospective test must follow J-first coordinator registry procedure."
+        "registry_rule": "No empirical future holdout reserved; any future retrospective test follows the registry's order, with J first for any source the coordinator's ruling doesn't name."
       },
       "critical_cells": [
         {
@@ -2366,7 +2454,7 @@
     }
   ],
   "coordinator_questions": [
-    "Reserve J candidates first and add reviewed source/family vocabulary; resolve all underlying-data overlaps and merged hash at freeze.",
+    "Add reviewed source/family vocabulary and the ruling on J's sources in the registry PR; name the B3 and B4 rows that overlap each held-out year at its freeze; resolve all underlying-data overlaps and merged hash at freeze.",
     "Ratify source-class numerical allowances, critical cells, zero-cell rule, pooling ladders and >=0.90 operating-characteristic alternatives after blinded feasibility review.",
     "Choose entry-year exit/timing, OP5 reference/GQ/date bridges and gate_pop arms; no provisional choice freezes itself.",
     "Confirm unused NCHS 2015/sex/nativity/observed-single-age targets and exact birth sex-ratio fitting partition; resolve ACS 2014/2019 upstream dependencies.",
