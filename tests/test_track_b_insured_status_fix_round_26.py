@@ -150,6 +150,80 @@ def test_a_continuity_observation_raises_the_low(through, lower):
     assert _dli(result) == (lower, date(2051, 12, 31), False)
 
 
+def test_an_ending_after_the_query_alone_can_refuse_the_low():
+    # Six QCs in the 12 quarters ending 2022Q1 begin the period there, and that
+    # start needs 2022's one QC in 2022Q1. The period runs at least to July,
+    # so every ending falls after the May query. With that QC in 2022Q4, an
+    # ending in 2022Q3 dates 2023Q2, the lowest date any ending allows. With it
+    # in 2022Q1, no filling passes 2023Q1 there, so the rule refuses the low.
+    person = i.Person(
+        date(2000, 2, 2),
+        sex=i.Sex.FEMALE,
+        disability_onset=date(2021, 10, 15),
+        current_disability_period_established=True,
+        current_disability_period_provenance=OBSERVED,
+        current_disability_period_continues_through=date(2022, 7, 1),
+        current_disability_period_continues_through_provenance=OBSERVED,
+        prior_disability_periods_provenance=OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=OBSERVED,
+    )
+    annual = {2019: 1, 2020: 1, 2021: 3, 2022: 1}
+    month = date(2022, 5, 1)
+    with pytest.raises(i.InsuredConfigurationUnsupported) as error:
+        i.insured_status(
+            person,
+            {
+                year: i.CoverageYear(OBSERVED, qc_count=annual.get(year, 0))
+                for year in range(2000, 2023)
+            },
+            month,
+            coverage_end_month=month,
+            test=DISABILITY,
+        )
+    assert (
+        error.value.reason is i.InsuredUnsupportedReason.ASSIGNMENT_COMPLEXITY
+    )
+    assert error.value.detail.startswith(
+        "A period ending cannot reach the lower date"
+    )
+
+
+def test_an_unknown_exit_year_can_split_the_cap_after_the_query():
+    # The period begins in 2021Q3 on 404.130(c) alone and runs at least to
+    # July, so every ending falls after the May query. The range's high end
+    # reads the unknown 2022 with four QCs. For an ending in 2022Q3, with the
+    # periods set aside, 23 of the 47 quarters from age 21 through 2024Q4 hold
+    # QCs, half of them rounded down, but only 19 of the last 40 do. The two
+    # readings of the subsequent-special cap differ there, so the rule refuses.
+    person = i.Person(
+        date(1992, 2, 2),
+        sex=i.Sex.FEMALE,
+        disability_onset=date(2021, 7, 15),
+        current_disability_period_established=True,
+        current_disability_period_provenance=OBSERVED,
+        current_disability_period_continues_through=date(2022, 7, 1),
+        current_disability_period_continues_through_provenance=OBSERVED,
+        prior_disability_periods_provenance=OBSERVED,
+        sspa211_applies=False,
+        sspa211_provenance=OBSERVED,
+    )
+    years = {
+        year: i.CoverageYear(OBSERVED, qc_count=2 if year >= 2013 else 0)
+        for year in range(1992, 2021)
+    }
+    years[2021] = i.CoverageYear(OBSERVED, qc_count=3)
+    years[2022] = i.CoverageYear(UNKNOWN)
+    month = date(2022, 5, 1)
+    with pytest.raises(i.InsuredConfigurationUnsupported) as error:
+        i.insured_status(
+            person, years, month, coverage_end_month=month, test=DISABILITY
+        )
+    assert (
+        error.value.reason is i.InsuredUnsupportedReason.SUBSEQUENT_LONG_PERIOD
+    )
+
+
 @pytest.mark.parametrize(
     ("death", "lower", "upper"),
     (

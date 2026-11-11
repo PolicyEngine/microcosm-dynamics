@@ -4008,7 +4008,15 @@ from there on, and the last ending's date tops the range.
 Where a placement can move the start and no filling with the reported start
 reaches the lower date, the rule still refuses by name (round 17), as
 `test_established_current_period_ranges_an_unobserved_future_dli` shows for
-2022's two QCs. Three properties hold on every other record the tests draw:
+2022's two QCs. An ending after the query can decide that alone. In
+`test_an_ending_after_the_query_alone_can_refuse_the_low`, continuity past the
+query leaves no earlier ending, and the start needs 2022's one QC in 2022Q1,
+which leaves an ending in 2022Q3 a quarter short of the low. The list for the
+range's high end runs through the same endings. In
+`test_an_unknown_exit_year_can_split_the_cap_after_the_query`, four QCs in the
+unknown exit year split the two readings of the subsequent-special cap for an
+ending in 2022Q3, so the rule refuses by name. Three properties hold on every
+other record the tests draw:
 
 - each declared ending that computes gives a date inside the range, with the
   range's start and status;
@@ -4022,6 +4030,17 @@ quarter before age 67, on every annual placement of workers born from 1960.
 `test_every_declared_ending_fits_the_range` compares it with the rule's own
 answer for each declared ending, across ages, sexes, priors, blindness and
 continuity observations.
+
+`round_26_mutations` in `track_b_insured_status_mutations.json` takes round
+24's 135 mutations and round 25's one and adds nine for this round. Each ran
+against this source and failed its named test, and the audit hook counted no
+restricted open and no subprocess. Round 24's parser cut five node ids at a
+space, so this list gives them in full and quotes every target, and its
+commands need bash. Round 23's property draws its records at random and caught
+`flagged_refuses_every_placement` on only 3 of 40 seeds, so that test now pins
+a record that catches it every time. Dropping the exit from the list
+`_period_outcomes` reads, or from the high list, passed every earlier test, and
+the two tests named above now fail under each.
 
 ## Not in scope
 

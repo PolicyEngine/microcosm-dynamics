@@ -243,6 +243,9 @@ M1_ENDS = tuple(
 
 @PROPERTY
 @example(qcs_1997=0, qcs_2001=2, qcs_2002=4, qcs_2012=1, end=M1_END)
+# Every placement begins this flagged prior and none meets 404.130(b), so
+# it holds on every placement and placement doesn't decide its start.
+@example(qcs_1997=0, qcs_2001=1, qcs_2002=3, qcs_2012=4, end=date(2004, 6, 30))
 @given(
     qcs_1997=st.integers(0, 4),
     qcs_2001=st.integers(1, 4),
