@@ -19922,6 +19922,6 @@
     "tests/test_track_b_insured_status_fix_round_26.py": "b9eb8c7aef29307e0c0813a9687e5d6c5bc8df06d5aa1b6e4de20db14ae005d5",
     "tests/test_track_b_insured_status_status_stress.py": "9474abda63f850437c77b4dc1b24fcc362fb90a55cd84152f7b8e61945340876"
   },
-  "round_26_replay": "Write round_24_runner_source to scratch/review/run_round24_named.py. For each round_26_mutations record, write name/source_sha256/changes to its spec_path, then execute its exact command under bash at the final source. Mutations apply only in memory.",
+  "round_26_replay": "Write round_24_runner_source to scratch/review/run_round24_named.py. For each round_26_mutations record, write name/source_sha256/changes to its spec_path, then execute its exact command under bash at the final source. Each command's python names an interpreter with the repository's dev dependencies; these runs used the repository's .venv. Mutations apply only in memory.",
   "round_26_final_source_sha256": "798c950d8ece7902324ee2a440af91e026fc0fcb45de8590f23cdcdc67fa3e25"
 }
