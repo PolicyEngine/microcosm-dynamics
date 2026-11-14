@@ -171,6 +171,12 @@ flags and traps, and every field of `DefaultContext` (review r2, finding
 3; review r3, finding 2). This covers `mint_interval` only; the script's
 other Decimal operations still use the caller's context, with 50-digit
 precision where they set one.
+For readable inputs, `mint_interval` gives the same result under any
+decimal context. For an unreadable decimal, it raises `InvalidOperation`
+when the caller's context traps that signal and `ValueError` when the
+context doesn't. On both paths, `mint_interval` refuses the input.
+Neither path affects the committed invented fixtures or the cleared
+pinned inputs.
 No acceptance threshold, pass band or verdict is computed.
 
 ## Disclosures for the second registration comment
