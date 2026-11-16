@@ -54,7 +54,7 @@ Once implementation begins (Phase 1), we will welcome contributions to:
 
 ### Requirements
 
-- Python 3.10-3.14
+- Python 3.11-3.15
 - Quarto CLI 1.9+
 
 ### Installation

@@ -117,7 +117,7 @@ paper/                   # the Quarto paper (front door)
 
 ## Code Style
 
-- Python 3.10-3.14
+- Python 3.11-3.15
 - Black formatter, 79-char line length
 - Ruff linting
 - pytest for testing

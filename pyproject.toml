@@ -3,7 +3,7 @@ name = "policyengine-social-security-model"
 version = "0.1.0"
 description = "Open-source dynamic microsimulation model for Social Security policy analysis"
 readme = "README.md"
-requires-python = ">=3.10,<3.15"
+requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
     {name = "Max Ghenis", email = "max@policyengine.org"},
@@ -29,11 +29,11 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Topic :: Scientific/Engineering :: Economics",
 ]
 
@@ -91,12 +91,12 @@ where = ["src"]
 
 [tool.black]
 line-length = 79
-target-version = ['py310', 'py311', 'py312', 'py313']
+target-version = ['py311', 'py312', 'py313']
 include = '\.pyi?$'
 
 [tool.ruff]
 line-length = 79
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.lint]
 select = [
@@ -109,6 +109,10 @@ select = [
 ]
 ignore = [
     "E501",  # line too long (handled by black)
+    # The py311 target newly flags these. Applying them is a separate
+    # style change, and UP042 alters str() on enums.
+    "UP017",  # datetime-timezone-utc
+    "UP042",  # replace-str-enum
 ]
 
 [tool.ruff.lint.per-file-ignores]

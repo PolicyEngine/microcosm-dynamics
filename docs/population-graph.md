@@ -10,18 +10,18 @@ registries, scientific gates, or committed evidence.
 
 ## Dependencies and execution
 
-The graph example requires Python **3.13 or 3.14**, NumPy 2+, pandas 2.3+,
+The graph example requires Python **3.13, 3.14, or 3.15**, NumPy 2+, pandas 2.3+,
 and the Microcosm graph/frame revisions containing typed artifact edges and
 `microcosm.graph.randomness.keyed_uniform`. The default Dynamics installation
-continues to support Python 3.10–3.14 without importing Microcosm. The entry
+continues to support Python 3.11–3.15 without importing Microcosm. The entry
 point checks capabilities and gives installation guidance when they are absent.
 
 The `graph` extra pins both graph and Frame to core main commit
 `c28b45376209f31676286e07f5dcb4593bcd248d`. An older package merely sharing
-the version number `0.1.0` is insufficient. In an isolated Python 3.13 or 3.14
+the version number `0.1.0` is insufficient. In an isolated Python 3.13, 3.14, or 3.15
 environment, install with `uv pip install '.[graph]'`. Replace the Git pins
 with a compatible published release when one exists. CI installs this exact
-extra, refuses missing capabilities, and runs the integration on both supported
+extra, refuses missing capabilities, and runs the integration on all three supported
 Python versions. Do not modify the existing scientific gate environment. No
 rules engine, restricted microdata, or optional forest fitter is needed here.
 
@@ -220,7 +220,7 @@ check direct-step parity, fit reuse and changed application identity. They skip
 the optional runtime cases when the required core capabilities are unavailable;
 the JSON and dependency
 boundary tests still run. Importing `populace_dynamics.graph` remains safe
-under Python 3.10–3.12.
+under Python 3.11–3.12.
 
 The annual tests independently repeat the existing fit, mortality, ageing,
 and keyed-draw operations; compare every retained person-period and weighted
