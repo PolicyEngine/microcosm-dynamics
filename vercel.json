@@ -6,17 +6,17 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "https://populace.dev/papers/dynamics",
+      "destination": "https://microcosm.institute/dynamics/paper",
       "permanent": false
     },
     {
       "source": "/index.html",
-      "destination": "https://populace.dev/papers/dynamics",
+      "destination": "https://microcosm.institute/dynamics/paper",
       "permanent": false
     },
     {
       "source": "/funder-summary.html",
-      "destination": "https://populace.dev/papers/dynamics",
+      "destination": "https://microcosm.institute/dynamics/paper",
       "permanent": false
     }
   ]
