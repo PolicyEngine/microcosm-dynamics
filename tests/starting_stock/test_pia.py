@@ -46,6 +46,19 @@ def _uniform(prefix: str, seed: int, person_id: int) -> float:
 # The import guard
 # --------------------------------------------------------------------------
 def test_import_guard_keeps_barred_modules_out(barred_module_names):
+    """Importing the package leaves both barred modules unloaded.
+
+    The guard refuses them whenever this package's or these tests' code
+    is on the stack, so neither can enter ``sys.modules`` through them.
+    A session that also runs other test modules may load one first; a
+    cached module bypasses every finder, so the check can't run there.
+    """
+    preloaded = sorted(n for n in barred_module_names if n in sys.modules)
+    if preloaded:
+        pytest.skip(
+            f"{preloaded} loaded earlier in this session, outside the "
+            "guard's scope; run this module on its own to check"
+        )
     for name in (
         "populace_dynamics.starting_stock",
         "populace_dynamics.starting_stock.pia",

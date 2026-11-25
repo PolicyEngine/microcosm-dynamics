@@ -3,6 +3,11 @@
 The guard is a ``sys.meta_path`` finder, installed when this conftest is
 imported, that refuses two modules no starting-stock test may load. If
 it ever fires, its message names the module that tried the import.
+
+The finder stays in ``sys.meta_path`` for the rest of the pytest
+session, so it refuses an import only while this package's or these
+tests' code is on the stack. Test modules elsewhere in a full-suite run
+import those two modules as before.
 """
 
 from __future__ import annotations
@@ -22,6 +27,25 @@ BARRED_MODULES = frozenset(
 )
 
 _IMPORT_MACHINERY = ("importlib", "_frozen_importlib")
+#: Modules whose code on the stack puts an import under the guard.
+_GUARDED_SCOPES = ("populace_dynamics.starting_stock", "tests.starting_stock")
+
+
+def _in_guarded_scope(name: str) -> bool:
+    return any(
+        name == scope or name.startswith(scope + ".")
+        for scope in _GUARDED_SCOPES
+    )
+
+
+def _guarded_stack() -> bool:
+    """Whether code of this package or these tests is on the stack."""
+    frame = sys._getframe(2)
+    while frame is not None:
+        if _in_guarded_scope(frame.f_globals.get("__name__", "")):
+            return True
+        frame = frame.f_back
+    return False
 
 
 def _importer() -> str:
@@ -39,7 +63,7 @@ class _BarredModuleFinder:
     """Raise ImportError for a barred module before any finder looks."""
 
     def find_spec(self, fullname, path=None, target=None):
-        if fullname in BARRED_MODULES:
+        if fullname in BARRED_MODULES and _guarded_stack():
             raise ImportError(
                 f"import guard: {fullname} is barred (imported from "
                 f"{_importer()})"
